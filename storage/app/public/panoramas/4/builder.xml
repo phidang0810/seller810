@@ -1,0 +1,171 @@
+<krpano>
+    <include url="https://s3.amazonaws.com/dhd-films-live/krpano/skin/vtourskin.xml"/>
+    <include url="https://s3.amazonaws.com/dhd-films-live/krpano/loadinganimation.xml"/>
+    <include url="https://s3.amazonaws.com/dhd-films-live/krpano/loadingpercenttext.xml"/>
+    <include url="https://s3.amazonaws.com/dhd-films-live/krpano/loadingbar.xml"/>
+    <include url="https://s3.amazonaws.com/dhd-films-live/krpano/plugins/showtext.xml"/>
+    <include url="https://s3.amazonaws.com/dhd-films-live/krpano/poly_editor.xml"/>
+    <plugin name="gyro" devices="html5"
+            xurl="%SWFPATH%/plugins/gyro2.js"
+            enabled="false"
+            onavailable="gyro_available_info();"
+            onunavailable="gyro_not_available_info();"
+            softstart="1"
+    />
+    <style name="roomspot" alpha="0.0" capture="false" />
+    <style name="skin_tooltips"
+           onover.mouse="copy(layer[skin_tooltip].html, tooltip);
+	                     set(layer[skin_tooltip].visible, calc(webvr.isenabled ? false : true));
+	                     tween(layer[skin_tooltip].alpha, 1.0, 0.1);
+	                     asyncloop(hovering, copy(layer[skin_tooltip].x,mouse.stagex); copy(layer[skin_tooltip].y,mouse.stagey); );"
+           onout.mouse="tween(layer[skin_tooltip].alpha, 0.0, 0.1, default, set(layer[skin_tooltip].visible,false), copy(layer[skin_tooltip].x,mouse.stagex); copy(layer[skin_tooltip].y,mouse.stagey); );"
+    />
+    <style name="skintext" url="%SWFPATH%/plugins/textfield.swf" background="false" border="false" css="calc:skin_settings.design_text_css + ' text-align:left; font-style:italic; font-size:12px;'" textshadow="get:skin_settings.design_text_shadow" />
+
+
+    <layer name="infotext" url="%SWFPATH%/plugins/textfield.swf"
+           background="false" border="false"
+           enabled="false"
+           html=""
+           css="text-align:left; color:#FFFFFF; font-family:Arial; font-size:14px; font-weight:bold;"
+           align="left" x="10" height="100%" vcenter="true"
+    />
+    <style name="dragableHotspot"
+           dragging="if(pressed,
+sub(dx,mouse.stagex,drag_adjustx); sub(dy,mouse.stagey,drag_adjusty);
+screentosphere(dx,dy,ath,atv); if(onDrag!==null, onDrag() );
+delayedcall(0,dragging()); delayedcall(1,js(generalProperties(get(name))));, if(onDragEnd!==null, onDragEnd() ); js(focusHS(get(name))););"
+           ondown="spheretoscreen(ath,atv,hotspotcenterx,hotspotcentery);
+sub(drag_adjustx,mouse.stagex,hotspotcenterx);
+sub(drag_adjusty,mouse.stagey,hotspotcentery); if(onDragStart!==null,
+onDragStart() ); dragging();">
+    </style>
+
+    <style name="dragableVideo"
+           dragging="if(pressed,
+sub(dx,mouse.stagex,drag_adjustx); sub(dy,mouse.stagey,drag_adjusty);
+screentosphere(dx,dy,ath,atv); if(onDrag!==null, onDrag() );
+delayedcall(0,dragging()); delayedcall(1,js(generalProperties(get(name)))); , if(onDragEnd!==null, onDragEnd() ); js(focusVideoHS(get(name))););"
+           ondown="spheretoscreen(ath,atv,hotspotcenterx,hotspotcentery);
+sub(drag_adjustx,mouse.stagex,hotspotcenterx);
+sub(drag_adjusty,mouse.stagey,hotspotcentery); if(onDragStart!==null,
+onDragStart() ); dragging();">
+    </style>
+
+    <action name="draghotspot">
+        if(%1 != dragging,
+        spheretoscreen(hotspot[get(name)].point[0].ath, hotspot[get(name)].point[0].atv, hotspotcenterx, hotspotcentery);
+        sub(drag_adjustx, mouse.stagex, hotspotcenterx);
+        sub(drag_adjusty, mouse.stagey, hotspotcentery);
+        draghotspot(dragging);
+        delayedcall(1,js(generalPolyHS(get(name))));
+            ,
+        if(pressed,
+        sub(dx, mouse.stagex, drag_adjustx);
+        sub(dy, mouse.stagey, drag_adjusty);
+        screentosphere(dx, dy, new_ath, new_atv);
+        sub(ath_diff,hotspot[get(name)].point[0].ath,new_ath);sub(atv_diff,hotspot[get(name)].point[0].atv,new_atv);
+        for(set(i,0), i LT hotspot[get(name)].point.count, inc(i),
+        sub(hotspot[get(name)].point[get(i)].ath,ath_diff);sub(hotspot[get(name)].point[get(i)].atv,atv_diff);   );
+        delayedcall(0, draghotspot(dragging) );
+        updatescreen();
+        delayedcall(1,js(generalProperties(get(name))));
+        );
+            );
+        </action>
+    <action name="overChildTag">
+        set(tagChild, 1);
+        set(layer[HSInfo].visible,true);
+    </action>
+    <action name="outChildTag">
+        set(tagChild, 0);
+        delayedcall(0.1, hideTag(); );
+    </action>
+    <action name="hideTag">
+        if (tagChild != 1 AND tagParent != 1, set(layer[HSInfo].visible,false););
+    </action>
+    <action name="overParentTag">
+        set(layer[HSInfo].parent, %1);
+        set(layer[infoImage].url,%2);
+        set(layer[infoName].html, %3);
+        set(layer[infoAdd].html, %4);
+        set(layer[HSInfo].visible,true);
+        set(tagParent, 1);
+    </action>
+    <action name="outParentTag">
+        set(tagParent, 0);
+        delayedcall(0.1, hideTag(); );
+    </action>
+    <action name="goto">
+        loadscene(%1, null, MERGE, OPENBLEND(0.8, 0.0, 0.6, 0.3, easeOutQuad));
+        js(generalNewHotSpot(%1));
+    </action>
+    <!-- startup action - load the first scene -->
+    <action name="startup" autorun="onstart">
+        set(mainScene, 0);
+        for(set(i,0), i LT scene.count, inc(i),
+        if (scene[get(i)].main AND scene[get(i)].main == 1,set(mainScene, calc(i));)
+        );
+
+        if(startscene === null OR !scene[get(startscene)], copy(startscene,scene[get(mainScene)].name); );
+        loadscene(get(startscene), null, MERGE);
+        if(startactions !== null, startactions() );
+    </action>
+
+    <action name="hotspot_topdown">
+        if(hotspot[%1].loaded,
+        tween(hotspot[%1].atv, %2, 0.5, easeInOutQuad, tween(hotspot[%1].atv, %3, 0.5, default, hotspot_topdown(%1, %2, %3) ) );
+        );
+    </action>
+
+    <skin_settings maps="false"
+                   maps_type="google"
+                   maps_bing_api_key=""
+                   maps_google_api_key=""
+                   maps_zoombuttons="false"
+                   webvr="true"
+                   webvr_gyro_keeplookingdirection="false"
+                   webvr_prev_next_hotspots="true"
+                   littleplanetintro="false"
+                   title="true"
+                   thumbs="true"
+                   thumbs_width="120" thumbs_height="80" thumbs_padding="10" thumbs_crop="0|40|240|160"
+                   thumbs_opened="false"
+                   thumbs_text="true"
+                   thumbs_dragging="true"
+                   thumbs_onhoverscrolling="false"
+                   thumbs_scrollbuttons="false"
+                   thumbs_scrollindicator="false"
+                   thumbs_loop="false"
+                   tooltips_buttons="true"
+                   tooltips_thumbs="true"
+                   tooltips_hotspots="true"
+                   tooltips_mapspots="true"
+                   deeplinking="false"
+                   loadscene_flags="KEEPVIEW"
+                   loadscene_blend="OPENBLEND(0.5, 0.0, 0.75, 0.05, linear)"
+                   loadscene_blend_prev="SLIDEBLEND(0.5, 180, 0.75, linear)"
+                   loadscene_blend_next="SLIDEBLEND(0.5,   0, 0.75, linear)"
+                   loadingtext=""
+                   layout_width="100%"
+                   layout_maxwidth="814"
+                   controlbar_width="-24"
+                   controlbar_height="40"
+                   controlbar_offset="20"
+                   controlbar_offset_closed="-40"
+                   controlbar_overlap.no-fractionalscaling="10"
+                   controlbar_overlap.fractionalscaling="0"
+                   design_skin_images="vtourskin.png"
+                   design_bgcolor="0x2D3E50"
+                   design_bgalpha="0.8"
+                   design_bgborder="0"
+                   design_bgroundedge="1"
+                   design_bgshadow="0 4 10 0x000000 0.3"
+                   design_thumbborder_bgborder="3 0xFFFFFF 1.0"
+                   design_thumbborder_padding="2"
+                   design_thumbborder_bgroundedge="0"
+                   design_text_css="color:#FFFFFF; font-family:Arial;"
+                   design_text_shadow="1"
+
+    />
+</krpano>
