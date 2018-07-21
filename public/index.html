@@ -1,0 +1,117 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>WebGL</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, viewport-fit=cover" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="x-ua-compatible" content="IE=edge" />
+
+    <!-- CSRF Token -->
+    <meta name="csrf-token" content="LroN9ogtMXiLCSrRYuS075yNafx49KVWu7bKKJlv">
+    <link href="css/inspinia/vendor.css" rel="stylesheet">
+    <link href="assets/css/webgl.css" rel="stylesheet">
+    <!-- Additional Styles and Scripts for individual components -->
+    <style>
+        @-ms-viewport { width:device-width; }
+        @media  only screen and (min-device-width:800px) { html { overflow:hidden; } }
+        html { height:100%; }
+        body { height:100%; overflow:hidden; margin:0; padding:0; font-family:Arial, Helvetica, sans-serif; font-size:16px; color:#FFFFFF; background-color:#000000; }
+    </style>
+</head>
+<body>
+
+<!-- Top Navigation -->
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">WebGL</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+
+
+            </ul>
+        </div><!--/.nav-collapse -->
+    </div>
+</nav>
+<!-- Main view  -->
+<script src="plugins/krpano/krpano.js"></script>
+<div id="pano" style="width:100%;height:100%;">
+    <noscript><table style="width:100%;height:100%;"><tr style="vertical-align:middle;text-align:center;"><td>ERROR:<br><br>Javascript not activated<br><br></td></tr></table></noscript>
+    <script>
+        var krpano = null;
+        var tagLists = [
+            {id: 1, name: "name 1", photo: "", x: 12, y: 30},
+            {id: 2, name: "name 2", photo: "", x: 22, y: 40},
+            {id: 3, name: "name 3", photo: "", x: 2, y: 10},
+            {id: 4, name: "name 41", photo: "", x: 42, y: 24},
+            {id: 5, name: "name 5", photo: "", x: 32, y: 11},
+            {id: 6, name: "name 6", photo: "", x: 12, y: 66},
+            {id: 7, name: "name 7", photo: "", x: -40, y: 54},
+            {id: 8, name: "name 8", photo: "", x: -30, y: 77},
+            {id: 9, name: "name 9", photo: "", x: -50, y: -21},
+            {id: 10, name: "name 10", photo: "", x: -20, y: -54},
+            {id: 11, name: "name 11", photo: "", x: -25, y: 32},
+            {id: 12, name: "name 12", photo: "", x: -90, y: 16},
+            {id: 13, name: "name 13", photo: "", x: 43, y: 22}
+
+        ];
+
+        embedpano({
+            swf:"plugins/krpano/krpano.swf",
+            xml:"plugins/krpano/tour.xml",
+            target:"pano",
+            html5:"auto",
+            mobilescale:1.0,
+            passQueryParameters:true,
+            onready : krpano_onready_callback
+        });
+
+        krpano.set("events.onclick", function(){
+            var x = krpano.get("mouse.x");
+            var y = krpano.get("mouse.y");
+            var pos = krpano.screentosphere(x,y);
+
+            var uniqname = "hs" + Date.now();
+            addTag(uniqname, pos.x, pos.y)
+        });
+
+        loadTagList(tagLists);
+
+        function krpano_onready_callback(krpano_interface)
+        {
+            krpano = krpano_interface;
+        }
+
+        function loadTagList(tagLists) {
+            tagLists.forEach(function(element) {
+                addTag(element.name, element.x, element.y);
+            });
+        }
+
+        function addTag(name, x, y) {
+            krpano.call("addhotspot(" + name + ");");
+            krpano.call("set(hotspot[" + name + "].ath," + x + ");");
+            krpano.call("set(hotspot[" + name + "].atv, " + y + ");");
+            krpano.call("set(hotspot[" + name + "].onclick,lookto(get(ath),get(atv),90));");
+            krpano.call("set(hotspot[" + name + "].onover,tween(scale, 1.5));");
+            krpano.call("set(hotspot[" + name + "].onout,tween(scale, 1));");
+            krpano.call("set(hotspot[" + name + "].scale,1);");
+            krpano.call("set(hotspot[" + name + "].url, '../../uploads/webgl/gryo/team_sprite.png');");
+            krpano.call("set(hotspot[" + name + "].crop,0|0|50|50);");
+        }
+
+    </script>
+</div>
+</body>
+</html>
