@@ -17,7 +17,7 @@
                 searching: false,
                 processing: true,
                 serverSide: true,
-                "dom": '<"top"i>rt<"bottom"flp><"clear">',
+                "dom": 'rt<"#pagination"flp>',
                 ajax: {
                     "url": "{{route('admin.users.index')}}",
                     "data": function ( d ) {
@@ -39,7 +39,31 @@
                     // Column index begins at 0
                     { "sClass": "text-center", "aTargets": [ 5 ] },
                     { "sClass": "text-right", "aTargets": [ 6 ] }
-                ]
+                ],
+                "language": {
+                    "decimal": "",
+                    "emptyTable": "Không có dữ liệu hợp lệ",
+                    "info": "Hiển thị từ _START_ đến _END_ / _TOTAL_ kết quả",
+                    "infoEmpty": "Hiển thị từ 0 đến 0 trên 0 dòng",
+                    "infoFiltered": "(filtered from _MAX_ total entries)",
+                    "infoPostFix": "",
+                    "thousands": ",",
+                    "lengthMenu": "Hiển thị _MENU_ kết quả",
+                    "loadingRecords": "Đang tải...",
+                    "processing": "Đang xử lý...",
+                    "search": "Search:",
+                    "zeroRecords": "Không có kết quả nào được tìm thấy",
+                    "paginate": {
+                        "first": "Đầu",
+                        "last": "Cuối",
+                        "next": "Tiếp",
+                        "previous": "Trước"
+                    },
+                    "aria": {
+                        "sortAscending": ": activate to sort column ascending",
+                        "sortDescending": ": activate to sort column descending"
+                    }
+                }
 
             });
 
@@ -60,13 +84,13 @@
                 ids: [$(this).attr('data-id')]
             };
             swal({
-                    title: "Warning!",
-                    text: "Are you sure you want to delete <b>"+email+"</b> ?",
+                    title: "Cảnh Báo!",
+                    text: "Bạn có chắc muốn xóa <b>"+email+"</b> ?",
                     html:true,
                     type: "warning",
                     showCancelButton: true,
                     confirmButtonClass: "btn-danger",
-                    confirmButtonText: "Yes, delete it!",
+                    confirmButtonText: "Vâng, xóa!",
                     closeOnConfirm: false
                 },
                 function(){
@@ -78,8 +102,8 @@
                         success: function(response) {
                             if (response.success) {
                                 swal({
-                                    title: "Successfully!",
-                                    text: "The account " + email + " file has been deleted.",
+                                    title: "Thành công!",
+                                    text: "Tài khoản " + email + " đã bị xóa.",
                                     html: true,
                                     type: "success",
                                     confirmButtonClass: "btn-primary"
@@ -95,7 +119,7 @@
                                     text: errorHtml,
                                     html: true,
                                     type: "error",
-                                    confirmButtonClass: "btn-danger",
+                                    confirmButtonClass: "btn-danger"
                                 });
                             }
                             table.fnDraw();
@@ -108,67 +132,71 @@
 @endsection
 @section('content')
 <div class="row">
-    <div class="col-lg-12">
+    <!-- Search form -->
+    <form role="form" id="fSearch">
+        <div class="row v-center">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label>Email, họ tên</label>
+                    <input type="text" placeholder="Nhập email, họ tên" name="keyword" id="s-keyword" class="form-control" value="{{app('request')->input('keyword')}}">
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label>Chọn quyền</label>
+                    <select class="form-control" name="role" id="s-role">
+                        <option value=""> -- Tất cả -- </option>
+                        @foreach($roles as $role)
+                            <option @if(app('request')->input('role') == $role->id) selected @endif value="{{$role->id}}">{{$role->name}}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label>Chọn trạng thái</label>
+                    <select class="form-control" name="status" id="s-status">
+                        <option value=""> -- Tất cả -- </option>
+                        <option @if(app('request')->has('status') && app('request')->input('status') == ACTIVE) selected @endif value="{{ACTIVE}}">Active</option>
+                        <option @if(app('request')->has('status') && app('request')->input('status') == INACTIVE) selected @endif value="{{INACTIVE}}">Inactive</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label></label>
+                    <button class="btn btn-sm btn-warning" type="submit" style="margin-bottom: 0;margin-top: 22px;">
+                        <i class="fa fa-search"></i> Tìm kiếm
+                    </button>
+                    <button class="btn btn-sm btn-default" type="button" id="bt-reset" style="margin-bottom: 0;margin-top: 22px; margin-right:5px">
+                        <i class="fa fa-refresh"></i> Clear
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </form>
+</div>
+<div class="row">
         <div class="ibox float-e-margins">
             @include('admin._partials._alert')
             <div class="ibox-content">
-
-                <!-- Search form -->
-                <form role="form" id="fSearch">
-                    <div class="row">
-                            <div class="col-sm-3">
-                                <div class="form-group">
-                                    <label>Email, name</label>
-                                    <input type="text" placeholder="Enter email, name" name="keyword" id="s-keyword" class="form-control" value="{{app('request')->input('keyword')}}">
-                                </div>
-                            </div>
-
-                            <div class="col-sm-3">
-                                <div class="form-group">
-                                    <label>Select role</label>
-                                    <select class="form-control" name="role" id="s-role">
-                                        <option value=""> -- All -- </option>
-                                        @foreach($roles as $role)
-                                            <option @if(app('request')->input('role') == $role->id) selected @endif value="{{$role->id}}">{{$role->name}}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="col-sm-3">
-                                <div class="form-group">
-                                    <label>Select status</label>
-                                    <select class="form-control" name="status" id="s-status">
-                                        <option value=""> -- All -- </option>
-                                        <option @if(app('request')->has('status') && app('request')->input('status') == ACTIVE) selected @endif value="{{ACTIVE}}">Active</option>
-                                        <option @if(app('request')->has('status') && app('request')->input('status') == INACTIVE) selected @endif value="{{INACTIVE}}">Inactive</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-sm-3">
-                                <button class="btn btn-default" type="button" id="bt-reset" style="margin-bottom: 0;margin-top: 22px; margin-right:5px">
-                                    <i class="fa fa-refresh"></i> Reset
-                                </button>
-                                <button class="btn btn-warning" type="submit" style="margin-bottom: 0;margin-top: 22px;">
-                                    <i class="fa fa-search"></i> Search
-                                </button>
-                            </div>
-                    </div>
-                </form>
-                <div class="hr-line-dashed"></div>
-                <div class="text-right">
-                    <a href="{{route('admin.users.create')}}" class="btn btn-primary"><i class="fa fa-plus"></i> New Account</a>
+                <div class="text-right" style="padding: 10px 10px 0px 10px;">
+                    <a href="{{route('admin.users.create')}}" class="btn btn-sm btn-primary"><i class="fa fa-plus"></i> Tạo Tài Khoản</a>
                 </div>
+                <div class="hr-line-dashed"></div>
                 <!-- Account list -->
-                <table class="table table-striped table-bordered table-hover" id="dataTables">
+                <table class="table table-striped table-hover" id="dataTables">
                     <thead>
                     <tr>
                         <th>ID</th>
                         <th>Email</th>
-                        <th>Name</th>
-                        <th>Role</th>
-                        <th>Created At</th>
-                        <th>Status</th>
+                        <th>Họ Tên</th>
+                        <th>Quyền</th>
+                        <th>Ngày Tạo</th>
+                        <th>Trạng Thái</th>
                         <th></th>
                     </tr>
                     </thead>
@@ -178,6 +206,5 @@
 
             </div>
         </div>
-    </div>
 </div>
 @endsection

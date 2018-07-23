@@ -17,7 +17,7 @@
     <link href="{{asset('themes/inspinia/css/plugins/dataTables/dataTables.bootstrap.css')}}" rel="stylesheet">
     <link href="{{asset('themes/inspinia/css/plugins/dataTables/dataTables.responsive.css')}}" rel="stylesheet">
     <link href="{{asset('themes/inspinia/css/plugins/dataTables/dataTables.tableTools.min.css')}}" rel="stylesheet">
-    <link href="{{asset('plugins/swal/sweetalert.css')}}" rel="stylesheet">
+    <link href="{{asset('themes/inspinia/css/plugins/swal/sweetalert.css')}}" rel="stylesheet">
     <link href="{{asset('themes/inspinia/css/plugins/toastr/toastr.min.css')}}" rel="stylesheet">
 
     <link href="{{asset('themes/inspinia/css/animate.css')}}" rel="stylesheet">
@@ -94,7 +94,7 @@
 <!-- Custom and plugin javascript -->
 <script src="{{asset('themes/inspinia/js/inspinia.js')}}"></script>
 <script src="{{asset('themes/inspinia/js/plugins/pace/pace.min.js')}}"></script>
-<script src="{{asset('plugins/swal/sweetalert.min.js')}}"></script>
+<script src="{{asset('themes/inspinia/js/plugins/swal/sweetalert.min.js')}}"></script>
 <script src="{{asset('themes/inspinia/js/plugins/toastr/toastr.min.js')}}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
 @yield('js')

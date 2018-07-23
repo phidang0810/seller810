@@ -1,7 +1,36 @@
+*{
+    font-size: 12px;
+}
 .v-center {
     display: flex;
     justify-content: left;
     align-items: center;
+}
+#pagination{
+    position: absolute;
+    width: 100%;
+    bottom: -50px;
+    left: 0;
+}
+.ibox-content{
+    position: relative;
+}
+.form-control{
+    height: 32px;
+    font-size:12px
+}
+.hr-line-dashed {
+    margin: 10px 0 20px 0;
+}
+.dataTables_wrapper {
+    padding-bottom: 0;
+}
+.ibox-content{
+    padding: 0;
+    box-shadow: 1px 2px 5px #cbcbd6;
+}
+.btn, .label{
+    border-radius:0;
 }
 /* Fixes for IE < 8 */
 @media screen\9 {
