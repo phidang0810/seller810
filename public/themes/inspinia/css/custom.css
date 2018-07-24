@@ -26,7 +26,8 @@
     padding-bottom: 0;
 }
 .ibox-content{
-    padding: 0;
+    /*padding: 0;*/
+    padding: 10px;
     box-shadow: 1px 2px 5px #cbcbd6;
 }
 .btn, .label{
@@ -40,3 +41,97 @@
         height: 100%;
     }
 }
+
+/* BEGIN: Style for Layout */
+body{
+    background-color: #FFFFFF;
+}
+
+.bg-white{
+    background-color: #FFFFFF;
+}
+
+.c-header-logo-wrapper{
+    float: left;
+}
+
+.c-header-logo-wrapper h1{
+    margin-left: 30px;
+    margin-right: 0;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+#page-wrapper{
+    border-left: 1px solid #e7eaec;
+}
+
+.navbar-default .nav > li > a:hover, .navbar-default .nav > li > a:focus{
+    background-color: #FFF;
+    color: #293846;
+}
+
+.nav > li.active{
+ background-color: #FFF;
+ color: #293846;
+ border-left: none;
+}
+
+.nav .nav-item a > .nav-label{
+    text-transform: uppercase;
+    font-size: 14px;
+    font-weight: 400;
+
+}
+
+.nav .nav-item a > i{
+    font-size: 14px;
+}
+
+.nav .nav-item.active a .nav-label{
+    font-weight: 700;
+}
+
+.nav .nav-item:hover a .nav-label{
+    font-weight: 700;
+}
+
+
+.nav > li.active > a{
+    color: #293846;
+}
+
+ul.nav-second-level{
+    background-color: #FFF;
+    color: #293846;
+}
+
+.nav-second-level li a{
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.wrapper-content{
+    padding-left: 0;
+    padding-top: 15px;
+    padding-right: 0;
+    padding-bottom: 30px;
+}
+
+#fSearch{
+    padding: 0 15px;
+}
+
+.pr-15{
+    padding-right: 15px;
+}
+
+.pl-15{
+    padding-left: 15px;
+}
+
+.arrow{
+    margin-top: 5px;
+}
+
+/* END: Style for Layout */

@@ -2,60 +2,86 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Repositories\IconRepository;
+use App\Repositories\CategoryRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\View\View;
 
 class CategoryController extends AdminController
 {
     public function __construct(Request $request)
     {
         parent::__construct($request);
+
+        $this->_pushBreadCrumbs('Admins', route('admin.categories.index'));
     }
 
-    public function index(IconRepository $iconRepo)
+    /**
+     * Show the application dashboard.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index(CategoryRepository $category)
     {
         if ($this->_request->ajax()) {
-            return $iconRepo->dataTable($this->_request);
+            return $category->dataTable($this->_request);
         }
 
-        $this->_data['title'] = 'Video';
-        $this->_data['status'] = $iconRepo->getStatus();
+        $this->_data['title'] = 'Danh mục sản phẩm';
 
-        return view('admin.video.index', $this->_data);
+        return view('admin.categories.index', $this->_data);
     }
 
-    public function store(IconRepository $iconRepo)
+    public function view(CategoryRepository $category)
+    {
+        $id = $this->_request->get('id');
+        $this->_data['title'] = 'Tạo mới danh mục sản phẩm';
+        if ($id) {
+            $this->_data['title'] = 'Chỉnh sửa danh mục sản phẩm';
+            $this->_data['data'] = $category->getCategory($id);
+        }
+
+        $this->_pushBreadCrumbs($this->_data['title']);
+        return view('admin.categories.view', $this->_data);
+    }
+
+    /**
+     * @param CategoryRepository $category
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function store(CategoryRepository $category)
     {
         $input = $this->_request->all();
         $id = $input['id'] ?? null;
         $rules = [
-            'name' => 'required',
-            'panorama_id' => 'required|exists:panoramas,id',
-            'file' => 'required'
+            'name' => 'required|string|max:50',
+            'active' => 'required'
         ];
+        $message = 'The account has been created.';
 
-        $validator = Validator::make($input, $rules);
-        if ($validator->fails()) {
-            return response()->json([
-                'errors' => $validator->errors()
-            ], 400);
+        if ($id) {
+            $rules['name'] = 'required|string|max:50|unique:name,' . $input['id'];
+            $message = 'The account has been updated.';
         }
 
-        $iconRepo->createOrUpdate($this->_request->all(), $id);
+        $validator = Validator::make($input, $rules);
 
-        return response()->json([
-            'msg' => 'The icon has been uploaded.'
-        ]);
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        $category->createOrUpdate($input, $id);
+
+        return redirect()->route('admin.categories.index')->withSuccess($message);
     }
 
-    public function dataList(IconRepository $iconRepo)
+    public function delete(CategoryRepository $category)
     {
-        $panoramaId = $this->_request->get('panorama_id');
-        $data = $iconRepo->dataList(['panorama_id' => $panoramaId]);
+        $ids = $this->_request->get('ids');
+        $result = $category->delete($ids);
 
-        return response()->json([
-            'results' => $data
-        ]);
+        return response()->json($result);
     }
 }
