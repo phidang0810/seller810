@@ -9,10 +9,12 @@
 namespace App\Repositories;
 
 
+use App\Libraries\Photo;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 
 class UserRepository
@@ -21,7 +23,7 @@ class UserRepository
 
     public function dataTable($request)
     {
-        $users = User::select(['users.id', 'roles.name as role', 'full_name', 'email', 'users.active', 'users.created_at'])
+        $users = User::select(['users.id', 'users.avatar', 'roles.name as role', 'full_name', 'email', 'users.active', 'users.created_at'])
             ->join('roles', 'roles.id', '=', 'users.role_id');
 
         $dataTable = DataTables::eloquent($users)
@@ -42,6 +44,14 @@ class UserRepository
 
                 }
             }, true)
+            ->addColumn('avatar', function ($user) {
+                if ($user->avatar) {
+                    $html = '<img style="width: 80px; height: 60px;" class="img-thumbnail" src="' . asset('storage/' . $user->avatar). '" />';
+                } else {
+                    $html = ' <img alt="No Photo" style="width: 80px; height: 60px;" class="img-thumbnail" src="'.asset(NO_PHOTO).'" >';
+                }
+                return $html;
+            })
             ->addColumn('action', function ($user) {
                 $html = '';
                 if ($user->id != Auth::id()) {
@@ -59,7 +69,7 @@ class UserRepository
                 }
                 return $html;
             })
-            ->rawColumns(['status', 'action'])
+            ->rawColumns(['avatar','status', 'action'])
             ->toJson();
 
         return $dataTable;
@@ -96,10 +106,15 @@ class UserRepository
         $model->role_id = $data['role_id'];
         $model->active = $data['active'];
         $model->password = Hash::make($data['password']);
-        $model->first_name = $data['first_name'];
-        $model->last_name = $data['last_name'];
-        $model->full_name = $data['first_name'] . ' ' . $data['last_name'];
+        $model->full_name = $data['full_name'];
 
+        if(isset($data['avatar'])) {
+            if ($model->avatar) {
+                Storage::delete($model->avatar);
+            }
+            $upload = new Photo($data['avatar']);
+            $model->avatar = $upload->uploadTo('users');
+        }
         $model->save();
 
         return $model;
@@ -114,12 +129,12 @@ class UserRepository
         foreach ($ids as $id) {
             $user = User::find($id);
             if ($user === null) {
-                $result['errors'][] = 'User ID: ' . $id . ' is not exists';
+                $result['errors'][] = 'Tài khoản có ID: ' . $id . ' không tồn tại!';
                 $result['success'] = false;
                 continue;
             }
             if (Auth::id() == $id) {
-                $result['errors'][] = 'You can not delete yourself';
+                $result['errors'][] = 'Không thể xóa chính bạn!';
                 $result['success'] = false;
                 continue;
             }

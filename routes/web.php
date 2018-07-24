@@ -15,4 +15,6 @@
 Route::get ('/', function(){
     redirect('admin/');
 })->name('home');
+
+Route::get ('/error/{code}', 'Controller@error')->name('error');
 Auth::routes();

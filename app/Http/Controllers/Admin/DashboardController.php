@@ -11,7 +11,7 @@ class DashboardController extends AdminController
      */
     public function index()
     {
-        $this->_data['title'] = 'Dashboard';
+        $this->_data['title'] = 'Quản trị';
         return view($this->_view . 'dashboard.index', $this->_data);
     }
 }

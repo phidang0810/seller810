@@ -22,7 +22,7 @@
                 <a href="#"><i class="fa fa-user"></i> <span class="nav-label">Tài Khoản</span><span class="fa arrow"></span></a>
                 <ul class="nav nav-second-level">
                     <li class="{{ set_active(['quan-ly/thanh-vien']) }}"><a href="{{route('admin.users.index')}}">Danh sách tài khoản</a></li>
-                    <li class="{{ set_active(['quan-ly/thanh-vien/them']) }}"><a href="{{route('admin.users.create')}}">Thêm tài khoản</a></li>
+                    <li class="{{ set_active(['quan-ly/thanh-vien/them']) }}"><a href="{{route('admin.users.create')}}">Tạo tài khoản</a></li>
                 </ul>
             </li>
         </ul>

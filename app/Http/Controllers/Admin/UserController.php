@@ -6,6 +6,7 @@ use App\Repositories\RoleRepository;
 use App\Repositories\UserRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class UserController extends AdminController
@@ -14,7 +15,7 @@ class UserController extends AdminController
     {
         parent::__construct($request);
 
-        $this->_pushBreadCrumbs('Admins', route('admin.users.index'));
+        $this->_pushBreadCrumbs('Quản lý tài khoản', route('admin.users.index'));
     }
 
     /**
@@ -28,7 +29,7 @@ class UserController extends AdminController
             return $user->dataTable($this->_request);
         }
 
-        $this->_data['title'] = 'Admins';
+        $this->_data['title'] = 'Tài khoản';
         $this->_data['roles'] = $role->all();
 
         return view('admin.users.index', $this->_data);
@@ -37,9 +38,9 @@ class UserController extends AdminController
     public function view(UserRepository $user, RoleRepository $role)
     {
         $id = $this->_request->get('id');
-        $this->_data['title'] = 'Create a new account';
+        $this->_data['title'] = 'Tạo tài khoản';
         if ($id) {
-            $this->_data['title'] = 'Edit account';
+            $this->_data['title'] = 'Sửa tài tài khoản';
             $this->_data['data'] = $user->getUser($id);
         }
 
@@ -54,35 +55,44 @@ class UserController extends AdminController
         $input = $this->_request->all();
         $id = $input['id'] ?? null;
         $rules = [
-            'first_name' => 'required|string|max:50',
-            'last_name' => 'required|string|max:100',
+            'full_name' => 'required|string|max:100',
             'email' => 'required|email|max:100|unique:users',
-            'password' => 'required',
+            'password' => 'required|min:3|confirmed',
+            'password_confirmation' => 'required|min:3',
             'role_id' => 'required',
             'active' => 'required'
         ];
-        $message = 'The account has been created.';
+        $message = 'Tài khoản '.$input['email'].' đã được tạo.';
 
         if ($id) {
             $rules['email'] = 'required|email|max:100|unique:users,email,' . $input['id'];
-            $message = 'The account has been updated.';
+            $message = 'Tài khoản '.$input['email'].' đã được cập nhật.';
         }
+
         if ($id && $id == Auth::id()) {
             return redirect()->back()
-                ->withErrors(['You can not update yourself.'])
+                ->withErrors(['Không thể tự sửa thông tin của chính bạn!'])
                 ->withInput();
         }
 
-        $validator = Validator::make($input, $rules);
+        $validator = Validator::make($input, $rules, [
+            'full_name.required' => 'Vui lòng tên của bạn.',
+            'email.required' => 'Vui lòng nhập email.',
+            'email.unique' => 'Email '.$input['email'].' này đã được sử dụng!',
+            'password.required' => 'Vui lòng nhập password cho tài khoản này!',
+            'password_confirmation' => 'Mật khẩu xác nhận không chính xác!'
+        ]);
 
         if ($validator->fails()) {
             return redirect()->back()
                 ->withErrors($validator)
                 ->withInput();
         }
-
         $user->createOrUpdate($input, $id);
 
+        if($input['action'] === 'save') {
+            return redirect()->back()->withSuccess($message);
+        }
         return redirect()->route('admin.users.index')->withSuccess($message);
     }
 

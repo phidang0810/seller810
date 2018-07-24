@@ -96,7 +96,29 @@
 <script src="{{asset('themes/inspinia/js/plugins/pace/pace.min.js')}}"></script>
 <script src="{{asset('themes/inspinia/js/plugins/swal/sweetalert.min.js')}}"></script>
 <script src="{{asset('themes/inspinia/js/plugins/toastr/toastr.min.js')}}"></script>
+<script src="{{asset('themes/inspinia/js/plugins/validate/jquery.validate.min.js')}}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+<script>
+    $.extend( $.validator.messages, {
+        required: "Vui lòng nhập.",
+        remote: "Hãy sửa cho đúng.",
+        email: "Định dạng email không hợp lệ.",
+        url: "Hãy nhập URL.",
+        date: "Hãy nhập ngày.",
+        dateISO: "Hãy nhập ngày (ISO).",
+        number: "Hãy nhập số.",
+        digits: "Hãy nhập chữ số.",
+        creditcard: "Hãy nhập số thẻ tín dụng.",
+        equalTo: "Không đúng! Hãy nhập lại lần nữa.",
+        extension: "Phần mở rộng không đúng.",
+        maxlength: $.validator.format( "Hãy nhập từ {0} kí tự trở xuống." ),
+        minlength: $.validator.format( "Hãy nhập từ {0} kí tự trở lên." ),
+        rangelength: $.validator.format( "Hãy nhập từ {0} đến {1} kí tự." ),
+        range: $.validator.format( "Hãy nhập từ {0} đến {1}." ),
+        max: $.validator.format( "Hãy nhập từ {0} trở xuống." ),
+        min: $.validator.format( "Hãy nhập từ {0} trở lên." )
+    } );
+</script>
 @yield('js')
 </body>
 

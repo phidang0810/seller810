@@ -28,6 +28,7 @@
                 },
                 columns: [
                     {data: 'id'},
+                    {data: 'avatar'},
                     {data: 'email'},
                     {data: 'full_name'},
                     {data: 'role'},
@@ -192,6 +193,7 @@
                     <thead>
                     <tr>
                         <th>ID</th>
+                        <th>Avatar</th>
                         <th>Email</th>
                         <th>Họ Tên</th>
                         <th>Quyền</th>
