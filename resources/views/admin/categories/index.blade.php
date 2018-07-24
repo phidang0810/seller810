@@ -1,4 +1,3 @@
-<!-- PHuoc chich -->
 @extends('admin.layouts.inspinia.master')
 
 @section('title', $title)
@@ -6,40 +5,39 @@
 @section('js')
     <!-- Page-Level Scripts -->
     <script>
-        var url_delete = "{{route('admin.users.delete')}}";
+        var url_delete = "{{route('admin.categories.delete')}}";
         var table;
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
-        $(document).ready(function() {
+        $(document).ready(function () {
             table = $('#dataTables').dataTable({
                 searching: false,
                 processing: true,
                 serverSide: true,
                 "dom": 'rt<"#pagination"flp>',
                 ajax: {
-                    "url": "{{route('admin.users.index')}}",
-                    "data": function ( d ) {
+                    "url": "{{route('admin.categories.index')}}",
+                    "data": function (d) {
                         d.keyword = $('#s-keyword').val();
-                        d.role = $('#s-role').val();
                         d.status = $('#s-status').val();
                     }
                 },
                 columns: [
                     {data: 'id'},
-                    {data: 'email'},
-                    {data: 'full_name'},
-                    {data: 'role'},
+                    {data: 'name'},
+                    {data: 'numbers'},
+                    {data: 'level'},
                     {data: 'created_at'},
                     {data: 'status'},
                     {data: 'action'}
                 ],
                 "aoColumnDefs": [
                     // Column index begins at 0
-                    { "sClass": "text-center", "aTargets": [ 5 ] },
-                    { "sClass": "text-right", "aTargets": [ 6 ] }
+                    {"sClass": "text-center", "aTargets": [4]},
+                    {"sClass": "text-right", "aTargets": [5]}
                 ],
                 "language": {
                     "decimal": "",
@@ -68,50 +66,50 @@
 
             });
 
-            $('#fSearch').submit(function(){
+            $('#fSearch').submit(function () {
                 table.fnDraw();
                 return false;
             });
 
-            $('#bt-reset').click(function(){
+            $('#bt-reset').click(function () {
                 $('#fSearch')[0].reset();
                 table.fnDraw();
             });
         });
 
-        $("#dataTables").on("click", '.bt-delete', function(){
-            var email = $(this).attr('data-email');
+        $("#dataTables").on("click", '.bt-delete', function () {
+            var name = $(this).attr('data-name');
             var data = {
                 ids: [$(this).attr('data-id')]
             };
             swal({
                     title: "Cảnh Báo!",
-                    text: "Bạn có chắc muốn xóa <b>"+email+"</b> ?",
-                    html:true,
+                    text: "Bạn có chắc muốn xóa <b>" + name + "</b> ?",
+                    html: true,
                     type: "warning",
                     showCancelButton: true,
                     confirmButtonClass: "btn-danger",
                     confirmButtonText: "Vâng, xóa!",
                     closeOnConfirm: false
                 },
-                function(){
+                function () {
                     $.ajax({
                         url: url_delete,
                         type: 'DELETE',
                         data: data,
-                        dataType:'json',
-                        success: function(response) {
+                        dataType: 'json',
+                        success: function (response) {
                             if (response.success) {
                                 swal({
                                     title: "Thành công!",
-                                    text: "Tài khoản " + email + " đã bị xóa.",
+                                    text: "Danh mục " + name + " đã bị xóa.",
                                     html: true,
                                     type: "success",
                                     confirmButtonClass: "btn-primary"
                                 });
                             } else {
                                 errorHtml = '<ul class="text-left">';
-                                $.each( response.errors, function( key, error ) {
+                                $.each(response.errors, function (key, error) {
                                     errorHtml += '<li>' + error + '</li>';
                                 });
                                 errorHtml += '</ul>';
@@ -132,60 +130,55 @@
     </script>
 @endsection
 @section('content')
-<div class="row">
-    <!-- Search form -->
-    <form role="form" id="fSearch">
-        <div class="row v-center">
-            <div class="col-sm-3">
-                <div class="form-group">
-                    <label>Email, họ tên</label>
-                    <input type="text" placeholder="Nhập email, họ tên" name="keyword" id="s-keyword" class="form-control" value="{{app('request')->input('keyword')}}">
-                </div>
-            </div>
-
-            <div class="col-sm-3">
-                <div class="form-group">
-                    <label>Chọn quyền</label>
-                    <select class="form-control" name="role" id="s-role">
-                        <option value=""> -- Tất cả -- </option>
-                        @foreach($roles as $role)
-                            <option @if(app('request')->input('role') == $role->id) selected @endif value="{{$role->id}}">{{$role->name}}</option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-
-            <div class="col-sm-3">
-                <div class="form-group">
-                    <label>Chọn trạng thái</label>
-                    <select class="form-control" name="status" id="s-status">
-                        <option value=""> -- Tất cả -- </option>
-                        <option @if(app('request')->has('status') && app('request')->input('status') == ACTIVE) selected @endif value="{{ACTIVE}}">Active</option>
-                        <option @if(app('request')->has('status') && app('request')->input('status') == INACTIVE) selected @endif value="{{INACTIVE}}">Inactive</option>
-                    </select>
-                </div>
-            </div>
-            <div class="col-sm-3">
-                <div class="form-group">
-                    <label></label>
-                    <button class="btn btn-sm btn-warning" type="submit" style="margin-bottom: 0;margin-top: 22px;">
-                        <i class="fa fa-search"></i> Tìm kiếm
-                    </button>
-                    <button class="btn btn-sm btn-default" type="button" id="bt-reset" style="margin-bottom: 0;margin-top: 22px; margin-right:5px">
-                        <i class="fa fa-refresh"></i> Clear
-                    </button>
+    <div class="row">
+        <!-- Search form -->
+        <form role="form" id="fSearch">
+            <div class="row v-center">
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>Tên</label>
+                        <input type="text" placeholder="Nhập tên" name="keyword" id="s-keyword" class="form-control"
+                               value="{{app('request')->input('keyword')}}">
+                    </div>
                 </div>
 
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>Chọn trạng thái</label>
+                        <select class="form-control" name="status" id="s-status">
+                            <option value=""> -- Tất cả --</option>
+                            <option @if(app('request')->has('status') && app('request')->input('status') == ACTIVE) selected
+                                    @endif value="{{ACTIVE}}">Active
+                            </option>
+                            <option @if(app('request')->has('status') && app('request')->input('status') == INACTIVE) selected
+                                    @endif value="{{INACTIVE}}">Inactive
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label></label>
+                        <button class="btn btn-sm btn-warning" type="submit" style="margin-bottom: 0;margin-top: 22px;">
+                            <i class="fa fa-search"></i> Tìm kiếm
+                        </button>
+                        <button class="btn btn-sm btn-default" type="button" id="bt-reset"
+                                style="margin-bottom: 0;margin-top: 22px; margin-right:5px">
+                            <i class="fa fa-refresh"></i> Clear
+                        </button>
+                    </div>
+
+                </div>
             </div>
-        </div>
-    </form>
-</div>
-<div class="row">
+        </form>
+    </div>
+    <div class="row">
         <div class="ibox float-e-margins pl-15 pr-15">
             @include('admin._partials._alert')
             <div class="ibox-content">
                 <div class="text-right" style="padding: 10px 10px 0px 10px;">
-                    <a href="{{route('admin.users.create')}}" class="btn btn-sm btn-primary"><i class="fa fa-plus"></i> Tạo Tài Khoản</a>
+                    <a href="{{route('admin.categories.create')}}" class="btn btn-sm btn-primary"><i
+                                class="fa fa-plus"></i> Tạo Danh Mục</a>
                 </div>
                 <div class="hr-line-dashed"></div>
                 <!-- Account list -->
@@ -193,9 +186,9 @@
                     <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Email</th>
-                        <th>Họ Tên</th>
-                        <th>Quyền</th>
+                        <th>Tên</th>
+                        <th>Số sản phẩm</th>
+                        <th>Cấp</th>
                         <th>Ngày Tạo</th>
                         <th>Trạng Thái</th>
                         <th></th>
@@ -207,5 +200,5 @@
 
             </div>
         </div>
-</div>
+    </div>
 @endsection

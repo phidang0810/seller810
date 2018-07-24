@@ -29,13 +29,15 @@
 <body>
 
 <div id="wrapper">
-    @include('admin._partials._sidebar')
-
-    <div id="page-wrapper" class="gray-bg">
-        <div class="row border-bottom">
-            <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
-                <div class="navbar-header">
+    <div class="row border-bottom">
+            <nav class="navbar navbar-static-top bg-white" role="navigation" style="margin-bottom: 0">
+                <div class="navbar-header hidden">
                     <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i> </a>
+                </div>
+                <div class="c-header-logo-wrapper">
+                    <h1>
+                        <a href="" title=""><img src="{{asset('themes/inspinia/img/logo.png')}}" alt=""></a>
+                    </h1>
                 </div>
                 <ul class="nav navbar-top-links navbar-right">
                     <li class="dropdown" id="notify-menu">
@@ -59,6 +61,10 @@
 
             </nav>
         </div>
+    @include('admin._partials._sidebar')
+
+    <div id="page-wrapper" class="gray-bg">
+        
         <div class="row wrapper border-bottom white-bg page-heading">
             <div class="col-lg-10">
                 @if (isset($title))

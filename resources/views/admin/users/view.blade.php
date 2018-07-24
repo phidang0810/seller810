@@ -15,7 +15,7 @@
 @section('content')
 <div class="row">
     <div class="col-lg-12">
-        <div class="ibox float-e-margins">
+        <div class="ibox float-e-margins pl-15 pr-15">
             @include('admin._partials._alert')
             <form role="form" method="POST" id="mainForm" action="{{route('admin.users.store')}}">
                 {{ csrf_field() }}
