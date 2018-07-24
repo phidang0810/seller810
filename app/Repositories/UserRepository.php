@@ -138,6 +138,10 @@ class UserRepository
                 $result['success'] = false;
                 continue;
             }
+
+            if ($user->avatar) {
+                Storage::delete($user->avatar);
+            }
             $user->delete();
         }
 
