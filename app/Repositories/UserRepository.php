@@ -63,10 +63,14 @@ class UserRepository
             })
             ->addColumn('status', function ($user) {
                 $active = '';
+                $disable = '';
+                if ($user->id === Auth::id()) {
+                    $disable = 'disabled';
+                }
                 if ($user->active === ACTIVE) {
                     $active  = 'checked';
                 }
-                $html = '<input type="checkbox" data-email="'.$user->email.'" data-id="'.$user->id.'" name="social' . $user->active . '" class="js-switch" value="' . $user->active . '" ' . $active . ' ./>';
+                $html = '<input type="checkbox" '.$disable.' data-email="'.$user->email.'" data-id="'.$user->id.'" name="social' . $user->active . '" class="js-switch" value="' . $user->active . '" ' . $active . ' ./>';
                 return $html;
             })
             ->rawColumns(['avatar','status', 'action'])
