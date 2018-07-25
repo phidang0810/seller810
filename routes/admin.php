@@ -3,11 +3,16 @@ Route::get ('/', 'DashboardController@index')->name('admin.dashboard');
 Route::get ('roles', 'RoleController@index')->name('admin.roles.index');
 Route::get ('roles/create', 'RoleController@create')->name('admin.roles.create');
 
-Route::get ('thanh-vien', 'UserController@index')->name('admin.users.index');
-Route::get ('thanh-vien/chi-tiet', 'UserController@view')->name('admin.users.view');
-Route::get ('thanh-vien/them', 'UserController@view')->name('admin.users.create');
-Route::post ('thanh-vien/them', 'UserController@store')->name('admin.users.store');
-Route::delete ('thanh-vien', 'UserController@delete')->name('admin.users.delete');
+Route::prefix('thanh-vien')
+    ->middleware('permission:user_manager')->group(function () {
+    Route::get ('/', 'UserController@index')->name('admin.users.index');
+    Route::get ('/chi-tiet', 'UserController@view')->name('admin.users.view');
+    Route::get ('/them', 'UserController@view')->name('admin.users.create');
+    Route::post ('/them', 'UserController@store')->name('admin.users.store');
+    Route::delete ('/', 'UserController@delete')->name('admin.users.delete');
+});
+
+
 
 Route::get ('danh-muc-san-pham', 'CategoryController@index')->name('admin.categories.index');
 Route::get ('danh-muc-san-pham/chi-tiet', 'CategoryController@view')->name('admin.categories.view');
