@@ -15,21 +15,21 @@
                 </div>
                 <div class="logo-element">SELLER</div>
             </li>
-            <li class="{{ set_active(['admin']) }} nav-item">
+            <li class="{{ set_active(['quan-ly']) }} nav-item">
                 <a href="{{route('admin.dashboard')}}"><i class="fa fa-home"></i> <span class="nav-label">Dashboards</span></a>
             </li>
-            <li class="{{ set_active(['admin/users', 'admin/users/*']) }} nav-item">
+            <li class="{{ set_active(['quan-ly/thanh-vien*']) }} nav-item">
                 <a href="#"><i class="fa fa-user"></i> <span class="nav-label">Tài Khoản</span><span class="fa arrow"></span></a>
                 <ul class="nav nav-second-level">
                     <li class="{{ set_active(['quan-ly/thanh-vien']) }}"><a href="{{route('admin.users.index')}}">Danh sách tài khoản</a></li>
                     <li class="{{ set_active(['quan-ly/thanh-vien/them']) }}"><a href="{{route('admin.users.create')}}">Tạo tài khoản</a></li>
                 </ul>
             </li>
-            <li class="{{ set_active(['admin/categories', 'admin/categories/*']) }} nav-item">
+            <li class="{{ set_active(['quan-ly/danh-muc-san-pham*']) }} nav-item">
                 <a href="#"><i class="fa fa-user"></i> <span class="nav-label">Danh mục</span><span class="fa arrow"></span></a>
                 <ul class="nav nav-second-level">
-                    <li class="{{ set_active(['quan-ly/thanh-vien']) }}"><a href="{{route('admin.categories.index')}}">Danh sách danh mục</a></li>
-                    <li class="{{ set_active(['quan-ly/thanh-vien/them']) }}"><a href="{{route('admin.categories.create')}}">Thêm danh mục</a></li>
+                    <li class="{{ set_active(['quan-ly/danh-muc-san-pham']) }}"><a href="{{route('admin.categories.index')}}">Danh sách danh mục</a></li>
+                    <li class="{{ set_active(['quan-ly/danh-muc-san-pham/them']) }}"><a href="{{route('admin.categories.create')}}">Thêm danh mục</a></li>
                 </ul>
             </li>
         </ul>

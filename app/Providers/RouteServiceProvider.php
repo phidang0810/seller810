@@ -63,7 +63,7 @@ class RouteServiceProvider extends ServiceProvider
      */
     protected function mapAdminRoutes()
     {
-        Route::prefix('admin')
+        Route::prefix('quan-ly')
             ->middleware(['web', 'permission:shop_manager,seller_manager,product_manager,warehouse_manager,accountant_manager,user_manager,report_manager,setting_manager'])
             ->namespace($this->namespace . '\Admin')
             ->group(base_path('routes/admin.php'));
