@@ -19,10 +19,9 @@
                 <a href="{{route('admin.dashboard')}}"><i class="fa fa-home"></i> <span class="nav-label">Dashboards</span></a>
             </li>
             <li class="{{ set_active(['quan-ly/thanh-vien*']) }} nav-item">
-                <a href="#"><i class="fa fa-user"></i> <span class="nav-label">Tài Khoản</span><span class="fa arrow"></span></a>
+                <a href="#"><i class="fa fa-user"></i> <span class="nav-label">Quản Lý Tài Khoản</span><span class="fa arrow"></span></a>
                 <ul class="nav nav-second-level">
-                    <li class="{{ set_active(['quan-ly/thanh-vien']) }}"><a href="{{route('admin.users.index')}}">Danh sách tài khoản</a></li>
-                    <li class="{{ set_active(['quan-ly/thanh-vien/them']) }}"><a href="{{route('admin.users.create')}}">Tạo tài khoản</a></li>
+                    <li class="{{ set_active(['quan-ly/thanh-vien']) }}"><a href="{{route('admin.users.index')}}">Danh sách nhân viên</a></li>
                 </ul>
             </li>
             <li class="{{ set_active(['quan-ly/danh-muc-san-pham*']) }} nav-item">

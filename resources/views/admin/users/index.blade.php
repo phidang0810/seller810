@@ -7,6 +7,7 @@
     <!-- Page-Level Scripts -->
     <script>
         var url_delete = "{{route('admin.users.delete')}}";
+        var url_change_status = "{{route('admin.users.changeStatus')}}";
         var table;
         $.ajaxSetup({
             headers: {
@@ -25,6 +26,74 @@
                         d.keyword = $('#s-keyword').val();
                         d.role = $('#s-role').val();
                         d.status = $('#s-status').val();
+                    },
+                    complete: function(){
+                        var inputStatus = document.querySelectorAll('.js-switch');
+                        var elems = Array.prototype.slice.call(inputStatus);
+
+                        elems.forEach(function(elem) {
+                            var switchery = new Switchery(elem, { size: 'small' });
+
+                            elem.onchange = function() {
+                                var id = $(elem).attr('data-id');
+                                var email = $(elem).attr('data-email');
+                                if (elem.checked) {
+                                    var status = 'kích hoạt';
+                                } else {
+                                    var status = 'bỏ kích hoạt';
+                                }
+
+                                swal({
+                                        title: "Cảnh Báo!",
+                                        text: "Bạn có chắc muốn "+status+" <b>"+email+"</b> ?",
+                                        html:true,
+                                        type: "warning",
+                                        showCancelButton: true,
+                                        confirmButtonClass: "btn-danger",
+                                        confirmButtonText: "Chắc chắn!",
+                                        cancelButtonText: "Không",
+                                        closeOnConfirm: false
+                                    },
+                                    function(){
+                                        $.ajax({
+                                            url: url_change_status,
+                                            type: 'PUT',
+                                            data: {
+                                                id: id,
+                                                status: elem.checked
+                                            },
+                                            dataType:'json',
+                                            success: function(response) {
+                                                if (response.success) {
+                                                    swal({
+                                                        title: "Thành công!",
+                                                        text: "Bạn đã " + status + " nhân viên "+email+" thành công.",
+                                                        html: true,
+                                                        type: "success",
+                                                        confirmButtonClass: "btn-primary"
+                                                    });
+                                                } else {
+                                                    errorHtml = '<ul class="text-left">';
+                                                    $.each( response.errors, function( key, error ) {
+                                                        errorHtml += '<li>' + error + '</li>';
+                                                    });
+                                                    errorHtml += '</ul>';
+                                                    swal({
+                                                        title: "Error! Refresh page and try again.",
+                                                        text: errorHtml,
+                                                        html: true,
+                                                        type: "error",
+                                                        confirmButtonClass: "btn-danger"
+                                                    });
+                                                }
+                                                table.fnDraw();
+                                            }
+                                        });
+
+                                    });
+                            };
+                        });
+
                     }
                 },
                 columns: [
@@ -93,6 +162,7 @@
                     showCancelButton: true,
                     confirmButtonClass: "btn-danger",
                     confirmButtonText: "Vâng, xóa!",
+                    cancelButtonText: "Không",
                     closeOnConfirm: false
                 },
                 function(){

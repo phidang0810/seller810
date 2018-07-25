@@ -10,6 +10,7 @@ Route::prefix('thanh-vien')
     Route::get ('/them', 'UserController@view')->name('admin.users.create');
     Route::post ('/them', 'UserController@store')->name('admin.users.store');
     Route::delete ('/', 'UserController@delete')->name('admin.users.delete');
+    Route::put ('/change-status', 'UserController@changeStatus')->name('admin.users.changeStatus');
 });
 
 Route::get ('danh-muc-san-pham', 'CategoryController@index')->name('admin.categories.index');

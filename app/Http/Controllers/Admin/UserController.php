@@ -15,7 +15,7 @@ class UserController extends AdminController
     {
         parent::__construct($request);
 
-        $this->_pushBreadCrumbs('Quản lý tài khoản', route('admin.users.index'));
+        $this->_pushBreadCrumbs('Danh sách nhân viên', route('admin.users.index'));
     }
 
     /**
@@ -29,7 +29,7 @@ class UserController extends AdminController
             return $user->dataTable($this->_request);
         }
 
-        $this->_data['title'] = 'Tài khoản';
+        $this->_data['title'] = 'Danh sách nhân viên';
         $this->_data['roles'] = $role->all();
 
         return view('admin.users.index', $this->_data);
@@ -38,9 +38,9 @@ class UserController extends AdminController
     public function view(UserRepository $user, RoleRepository $role)
     {
         $id = $this->_request->get('id');
-        $this->_data['title'] = 'Tạo tài khoản';
+        $this->_data['title'] = 'Thêm nhân viên';
         if ($id) {
-            $this->_data['title'] = 'Sửa tài tài khoản';
+            $this->_data['title'] = 'Sửa thông tin nhân viên';
             $this->_data['data'] = $user->getUser($id);
         }
 
@@ -62,11 +62,11 @@ class UserController extends AdminController
             'role_id' => 'required',
             'active' => 'required'
         ];
-        $message = 'Tài khoản '.$input['email'].' đã được tạo.';
+        $message = 'Nhân viên có email '.$input['email'].' đã được tạo.';
 
         if ($id) {
             $rules['email'] = 'required|email|max:100|unique:users,email,' . $input['id'];
-            $message = 'Tài khoản '.$input['email'].' đã được cập nhật.';
+            $message = 'Thông tin nhân viên '.$input['email'].' đã được cập nhật.';
         }
 
         if ($id && $id == Auth::id()) {
@@ -102,5 +102,16 @@ class UserController extends AdminController
         $result = $user->delete($ids);
 
         return response()->json($result);
+    }
+
+    public function changeStatus(UserRepository $user)
+    {
+        $userID = $this->_request->get('id');
+        $status = $this->_request->get('status');
+        $user->changeStatus($userID, $status);
+
+        return response()->json([
+            'success' => true
+        ]);
     }
 }

@@ -20,6 +20,7 @@
     <link href="{{asset('themes/inspinia/css/plugins/swal/sweetalert.css')}}" rel="stylesheet">
     <link href="{{asset('themes/inspinia/css/plugins/toastr/toastr.min.css')}}" rel="stylesheet">
 
+    <link href="{{asset('/themes/inspinia/css/plugins/switchery/switchery.css')}}" rel="stylesheet" />
     <link href="{{asset('themes/inspinia/css/animate.css')}}" rel="stylesheet">
     <link href="{{asset('themes/inspinia/css/style.css')}}" rel="stylesheet">
     <link href="{{asset('themes/inspinia/css/custom.css')}}" rel="stylesheet">
@@ -103,6 +104,8 @@
 <script src="{{asset('themes/inspinia/js/plugins/swal/sweetalert.min.js')}}"></script>
 <script src="{{asset('themes/inspinia/js/plugins/toastr/toastr.min.js')}}"></script>
 <script src="{{asset('themes/inspinia/js/plugins/validate/jquery.validate.min.js')}}"></script>
+
+<script src="{{asset('themes/inspinia/js/plugins/switchery/switchery.js')}}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
 <script>
     $.extend( $.validator.messages, {

@@ -62,11 +62,11 @@ class UserRepository
                 return $html;
             })
             ->addColumn('status', function ($user) {
+                $active = '';
                 if ($user->active === ACTIVE) {
-                    $html = '<span class="label label-primary">Đã kích hoạt</span>';
-                } else {
-                    $html = '<span class="label">Chưa kích hoạt</span>';
+                    $active  = 'checked';
                 }
+                $html = '<input type="checkbox" data-email="'.$user->email.'" data-id="'.$user->id.'" name="social' . $user->active . '" class="js-switch" value="' . $user->active . '" ' . $active . ' ./>';
                 return $html;
             })
             ->rawColumns(['avatar','status', 'action'])
@@ -146,5 +146,12 @@ class UserRepository
         }
 
         return $result;
+    }
+
+    public function changeStatus($userID, $status)
+    {
+        $model = User::find($userID);
+        $model->active = $status;
+        return $model->save();
     }
 }
