@@ -108,6 +108,7 @@ class UserController extends AdminController
     {
         $userID = $this->_request->get('id');
         $status = $this->_request->get('status');
+        $status = filter_var($status, FILTER_VALIDATE_BOOLEAN);
         $user->changeStatus($userID, $status);
 
         return response()->json([

@@ -54,42 +54,45 @@
                                         cancelButtonText: "Không",
                                         closeOnConfirm: false
                                     },
-                                    function(){
-                                        $.ajax({
-                                            url: url_change_status,
-                                            type: 'PUT',
-                                            data: {
-                                                id: id,
-                                                status: elem.checked
-                                            },
-                                            dataType:'json',
-                                            success: function(response) {
-                                                if (response.success) {
-                                                    swal({
-                                                        title: "Thành công!",
-                                                        text: "Bạn đã " + status + " nhân viên "+email+" thành công.",
-                                                        html: true,
-                                                        type: "success",
-                                                        confirmButtonClass: "btn-primary"
-                                                    });
-                                                } else {
-                                                    errorHtml = '<ul class="text-left">';
-                                                    $.each( response.errors, function( key, error ) {
-                                                        errorHtml += '<li>' + error + '</li>';
-                                                    });
-                                                    errorHtml += '</ul>';
-                                                    swal({
-                                                        title: "Error! Refresh page and try again.",
-                                                        text: errorHtml,
-                                                        html: true,
-                                                        type: "error",
-                                                        confirmButtonClass: "btn-danger"
-                                                    });
+                                    function(isConfirm){
+                                        if (isConfirm) {
+                                            $.ajax({
+                                                url: url_change_status,
+                                                type: 'PUT',
+                                                data: {
+                                                    id: id,
+                                                    status: elem.checked
+                                                },
+                                                dataType: 'json',
+                                                success: function (response) {
+                                                    if (response.success) {
+                                                        swal({
+                                                            title: "Thành công!",
+                                                            text: "Bạn đã " + status + " nhân viên " + email + " thành công.",
+                                                            html: true,
+                                                            type: "success",
+                                                            confirmButtonClass: "btn-primary"
+                                                        });
+                                                    } else {
+                                                        errorHtml = '<ul class="text-left">';
+                                                        $.each(response.errors, function (key, error) {
+                                                            errorHtml += '<li>' + error + '</li>';
+                                                        });
+                                                        errorHtml += '</ul>';
+                                                        swal({
+                                                            title: "Error! Refresh page and try again.",
+                                                            text: errorHtml,
+                                                            html: true,
+                                                            type: "error",
+                                                            confirmButtonClass: "btn-danger"
+                                                        });
+                                                    }
                                                 }
-                                                table.fnDraw();
-                                            }
-                                        });
-
+                                            });
+                                        } else {
+                                            $(elem).prop('checked', !elem.checked);
+                                            $(elem).parent().find(".switchery").trigger("click");
+                                        }
                                     });
                             };
                         });
