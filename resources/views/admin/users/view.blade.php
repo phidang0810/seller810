@@ -19,9 +19,6 @@
         }
 
         $(document).ready(function() {
-            $("#photo").change(function() {
-
-            });
 
             $("#bt-reset").click(function(){
                 $("#mainForm")[0].reset();

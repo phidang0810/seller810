@@ -18,14 +18,25 @@
             <li class="{{ set_active(['quan-ly']) }} nav-item">
                 <a href="{{route('admin.dashboard')}}"><i class="fa fa-home"></i> <span class="nav-label">Dashboards</span></a>
             </li>
+
+            @if(key_exists('customer_manager', Auth::user()->permissions))
+                <li class="{{ set_active(['quan-ly/khach-hang*']) }} nav-item">
+                    <a href="#"><i class="fa fa-users" aria-hidden="true"></i <span class="nav-label">Quản Lý Khách Hàng</span><span class="fa arrow"></span></a>
+                    <ul class="nav nav-second-level">
+                        <li class="{{ set_active(['quan-ly/khach-hang/nhom*']) }}"><a href="{{route('admin.groupCustomer.index')}}">Nhóm khách hàng</a></li>
+                    </ul>
+                </li>
+            @endif
+
             @if(key_exists('user_manager', Auth::user()->permissions))
             <li class="{{ set_active(['quan-ly/thanh-vien*']) }} nav-item">
                 <a href="#"><i class="fa fa-user"></i> <span class="nav-label">Quản Lý Tài Khoản</span><span class="fa arrow"></span></a>
                 <ul class="nav nav-second-level">
-                    <li class="{{ set_active(['quan-ly/thanh-vien']) }}"><a href="{{route('admin.users.index')}}">Danh sách nhân viên</a></li>
+                    <li class="{{ set_active(['quan-ly/thanh-vien*']) }}"><a href="{{route('admin.users.index')}}">Danh sách nhân viên</a></li>
                 </ul>
             </li>
             @endif
+
             <li class="{{ set_active(['quan-ly/danh-muc-san-pham*']) }} nav-item">
                 <a href="#"><i class="fa fa-user"></i> <span class="nav-label">Danh mục</span><span class="fa arrow"></span></a>
                 <ul class="nav nav-second-level">
