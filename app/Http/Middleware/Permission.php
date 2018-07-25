@@ -29,7 +29,10 @@ class Permission
 
         $permissionUser = $this->role->getPermissionByRoleID($user->role_id);
         foreach($permissionUser as $item) {
-            if (in_array($item->alias, $permissionRequired)) return $next($request);
+            if (in_array($item->alias, $permissionRequired)) {
+                Auth::user()->setAttribute('permissions', $permissionUser->keyBy('alias')->toArray());
+                return $next($request);
+            }
         }
         return redirect()->route('error', [403]);
     }
