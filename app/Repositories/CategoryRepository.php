@@ -21,56 +21,43 @@ Class CategoryRepository
         $categories = Category::select(['categories.id', 'categories.name', 'categories.level', 'categories.active', 'categories.created_at']);
 
         $dataTable = DataTables::eloquent($categories)
-            ->filter(function ($query) use ($request) {
-                if (trim($request->get('status')) !== "") {
-                    $query->where('categories.active', $request->get('status'));
-                }
+        ->filter(function ($query) use ($request) {
+            if (trim($request->get('status')) !== "") {
+                $query->where('categories.active', $request->get('status'));
+            }
 
-                if (trim($request->get('keyword')) !== "") {
-                    $query->where(function ($sub) use ($request) {
-                        $sub->where('categories.name', 'like', '%' . $request->get('keyword') . '%');
-                    });
+            if (trim($request->get('keyword')) !== "") {
+                $query->where(function ($sub) use ($request) {
+                    $sub->where('categories.name', 'like', '%' . $request->get('keyword') . '%');
+                });
 
-                }
-            }, true)
-            ->addColumn('numbers', function ($category) {
-                $html = '';
-                $html .= '<a href="javascript:;">10</a>';
-                return $html;
-            })
-            ->addColumn('action', function ($category) {
-                $html = '';
-                $html .= '<a href="' . route('admin.categories.view', ['id' => $category->id]) . '" class="btn btn-xs btn-primary" style="margin-right: 5px"><i class="glyphicon glyphicon-edit"></i> Sửa</a>';
-                $html .= '<a href="#" class="bt-delete btn btn-xs btn-danger" data-id="' . $category->id . '" data-name="' . $category->name . '">';
-                $html .= '<i class="fa fa-trash-o" aria-hidden="true"></i> Xóa</a>';
-                return $html;
-            })
-            ->addColumn('status', function ($category) {
-                if ($category->active === ACTIVE) {
-                    $html = '<span class="label label-primary">Đã kích hoạt</span>';
-                } else {
-                    $html = '<span class="label">Chưa kích hoạt</span>';
-                }
-                return $html;
-            })
-            ->rawColumns(['status', 'action', 'numbers'])
-            ->toJson();
+            }
+        }, true)
+        ->addColumn('numbers', function ($category) {
+            $html = '';
+            $html .= '<a href="javascript:;">10</a>';
+            return $html;
+        })
+        ->addColumn('action', function ($category) {
+            $html = '';
+            $html .= '<a href="' . route('admin.categories.view', ['id' => $category->id]) . '" class="btn btn-xs btn-primary" style="margin-right: 5px"><i class="glyphicon glyphicon-edit"></i> Sửa</a>';
+            $html .= '<a href="#" class="bt-delete btn btn-xs btn-danger" data-id="' . $category->id . '" data-name="' . $category->name . '">';
+            $html .= '<i class="fa fa-trash-o" aria-hidden="true"></i> Xóa</a>';
+            return $html;
+        })
+        ->addColumn('status', function ($category) {
+            $active = '';
+            $disable = '';
+            if ($category->active === ACTIVE) {
+                $active  = 'checked';
+            }
+            $html = '<input type="checkbox" '.$disable.' data-name="'.$category->name.'" data-id="'.$category->id.'" name="social' . $category->active . '" class="js-switch" value="' . $category->active . '" ' . $active . ' ./>';
+            return $html;
+        })
+        ->rawColumns(['status', 'action', 'numbers'])
+        ->toJson();
 
         return $dataTable;
-    }
-
-    public function addCategory($category)
-    {
-        $categories = $this->getCategories();
-        array_push($categories, $category);
-        Cache::forever(self::CACHE_NAME_CATEGORIES, $categories);
-
-        return $category;
-    }
-
-    public function getCategories()
-    {
-        return Cache::get(self::CACHE_NAME_CATEGORIES, []);
     }
 
     public function getCategory($id)
@@ -83,9 +70,11 @@ Class CategoryRepository
     {
         if ($id) {
             $model = Category::find($id);
+            $old_level = $model->level;
         } else {
             $model = new Category;
         }
+
         $model->name = $data['name'];
         if ($data['parent_id']) {
             $parent = Category::find($data['parent_id']);
@@ -97,6 +86,11 @@ Class CategoryRepository
         $model->order = $data['order'];
 
         $model->save();
+
+        // Check if have old level then reset categories hyerarchy
+        if (isset($old_level) && $old_level != $model->level) {
+            CategoryRepository::resetHierarchy($id, $id);
+        }
 
         return $model;
     }
@@ -114,9 +108,45 @@ Class CategoryRepository
                 $result['success'] = false;
                 continue;
             }
+
+            // Check category has products or not
+
+            // Reset level and parent for children categories
+            CategoryRepository::resetHierarchy($id, $category->parent_id);
+
             $category->delete();
         }
 
         return $result;
     }
+
+    public function getCategoriesTree(){
+        $categories = Category::select(['categories.id', 'categories.name', 'categories.level', 'categories.parent_id'])->get();
+        $result = make_tree($categories);
+
+        return $result;
+    }
+
+    public function changeStatus($categoryID, $status)
+    {
+        $model = Category::find($categoryID);
+        $model->active = $status;
+        return $model->save();
+    }
+
+    public static function resetHierarchy($id, $parent_id){
+        $children = Category::select(['categories.id', 'categories.level', 'categories.active'])->where('categories.parent_id', $id)->get();
+        if (count($children) > 0) {
+            $parent = Category::find($parent_id);
+            foreach ($children as $child) {
+                $child->parent_id = $parent_id;
+                $child->level = $parent->level + 1;
+
+                $child->save();
+
+                CategoryRepository::resetHierarchy($child->id, $child->parent_id);
+            }
+        }
+    }
+
 }

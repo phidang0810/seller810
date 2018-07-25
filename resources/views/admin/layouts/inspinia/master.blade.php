@@ -11,7 +11,9 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
     <link href="{{asset('themes/inspinia/css/bootstrap.min.css')}}" rel="stylesheet">
+    <link href="{{asset('themes/inspinia/css/plugins/jasny/jasny-bootstrap.min.css')}}" rel="stylesheet">
     <link href="{{asset('themes/inspinia//font-awesome/css/font-awesome.css')}}" rel="stylesheet">
+    <link href="{{asset('themes/inspinia/css/plugins/colorpicker/bootstrap-colorpicker.min.css')}}" rel="stylesheet">
 
     <!-- Data Tables -->
     <link href="{{asset('themes/inspinia/css/plugins/dataTables/dataTables.bootstrap.css')}}" rel="stylesheet">
@@ -88,6 +90,8 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
 <script src="{{asset('themes/inspinia/js/bootstrap.min.js')}}"></script>
+<!-- Jasny -->
+<script src="{{asset('themes/inspinia/js/plugins/jasny/jasny-bootstrap.min.js')}}"></script>
 <script src="{{asset('themes/inspinia/js/plugins/metisMenu/jquery.metisMenu.js')}}"></script>
 <script src="{{asset('themes/inspinia/js/plugins/slimscroll/jquery.slimscroll.min.js')}}"></script>
 <script src="{{asset('themes/inspinia/js/plugins/jeditable/jquery.jeditable.js')}}"></script>
@@ -104,6 +108,7 @@
 <script src="{{asset('themes/inspinia/js/plugins/swal/sweetalert.min.js')}}"></script>
 <script src="{{asset('themes/inspinia/js/plugins/toastr/toastr.min.js')}}"></script>
 <script src="{{asset('themes/inspinia/js/plugins/validate/jquery.validate.min.js')}}"></script>
+<script src="{{asset('themes/inspinia/js/plugins/colorpicker/bootstrap-colorpicker.min.js')}}"></script>
 
 <script src="{{asset('themes/inspinia/js/plugins/switchery/switchery.js')}}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
