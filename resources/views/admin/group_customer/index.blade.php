@@ -172,7 +172,7 @@
                             if (response.success) {
                                 swal({
                                     title: "Thành công!",
-                                    text: "Tài khoản " + name + " đã bị xóa.",
+                                    text: "Nhóm " + name + " đã bị xóa.",
                                     html: true,
                                     type: "success",
                                     confirmButtonClass: "btn-primary",
@@ -206,7 +206,7 @@
             @include('admin._partials._alert')
             <div class="ibox-content">
                 <div class="text-right" style="padding: 10px 10px 0px 10px;">
-                    <a href="{{route('admin.groupCustomer.create')}}" class="btn btn-sm btn-primary"><i class="fa fa-plus"></i> Tạo Tài Khoản</a>
+                    <a href="{{route('admin.groupCustomer.create')}}" class="btn btn-sm btn-primary"><i class="fa fa-plus"></i> Tạo Nhóm</a>
                 </div>
                 <div class="hr-line-dashed"></div>
                 <!-- Account list -->

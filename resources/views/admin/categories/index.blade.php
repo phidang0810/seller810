@@ -238,7 +238,7 @@
                     </button>
                     <button class="btn btn-sm btn-default" type="button" id="bt-reset"
                     style="margin-bottom: 0;margin-top: 22px; margin-right:5px">
-                    <i class="fa fa-refresh"></i> Clear
+                    <i class="fa fa-refresh"></i> Làm mới
                 </button>
             </div>
 

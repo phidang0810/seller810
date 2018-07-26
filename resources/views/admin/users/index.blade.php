@@ -221,7 +221,7 @@
 
             <div class="col-sm-3">
                 <div class="form-group">
-                    <label>Chọn quyền</label>
+                    <label>Chọn phòng ban</label>
                     <select class="form-control" name="role" id="s-role">
                         <option value=""> -- Tất cả -- </option>
                         @foreach($roles as $role)
@@ -236,8 +236,8 @@
                     <label>Chọn trạng thái</label>
                     <select class="form-control" name="status" id="s-status">
                         <option value=""> -- Tất cả -- </option>
-                        <option @if(app('request')->has('status') && app('request')->input('status') == ACTIVE) selected @endif value="{{ACTIVE}}">Active</option>
-                        <option @if(app('request')->has('status') && app('request')->input('status') == INACTIVE) selected @endif value="{{INACTIVE}}">Inactive</option>
+                        <option @if(app('request')->has('status') && app('request')->input('status') == ACTIVE) selected @endif value="{{ACTIVE}}">Đã kích hoạt</option>
+                        <option @if(app('request')->has('status') && app('request')->input('status') == INACTIVE) selected @endif value="{{INACTIVE}}">Chưa kích hoạt</option>
                     </select>
                 </div>
             </div>

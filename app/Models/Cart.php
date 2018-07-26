@@ -12,6 +12,6 @@ class Cart extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'code', 'city_id', 'email', 'address', 'phone', 'discount_amount', 'active', 'order'
+        'code', 'city_id', 'quantity', 'discount_amount', 'active'
     ];
 }

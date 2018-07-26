@@ -2,7 +2,7 @@
 
 namespace App\Repositories;
 
-use App\Models\Customer;
+use App\Models\Cart;
 use App\Models\Partner;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -27,8 +27,11 @@ class PartnerRepository
 
                 }
             }, true)
+            ->addColumn('discount_amount', function($data){
+                return format_price($data->discount_amount);
+            })
             ->addColumn('action', function ($data) {
-                $html = '<a href="' . route('admin.Partner.view', ['id' => $data->id]) . '" class="btn btn-xs btn-primary" style="margin-right: 5px"><i class="glyphicon glyphicon-edit"></i> Sửa</a>';
+                $html = '<a href="' . route('admin.partners.view', ['id' => $data->id]) . '" class="btn btn-xs btn-primary" style="margin-right: 5px"><i class="glyphicon glyphicon-edit"></i> Sửa</a>';
                 $html .= '<a href="#" class="bt-delete btn btn-xs btn-danger" data-id="' . $data->id . '" data-name="' . $data->name . '">';
                 $html .= '<i class="fa fa-trash-o" aria-hidden="true"></i> Xóa</a>';
 
@@ -61,9 +64,9 @@ class PartnerRepository
             $model = new Partner;
         }
         $model->name = $data['name'];
-        $model->email = $data['name'];
+        $model->email = $data['email'];
         $model->code = $data['code'];
-        $model->discount_amount = $data['discount_amount'];
+        $model->discount_amount = preg_replace('/[^0-9]/', '', $data['discount_amount']);
         $model->active = $data['active'];
         if(isset($data['phone'])) {
             $model->phone = $data['phone'];
@@ -87,13 +90,14 @@ class PartnerRepository
             $result['success'] = false;
             return $result;
         }
-        $count = Customer::where('partner_id', $id)->count();
+        $count = Cart::where('partner_id', $id)->count();
         if ($count) {
-            $result['errors'][] = 'Nhóm khách hàng đang được sử dụng. Bạn không thể xóa!';
+            $result['errors'][] = 'Cộng tác viên có nhiều đơn hàng. Bạn không thể xóa!';
             $result['success'] = false;
             return $result;
         }
-        $model->delete();
+
+        Partner::destroy($id);
 
         return [
             'success' => true

@@ -109,6 +109,8 @@
 <script src="{{asset('themes/inspinia/js/plugins/toastr/toastr.min.js')}}"></script>
 <script src="{{asset('themes/inspinia/js/plugins/validate/jquery.validate.min.js')}}"></script>
 <script src="{{asset('themes/inspinia/js/plugins/colorpicker/bootstrap-colorpicker.min.js')}}"></script>
+<script src="{{asset('themes/inspinia/js/plugins/cleave/cleave.min.js')}}"></script>
+<script src="{{asset('themes/inspinia/js/plugins/cleave/cleave-phone.i18n.js')}}"></script>
 
 <script src="{{asset('themes/inspinia/js/plugins/switchery/switchery.js')}}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>

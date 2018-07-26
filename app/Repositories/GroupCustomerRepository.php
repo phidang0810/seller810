@@ -30,6 +30,9 @@ class GroupCustomerRepository
 
                 return $html;
             })
+            ->addColumn('discount_amount', function($data){
+                return format_price($data->discount_amount);
+            })
             ->addColumn('status', function ($data) {
                 $active = '';
                 if ($data->active === ACTIVE) {
@@ -78,7 +81,8 @@ class GroupCustomerRepository
             $result['success'] = false;
             return $result;
         }
-        $model->delete();
+
+        GroupCustomer::destroy($id);
 
         return [
             'success' => true

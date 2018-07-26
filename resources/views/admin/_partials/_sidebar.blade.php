@@ -19,6 +19,12 @@
                 <a href="{{route('admin.dashboard')}}"><i class="fa fa-home"></i> <span class="nav-label">Dashboards</span></a>
             </li>
 
+            @if(key_exists('partner_manager', Auth::user()->permissions))
+                <li class="{{ set_active(['quan-ly/cong-tac-vien*']) }} nav-item">
+                    <a href="{{route('admin.partners.index')}}"><i class="fa fa-users" aria-hidden="true"></i> <span class="nav-label">Cộng Tác Viên</span></a>
+                </li>
+            @endif
+
             @if(key_exists('customer_manager', Auth::user()->permissions))
                 <li class="{{ set_active(['quan-ly/khach-hang*']) }} nav-item">
                     <a href="#"><i class="fa fa-users" aria-hidden="true"></i> <span class="nav-label">Quản Lý Khách Hàng</span><span class="fa arrow"></span></a>

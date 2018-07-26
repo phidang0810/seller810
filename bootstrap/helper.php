@@ -38,3 +38,8 @@ function option_menu($array, $parent = 0, $text = "", $select = 0, $result = '')
 	}
 	return $result;
 }
+
+function format_price($price)
+{
+    return number_format($price) . ' VND';
+}
