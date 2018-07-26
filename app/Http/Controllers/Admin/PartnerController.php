@@ -74,7 +74,7 @@ class GroupCustomerController extends AdminController
         $data = $group->createOrUpdate($input, $id);
 
         if($input['action'] === 'save') {
-            return redirect()->route('admin.categories.view', ['id' => $data->id])->withSuccess($message);
+            return redirect()->route('admin.users.view', ['id' => $data->id])->withSuccess($message);
         }
         return redirect()->route('admin.groupCustomer.index')->withSuccess($message);
     }

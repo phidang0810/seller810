@@ -78,7 +78,7 @@ class CategoryController extends AdminController
         $data = $category->createOrUpdate($input, $id);
 
         if($input['action'] === 'save') {
-            return redirect()->route('admin.users.view', ['id' => $data->id])->withSuccess($message);
+            return redirect()->route('admin.categories.view', ['id' => $data->id])->withSuccess($message);
         }
 
         return redirect()->route('admin.categories.index')->withSuccess($message);
