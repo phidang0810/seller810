@@ -21,7 +21,7 @@
 
             @if(key_exists('customer_manager', Auth::user()->permissions))
                 <li class="{{ set_active(['quan-ly/khach-hang*']) }} nav-item">
-                    <a href="#"><i class="fa fa-users" aria-hidden="true"></i <span class="nav-label">Quản Lý Khách Hàng</span><span class="fa arrow"></span></a>
+                    <a href="#"><i class="fa fa-users" aria-hidden="true"></i> <span class="nav-label">Quản Lý Khách Hàng</span><span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level">
                         <li class="{{ set_active(['quan-ly/khach-hang/nhom*']) }}"><a href="{{route('admin.groupCustomer.index')}}">Nhóm khách hàng</a></li>
                     </ul>
