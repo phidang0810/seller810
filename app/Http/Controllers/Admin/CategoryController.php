@@ -21,9 +21,8 @@ class CategoryController extends AdminController
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(CategoryRepository $category)
-    {
-        if ($this->_request->ajax()) {
+    public function index(CategoryRepository $category){
+        if ($this->_request->ajax()){
             return $category->dataTable($this->_request);
         }
 
@@ -41,6 +40,9 @@ class CategoryController extends AdminController
             $this->_data['data'] = $category->getCategory($id);
         }
 
+        $parent_id = ($id) ? $category->getCategory($id)->parent_id : 0;
+        $this->_data['categoriesTree'] = option_menu($category->getCategoriesTree(), 0, "", $parent_id);
+
         $this->_pushBreadCrumbs($this->_data['title']);
         return view('admin.categories.view', $this->_data);
     }
@@ -53,26 +55,31 @@ class CategoryController extends AdminController
     {
         $input = $this->_request->all();
         $id = $input['id'] ?? null;
+
         $rules = [
             'name' => 'required|string|max:50',
             'active' => 'required'
         ];
-        $message = 'The account has been created.';
+        $message = 'Danh mục sản phẩm đã được tạo.';
 
         if ($id) {
-            $rules['name'] = 'required|string|max:50|unique:name,' . $input['id'];
-            $message = 'The account has been updated.';
+            $rules['name'] = 'required|string|max:50|unique:categories,name,' . $input['id'];
+            $message = 'Danh mục sản phẩm đã được cập nhật.';
         }
 
         $validator = Validator::make($input, $rules);
-
         if ($validator->fails()) {
+            
             return redirect()->back()
                 ->withErrors($validator)
                 ->withInput();
         }
 
         $category->createOrUpdate($input, $id);
+
+        if($input['action'] === 'save') {
+            return redirect()->back()->withSuccess($message);
+        }
 
         return redirect()->route('admin.categories.index')->withSuccess($message);
     }
@@ -83,5 +90,17 @@ class CategoryController extends AdminController
         $result = $category->delete($ids);
 
         return response()->json($result);
+    }
+
+    public function changeStatus(CategoryRepository $category)
+    {
+        $categoryID = $this->_request->get('id');
+        $status = $this->_request->get('status');
+        $status = filter_var($status, FILTER_VALIDATE_BOOLEAN);
+        $category->changeStatus($categoryID, $status);
+
+        return response()->json([
+            'success' => true
+        ]);
     }
 }
