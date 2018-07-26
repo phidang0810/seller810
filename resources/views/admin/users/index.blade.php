@@ -71,7 +71,8 @@
                                                             text: "Bạn đã " + status + " nhân viên " + email + " thành công.",
                                                             html: true,
                                                             type: "success",
-                                                            confirmButtonClass: "btn-primary"
+                                                            confirmButtonClass: "btn-primary",
+                                                            confirmButtonText: "Đóng lại."
                                                         });
                                                     } else {
                                                         errorHtml = '<ul class="text-left">';
@@ -181,7 +182,8 @@
                                     text: "Tài khoản " + email + " đã bị xóa.",
                                     html: true,
                                     type: "success",
-                                    confirmButtonClass: "btn-primary"
+                                    confirmButtonClass: "btn-primary",
+                                    confirmButtonText: "Đóng lại."
                                 });
                             } else {
                                 errorHtml = '<ul class="text-left">';

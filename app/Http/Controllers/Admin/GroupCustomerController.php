@@ -71,10 +71,10 @@ class GroupCustomerController extends AdminController
                 ->withErrors($validator)
                 ->withInput();
         }
-        $group->createOrUpdate($input, $id);
+        $data = $group->createOrUpdate($input, $id);
 
         if($input['action'] === 'save') {
-            return redirect()->back()->withSuccess($message);
+            return redirect()->route('admin.users.view', ['id' => $data->id])->withSuccess($message);
         }
         return redirect()->route('admin.groupCustomer.index')->withSuccess($message);
     }

@@ -88,10 +88,10 @@ class UserController extends AdminController
                 ->withErrors($validator)
                 ->withInput();
         }
-        $user->createOrUpdate($input, $id);
+        $data = $user->createOrUpdate($input, $id);
 
         if($input['action'] === 'save') {
-            return redirect()->back()->withSuccess($message);
+            return redirect()->route('admin.users.view', ['id' => $data->id])->withSuccess($message);
         }
         return redirect()->route('admin.users.index')->withSuccess($message);
     }

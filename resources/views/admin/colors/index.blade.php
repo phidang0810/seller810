@@ -69,7 +69,8 @@
                                                     text: "Bạn đã " + status + " danh mục " + name + " thành công.",
                                                     html: true,
                                                     type: "success",
-                                                    confirmButtonClass: "btn-primary"
+                                                    confirmButtonClass: "btn-primary",
+                                                    confirmButtonText: "Đóng lại."
                                                 });
                                             } else {
                                                 errorHtml = '<ul class="text-left">';
@@ -177,7 +178,8 @@ $("#dataTables").on("click", '.bt-delete', function(){
                         text: "Màu sắc " + name + " đã bị xóa.",
                         html: true,
                         type: "success",
-                        confirmButtonClass: "btn-primary"
+                        confirmButtonClass: "btn-primary",
+                        confirmButtonText: "Đóng lại."
                     });
                 } else {
                     errorHtml = '<ul class="text-left">';

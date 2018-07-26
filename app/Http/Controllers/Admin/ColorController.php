@@ -72,10 +72,10 @@ class ColorController extends AdminController
                 ->withInput();
         }
 
-        $color->createOrUpdate($input, $id);
+        $data = $color->createOrUpdate($input, $id);
 
         if($input['action'] === 'save') {
-            return redirect()->back()->withSuccess($message);
+            return redirect()->route('admin.users.view', ['id' => $data->id])->withSuccess($message);
         }
 
         return redirect()->route('admin.colors.index')->withSuccess($message);
