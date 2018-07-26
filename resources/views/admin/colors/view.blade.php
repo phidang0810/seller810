@@ -10,6 +10,8 @@
             $("#mainForm")[0].reset();
         })
 
+        $("#mainForm").validate();
+
         $("#i-color-code").colorpicker({popover:false});
 
         if($(".c-ratio-photo").is(":checked")){
@@ -54,20 +56,20 @@
                                 <div class="col-md-5">
                                     @if(isset($data->photo) && !empty($data->photo))
                                     <label for="photo" class="mr-10 lbl-ratio">
-                                        <input type="radio" checked name="color" placeholder="" class="form-control m-b c-ratio-color c-ratio-photo" value="photo"/>Hình ảnh
+                                        <input type="radio" checked name="color" placeholder="" class="form-control required m-b c-ratio-color c-ratio-photo" value="photo"/>Hình ảnh
                                     </label>
                                     @else
                                      <label for="photo" class="mr-10 lbl-ratio">
-                                        <input type="radio" name="color" placeholder="" class="form-control m-b c-ratio-color c-ratio-photo" value="photo"/>Hình ảnh
+                                        <input type="radio" name="color" placeholder="" class="form-control required m-b c-ratio-color c-ratio-photo" value="photo"/>Hình ảnh
                                     </label>
                                     @endif
-                                    @if(isset($data->code) && !empty($data->code))
+                                    @if( ( isset($data->code) && !empty($data->code) ) || ( !isset($data->photo) || empty($data->photo) ) )
                                     <label for="code" class="lbl-ratio">
-                                        <input type="radio" checked name="color" placeholder="" class="form-control m-b c-ratio-color c-ratio-code" value="code"/>Mã màu
+                                        <input type="radio" checked name="color" placeholder="" class="form-control required m-b c-ratio-color c-ratio-code" value="code"/>Mã màu
                                     </label>
                                     @else
                                     <label for="code" class="lbl-ratio">
-                                        <input type="radio" name="color" placeholder="" class="form-control m-b c-ratio-color c-ratio-code" value="code"/>Mã màu
+                                        <input type="radio" name="color" placeholder="" class="form-control required m-b c-ratio-color c-ratio-code" value="code"/>Mã màu
                                     </label>
                                     @endif
                                 </div>
@@ -93,7 +95,7 @@
                                             <span class="btn btn-default btn-file">
                                                 <span class="fileinput-new">Select image</span>
                                                 <span class="fileinput-exists">Change</span>
-                                                <input type="file" name="photo">
+                                                <input type="file" name="photo" class="required">
                                             </span>
                                             <a href="#" class="btn btn-default fileinput-exists"
                                             data-dismiss="fileinput">Remove</a>
@@ -108,7 +110,7 @@
                                 <label class="col-md-2 control-label">Mã màu (<span
                                     class="text-danger">*</span>)</label>
                                     <div class="col-md-5">
-                                        <input id="i-color-code" type="text" name="code" placeholder="" class="form-control m-b"
+                                        <input id="i-color-code" type="text" name="code" placeholder="" class="form-control required m-b"
                                         value="@if(isset($data->code)){{$data->code}}@else{{old('code')}}@endif"/>
                                     </div>
                                 </div>
@@ -119,7 +121,7 @@
                                     <label class="col-md-2 control-label">Tên màu sắc (<span
                                         class="text-danger">*</span>)</label>
                                         <div class="col-md-5">
-                                            <input type="text" name="name" placeholder="" class="form-control m-b"
+                                            <input type="text" name="name" placeholder="" class="form-control required m-b"
                                             value="@if(isset($data->name)){{$data->name}}@else{{old('name')}}@endif"/>
                                         </div>
                                     </div>

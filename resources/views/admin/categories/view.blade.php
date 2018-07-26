@@ -9,6 +9,8 @@
             $("#bt-reset").click(function(){
                 $("#mainForm")[0].reset();
             })
+
+            $("#mainForm").validate();
         });
     </script>
 @endsection
@@ -27,7 +29,7 @@
                         <div class="form-group">
                             <label class="col-md-2 control-label">Tên danh mục (<span class="text-danger">*</span>)</label>
                             <div class="col-md-5">
-                                <input type="text" name="name" placeholder="" class="form-control m-b" value="@if(isset($data->name)){{$data->name}}@else{{old('name')}}@endif"/>
+                                <input type="text" name="name" placeholder="" class="form-control required m-b" value="@if(isset($data->name)){{$data->name}}@else{{old('name')}}@endif"/>
                             </div>
                         </div>
                     </div>
@@ -46,18 +48,9 @@
 
                     <div class="row">
                         <div class="form-group">
-                            <label class="col-md-2 control-label">Mô tả</label>
+                            <label class="col-md-2 control-label">Mô tả (<span class="text-danger">*</span>)</label>
                             <div class="col-md-5">
-                                <textarea name="description" id="" cols="30" rows="10"  class="form-control m-b">@if(isset($data->description)){{$data->description}}@else{{old('description')}}@endif</textarea>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="form-group">
-                            <label class="col-md-2 control-label">Cấp</label>
-                            <div class="col-md-5">
-                                <input type="text" name="level" placeholder="" class="form-control m-b" value="@if(isset($data->level)){{$data->level}}@else{{old('level')}}@endif"/>
+                                <textarea name="description" id="" cols="30" rows="10"  class="form-control required m-b">@if(isset($data->description)){{$data->description}}@else{{old('description')}}@endif</textarea>
                             </div>
                         </div>
                     </div>

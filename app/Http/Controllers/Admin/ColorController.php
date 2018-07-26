@@ -55,6 +55,7 @@ class ColorController extends AdminController
 
         $rules = [
             'name' => 'required|string|max:50',
+            'color'  => 'required',
             'active' => 'required'
         ];
         $message = 'Màu sắc sản phẩm đã được tạo.';
@@ -62,6 +63,22 @@ class ColorController extends AdminController
         if ($id) {
             $rules['name'] = 'required|string|max:50|unique:colors,name,' . $input['id'];
             $message = 'Màu sắc sản phẩm đã được cập nhật.';
+        }
+
+        $validator = Validator::make($input, $rules);
+        if ($validator->fails()) {
+            
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        if ($input['color'] == 'photo') {
+            $rules['photo'] = 'required';
+        }
+
+        if ($input['color'] == 'code') {
+            $rules['code'] = 'required';
         }
 
         $validator = Validator::make($input, $rules);

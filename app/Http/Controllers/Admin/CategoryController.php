@@ -58,6 +58,7 @@ class CategoryController extends AdminController
 
         $rules = [
             'name' => 'required|string|max:50',
+            'description' => 'required',
             'active' => 'required'
         ];
         $message = 'Danh mục sản phẩm đã được tạo.';

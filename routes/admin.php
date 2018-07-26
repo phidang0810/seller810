@@ -60,3 +60,13 @@ Route::prefix('mau-sac')
     Route::delete ('/', 'ColorController@delete')->name('admin.colors.delete');
     Route::put ('/change-status', 'ColorController@changeStatus')->name('admin.colors.changeStatus');
 });
+
+Route::prefix('san-pham')
+->middleware('permission:product_manager')->group(function () {
+    Route::get ('/', 'ProductController@index')->name('admin.products.index');
+    Route::get ('/chi-tiet', 'ProductController@view')->name('admin.products.view');
+    Route::get ('/them', 'ProductController@view')->name('admin.products.create');
+    Route::post ('/them', 'ProductController@store')->name('admin.products.store');
+    Route::delete ('/', 'ProductController@delete')->name('admin.products.delete');
+    Route::put ('/change-status', 'ProductController@changeStatus')->name('admin.products.changeStatus');
+});

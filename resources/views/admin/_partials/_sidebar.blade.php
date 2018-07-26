@@ -62,6 +62,17 @@
                 </ul>
             </li>
             @endif
+            
+            @if(key_exists('product_manager', Auth::user()->permissions))
+            <li class="{{ set_active(['quan-ly/san-pham', 'quan-ly/san-pham/*']) }} nav-item">
+                <a href="#"><i class="fa fa-tasks "></i> <span class="nav-label">Quản Lý Sản Phẩm</span><span class="fa arrow"></span></a>
+                <ul class="nav nav-second-level">
+                    <li class="{{ set_active(['quan-ly/san-pham']) }}"><a href="{{route('admin.products.index')}}">Danh sách Sản Phẩm</a></li>
+                    <li class="{{ set_active(['quan-ly/san-pham/them']) }}"><a href="{{route('admin.products.create')}}">Thêm Sản Phẩm</a></li>
+                </ul>
+            </li>
+            @endif
+
         </ul>
 
     </div>
