@@ -41,7 +41,7 @@ class CategoryController extends AdminController
         }
 
         $parent_id = ($id) ? $category->getCategory($id)->parent_id : 0;
-        $this->_data['categoriesTree'] = option_menu($category->getCategoriesTree(), 0, "", $parent_id);
+        $this->_data['categoriesTree'] = option_menu($category->getCategoriesTree(), "", $parent_id);
 
         $this->_pushBreadCrumbs($this->_data['title']);
         return view('admin.categories.view', $this->_data);
@@ -57,7 +57,7 @@ class CategoryController extends AdminController
         $id = $input['id'] ?? null;
 
         $rules = [
-            'name' => 'required|string|max:50',
+            'name' => 'required|string|max:50|unique:categories,name',
             'description' => 'required',
             'active' => 'required'
         ];

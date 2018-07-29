@@ -241,7 +241,7 @@ input:checked + .slider:before {
 }
 
 .sweet-alert .sa-icon.sa-success::before, .sweet-alert .sa-icon.sa-success::after {
-    height: 110px;
+  height: 110px;
 }
 
 /* Note Editor */
@@ -256,4 +256,62 @@ input:checked + .slider:before {
 
 .sweet-alert{
   z-index: 99999;
+}
+
+/* List tree CSS */
+.list-tree{
+  padding-left: 20px;
+  list-style-type: none;
+}
+
+.list-tree-item{
+
+}
+
+.list-tree-item .checkbox{
+  margin-bottom: 5px;
+  margin-top: 5px;
+}
+
+.list-tree-section {
+    padding: 5px 0px;
+    border: 1px solid #eee;
+}
+
+.c-gallery-preview input[type="file"] {
+  display: block;
+}
+
+.c-gallery-preview .pip {
+  display: inline-block;
+  margin: 10px 10px 0 0;
+}
+
+.c-gallery-preview .img-wrapper{
+  display: block;
+  width: 150px;
+  height: 100px;
+}
+
+.c-gallery-preview .img-wrapper img.imageThumb{
+  width: 100%;
+  height: 100%;
+  border: 2px solid #e7eaec;
+  padding: 1px;
+  cursor: pointer;
+  object-fit: cover;
+}
+
+.c-gallery-preview .remove {
+  display: block;
+  /*background: #444;*/
+  /*border: 1px solid black;*/
+  /*color: white;*/
+  text-align: center;
+  cursor: pointer;
+}
+
+.c-gallery-preview .remove:hover {
+/*  background: white;
+  color: black;*/
 }
