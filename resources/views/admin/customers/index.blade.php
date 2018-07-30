@@ -6,8 +6,8 @@
 @section('js')
     <!-- Page-Level Scripts -->
     <script>
-        var url_delete = "{{route('admin.partners.delete')}}";
-        var url_change_status = "{{route('admin.partners.changeStatus')}}";
+        var url_delete = "{{route('admin.customers.delete')}}";
+        var url_change_status = "{{route('admin.customers.changeStatus')}}";
         var table;
         $.ajaxSetup({
             headers: {
@@ -21,9 +21,10 @@
                 serverSide: true,
                 "dom": 'rt<"#pagination"flp>',
                 ajax: {
-                    "url": "{{route('admin.partners.index')}}",
+                    "url": "{{route('admin.customers.index')}}",
                     "data": function ( d ) {
                         d.keyword = $('#s-keyword').val();
+                        d.group_customer_id = $('#s-group').val();
                         d.status = $('#s-status').val();
                     },
                     complete: function(){
@@ -103,9 +104,9 @@
                     {data: 'id'},
                     {data: 'name'},
                     {data: 'code'},
+                    {data: 'group_name'},
                     {data: 'email'},
                     {data: 'phone'},
-                    {data: 'discount_amount'},
                     {data: 'address'},
                     {data: 'status'},
                     {data: 'action'}
@@ -179,7 +180,7 @@
                             if (response.success) {
                                 swal({
                                     title: "Thành công!",
-                                    text: "Cộng tác viên " + name + " đã bị xóa.",
+                                    text: "Khách hàng " + name + " đã bị xóa.",
                                     html: true,
                                     type: "success",
                                     confirmButtonClass: "btn-primary",
@@ -219,6 +220,17 @@
                     </div>
                 </div>
 
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>Chọn nhóm</label>
+                        <select class="form-control" name="group_customer_id" id="s-group">
+                            <option value="">-- Chọn nhóm khách hàng --</option>
+                            @foreach($groups as $group)
+                                <option value="{{$group->id}}" @if(app('request')->input('group_customer_id') === $group->id) selected @endif>{{$group->name}}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
 
                 <div class="col-sm-3">
                     <div class="form-group">
@@ -250,7 +262,7 @@
             @include('admin._partials._alert')
             <div class="ibox-content">
                 <div class="text-right" style="padding: 10px 10px 0px 10px;">
-                    <a href="{{route('admin.partners.create')}}" class="btn btn-sm btn-primary"><i class="fa fa-plus"></i> Thêm Cộng Tác Viên</a>
+                    <a href="{{route('admin.customers.create')}}" class="btn btn-sm btn-primary"><i class="fa fa-plus"></i> Thêm Khách Hàng</a>
                 </div>
                 <div class="hr-line-dashed"></div>
                 <!-- Account list -->
@@ -260,9 +272,9 @@
                         <th>ID</th>
                         <th>Tên</th>
                         <th>Mã</th>
+                        <th>Nhóm</th>
                         <th>Email</th>
                         <th>Điện Thoại</th>
-                        <th>Chiết Khấu</th>
                         <th>Địa Chỉ</th>
                         <th>Trạng Thái</th>
                         <th></th>

@@ -2,18 +2,19 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Repositories\GroupCustomerRepository;
 use App\Repositories\RoleRepository;
-use App\Repositories\PartnerRepository;
+use App\Repositories\CustomerRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class PartnerController extends AdminController
+class CustomerController extends AdminController
 {
     public function __construct(Request $request)
     {
         parent::__construct($request);
 
-        $this->_pushBreadCrumbs('Danh sách cộng tác viên', route('admin.partners.index'));
+        $this->_pushBreadCrumbs('Danh sách khách hàng', route('admin.customers.index'));
     }
 
     /**
@@ -21,51 +22,53 @@ class PartnerController extends AdminController
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(PartnerRepository $model)
+    public function index(CustomerRepository $model, GroupCustomerRepository $group)
     {
         if ($this->_request->ajax()) {
             return $model->dataTable($this->_request);
         }
 
-        $this->_data['title'] = 'Danh sách cộng tác viên';
-
-        return view('admin.partners.index', $this->_data);
+        $this->_data['title'] = 'Danh sách khách hàng';
+        $this->_data['groups'] = $group->getDataList();
+        return view('admin.customers.index', $this->_data);
     }
 
-    public function view(PartnerRepository $model)
+    public function view(CustomerRepository $model, GroupCustomerRepository $group)
     {
         $id = $this->_request->get('id');
-        $this->_data['title'] = 'Thêm cộng tác viên';
+        $this->_data['title'] = 'Thêm khách hàng';
         if ($id) {
-            $this->_data['title'] = 'Sửa thông tin cộng tác viên';
+            $this->_data['title'] = 'Sửa thông tin khách hàng';
             $this->_data['data'] = $model->getData($id);
         }
 
         $this->_pushBreadCrumbs($this->_data['title']);
-        return view('admin.partners.view', $this->_data);
+
+        $this->_data['groups'] = $group->getDataList();
+        return view('admin.customers.view', $this->_data);
     }
 
-    public function store(PartnerRepository $model)
+    public function store(CustomerRepository $model)
     {
         $input = $this->_request->all();
         $id = $input['id'] ?? null;
         $rules = [
-            'email' => 'required|email|string|max:100|unique:partners',
+            'email' => 'required|email|string|max:100|unique:customers',
             'name' => 'required|string|max:100',
-            'code' => 'required|max:20|unique:partners',
+            'code' => 'required|max:20|unique:customers',
             'active' => 'required'
         ];
-        $message = 'Cộng tác viên '.$input['name'].' đã được tạo.';
+        $message = 'Khách hàng '.$input['name'].' đã được tạo.';
 
         if ($id) {
-            $rules['email'] = 'required|email|max:100|unique:partners,email,' . $input['id'];
-            $rules['code'] = 'required|max:20|unique:partners,code,' . $input['id'];
-            $message = 'Cộng tác viên '.$input['name'].' đã được cập nhật.';
+            $rules['email'] = 'required|email|max:100|unique:customers,email,' . $input['id'];
+            $rules['code'] = 'required|max:20|unique:customers,code,' . $input['id'];
+            $message = 'Khách hàng '.$input['name'].' đã được cập nhật.';
         }
         
         $validator = Validator::make($input, $rules, [
             'email.unique' => 'Email này đã được sử dụng.',
-            'code.unique' => 'Mã nhân viên này đã được sử dụng.',
+            'code.unique' => 'Mã khách hàng này đã được sử dụng.',
             'email.required' => 'Vui lòng nhập email.',
             'code.required' => 'Vui lòng nhập mã.',
             'name.required' => 'Vui lòng nhập tên.',
@@ -79,12 +82,12 @@ class PartnerController extends AdminController
         $data = $model->createOrUpdate($input, $id);
 
         if($input['action'] === 'save') {
-            return redirect()->route('admin.partners.view', ['id' => $data->id])->withSuccess($message);
+            return redirect()->route('admin.customers.view', ['id' => $data->id])->withSuccess($message);
         }
-        return redirect()->route('admin.partners.index')->withSuccess($message);
+        return redirect()->route('admin.customers.index')->withSuccess($message);
     }
 
-    public function delete(PartnerRepository $model)
+    public function delete(CustomerRepository $model)
     {
         $ids = $this->_request->get('ids');
         $result = $model->delete($ids);
@@ -92,7 +95,7 @@ class PartnerController extends AdminController
         return response()->json($result);
     }
 
-    public function changeStatus(PartnerRepository $model)
+    public function changeStatus(CustomerRepository $model)
     {
         $id = $this->_request->get('id');
         $status = $this->_request->get('status');

@@ -6,8 +6,8 @@
 @section('js')
     <!-- Page-Level Scripts -->
     <script>
-        var url_delete = "{{route('admin.partners.delete')}}";
-        var url_change_status = "{{route('admin.partners.changeStatus')}}";
+        var url_delete = "{{route('admin.suppliers.delete')}}";
+        var url_change_status = "{{route('admin.suppliers.changeStatus')}}";
         var table;
         $.ajaxSetup({
             headers: {
@@ -21,7 +21,7 @@
                 serverSide: true,
                 "dom": 'rt<"#pagination"flp>',
                 ajax: {
-                    "url": "{{route('admin.partners.index')}}",
+                    "url": "{{route('admin.suppliers.index')}}",
                     "data": function ( d ) {
                         d.keyword = $('#s-keyword').val();
                         d.status = $('#s-status').val();
@@ -103,10 +103,10 @@
                     {data: 'id'},
                     {data: 'name'},
                     {data: 'code'},
+                    {data: 'tax_code'},
+                    {data: 'responsible_person'},
                     {data: 'email'},
                     {data: 'phone'},
-                    {data: 'discount_amount'},
-                    {data: 'address'},
                     {data: 'status'},
                     {data: 'action'}
                 ],
@@ -179,7 +179,7 @@
                             if (response.success) {
                                 swal({
                                     title: "Thành công!",
-                                    text: "Cộng tác viên " + name + " đã bị xóa.",
+                                    text: "Nhà cung cấp " + name + " đã bị xóa.",
                                     html: true,
                                     type: "success",
                                     confirmButtonClass: "btn-primary",
@@ -250,7 +250,7 @@
             @include('admin._partials._alert')
             <div class="ibox-content">
                 <div class="text-right" style="padding: 10px 10px 0px 10px;">
-                    <a href="{{route('admin.partners.create')}}" class="btn btn-sm btn-primary"><i class="fa fa-plus"></i> Thêm Cộng Tác Viên</a>
+                    <a href="{{route('admin.suppliers.create')}}" class="btn btn-sm btn-primary"><i class="fa fa-plus"></i> Thêm Nhà Cung Cấp</a>
                 </div>
                 <div class="hr-line-dashed"></div>
                 <!-- Account list -->
@@ -260,10 +260,10 @@
                         <th>ID</th>
                         <th>Tên</th>
                         <th>Mã</th>
+                        <th>Mã Số Thuế</th>
+                        <th>Người Đại Diện</th>
                         <th>Email</th>
                         <th>Điện Thoại</th>
-                        <th>Chiết Khấu</th>
-                        <th>Địa Chỉ</th>
                         <th>Trạng Thái</th>
                         <th></th>
                     </tr>

@@ -46,6 +46,13 @@ class GroupCustomerRepository
 
         return $dataTable;
     }
+
+    public function getDataList()
+    {
+        $data = GroupCustomer::where('active', ACTIVE)->get();
+        return $data;
+    }
+
     public function getData($id)
     {
         $data = GroupCustomer::find($id);
@@ -60,7 +67,7 @@ class GroupCustomerRepository
             $model = new GroupCustomer;
         }
         $model->name = $data['name'];
-        $model->discount_amount = $data['discount_amount'];
+        $model->discount_amount = preg_replace('/[^0-9]/', '', $data['discount_amount']);
         $model->active = $data['active'];
         $model->save();
 

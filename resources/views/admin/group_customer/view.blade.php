@@ -25,6 +25,10 @@
             })
 
             $("#mainForm").validate();
+            new Cleave('.input-price', {
+                numeral: true,
+                numeralThousandsGroupStyle: 'thousand'
+            });
         });
     </script>
 @endsection
@@ -52,7 +56,7 @@
                         <div class="form-group">
                             <label class="col-md-2 control-label">Chiết khấu (VND)</label>
                             <div class="col-md-3">
-                                <input type="number" name="discount_amount" placeholder="Ví dụ: 10.000" class="form-control" value="@if(isset($data->discount_amount)){{$data->discount_amount}}@else{{old('discount_amount')}}@endif"/>
+                                <input type="text" name="discount_amount" placeholder="Ví dụ: 10.000" class="form-control input-price" value="@if(isset($data->discount_amount)){{$data->discount_amount}}@else{{old('discount_amount')}}@endif"/>
                             </div>
                         </div>
                     </div>

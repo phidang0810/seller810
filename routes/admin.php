@@ -23,14 +23,24 @@ Route::prefix('cong-tac-vien')
         Route::put ('/change-status', 'PartnerController@changeStatus')->name('admin.partners.changeStatus');
     });
 
+Route::prefix('nha-cung-cap')
+    ->middleware('permission:supplier_manager')->group(function () {
+        Route::get ('/', 'SupplierController@index')->name('admin.suppliers.index');
+        Route::get ('/chi-tiet', 'SupplierController@view')->name('admin.suppliers.view');
+        Route::get ('/them', 'SupplierController@view')->name('admin.suppliers.create');
+        Route::post ('/them', 'SupplierController@store')->name('admin.suppliers.store');
+        Route::delete ('/', 'SupplierController@delete')->name('admin.suppliers.delete');
+        Route::put ('/change-status', 'SupplierController@changeStatus')->name('admin.suppliers.changeStatus');
+    });
+
 Route::prefix('khach-hang')
 ->middleware('permission:customer_manager')->group(function () {
-    Route::get ('/', 'CustomerController@index')->name('admin.customer.index');
-    Route::get ('/chi-tiet', 'CustomerController@view')->name('admin.customer.view');
-    Route::get ('/them', 'CustomerController@view')->name('admin.customer.create');
-    Route::post ('/them', 'CustomerController@store')->name('admin.customer.store');
-    Route::delete ('/', 'CustomerController@delete')->name('admin.customer.delete');
-    Route::put ('/change-status', 'CustomerController@changeStatus')->name('admin.customer.changeStatus');
+    Route::get ('/', 'CustomerController@index')->name('admin.customers.index');
+    Route::get ('/chi-tiet', 'CustomerController@view')->name('admin.customers.view');
+    Route::get ('/them', 'CustomerController@view')->name('admin.customers.create');
+    Route::post ('/them', 'CustomerController@store')->name('admin.customers.store');
+    Route::delete ('/', 'CustomerController@delete')->name('admin.customers.delete');
+    Route::put ('/change-status', 'CustomerController@changeStatus')->name('admin.customers.changeStatus');
 
     Route::get ('/nhom/', 'GroupCustomerController@index')->name('admin.groupCustomer.index');
     Route::get ('/nhom/chi-tiet', 'GroupCustomerController@view')->name('admin.groupCustomer.view');
