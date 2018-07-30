@@ -6,7 +6,9 @@
 <!-- Page-Level Scripts -->
 <script>
 
-    var details =  jQuery.parseJSON($('input[name="details"]').val());
+    var details = ($('input[name="details"]').val()) ? jQuery.parseJSON($('input[name="details"]').val()) : [];
+    var colors = ($('input[name="colors"]').val()) ? jQuery.parseJSON($('input[name="colors"]').val()) : [];
+    var photos = ($('input[name="photos"]').val()) ? jQuery.parseJSON($('input[name="photos"]').val()) : [];
 
     function print_table_details(arr_details){
         var sum = 0;
@@ -39,32 +41,100 @@
         print_table_details(details);
     });
 
-    function uploadMultipleImages(){
-        if (window.File && window.FileList && window.FileReader) {
-            $(".c-mutiple-input").on("change", function(e) {
-              var files = e.target.files,
-              filesLength = files.length;
-              for (var i = 0; i < filesLength; i++) {
-                var f = files[i]
-                var fileReader = new FileReader();
-                fileReader.onload = (function(e) {
-                    var file = e.target;
-                    $("<span class=\"pip\">" +
-                        "<span class='img-wrapper'><img class=\"imageThumb\" src=\"" + e.target.result + "\" title=\"" + file.name + "\"/></span>" +
-                        "<span class=\"btn btn-outline btn-danger remove\">Remove image</span>" +
-                        "</span>").appendTo(".c-gallery-preview");
-                    $(".remove").click(function(){
-                        $(this).parent(".pip").remove();
-                            // $('.c-mutiple-input').val();
-                        });
 
-                });
-                fileReader.readAsDataURL(f);
-            }
+    var files = [];
+
+    $('.c-mutiple-input').on('change', preparePhotosTable);
+
+    function preparePhotosTable(event)
+    {
+        tmp_files = event.target.files;
+        $.each(tmp_files, function(key, value){
+            photos.push({
+                'file':value,
+                'file_name':value.name,
+                'color_code':0,
+                'name':value.name,
+                'order':'0',
+                'delete':false
+            });
+            files.push(value);
         });
-        } else {
-            alert("Your browser doesn't support to File API")
-        }
+        print_table_photos(photos);
+    }
+
+    // function updatePhotosData(){
+    //     $.each(photos, function(key, value){
+    //         photos[key].color_code = ($('#select_color'+key).val() != 0) ? $('#select_color'+key).val() : photos[key].color_code;
+    //         photos[key].name = ($('#photo_name_'+key).val()) ? $('#photo_name_'+key).val() : photos[key].name;
+    //         photos[key].order = ($('#photo_order_'+key).val()) ? $('#photo_order_'+key).val() : photos[key].order;
+    //     });
+    // }
+
+    function print_table_photos(arr_photos){
+        var html = '';
+        $('#i-product-photos tbody').html(html);
+        $.each(arr_photos, function(key, value){
+
+            if (value.delete != true) {
+                if (value.file) {
+                    var fileReader = new FileReader();
+                    fileReader.onload = (function(e) {
+                        html_photo_color_option = '<select id="select_color'+key+'">';
+                        html_photo_color_option += '<option value="0">Chọn màu</option>';
+                        $.each(colors, function(key_color, value_color){
+                            if (value_color.id == value.color_code) {
+                                html_photo_color_option += '<option value="'+value_color.id+'" selected>'+value_color.name+'</option>';
+                            }else{
+                                html_photo_color_option += '<option value="'+value_color.id+'">'+value_color.name+'</option>';
+                            }
+                        });
+                        html_photo_color_option += '</select>';
+
+                        html_photo_input_name = '<input type="text" value="'+value['name']+'" id="photo_name_'+key+'">';
+
+                        html_photo_input_order = '<input type="text" value="'+value['order']+'" id="photo_order_'+key+'">';
+
+                        html = '<tr class="child" id="photo_row_'+key+'"><td><a href="javascript:;" onclick="deletePhoto('+key+');">Xóa</a> <a href="javascript:;" onclick="updatePhoto('+key+');">Sửa</a></td><td><span class="img-wrapper"><img class="imageThumb" src="' + e.target.result + '" title="' + value.name + '"/></span></td><td>'+html_photo_color_option+'</td><td>'+html_photo_input_name+'</td><td class="c-quantity">'+html_photo_input_order+'</td></tr>';
+                        $(html).appendTo('#i-product-photos tbody');
+                    });
+                    fileReader.readAsDataURL(value.file);
+                }else{
+                    html_photo_color_option = '<select id="select_color'+key+'">';
+                    html_photo_color_option += '<option value="0">Chọn màu</option>';
+                    $.each(colors, function(key_color, value_color){
+                        if (value_color.id == value.color_code) {
+                            html_photo_color_option += '<option value="'+value_color.id+'" selected>'+value_color.name+'</option>';
+                        }else{
+                            html_photo_color_option += '<option value="'+value_color.id+'">'+value_color.name+'</option>';
+                        }
+                    });
+                    html_photo_color_option += '</select>';
+
+                    html_photo_input_name = '<input type="text" value="'+value['name']+'" id="photo_name_'+key+'">';
+
+                    html_photo_input_order = '<input type="text" value="'+value['order']+'" id="photo_order_'+key+'">';
+
+                    html = '<tr class="child" id="photo_row_'+key+'"><td><a href="javascript:;" onclick="deletePhoto('+key+');">Xóa</a> <a href="javascript:;" onclick="updatePhoto('+key+');">Sửa</a></td><td><span class="img-wrapper"><img class="imageThumb" src="' + value.origin_url + '" title="' + value.name + '"/></span></td><td>'+html_photo_color_option+'</td><td>'+html_photo_input_name+'</td><td class="c-quantity">'+html_photo_input_order+'</td></tr>';
+                    $(html).appendTo('#i-product-photos tbody');
+                }
+            }
+
+        });
+        // updatePhotosData();
+        $('input[name="photos"]').val(JSON.stringify(photos));
+    }
+
+    function deletePhoto(key){
+        photos[key].delete = true;
+        print_table_photos(photos);
+    }
+
+    function updatePhoto(key){
+        photos[key].color_code = ($('#select_color'+key).val()) ? $('#select_color'+key).val() : photos[key].color_code;
+        photos[key].name = ($('#photo_name_'+key).val()) ? $('#photo_name_'+key).val() : photos[key].name;
+        photos[key].order = ($('#photo_order_'+key).val()) ? $('#photo_order_'+key).val() : photos[key].order;
+        print_table_photos(photos);
     }
 
     $(document).ready(function () {
@@ -84,10 +154,8 @@
         //---> Init summer note
         $('.summernote').summernote();
 
-        //---> build table details
-        
         print_table_details(details);
-        uploadMultipleImages();
+        print_table_photos(photos);
 
     });
 </script>
@@ -105,6 +173,8 @@
             @endif
             <input type="hidden" name="categories" value="@if(isset($categories)){{$categories}}@endif"/>
             <input type="hidden" name="details" value="@if(isset($details)){{$details}}@endif"/>
+            <input type="hidden" name="photos" value="@if(isset($photos)){{$photos}}@endif"/>
+            <input type="hidden" name="colors" value="@if(isset($colors)){{$colors}}@endif"/>
             <div class="ibox-content">
 
                 <div class="row">
@@ -142,20 +212,32 @@
 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-3 control-label">Số lượng</label>
+                                                        <label class="col-md-3 control-label">Barcode</label>
                                                         <div class="col-md-9">
-                                                            <input readonly type="text" name="quantity" placeholder="0" class="form-control m-b c-quatity-input"
-                                                            value="@if(isset($data->quantity)){{$data->quantity}}@else{{old('quantity')}}@endif"/>
+                                                            <input type="text" name="barcode" placeholder="" class="form-control m-b"
+                                                            value="@if(isset($data->barcode)){{$data->barcode}}@else{{old('barcode')}}@endif"/>
                                                         </div>
                                                     </div>
                                                 </div>
 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-3 control-label">Barcode</label>
+                                                        <label class="col-md-3 control-label">Thương hiệu</label>
                                                         <div class="col-md-9">
-                                                            <input type="text" name="barcode" placeholder="" class="form-control m-b"
-                                                            value="@if(isset($data->barcode)){{$data->barcode}}@else{{old('barcode')}}@endif"/>
+                                                            <select name="brand_id" class="form-control m-b">
+                                                                <option value="" selected>-- Chọn thương hiệu --</option>
+                                                                {!! $brand_options !!}
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-3 control-label">Số lượng</label>
+                                                        <div class="col-md-9">
+                                                            <input readonly type="text" name="quantity" placeholder="0" class="form-control m-b c-quatity-input"
+                                                            value="@if(isset($data->quantity)){{$data->quantity}}@else{{old('quantity')}}@endif"/>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -180,21 +262,6 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="row hidden">
-                                                    <div class="form-group">
-                                                        <label class="col-md-3 control-label">Kích thước</label>
-                                                        <div class="col-md-9">
-                                                            <select name="sizes" id="" class="form-control m-b">
-                                                                <option value="">-- Chọn kích thước --</option>
-                                                                <option value="">Size XL</option>
-                                                                <option value="">Size L</option>
-                                                                <option value="">Size M</option>
-                                                                <option value="">Size S</option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
                                                 <div class="row">
                                                     <div class="form-group">
                                                         <label class="col-md-3 control-label">Mô tả (<span class="text-danger">*</span>)</label>
@@ -208,7 +275,7 @@
                                                     <div class="form-group">
                                                         <label class="col-md-3 control-label">Nội dung</label>
                                                         <div class="col-md-9">
-                                                            <div class="summernote form-control m-b">@if(isset($data->content)){{$data->content}}@else{{old('content')}}@endif</div>
+                                                            <textarea name="content" id="" cols="30" rows="10"  class="summernote form-control m-b">@if(isset($data->content)){{$data->content}}@else{{old('content')}}@endif</textarea>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -323,9 +390,31 @@
                                 <div id="tab-4" class="tab-pane">
                                     <div class="panel-body">
                                         <div class="collection-photos">
-                                            <input class="c-mutiple-input" name="product_photos[]" type="file" accept="image/*" multiple value="" />
+                                            <input class="c-mutiple-input" id="product_photos" name="product_photos[]" type="file" accept="image/*" multiple value="" />
                                             <div class="row">
                                                 <div class="col-md-12 c-gallery-preview"></div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-9">
+                                                        <table id="i-product-photos" class="table">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th></th>
+                                                                    <th>Hình</th>
+                                                                    <th>Màu</th>
+                                                                    <th>Tên</th>
+                                                                    <th>Số thứ tự</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+
+
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

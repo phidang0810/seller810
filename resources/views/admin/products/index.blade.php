@@ -249,7 +249,7 @@ $("#dataTables").on("click", '.bt-delete', function(){
         @include('admin._partials._alert')
         <div class="ibox-content">
             <div class="text-right" style="padding: 10px 10px 0px 10px;">
-                <a href="{{route('admin.products.create')}}" class="btn btn-sm btn-primary"><i class="fa fa-plus"></i> Tạo Màu Sắc</a>
+                <a href="{{route('admin.products.create')}}" class="btn btn-sm btn-primary"><i class="fa fa-plus"></i> Tạo Sản Phẩm</a>
             </div>
             <div class="hr-line-dashed"></div>
             <!-- Account list -->

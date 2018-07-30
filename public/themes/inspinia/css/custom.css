@@ -315,3 +315,7 @@ input:checked + .slider:before {
 /*  background: white;
   color: black;*/
 }
+
+#i-product-photos img.imageThumb {
+    width: 100px;
+}

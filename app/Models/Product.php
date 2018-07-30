@@ -6,6 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
+
+    const LARGE_HEIGHT = 300;
+    const LARGE_WIDTH = 400;
+
+    const THUMB_HEIGHT = 50;
+    const THUMB_WIDTH = 80;
+
      /**
      * The attributes that are mass assignable.
      *
@@ -43,5 +50,13 @@ class Product extends Model
     public function details() {
 
         return $this->hasMany('App\Models\ProductDetail');
+    }
+
+    /**
+     * Get the brand that owns the product.
+     */
+    public function brand()
+    {
+        return $this->belongsTo('App\Models\Brand');
     }
 }
