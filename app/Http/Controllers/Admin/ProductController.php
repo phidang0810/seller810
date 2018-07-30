@@ -14,7 +14,7 @@ class ProductController extends AdminController
     {
         parent::__construct($request);
 
-        $this->_pushBreadCrumbs('Admins', route('admin.products.index'));
+        $this->_pushBreadCrumbs('Danh sách sản phẩm', route('admin.products.index'));
     }
 
     /**

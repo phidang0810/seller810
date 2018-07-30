@@ -56,21 +56,18 @@ function make_list_hierarchy($array, $checked = array(), $result = ''){
 	foreach ($array as $key => $value) {
 		if (array_key_exists($key, $checked)) {
 			$result .= '<li class="list-tree-item">
-			<div class="checkbox">
-			<label><input type="checkbox" value="'.$key.'" checked>'.$value['name'].'</label>
-			</div>
-			</li>';
+			
+			<input type="checkbox" value="'.$key.'" checked><label>'.$value['name'].'</label>';
 		}else{
 			$result .= '<li class="list-tree-item">
-			<div class="checkbox">
-			<label><input type="checkbox" value="'.$key.'">'.$value['name'].'</label>
-			</div>
-			</li>';
+	
+			<input type="checkbox" value="'.$key.'"><label>'.$value['name'].'</label>';
 		}
 		
 		if (count($value['children']) > 0) {
 			$result .= make_list_hierarchy($value['children'], $checked);
 		}
+		$result .= '</li>';
 
 		unset($array[$key]);
 	}

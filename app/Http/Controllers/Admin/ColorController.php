@@ -13,7 +13,7 @@ class ColorController extends AdminController
     {
         parent::__construct($request);
 
-        $this->_pushBreadCrumbs('Admins', route('admin.colors.index'));
+        $this->_pushBreadCrumbs('Danh sách màu sắc', route('admin.colors.index'));
     }
 
     /**

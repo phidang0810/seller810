@@ -274,8 +274,8 @@ input:checked + .slider:before {
 }
 
 .list-tree-section {
-    padding: 5px 0px;
-    border: 1px solid #eee;
+  padding: 5px 0px;
+  border: 1px solid #eee;
 }
 
 .c-gallery-preview input[type="file"] {
@@ -313,9 +313,57 @@ input:checked + .slider:before {
 
 .c-gallery-preview .remove:hover {
 /*  background: white;
-  color: black;*/
+color: black;*/
 }
 
 #i-product-photos img.imageThumb {
-    width: 100px;
+  width: 100px;
+}
+
+.list-tree-section input{
+  cursor: pointer;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  outline: 0;
+  background: #FFF;
+  height: 14px;
+  width: 14px;
+  border: 1px solid #999;
+  float: left;
+}
+
+.list-tree-section input:checked {
+  background: #FFF;
+}
+
+.list-tree-section input:hover {
+  filter: brightness(100%);
+}
+
+.list-tree-section input:after {
+  content: '';
+  position: relative;
+  left: 3px;
+  top: 0;
+  width: 6px;
+  height: 10px;
+  border: solid #666666;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+  display: none;
+}
+
+.list-tree-section input:checked:after {
+  display: block;
+}
+
+.list-tree-section input:disabled:after {
+  border-color: #7b7b7b;
+}
+
+.list-tree label{
+  margin-left: 5px;
+  line-height: 16px;
+  padding-top: 2px;
 }

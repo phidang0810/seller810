@@ -14,4 +14,14 @@ class Category extends Model
     protected $fillable = [
         'name', 'parent_id', 'level', 'description', 'active', 'order'
     ];
+
+    /**
+     * A category belong to many products.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function products()
+    {
+        return $this->belongsToMany('App\Models\Product', 'product_category', 'category_id', 'product_id');
+    }
 }

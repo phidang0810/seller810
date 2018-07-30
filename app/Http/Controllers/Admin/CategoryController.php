@@ -13,7 +13,7 @@ class CategoryController extends AdminController
     {
         parent::__construct($request);
 
-        $this->_pushBreadCrumbs('Admins', route('admin.categories.index'));
+        $this->_pushBreadCrumbs('Danh sách danh mục', route('admin.categories.index'));
     }
 
     /**
