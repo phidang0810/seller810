@@ -40,6 +40,8 @@ class CategoryController extends AdminController
             $this->_data['data'] = $category->getCategory($id);
         }
 
+        $this->_data['categoriesTreeList'] = make_list_hierarchy_no_checkbox($category->getCategoriesTree());
+
         $parent_id = ($id) ? $category->getCategory($id)->parent_id : 0;
         $this->_data['categoriesTree'] = option_menu($category->getCategoriesTree(), "", $parent_id);
 
@@ -58,7 +60,6 @@ class CategoryController extends AdminController
 
         $rules = [
             'name' => 'required|string|max:50|unique:categories,name',
-            'description' => 'required',
             'active' => 'required'
         ];
         $message = 'Danh mục sản phẩm đã được tạo.';

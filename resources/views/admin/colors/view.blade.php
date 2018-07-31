@@ -12,7 +12,11 @@
 
         $("#mainForm").validate();
 
-        $("#i-color-code").colorpicker({popover:false});
+        $("#i-color-code").colorpicker({
+            popover:false, 
+            container:$('#colorpicker_container'), 
+            inline:true
+        });
 
         if($(".c-ratio-photo").is(":checked")){
                 $(".c-photo-group").show();
@@ -113,10 +117,11 @@
                             <div class="form-group c-code-group">
                                 <label class="col-md-2 control-label">Mã màu (<span
                                     class="text-danger">*</span>)</label>
-                                    <div class="col-md-5">
+                                    <div class="col-md-3 col-xs-4">
                                         <input id="i-color-code" type="text" name="code" placeholder="" class="form-control required m-b"
                                         value="@if(isset($data->code)){{$data->code}}@else{{old('code')}}@endif"/>
                                     </div>
+                                    <div class="col-md-3 col-xs-4"><div id="colorpicker_container"></div></div>
                                 </div>
                             </div>
 

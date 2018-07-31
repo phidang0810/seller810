@@ -51,9 +51,9 @@ Class ColorRepository
             $html = '<input type="checkbox" '.$disable.' data-name="'.$color->name.'" data-id="'.$color->id.'" name="social' . $color->active . '" class="js-switch" value="' . $color->active . '" ' . $active . ' ./>';
             return $html;
         })
-		->addColumn('code', function ($color) {
-			if (!empty($color->code)) {
-				$html = '<div class="c-code-wrapper"><div class="c-code" style="background-color: '.$color->code.';"></div><span class="c-code-name">'.$color->code.'</span></div>';
+		->addColumn('name', function ($color) {
+			if ($color->code) {
+				$html = '<span class="c-code-name">'.$color->name.' <i class="fa fa-square" aria-hidden="true" style="color: '.$color->code.';"></i></span>';
 			} else {
 				$html = '';
 			}
@@ -67,7 +67,7 @@ Class ColorRepository
                 }
                 return $html;
             })
-		->rawColumns(['photo','code','status', 'action'])
+		->rawColumns(['photo','name','status', 'action'])
 		->toJson();
 
 		return $dataTable;
@@ -90,6 +90,7 @@ Class ColorRepository
 		$model->name = $data['name'];
 		$model->active = $data['active'];
 		$model->order = $data['order'];
+		$model->code = $data['code'];
 		if(isset($data['photo'])) {
 
             if ($model->photo) {

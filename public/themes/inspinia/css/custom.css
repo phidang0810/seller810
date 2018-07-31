@@ -265,7 +265,9 @@ input:checked + .slider:before {
 }
 
 .list-tree-item{
-
+  font-size: 13px;
+  padding-top: 5px;
+  line-height: 20px;
 }
 
 .list-tree-item .checkbox{
@@ -331,6 +333,7 @@ color: black;*/
   width: 14px;
   border: 1px solid #999;
   float: left;
+  margin-right: 7px;
 }
 
 .list-tree-section input:checked {

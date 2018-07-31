@@ -43,7 +43,7 @@ function option_menu($array, $text = "", $select = 0, $result = ''){
 		}
 		
 		if (count($value['children']) > 0) {
-			$result .= option_menu($value['children'], $text."|_", $select);
+			$result .= option_menu($value['children'], $text."___", $select);
 		}
 
 		unset($array[$key]);
@@ -57,15 +57,31 @@ function make_list_hierarchy($array, $checked = array(), $result = ''){
 		if (array_key_exists($key, $checked)) {
 			$result .= '<li class="list-tree-item">
 			
-			<input type="checkbox" value="'.$key.'" checked><label>'.$value['name'].'</label>';
+			<input type="checkbox" value="'.$key.'" checked>'.$value['name'];
 		}else{
 			$result .= '<li class="list-tree-item">
 	
-			<input type="checkbox" value="'.$key.'"><label>'.$value['name'].'</label>';
+			<input type="checkbox" value="'.$key.'">'.$value['name'];
 		}
 		
 		if (count($value['children']) > 0) {
 			$result .= make_list_hierarchy($value['children'], $checked);
+		}
+		$result .= '</li>';
+
+		unset($array[$key]);
+	}
+	$result .= '</ul>';
+	return $result;
+}
+
+function make_list_hierarchy_no_checkbox($array){
+	$result = '<ul class="list-tree">';
+	foreach ($array as $key => $value) {
+		$result .= '<li class="list-tree-item"><label>'.$value['name'].'</label>';
+		
+		if (count($value['children']) > 0) {
+			$result .= make_list_hierarchy_no_checkbox($value['children']);
 		}
 		$result .= '</li>';
 

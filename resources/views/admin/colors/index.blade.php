@@ -101,7 +101,6 @@
             columns: [
             {data: 'id'},
             {data: 'photo'},
-            {data: 'code'},
             {data: 'name'},
             {data: 'created_at'},
             {data: 'status'},
@@ -109,8 +108,8 @@
             ],
             "aoColumnDefs": [
                     // Column index begins at 0
-                    { "sClass": "text-center", "aTargets": [ 5 ] },
-                    { "sClass": "text-right", "aTargets": [ 6 ] }
+                    { "sClass": "text-center", "aTargets": [ 4 ] },
+                    { "sClass": "text-right", "aTargets": [ 5 ] }
                     ],
                     "language": {
                         "decimal": "",
@@ -254,7 +253,6 @@ $("#dataTables").on("click", '.bt-delete', function(){
                     <tr>
                         <th>ID</th>
                         <th>Hình ảnh</th>
-                        <th>Mã màu</th>
                         <th>Tên</th>
                         <th>Ngày Tạo</th>
                         <th>Trạng Thái</th>

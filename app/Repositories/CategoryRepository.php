@@ -30,12 +30,13 @@ Class CategoryRepository
                 $query->where(function ($sub) use ($request) {
                     $sub->where('categories.name', 'like', '%' . $request->get('keyword') . '%');
                 });
-
             }
         }, true)
         ->addColumn('numbers', function ($category) {
+            $categories = Category::withCount('products')->get();
+            $cat = Category::where('id', $category->id)->withCount('products')->first();
             $html = '';
-            $html .= '<a href="javascript:;">10</a>';
+            $html .= '<a href="' . route('admin.products.index', ['id' => $category->id]) . '">'.$cat->products_count.'</a>';
             return $html;
         })
         ->addColumn('action', function ($category) {
@@ -147,6 +148,13 @@ Class CategoryRepository
                 CategoryRepository::resetHierarchy($child->id, $child->parent_id);
             }
         }
+    }
+
+    public function getCategoryOptions($select = 0){
+        $categories = Category::select(['categories.id', 'categories.name'])->get();
+        $result = make_option($categories, $select);
+
+        return $result;
     }
 
 }

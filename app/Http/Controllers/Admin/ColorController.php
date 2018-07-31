@@ -52,7 +52,6 @@ class ColorController extends AdminController
     {
         $input = $this->_request->all();
         $id = $input['id'] ?? null;
-        // dd($input['photo']);
 
         $rules = [
             'name' => 'required|string|max:50|unique:colors,name',
@@ -66,7 +65,9 @@ class ColorController extends AdminController
             $message = 'Màu sắc sản phẩm đã được cập nhật.';
         }
 
-        $validator = Validator::make($input, $rules);
+        $validator = Validator::make($input, $rules, [
+            'name.unique' => 'Tên màu '.$input['name'].' đã được sử dụng!'
+        ]);
         if ($validator->fails()) {
             
             return redirect()->back()

@@ -30,6 +30,11 @@ Class ProductRepository
 
 		$dataTable = DataTables::eloquent($products)
 		->filter(function ($query) use ($request) {
+			if (trim($request->get('category')) !== "") {
+				$query->join('product_category', 'products.id', '=', 'product_category.product_id')
+				->where('product_category.category_id', $request->get('category'));
+			}
+			
 			if (trim($request->get('status')) !== "") {
 				$query->where('products.active', $request->get('status'));
 			}
@@ -67,9 +72,17 @@ Class ProductRepository
 		})
 		->addColumn('category', function ($product) {
 			$category = $this->lowestLevelCategory($product->id);
-			return $category->name;
+			return ($category) ? $category->name : "";
 		})
-		->rawColumns(['category', 'photo', 'status', 'action'])
+		->addColumn('name', function($product){
+			$html = '';
+			$html .= '<p>'.$product->name.'</p>';
+			if ($product->sizes) {
+				$html .= '<p>'.$product->sizes.'</p>';
+			}
+			return $html;
+		})
+		->rawColumns(['category', 'photo', 'status', 'action', 'name'])
 		->toJson();
 
 		return $dataTable;
@@ -98,8 +111,8 @@ Class ProductRepository
 		$model->content = $data['content'];
 		$model->code = $data['code'];
 		$model->barcode = $data['barcode'];
-		$model->price = $data['price'];
-		$model->sell_price = $data['sell_price'];
+		$model->price = preg_replace('/[^0-9]/', '', $data['price']);
+		$model->sell_price = preg_replace('/[^0-9]/', '', $data['sell_price']);
 		if(isset($data['photo'])) {
 
 			if ($model->photo) {
@@ -107,6 +120,13 @@ Class ProductRepository
 			}
 			$upload = new Photo($data['photo']);
 			$model->photo = $upload->uploadTo('products');
+		}
+
+		if(isset($data['delete_photo']) && $data['delete_photo'] == true) {
+			if ($model->photo) {
+				Storage::delete($model->photo);
+				$model->photo = null;
+			}
 		}
 
 		$model->save();
@@ -199,24 +219,28 @@ Class ProductRepository
 						$modelDetail->delete();
 					}else{
 						$modelDetail->quantity = $detail->quantity;
+						$modelDetail->color_id = $detail->color_code->id;
+						$modelDetail->size_id = $detail->size->id;
 						$modelDetail->save();
 					}
 				}
 			}else{
-				$modelDetail = new ProductDetail([
-					'color_id' => $detail->color->id,
-					'size_id' => $detail->size->id,
-					'quantity' => $detail->quantity
-				]);
-				$model->details()->save($modelDetail);
+				if (!isset($detail->delete) || $detail->delete != true) {
+					$modelDetail = new ProductDetail([
+						'color_id' => $detail->color_code->id,
+						'size_id' => $detail->size->id,
+						'quantity' => $detail->quantity
+					]);
+					$model->details()->save($modelDetail);
+				}
 			}
 
 			if (!in_array($detail->size->name, $sizes)) {
 				$sizes[] = $detail->size->name;
 			}
 
-			if (!in_array($detail->color->name, $colors)) {
-				$colors[] = $detail->color->name;
+			if (!in_array($detail->color_code->name, $colors)) {
+				$colors[] = $detail->color_code->name;
 			}
 		}
 		$data = [
@@ -242,7 +266,7 @@ Class ProductRepository
 						$modelPhoto->delete();
 					}else{
 						$modelPhoto->name = $photo->name;
-						$modelPhoto->color_code = $photo->color_code;
+						$modelPhoto->color_code = ($photo->color_code->id != 0 ) ? $photo->color_code->id : null;
 						$modelPhoto->order = $photo->order;
 						$modelPhoto->save();
 					}
@@ -255,7 +279,7 @@ Class ProductRepository
 								$upload = new Photo($file);
 								$modelPhoto = new ProductPhoto([
 									'name' => $photo->name,
-									'color_code' => $photo->color_code,
+									'color_code' => ($photo->color_code->id != 0 ) ? $photo->color_code->id : null,
 									'order' => $photo->order,
 									'origin' => $upload->uploadTo('product_photos'),
 									// 'large' => $upload->resizeTo('product_photos', Product::LARGE_WIDTH, Product::LARGE_HEIGHT),
@@ -274,10 +298,14 @@ Class ProductRepository
 		$model = Product::find($id);
 		$return = [];
 		foreach ($model->photos as $key => $value) {
+			$value->color;
 			$return[] = [
 				'id' => $value->id,
 				'name'	=>	$value->name,
-				'color_code' => $value->color_code,
+				'color_code' => [
+					'id'	=>	$value->color->id,
+					'name'	=>	$value->color->name
+				],
 				'origin' => $value->origin,
 				'origin_url' => asset('storage/' . $value->origin),
 				'order' => $value->order
@@ -296,7 +324,7 @@ Class ProductRepository
 		foreach ($model->details as $key => $value) {
 			$return[] = [
 				'id' => $value->id,
-				'color' => [
+				'color_code' => [
 					'id' => (isset($value->color)) ? $value->color->id : "",
 					'name'	=>	(isset($value->color)) ? $value->color->name : ""
 				],
@@ -314,6 +342,12 @@ Class ProductRepository
 		$colors = Color::select(['colors.id', 'colors.name'])->get();
 
 		return $colors;
+	}
+
+	public function getSizes(){
+		$sizes = Size::select(['sizes.id', 'sizes.name'])->get();
+
+		return $sizes;
 	}
 
 	public function getSizeOptions($id){
