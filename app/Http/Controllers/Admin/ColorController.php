@@ -33,6 +33,10 @@ class ColorController extends AdminController
 
     public function view(ColorRepository $color)
     {
+        if ($this->_request->ajax()){
+            return $color->validateAjax($this->_request);
+        }
+        
         $id = $this->_request->get('id');
         $this->_data['title'] = 'Tạo mới Màu sắc sản phẩm';
         if ($id) {

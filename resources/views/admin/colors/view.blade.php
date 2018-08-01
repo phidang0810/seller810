@@ -5,6 +5,37 @@
 @section('js')
 <!-- Page-Level Scripts -->
 <script>
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+    
+    $('.validate-ajax').change(function(){
+        var value = $(this).val();
+        var name = $(this).attr('name');
+        $.ajax({
+            url: "{{route('admin.colors.view')}}",
+            data:{
+                value:value,
+                name:name
+            },
+            dataType:'json'
+
+        }).done(function(data) {
+            if (data == false) {
+                swal({
+                    title: "Cảnh Báo!",
+                    text: "Tên/mã này đã tồn tại, xin hãy chọn tên/mã khác",
+                    html:true,
+                    type: "warning",
+                    confirmButtonText: "Đã biết",
+                    closeOnConfirm: false
+                });
+            }
+        })
+    });
+
     $(document).ready(function () {
         $("#bt-reset").click(function () {
             $("#mainForm")[0].reset();
@@ -130,7 +161,7 @@
                                     <label class="col-md-2 control-label">Tên màu sắc (<span
                                         class="text-danger">*</span>)</label>
                                         <div class="col-md-5">
-                                            <input type="text" name="name" placeholder="" class="form-control required m-b"
+                                            <input type="text" name="name" placeholder="" class="form-control required m-b validate-ajax"
                                             value="@if(isset($data->name)){{$data->name}}@else{{old('name')}}@endif"/>
                                         </div>
                                     </div>

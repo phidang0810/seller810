@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Cache;
 use Yajra\DataTables\Facades\DataTables;
 use App\Libraries\Photo;
 use Illuminate\Support\Facades\Storage;
+use Response;
 
 Class ProductRepository
 {
@@ -374,5 +375,19 @@ Class ProductRepository
 		}
 		
 		return $result;
+	}
+
+	public function validateAjax($request){
+		$name = $request->get('name');
+		$value = $request->get('value');
+		$return;
+
+		$model = Product::where($name,$value)->first();
+		if ($model) {
+			$return = false;
+		}else{
+			$return = true;
+		}
+		return Response::json($return);
 	}
 }

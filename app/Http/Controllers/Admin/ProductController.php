@@ -36,6 +36,9 @@ class ProductController extends AdminController
 
     public function view(ProductRepository $product, CategoryRepository $category)
     {
+        if ($this->_request->ajax()){
+            return $product->validateAjax($this->_request);
+        }
         $id = $this->_request->get('id');
         $this->_data['title'] = 'Tạo mới Sản phẩm';
         $categories = array();

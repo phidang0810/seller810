@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Cache;
 use Yajra\DataTables\Facades\DataTables;
 use App\Libraries\Photo;
 use Illuminate\Support\Facades\Storage;
+use Response;
 
 Class ColorRepository
 {
@@ -133,4 +134,18 @@ Class ColorRepository
         $model->active = $status;
         return $model->save();
     }
+
+	public function validateAjax($request){
+		$name = $request->get('name');
+		$value = $request->get('value');
+		$return;
+
+		$model = Color::where($name,$value)->first();
+		if ($model) {
+			$return = false;
+		}else{
+			$return = true;
+		}
+		return Response::json($return);
+	}
 }

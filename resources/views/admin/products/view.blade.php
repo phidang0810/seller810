@@ -6,6 +6,12 @@
 <!-- Page-Level Scripts -->
 <script>
 
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
     var details = ($('input[name="details"]').val()) ? jQuery.parseJSON($('input[name="details"]').val()) : [];
     var colors = ($('input[name="colors"]').val()) ? jQuery.parseJSON($('input[name="colors"]').val()) : [];
     var sizes = ($('input[name="sizes"]').val()) ? jQuery.parseJSON($('input[name="sizes"]').val()) : [];
@@ -215,6 +221,31 @@
 
     }
 
+    $('.validate-ajax').change(function(){
+        var value = $(this).val();
+        var name = $(this).attr('name');
+        $.ajax({
+            url: "{{route('admin.products.view')}}",
+            data:{
+                value:value,
+                name:name
+            },
+            dataType:'json'
+
+        }).done(function(data) {
+            if (data == false) {
+                swal({
+                    title: "Cảnh Báo!",
+                    text: "Tên/mã này đã tồn tại, xin hãy chọn tên/mã khác",
+                    html:true,
+                    type: "warning",
+                    confirmButtonText: "Đã biết",
+                    closeOnConfirm: false
+                });
+            }
+        })
+    });
+
     $(document).ready(function ($) {
         $( "#mainForm" ).submit(function( event ) {
             var searchIDs = $("#mainForm .list-tree-section input:checkbox:checked").map(function(){
@@ -309,7 +340,7 @@
                                                     <div class="form-group">
                                                         <label class="col-md-3 control-label">Tên sản phẩm (<span class="text-danger">*</span>)</label>
                                                         <div class="col-md-9">
-                                                            <input type="text" name="name" placeholder="" class="form-control required m-b"
+                                                            <input type="text" name="name" placeholder="" class="form-control required m-b validate-ajax"
                                                             value="@if(isset($data->name)){{$data->name}}@else{{old('name')}}@endif"/>
                                                         </div>
                                                     </div>
@@ -319,7 +350,7 @@
                                                     <div class="form-group">
                                                         <label class="col-md-3 control-label">Mã sản phẩm</label>
                                                         <div class="col-md-3">
-                                                            <input type="text" name="code" placeholder="" class="form-control m-b"
+                                                            <input type="text" name="code" placeholder="" class="form-control m-b validate-ajax"
                                                             value="@if(isset($data->code)){{$data->code}}@else{{old('code')}}@endif"/>
                                                         </div>
                                                         <label class="col-md-2 control-label">Số lượng</label>
@@ -334,7 +365,7 @@
                                                     <div class="form-group">
                                                         <label class="col-md-3 control-label">Barcode</label>
                                                         <div class="col-md-4">
-                                                            <input type="text" name="barcode" placeholder="" class="form-control m-b"
+                                                            <input type="text" name="barcode" placeholder="" class="form-control m-b validate-ajax"
                                                             value="@if(isset($data->barcode)){{$data->barcode}}@else{{old('barcode')}}@endif"/>
                                                         </div>
                                                     </div>
