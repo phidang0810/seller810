@@ -91,10 +91,10 @@ class ProductController extends AdminController
             ->withInput();
         }
 
-        $product->createOrUpdate($input, $id);
+        $data = $product->createOrUpdate($input, $id);
 
         if($input['action'] === 'save') {
-            return redirect()->route('admin.products.view', ['id' => $id])->withSuccess($message);
+            return redirect()->route('admin.products.view', ['id' => $data->id])->withSuccess($message);
         }
 
         return redirect()->route('admin.products.index')->withSuccess($message);
