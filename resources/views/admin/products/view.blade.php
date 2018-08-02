@@ -16,101 +16,153 @@
     var colors = ($('input[name="colors"]').val()) ? jQuery.parseJSON($('input[name="colors"]').val()) : [];
     var sizes = ($('input[name="sizes"]').val()) ? jQuery.parseJSON($('input[name="sizes"]').val()) : [];
     var photos = ($('input[name="photos"]').val()) ? jQuery.parseJSON($('input[name="photos"]').val()) : [];
+    var files = [];
 
-    function print_table_details(arr_details){
+    // When detail quantity, color, size change will count total again
+    $(document.body).delegate('.detail_quantity', 'change', function() {
+        printDetailTotalQuantities();
+    });
+    $(document.body).delegate('.select_detail_size', 'change', function() {
+        updateDetailsData();
+    });
+    $(document.body).delegate('.select_detail_color', 'change', function() {
+        updateDetailsData();
+    });
+
+    // When photo color, name, order change will update photos data
+    $(document.body).delegate('.select_photo_color', 'change', function() {
+        updatePhotosData();
+    });
+    $(document.body).delegate('.input_photo_name', 'change', function() {
+        updatePhotosData();
+    });
+    $(document.body).delegate('.input_photo_order', 'change', function() {
+        updatePhotosData();
+    });
+
+    // Function print total quantities to tfoot
+    function printDetailTotalQuantities(){
         var sum = 0;
-        var html = '';
-        $.each(arr_details, function(key, value){
-            if (value.delete != true) {
-                if (value.edit && value.edit == true) {
-                    html_detail_color_option = '<select id="select_detail_color_'+key+'">';
-                    html_detail_color_option += '<option value="0">Chọn màu</option>';
-                    $.each(colors, function(key_color, value_color){
-                        if (value_color.id == value.color_code.id) {
-                            html_detail_color_option += '<option value="'+value_color.id+'" selected>'+value_color.name+'</option>';
-                        }else{
-                            html_detail_color_option += '<option value="'+value_color.id+'">'+value_color.name+'</option>';
-                        }
-                    });
-                    html_detail_color_option += '</select>';
-
-                    html_detail_size_option = '<select id="select_detail_size_'+key+'">';
-                    html_detail_size_option += '<option value="0">Chọn size</option>';
-                    $.each(sizes, function(key_size, value_size){
-                        if (value_size.id == value.size.id) {
-                            html_detail_size_option += '<option value="'+value_size.id+'" selected>'+value_size.name+'</option>';
-                        }else{
-                            html_detail_size_option += '<option value="'+value_size.id+'">'+value_size.name+'</option>';
-                        }
-                    });
-                    html_detail_size_option += '</select>';
-
-                    html_detail_input_quantity = '<input type="text" value="'+value['quantity']+'" id="detail_quantity_'+key+'">';
-
-                    html += '<tr class="child" data-index="'+key+'"><td><a href="javascript:;" onclick="deleteProductInfoItem('+key+');">Delete</a> <a href="javascript:;" onclick="editProductInfoItem('+key+');">Lưu</a></td><td>'+html_detail_color_option+'</td><td>'+html_detail_size_option+'</td><td class="c-quantity">'+html_detail_input_quantity+'</td></tr>';
-                }else{
-                    html += '<tr class="child" data-index="'+key+'"><td><a href="javascript:;" onclick="deleteProductInfoItem('+key+');">Delete</a> <a href="javascript:;" onclick="getEditProductInfoItem('+key+');">Sửa</a></td><td>'+value.color_code.name+'</td><td>'+value.size.name+'</td><td class="c-quantity">'+value['quantity']+'</td></tr>';
-                }
-                sum += parseInt(value['quantity']);
-            }
+        $.each(details, function(key, value){
+            sum += ($('#detail_quantity_'+key).val()) ? parseInt($('#detail_quantity_'+key).val()) : 0;
         });
-        html += '<tr><td></td><td></td><td></td><td>Tổng số lượng: <span class="c-total-quantities">'+sum+'</span></td></tr>';
-        $('#i-product-info tbody').html(html);
 
-        $('input[name="details"]').val(JSON.stringify(details));
+        var html = '<tr id="product_details_quantity"><td></td><td></td><td></td><td>Tổng số lượng: <span class="c-total-quantities">'+sum+'</span></td></tr>';
+        $('#i-product-info tfoot').html(html);
         $('input[name="quantity"]').val(sum);
-
     }
 
-    function deleteProductInfoItem(key) {
-        details[key].delete = true;
-        // details.splice( $.inArray(key, details), 1 );
-        print_table_details(details);
-    }
-
-    function getEditProductInfoItem(key){
-        details[key].edit = true;
-        print_table_details(details);
-    }
-
-    function editProductInfoItem(key){
-        var existed = false;
-        $.each(details, function(key_detail, value_detail){
-            if (key_detail != key) {
-                if (value_detail.color_code.id == $('#select_detail_color_'+key).val() && value_detail.size.id == $('#select_detail_size_'+key).val()) {
-                    alert('Đã có sản phẩm trùng màu và kích thước này, xin hãy chọn lại');
-                    existed = true;
-                }
-            }
+    // First time show details to table
+    function printTableDetails(){
+        var html = '';
+        $.each(details, function(key, value){
+            html += '<tr class="child" id="product_detail_'+key+'">'+htmlEditCreateRowDetail(details[key], key)+'</tr>';
         });
-        if (existed == false) {
-            details[key].edit = false;
-            details[key].color_code = {id:$('#select_detail_color_'+key).val(), name:$('#select_detail_color_'+key+' option[value="'+$('#select_detail_color_'+key).val()+'"]').text()};
-            details[key].size = {id:$('#select_detail_size_'+key).val(), name:$('#select_detail_size_'+key+' option[value="'+$('#select_detail_size_'+key).val()+'"]').text()};
-            details[key].quantity = parseInt($('#detail_quantity_'+key).val());
-        }
-        print_table_details(details);
+        $('#i-product-info tbody').html(html);
+        printDetailTotalQuantities();
     }
 
-    // When button add details is clicked
+    // When "Thêm" button is clicked -> Add new item to array details, append new row to table
     $('#add_details').click(function(){
         details.push({
             'color_code':{'id':0, 'name':''},
             'size':{'id':0, 'name':''},
-            'quantity':0,
-            'edit':true
+            'quantity':0
         });
 
-        print_table_details(details);
+        var key = details.length-1;
+        var html = htmlEditCreateRowDetail(details[key], key);
+
+        $('#i-product-info tbody').append('<tr class="child" id="product_detail_'+key+'">'+html+'</tr>');
+        printDetailTotalQuantities();
     });
 
+    // When "Xóa" on row is clicked -> Remove current row, add delete:true to item on array details
+    function deleteProductInfoItem(key) {
+        details[key].delete = true;
+        $('#product_detail_'+key).remove();
+        printDetailTotalQuantities();
+    }
 
-    var files = [];
+    // When "Lưu", "Lưu và thoát" on form are clicked -> Update data for array photos
+    // When "Lưu", "Lưu và thoát" on form are clicked -> Update data for array details
+    $( "#mainForm" ).submit(function( event ) {
+        updatePhotosData();
+        var boolValidateDetails = updateDetailsData();
+        if (boolValidateDetails == false) {
+            event.preventDefault();
+        }
+    });
 
-    $('.c-mutiple-input').on('change', preparePhotosTable);
+    // Function update details data
+    function updateDetailsData(){
+        var result = true;
+        $('#mainForm button[type="submit"]').removeAttr("disabled");
+        $.each(details, function(key, value){
+            $('#product_detail_'+key).removeClass('error');
+            var existed = false;
+            $.each(details, function(key_detail, value_detail){
+                if ($('product_detail_'+key)) {
+                    if (key_detail != key) {
+                        if ($('#select_detail_color_'+key_detail).val() == $('#select_detail_color_'+key).val() && $('#select_detail_size_'+key_detail).val() == $('#select_detail_size_'+key).val()) {
+                            $('#product_detail_'+key).addClass('error');
+                            $('#mainForm button[type="submit"]').prop('disabled', true);
+                            existed = true;
+                            result = false;
+                        }
+                    }
+                }
+            });
+            if (existed == false) {
+                details[key].color_code = {id:$('#select_detail_color_'+key).val(), name:$('#select_detail_color_'+key+' option[value="'+$('#select_detail_color_'+key).val()+'"]').text()};
+                details[key].size = {id:$('#select_detail_size_'+key).val(), name:$('#select_detail_size_'+key+' option[value="'+$('#select_detail_size_'+key).val()+'"]').text()};
+                details[key].quantity = parseInt($('#detail_quantity_'+key).val());
+            }
+        });
+        $('input[name="details"]').val(JSON.stringify(details));
+        return result;
+    }
 
-    function preparePhotosTable(event)
-    {
+    // Function to add row with form edit/create to table details
+    function htmlEditCreateRowDetail(data, key){
+        var html_detail_color_option = '<select id="select_detail_color_'+key+'" class="select_detail_color">';
+        html_detail_color_option += '<option value="0">Chọn màu</option>';
+        $.each(colors, function(key_color, value_color){
+            if (value_color.id == data.color_code.id) {
+                html_detail_color_option += '<option value="'+value_color.id+'" selected>'+value_color.name+'</option>';
+            }else{
+                html_detail_color_option += '<option value="'+value_color.id+'">'+value_color.name+'</option>';
+            }
+        });
+        html_detail_color_option += '</select>';
+
+        var html_detail_size_option = '<select id="select_detail_size_'+key+'" class="select_detail_size">';
+        html_detail_size_option += '<option value="0">Chọn size</option>';
+        $.each(sizes, function(key_size, value_size){
+            if (value_size.id == data.size.id) {
+                html_detail_size_option += '<option value="'+value_size.id+'" selected>'+value_size.name+'</option>';
+            }else{
+                html_detail_size_option += '<option value="'+value_size.id+'">'+value_size.name+'</option>';
+            }
+        });
+        html_detail_size_option += '</select>';
+
+        var html_detail_input_quantity = '<input type="number" value="'+data['quantity']+'" id="detail_quantity_'+key+'" class="detail_quantity" >';
+
+        var html = '<td>'+html_detail_color_option+'</td><td>'+html_detail_size_option+'</td><td class="c-quantity">'+html_detail_input_quantity+'</td><td><a href="javascript:;" onclick="deleteProductInfoItem('+key+');">Xóa</a></td>';
+        return html;
+    }
+
+    // First time show photos to table
+    function printTablePhotos(){
+        $.each(photos, function(key, value){
+            htmlEditCreateRowPhoto(photos[key], key);
+        });
+    }
+    // When add new photo -> Add new item to array photos, append new row to table
+    $('.c-mutiple-input').on('change', addNewProductPhoto);
+
+    function addNewProductPhoto(event){
         tmp_files = event.target.files;
         $.each(tmp_files, function(key, value){
             photos.push({
@@ -120,128 +172,99 @@
                 'name':value.name,
                 'order':'0',
                 'delete':false,
-                'edit':true
             });
             files.push(value);
+
+            key = photos.length-1;
+            htmlEditCreateRowPhoto(photos[key], key);
         });
-        print_table_photos(photos);
     }
 
-    // function updatePhotosData(){
-    //     $.each(photos, function(key, value){
-    //         photos[key].color_code = ($('#select_color'+key).val() != 0) ? $('#select_color'+key).val() : photos[key].color_code;
-    //         photos[key].name = ($('#photo_name_'+key).val()) ? $('#photo_name_'+key).val() : photos[key].name;
-    //         photos[key].order = ($('#photo_order_'+key).val()) ? $('#photo_order_'+key).val() : photos[key].order;
-    //     });
-    // }
+    // When "Xóa" on row is clicked -> Remove current row, add delete:true to item on array photos
+    function deleteProductPhotoItem(key) {
+        photos[key].delete = true;
+        $('#product_photo_row_'+key).remove();
+    }
 
-    function print_table_photos(arr_photos){
-        var html = '';
-        $('#i-product-photos tbody').html(html);
-        $.each(arr_photos, function(key, value){
-
-            if (value.delete != true) {
-                if (value.file) {
-                    var fileReader = new FileReader();
-                    fileReader.onload = (function(e) {
-                        if (value.edit && value.edit == true) {
-                            html_photo_color_option = '<select id="select_color'+key+'">';
-                            html_photo_color_option += '<option value="0">Chọn màu</option>';
-                            $.each(colors, function(key_color, value_color){
-                                if (value_color.id == value.color_code.id) {
-                                    html_photo_color_option += '<option value="'+value_color.id+'" selected>'+value_color.name+'</option>';
-                                }else{
-                                    html_photo_color_option += '<option value="'+value_color.id+'">'+value_color.name+'</option>';
-                                }
-                            });
-                            html_photo_color_option += '</select>';
-
-                            html_photo_input_name = '<input type="text" value="'+value['name']+'" id="photo_name_'+key+'">';
-
-                            html_photo_input_order = '<input type="text" value="'+value['order']+'" id="photo_order_'+key+'">';
-
-                            html = '<tr class="child" id="photo_row_'+key+'"><td><a href="javascript:;" onclick="deletePhoto('+key+');">Xóa</a> <a href="javascript:;" onclick="updatePhoto('+key+');">Lưu</a></td><td><span class="img-wrapper"><img class="imageThumb" src="' + e.target.result + '" title="' + value.name + '"/></span></td><td>'+html_photo_color_option+'</td><td>'+html_photo_input_name+'</td><td class="c-quantity">'+html_photo_input_order+'</td></tr>';
-                        }else{
-                            html = '<tr class="child" id="photo_row_'+key+'"><td><a href="javascript:;" onclick="deletePhoto('+key+');">Xóa</a> <a href="javascript:;" onclick="getUpdatePhoto('+key+');">Sửa</a></td><td><span class="img-wrapper"><img class="imageThumb" src="' + e.target.result + '" title="' + value.name + '"/></span></td><td>'+value.color_code.name+'</td><td>'+value.name+'</td><td class="c-quantity">'+value.order+'</td></tr>';
-                        }
-
-                        $(html).appendTo('#i-product-photos tbody');
-                    });
-                    fileReader.readAsDataURL(value.file);
-                }else{
-                    if (value.edit && value.edit == true) {
-                        html_photo_color_option = '<select id="select_color'+key+'">';
-                        html_photo_color_option += '<option value="0">Chọn màu</option>';
-                        $.each(colors, function(key_color, value_color){
-                            if (value_color.id == value.color_code.id) {
-                                html_photo_color_option += '<option value="'+value_color.id+'" selected>'+value_color.name+'</option>';
-                            }else{
-                                html_photo_color_option += '<option value="'+value_color.id+'">'+value_color.name+'</option>';
-                            }
-                        });
-                        html_photo_color_option += '</select>';
-
-                        html_photo_input_name = '<input type="text" value="'+value['name']+'" id="photo_name_'+key+'">';
-
-                        html_photo_input_order = '<input type="text" value="'+value['order']+'" id="photo_order_'+key+'">';
-
-                        html = '<tr class="child" id="photo_row_'+key+'"><td><a href="javascript:;" onclick="deletePhoto('+key+');">Xóa</a> <a href="javascript:;" onclick="updatePhoto('+key+');">Lưu</a></td><td><span class="img-wrapper"><img class="imageThumb" src="' + value.origin_url + '" title="' + value.name + '"/></span></td><td>'+html_photo_color_option+'</td><td>'+html_photo_input_name+'</td><td class="c-quantity">'+html_photo_input_order+'</td></tr>';
-                    }else{
-                        html = '<tr class="child" id="photo_row_'+key+'"><td><a href="javascript:;" onclick="deletePhoto('+key+');">Xóa</a> <a href="javascript:;" onclick="getUpdatePhoto('+key+');">Sửa</a></td><td><span class="img-wrapper"><img class="imageThumb" src="' + value.origin_url + '" title="' + value.name + '"/></span></td><td>'+value.color_code.name+'</td><td>'+value.name+'</td><td class="c-quantity">'+value.order+'</td></tr>';
-                    }
-                    
-                    $(html).appendTo('#i-product-photos tbody');
-                }
-            }
-
+    // Function update photos data
+    function updatePhotosData(){
+        $.each(photos, function(key, value){
+            photos[key].color_code = {id:$('#select_color'+key).val(), name:$('#select_color'+key+' option[value="'+$('#select_color'+key).val()+'"]').text()};
+            photos[key].name = ($('#photo_name_'+key).val()) ? $('#photo_name_'+key).val() : photos[key].name;
+            photos[key].order = ($('#photo_order_'+key).val()) ? $('#photo_order_'+key).val() : photos[key].order;
         });
-        // updatePhotosData();
         $('input[name="photos"]').val(JSON.stringify(photos));
     }
 
-    function deletePhoto(key){
-        photos[key].delete = true;
-        print_table_photos(photos);
-    }
+    // Function to add row with form edit/create to table photos
+    function htmlEditCreateRowPhoto(data, key){
+        if (data.file) {
+            var fileReader = new FileReader();
+            fileReader.onload = (function(e) {
+                html_photo_color_option = '<select id="select_color'+key+'" class="select_photo_color">';
+                html_photo_color_option += '<option value="0">Chọn màu</option>';
+                $.each(colors, function(key_color, value_color){
+                    html_photo_color_option += '<option value="'+value_color.id+'">'+value_color.name+'</option>';
+                });
+                html_photo_color_option += '</select>';
 
-    function getUpdatePhoto(key){
-        photos[key].edit = true;
-        print_table_photos(photos);
-    }
+                html_photo_input_name = '<input type="text" value="'+data['name']+'" id="photo_name_'+key+'" class="input_photo_name">';
 
-    function updatePhoto(key){
-        photos[key].color_code = {id:$('#select_color'+key).val(), name:$('#select_color'+key+' option[value="'+$('#select_color'+key).val()+'"]').text()};
-        photos[key].name = ($('#photo_name_'+key).val()) ? $('#photo_name_'+key).val() : photos[key].name;
-        photos[key].order = ($('#photo_order_'+key).val()) ? $('#photo_order_'+key).val() : photos[key].order;
-        photos[key].edit = false;
-        print_table_photos(photos);
+                html_photo_input_order = '<input type="text" value="'+data['order']+'" id="photo_order_'+key+'" class="input_photo_order">';
+
+                html = '<tr class="child" id="product_photo_row_'+key+'"><td><span class="img-wrapper"><img class="imageThumb" src="' + e.target.result + '" title="' + data.name + '"/></span></td><td>'+html_photo_color_option+'</td><td>'+html_photo_input_name+'</td><td class="c-quantity">'+html_photo_input_order+'</td><td><a href="javascript:;" onclick="deleteProductPhotoItem('+key+');">Xóa</a></td></tr>';
+                
+
+                $(html).appendTo('#i-product-photos tbody');
+            });
+            fileReader.readAsDataURL(data.file);
+        }else{
+            html_photo_color_option = '<select id="select_color'+key+'" class="select_photo_color">';
+            html_photo_color_option += '<option value="0">Chọn màu</option>';
+            $.each(colors, function(key_color, value_color){
+                if (value_color.id == data.color_code.id) {
+                    html_photo_color_option += '<option value="'+value_color.id+'" selected>'+value_color.name+'</option>';
+                }else{
+                    html_photo_color_option += '<option value="'+value_color.id+'">'+value_color.name+'</option>';
+                }
+            });
+            html_photo_color_option += '</select>';
+
+            html_photo_input_name = '<input type="text" value="'+data['name']+'" id="photo_name_'+key+'" class="input_photo_name">';
+
+            html_photo_input_order = '<input type="text" value="'+data['order']+'" id="photo_order_'+key+'" class="input_photo_order">';
+
+            html = '<tr class="child" id="product_photo_row_'+key+'"><td><span class="img-wrapper"><img class="imageThumb" src="' + data.origin_url + '" title="' + data.name + '"/></span></td><td>'+html_photo_color_option+'</td><td>'+html_photo_input_name+'</td><td class="c-quantity">'+html_photo_input_order+'</td><td><a href="javascript:;" onclick="deleteProductPhotoItem('+key+');">Xóa</a></td></tr>';
+
+            $(html).appendTo('#i-product-photos tbody');
+        }
     }
 
     function synchronize_child_and_parent_category($) {
 
     }
 
-    $('.validate-ajax').change(function(){
+    $('.validate-ajax').focusout(function(){
         var value = $(this).val();
         var name = $(this).attr('name');
+        var current_id = $('input[name="id"]').val();
         $.ajax({
             url: "{{route('admin.products.view')}}",
             data:{
                 value:value,
-                name:name
+                name:name,
+                id:current_id
             },
             dataType:'json'
-
         }).done(function(data) {
-            if (data == false) {
-                swal({
-                    title: "Cảnh Báo!",
-                    text: "Tên/mã này đã tồn tại, xin hãy chọn tên/mã khác",
-                    html:true,
-                    type: "warning",
-                    confirmButtonText: "Đã biết",
-                    closeOnConfirm: false
-                });
+            if (data.result == false) {
+                var valMessage = data.message;
+                var elInput = $("input[name="+name+"]");
+                elInput.after('<label id="name-error" class="error error-product-name" for="'+name+'">'+valMessage+'</label>');
+                elInput.addClass("error");
+                $('#mainForm button[type="submit"]').prop('disabled', true);
+            }else{
+                $('#mainForm button[type="submit"]').removeAttr("disabled");
             }
         })
     });
@@ -274,8 +297,9 @@
         //---> Init summer note
         $('.summernote').summernote();
 
-        print_table_details(details);
-        print_table_photos(photos);
+        printTableDetails();
+        printTablePhotos();
+        // print_table_photos(photos);
         synchronize_child_and_parent_category($);
 
 
@@ -450,14 +474,16 @@
                                                             <table id="i-product-info" class="table">
                                                                 <thead>
                                                                     <tr>
-                                                                        <th></th>
                                                                         <th>Màu sắc</th>
                                                                         <th>Kích thước</th>
                                                                         <th>Số lượng</th>
+                                                                        <th></th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
                                                                 </tbody>
+                                                                <tfoot>
+                                                                </tfoot>
                                                             </table>
                                                         </div>
                                                     </div>
@@ -515,11 +541,11 @@
                                                         <table id="i-product-photos" class="table">
                                                             <thead>
                                                                 <tr>
-                                                                    <th></th>
                                                                     <th>Hình</th>
                                                                     <th>Màu</th>
                                                                     <th>Tên</th>
                                                                     <th>Số thứ tự</th>
+                                                                    <th></th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
@@ -540,8 +566,8 @@
                                                 <div class="form-group">
                                                     <label class="col-md-2 control-label">Keyword</label>
                                                     <div class="col-md-8">
-                                                        <input type="text" name="keyword" placeholder="" class="form-control m-b"
-                                                        value="@if(isset($data->keyword)){{$data->keyword}}@else{{old('keyword')}}@endif"/>
+                                                        <input type="text" name="meta_keyword" placeholder="" class="form-control m-b"
+                                                        value="@if(isset($data->meta_keyword)){{$data->meta_keyword}}@else{{old('meta_keyword')}}@endif"/>
                                                     </div>
                                                 </div>
                                             </div>

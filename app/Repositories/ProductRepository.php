@@ -112,6 +112,9 @@ Class ProductRepository
 		$model->content = $data['content'];
 		$model->code = $data['code'];
 		$model->barcode = $data['barcode'];
+		$model->meta_keyword = $data['meta_keyword'];
+		$model->meta_description = $data['meta_description'];
+		$model->meta_robot = $data['meta_robot'];
 		$model->price = preg_replace('/[^0-9]/', '', $data['price']);
 		$model->sell_price = preg_replace('/[^0-9]/', '', $data['sell_price']);
 		if(isset($data['photo'])) {
@@ -219,28 +222,28 @@ Class ProductRepository
 					if (isset($detail->delete) && $detail->delete == true) {
 						$modelDetail->delete();
 					}else{
-						$modelDetail->quantity = $detail->quantity;
-						$modelDetail->color_id = $detail->color_code->id;
-						$modelDetail->size_id = $detail->size->id;
+						$modelDetail->quantity = ($detail->quantity) ? $detail->quantity : 0;
+						$modelDetail->color_id = ($detail->color_code) ? $detail->color_code->id : 0;
+						$modelDetail->size_id = ($detail->size) ? $detail->size->id : 0;
 						$modelDetail->save();
 					}
 				}
 			}else{
 				if (!isset($detail->delete) || $detail->delete != true) {
 					$modelDetail = new ProductDetail([
-						'color_id' => $detail->color_code->id,
-						'size_id' => $detail->size->id,
-						'quantity' => $detail->quantity
+						'color_id' => ($detail->color_code) ? $detail->color_code->id : 0,
+						'size_id' => ($detail->size) ? $detail->size->id : 0,
+						'quantity' => ($detail->quantity) ? $detail->quantity : 0
 					]);
 					$model->details()->save($modelDetail);
 				}
 			}
 
-			if (!in_array($detail->size->name, $sizes)) {
+			if ($detail->size && !in_array($detail->size->name, $sizes)) {
 				$sizes[] = $detail->size->name;
 			}
 
-			if (!in_array($detail->color_code->name, $colors)) {
+			if ($detail->color_code && !in_array($detail->color_code->name, $colors)) {
 				$colors[] = $detail->color_code->name;
 			}
 		}
@@ -261,14 +264,16 @@ Class ProductRepository
 				$modelPhoto = ProductPhoto::find($photo->id);
 				if ($modelPhoto) {
 					if (isset($photo->delete) && $photo->delete == true) {
-						Storage::delete($modelPhoto->origin);
-	                // Storage::delete($modelPhoto->large);
-	                // Storage::delete($modelPhoto->thumb);
+						if ($modelPhoto->origin) {
+							Storage::delete($modelPhoto->origin);
+						}
+		                // Storage::delete($modelPhoto->large);
+		                // Storage::delete($modelPhoto->thumb);
 						$modelPhoto->delete();
 					}else{
-						$modelPhoto->name = $photo->name;
-						$modelPhoto->color_code = ($photo->color_code->id != 0 ) ? $photo->color_code->id : null;
-						$modelPhoto->order = $photo->order;
+						$modelPhoto->name = ($photo->name) ? $photo->name : null;
+						$modelPhoto->color_code = ($photo->color_code && $photo->color_code->id != 0 ) ? $photo->color_code->id : null;
+						$modelPhoto->order = ($photo->order) ? $photo->order : 0;
 						$modelPhoto->save();
 					}
 				}
@@ -279,9 +284,9 @@ Class ProductRepository
 							if ($photo->file_name == $file->getClientOriginalName() && $photo->delete != true) {
 								$upload = new Photo($file);
 								$modelPhoto = new ProductPhoto([
-									'name' => $photo->name,
-									'color_code' => ($photo->color_code->id != 0 ) ? $photo->color_code->id : null,
-									'order' => $photo->order,
+									'name' => ($photo->name) ? $photo->name : null,
+									'color_code' => ($photo->color_code && $photo->color_code->id != 0 ) ? $photo->color_code->id : null,
+									'order' => ($photo->order) ? $photo->order : 0,
 									'origin' => $upload->uploadTo('product_photos'),
 									// 'large' => $upload->resizeTo('product_photos', Product::LARGE_WIDTH, Product::LARGE_HEIGHT),
 									// 'thumb' => $upload->resizeTo('product_photos', Product::THUMB_WIDTH, Product::THUMB_HEIGHT)
@@ -304,8 +309,8 @@ Class ProductRepository
 				'id' => $value->id,
 				'name'	=>	$value->name,
 				'color_code' => [
-					'id'	=>	$value->color->id,
-					'name'	=>	$value->color->name
+					'id'	=>	($value->color) ? $value->color->id : 0,
+					'name'	=>	($value->color) ? $value->color->name : ''
 				],
 				'origin' => $value->origin,
 				'origin_url' => asset('storage/' . $value->origin),
@@ -326,14 +331,14 @@ Class ProductRepository
 			$return[] = [
 				'id' => $value->id,
 				'color_code' => [
-					'id' => (isset($value->color)) ? $value->color->id : "",
-					'name'	=>	(isset($value->color)) ? $value->color->name : ""
+					'id' => ($value->color) ? $value->color->id : 0,
+					'name'	=>	($value->color) ? $value->color->name : ""
 				],
 				'size' => [
-					'id' => (isset($value->size)) ? $value->size->id : "",
-					'name'	=>	(isset($value->size)) ? $value->size->name : ""
+					'id' => ($value->size) ? $value->size->id : 0,
+					'name'	=>	($value->size) ? $value->size->name : ""
 				],
-				'quantity' => $value->quantity
+				'quantity' => ($value->quantity) ? $value->quantity : 0
 			];
 		}
 		return $return;
@@ -368,7 +373,7 @@ Class ProductRepository
 	public function getBrandOptions($id){
 		$model = Product::find($id);
 		$brands = Brand::select(['brands.id', 'brands.name'])->get();
-		if ($model && isset($model->brand->id)) {
+		if ($model && $model->brand) {
 			$result = make_option($brands, $model->brand->id);
 		}else{
 			$result = make_option($brands);
@@ -377,16 +382,22 @@ Class ProductRepository
 		return $result;
 	}
 
-	public function validateAjax($request){
+	public function validateAjax($request, $id = null){
 		$name = $request->get('name');
 		$value = $request->get('value');
-		$return;
+		$id = $request->get('id');
+		$return = [
+			'result' => true,
+			'message'	=>	$value.' khả dụng',
+			'id'	=>	$id
+		];
 
 		$model = Product::where($name,$value)->first();
 		if ($model) {
-			$return = false;
-		}else{
-			$return = true;
+			if ($id == null || $id != $model->id) {
+				$return['result'] = false;
+				$return['message'] = $value.' đã được sử dụng';
+			}
 		}
 		return Response::json($return);
 	}

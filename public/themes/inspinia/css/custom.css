@@ -370,3 +370,7 @@ color: black;*/
   line-height: 16px;
   padding-top: 2px;
 }
+
+tr.error input, tr.error select {
+    border: 1px solid red;
+}
