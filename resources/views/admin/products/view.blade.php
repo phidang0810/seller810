@@ -99,24 +99,26 @@
         var result = true;
         $('#mainForm button[type="submit"]').removeAttr("disabled");
         $.each(details, function(key, value){
-            $('#product_detail_'+key).removeClass('error');
-            var existed = false;
-            $.each(details, function(key_detail, value_detail){
-                if ($('product_detail_'+key)) {
-                    if (key_detail != key) {
-                        if ($('#select_detail_color_'+key_detail).val() == $('#select_detail_color_'+key).val() && $('#select_detail_size_'+key_detail).val() == $('#select_detail_size_'+key).val()) {
-                            $('#product_detail_'+key).addClass('error');
-                            $('#mainForm button[type="submit"]').prop('disabled', true);
-                            existed = true;
-                            result = false;
+            if (value.delete != true) {
+                $('#product_detail_'+key).removeClass('error');
+                var existed = false;
+                $.each(details, function(key_detail, value_detail){
+                    if ($('product_detail_'+key) && value_detail.delete != true) {
+                        if (key_detail != key) {
+                            if ($('#select_detail_color_'+key_detail).val() == $('#select_detail_color_'+key).val() && $('#select_detail_size_'+key_detail).val() == $('#select_detail_size_'+key).val()) {
+                                $('#product_detail_'+key).addClass('error');
+                                $('#mainForm button[type="submit"]').prop('disabled', true);
+                                existed = true;
+                                result = false;
+                            }
                         }
                     }
+                });
+                if (existed == false) {
+                    details[key].color_code = {id:$('#select_detail_color_'+key).val(), name:$('#select_detail_color_'+key+' option[value="'+$('#select_detail_color_'+key).val()+'"]').text()};
+                    details[key].size = {id:$('#select_detail_size_'+key).val(), name:$('#select_detail_size_'+key+' option[value="'+$('#select_detail_size_'+key).val()+'"]').text()};
+                    details[key].quantity = parseInt($('#detail_quantity_'+key).val());
                 }
-            });
-            if (existed == false) {
-                details[key].color_code = {id:$('#select_detail_color_'+key).val(), name:$('#select_detail_color_'+key+' option[value="'+$('#select_detail_color_'+key).val()+'"]').text()};
-                details[key].size = {id:$('#select_detail_size_'+key).val(), name:$('#select_detail_size_'+key+' option[value="'+$('#select_detail_size_'+key).val()+'"]').text()};
-                details[key].quantity = parseInt($('#detail_quantity_'+key).val());
             }
         });
         $('input[name="details"]').val(JSON.stringify(details));
@@ -125,7 +127,7 @@
 
     // Function to add row with form edit/create to table details
     function htmlEditCreateRowDetail(data, key){
-        var html_detail_color_option = '<select id="select_detail_color_'+key+'" class="select_detail_color">';
+        var html_detail_color_option = '<select id="select_detail_color_'+key+'" class="select_detail_color form-control">';
         html_detail_color_option += '<option value="0">Chọn màu</option>';
         $.each(colors, function(key_color, value_color){
             if (value_color.id == data.color_code.id) {
@@ -136,7 +138,7 @@
         });
         html_detail_color_option += '</select>';
 
-        var html_detail_size_option = '<select id="select_detail_size_'+key+'" class="select_detail_size">';
+        var html_detail_size_option = '<select id="select_detail_size_'+key+'" class="select_detail_size form-control">';
         html_detail_size_option += '<option value="0">Chọn size</option>';
         $.each(sizes, function(key_size, value_size){
             if (value_size.id == data.size.id) {
@@ -147,9 +149,9 @@
         });
         html_detail_size_option += '</select>';
 
-        var html_detail_input_quantity = '<input type="number" value="'+data['quantity']+'" id="detail_quantity_'+key+'" class="detail_quantity" >';
+        var html_detail_input_quantity = '<input type="number" min="0" value="'+data['quantity']+'" id="detail_quantity_'+key+'" class="detail_quantity form-control" >';
 
-        var html = '<td>'+html_detail_color_option+'</td><td>'+html_detail_size_option+'</td><td class="c-quantity">'+html_detail_input_quantity+'</td><td><a href="javascript:;" onclick="deleteProductInfoItem('+key+');">Xóa</a></td>';
+        var html = '<td>'+html_detail_color_option+'</td><td>'+html_detail_size_option+'</td><td class="c-quantity">'+html_detail_input_quantity+'</td><td><a href="javascript:;" onclick="deleteProductInfoItem('+key+');" class="bt-delete btn btn-xs btn-danger"><i class="fa fa-trash-o" aria-hidden="true"></i></a></td>';
         return html;
     }
 
@@ -201,25 +203,25 @@
         if (data.file) {
             var fileReader = new FileReader();
             fileReader.onload = (function(e) {
-                html_photo_color_option = '<select id="select_color'+key+'" class="select_photo_color">';
+                html_photo_color_option = '<select id="select_color'+key+'" class="select_photo_color form-control">';
                 html_photo_color_option += '<option value="0">Chọn màu</option>';
                 $.each(colors, function(key_color, value_color){
                     html_photo_color_option += '<option value="'+value_color.id+'">'+value_color.name+'</option>';
                 });
                 html_photo_color_option += '</select>';
 
-                html_photo_input_name = '<input type="text" value="'+data['name']+'" id="photo_name_'+key+'" class="input_photo_name">';
+                html_photo_input_name = '<input type="text" value="'+data['name']+'" id="photo_name_'+key+'" class="input_photo_name form-control">';
 
-                html_photo_input_order = '<input type="text" value="'+data['order']+'" id="photo_order_'+key+'" class="input_photo_order">';
+                html_photo_input_order = '<input type="text" value="'+data['order']+'" id="photo_order_'+key+'" class="input_photo_order form-control">';
 
-                html = '<tr class="child" id="product_photo_row_'+key+'"><td><span class="img-wrapper"><img class="imageThumb" src="' + e.target.result + '" title="' + data.name + '"/></span></td><td>'+html_photo_color_option+'</td><td>'+html_photo_input_name+'</td><td class="c-quantity">'+html_photo_input_order+'</td><td><a href="javascript:;" onclick="deleteProductPhotoItem('+key+');">Xóa</a></td></tr>';
+                html = '<tr class="child" id="product_photo_row_'+key+'"><td><span class="img-wrapper"><img class="imageThumb" src="' + e.target.result + '" title="' + data.name + '"/></span></td><td>'+html_photo_color_option+'</td><td>'+html_photo_input_name+'</td><td class="c-quantity">'+html_photo_input_order+'</td><td><a href="javascript:;" onclick="deleteProductPhotoItem('+key+');" class="bt-delete btn btn-xs btn-danger"><i class="fa fa-trash-o" aria-hidden="true"></i></a></td></tr>';
                 
 
                 $(html).appendTo('#i-product-photos tbody');
             });
             fileReader.readAsDataURL(data.file);
         }else{
-            html_photo_color_option = '<select id="select_color'+key+'" class="select_photo_color">';
+            html_photo_color_option = '<select id="select_color'+key+'" class="select_photo_color form-control">';
             html_photo_color_option += '<option value="0">Chọn màu</option>';
             $.each(colors, function(key_color, value_color){
                 if (value_color.id == data.color_code.id) {
@@ -230,11 +232,11 @@
             });
             html_photo_color_option += '</select>';
 
-            html_photo_input_name = '<input type="text" value="'+data['name']+'" id="photo_name_'+key+'" class="input_photo_name">';
+            html_photo_input_name = '<input type="text" value="'+data['name']+'" id="photo_name_'+key+'" class="input_photo_name form-control">';
 
-            html_photo_input_order = '<input type="text" value="'+data['order']+'" id="photo_order_'+key+'" class="input_photo_order">';
+            html_photo_input_order = '<input type="text" value="'+data['order']+'" id="photo_order_'+key+'" class="input_photo_order form-control">';
 
-            html = '<tr class="child" id="product_photo_row_'+key+'"><td><span class="img-wrapper"><img class="imageThumb" src="' + data.origin_url + '" title="' + data.name + '"/></span></td><td>'+html_photo_color_option+'</td><td>'+html_photo_input_name+'</td><td class="c-quantity">'+html_photo_input_order+'</td><td><a href="javascript:;" onclick="deleteProductPhotoItem('+key+');">Xóa</a></td></tr>';
+            html = '<tr class="child" id="product_photo_row_'+key+'"><td><span class="img-wrapper"><img class="imageThumb" src="' + data.origin_url + '" title="' + data.name + '"/></span></td><td>'+html_photo_color_option+'</td><td>'+html_photo_input_name+'</td><td class="c-quantity">'+html_photo_input_order+'</td><td><a href="javascript:;" onclick="deleteProductPhotoItem('+key+');" class="bt-delete btn btn-xs btn-danger"><i class="fa fa-trash-o" aria-hidden="true"></i></a></td></tr>';
 
             $(html).appendTo('#i-product-photos tbody');
         }

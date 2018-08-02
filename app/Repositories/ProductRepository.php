@@ -167,7 +167,7 @@ Class ProductRepository
 				continue;
 			}
 			if ($product->photo) {
-				Storage::delete($user->photo);
+				Storage::delete($product->photo);
 			}
 			$product->delete();
 		}
@@ -215,13 +215,21 @@ Class ProductRepository
 		$sizes = [];
 		$colors = [];
 		foreach ($details as $detail) {
-
 			if (isset($detail->id)) {
 				$modelDetail = ProductDetail::find($detail->id);
 				if ($modelDetail) {
 					if (isset($detail->delete) && $detail->delete == true) {
 						$modelDetail->delete();
-					}else{
+					}
+				}
+			}
+		}
+		foreach ($details as $detail) {
+
+			if (isset($detail->id)) {
+				$modelDetail = ProductDetail::find($detail->id);
+				if ($modelDetail) {
+					if (!isset($detail->delete) || $detail->delete != true) {
 						$modelDetail->quantity = ($detail->quantity) ? $detail->quantity : 0;
 						$modelDetail->color_id = ($detail->color_code) ? $detail->color_code->id : 0;
 						$modelDetail->size_id = ($detail->size) ? $detail->size->id : 0;

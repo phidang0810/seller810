@@ -179,7 +179,7 @@ $("#dataTables").on("click", '.bt-delete', function(){
                 if (response.success) {
                     swal({
                         title: "Thành công!",
-                        text: "Màu sắc " + name + " đã bị xóa.",
+                        text: "Sản phẩm " + name + " đã bị xóa.",
                         html: true,
                         type: "success",
                         confirmButtonClass: "btn-primary",
