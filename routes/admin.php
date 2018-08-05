@@ -80,3 +80,13 @@ Route::prefix('san-pham')
     Route::delete ('/', 'ProductController@delete')->name('admin.products.delete');
     Route::put ('/change-status', 'ProductController@changeStatus')->name('admin.products.changeStatus');
 });
+
+Route::prefix('don-hang')
+->middleware('permission:product_manager')->group(function () {
+    Route::get ('/', 'CartController@index')->name('admin.carts.index');
+    Route::get ('/chi-tiet', 'CartController@view')->name('admin.carts.view');
+    Route::get ('/them', 'CartController@view')->name('admin.carts.create');
+    Route::post ('/them', 'CartController@store')->name('admin.carts.store');
+    Route::delete ('/', 'CartController@delete')->name('admin.carts.delete');
+    Route::put ('/change-status', 'CartController@changeStatus')->name('admin.carts.changeStatus');
+});

@@ -14,4 +14,14 @@ class Customer extends Model
     protected $fillable = [
         'group_customer_id', 'name', 'code', 'city_id', 'email', 'address', 'phone', 'active', 'order'
     ];
+
+    /**
+     * A customer can have many carts.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function carts() {
+
+        return $this->hasMany('App\Models\Cart');
+    }
 }

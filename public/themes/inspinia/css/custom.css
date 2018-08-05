@@ -131,6 +131,14 @@ ul.nav-second-level{
   padding-left: 15px;
 }
 
+.pr-0{
+  padding-right: 0;
+}
+
+.pl-0{
+  padding-left: 0;
+}
+
 .mr-10{
   margin-right: 10px;
 }
@@ -372,5 +380,22 @@ color: black;*/
 }
 
 tr.error input, tr.error select {
-    border: 1px solid red;
+  border: 1px solid red;
 }
+
+.lbl-to{
+/*  padding-left: 5px;
+  padding-right: 5px;*/
+}
+
+.pl-10{
+  padding-left: 10px;
+}
+
+@media (min-width: 768px){
+  .w-28-per{
+    width: 28.333333%;
+  }
+}
+
+
