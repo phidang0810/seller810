@@ -224,7 +224,10 @@ ul.nav-second-level{
   -webkit-transition: .4s;
   transition: .4s;
 }
-
+.tt-page{
+  font-size: 18px;
+  font-weight: 400;
+}
 input:checked + .slider {
   background-color: #18a689;
 }
