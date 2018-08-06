@@ -52,20 +52,18 @@ class PartnerController extends AdminController
         $rules = [
             'email' => 'required|email|string|max:100|unique:partners',
             'name' => 'required|string|max:100',
-            'code' => 'required|max:20|unique:partners',
+            'code' => 'required|max:20',
             'active' => 'required'
         ];
         $message = 'Cộng tác viên '.$input['name'].' đã được tạo.';
 
         if ($id) {
             $rules['email'] = 'required|email|max:100|unique:partners,email,' . $input['id'];
-            $rules['code'] = 'required|max:20|unique:partners,code,' . $input['id'];
             $message = 'Cộng tác viên '.$input['name'].' đã được cập nhật.';
         }
         
         $validator = Validator::make($input, $rules, [
             'email.unique' => 'Email này đã được sử dụng.',
-            'code.unique' => 'Mã nhân viên này đã được sử dụng.',
             'email.required' => 'Vui lòng nhập email.',
             'code.required' => 'Vui lòng nhập mã.',
             'name.required' => 'Vui lòng nhập tên.',

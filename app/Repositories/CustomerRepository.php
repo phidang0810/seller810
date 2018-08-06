@@ -57,17 +57,44 @@ class CustomerRepository
         return $data;
     }
 
+    public function getHistoryByID($id, $request)
+    {
+        $query = Cart::select('carts.code', 'carts.total_price', 'carts.created_at', 'carts.status', 'platforms.name as platform_name')
+            ->leftJoin('platforms', 'platforms.id', '=', 'carts.platform_id')
+            ->where('customer_id', $id);
+
+        $dataTable = DataTables::eloquent($query)
+            ->filter(function ($query) use ($request) {
+                if (trim($request->get('status')) !== "") {
+                    $query->where('custocartsmers.active', $request->get('status'));
+                }
+            }, true)
+            ->addColumn('status', function ($data) {
+                switch ($data->status) {
+                    case 1:
+                    default:
+                        $html = '<label class="label label-success">Đã giao</label>';
+                }
+
+                return $html;
+            })
+            ->rawColumns(['status'])
+            ->toJson();
+
+        return $dataTable;
+    }
+
     public function createOrUpdate($data, $id = null)
     {
         if ($id) {
             $model = Customer::find($id);
+            $model->code = general_code($data['name'], $id, 5);
         } else {
             $model = new Customer;
         }
         $model->group_customer_id = $data['group_customer_id'];
         $model->name = $data['name'];
         $model->email = $data['email'];
-        $model->code = $data['code'];
         $model->active = $data['active'];
         if(isset($data['phone'])) {
             $model->phone = $data['phone'];
@@ -78,8 +105,16 @@ class CustomerRepository
         if(isset($data['city_id'])) {
             $model->city_id = $data['city_id'];
         }
+        if(isset($data['description'])) {
+            $model->description = $data['description'];
+        }
+
         $model->save();
 
+        if (is_null($id)) {
+            $model->code = general_code($model->name, $model->id, 5);
+            $model->save();
+        }
         return $model;
     }
 

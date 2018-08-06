@@ -52,21 +52,19 @@ class SupplierController extends AdminController
         $rules = [
             'email' => 'required|email|string|max:100',
             'name' => 'required|string|max:50||unique:suppliers',
-            'code' => 'required|max:20|unique:suppliers',
+            'code' => 'required|max:20',
             'tax_code' => 'required|max:30|unique:suppliers',
             'active' => 'required'
         ];
         $message = 'Nhà cung cấp '.$input['name'].' đã được tạo.';
 
         if ($id) {
-            $rules['code'] = 'required|max:20|unique:suppliers,code,' . $input['id'];
             $rules['tax_code'] = 'required|max:30|unique:suppliers,tax_code,' . $input['id'];
             $rules['name'] = 'required|max:50|unique:suppliers,name,' . $input['id'];
             $message = 'Nhà cung cấp '.$input['name'].' đã được cập nhật.';
         }
         
         $validator = Validator::make($input, $rules, [
-            'code.unique' => 'Mã nhà cung cấp này đã được sử dụng.',
             'tax_code.unique' => 'Mã số thuế này đã được sử dụng.',
             'email.required' => 'Vui lòng nhập email.',
             'code.required' => 'Vui lòng nhập mã.',

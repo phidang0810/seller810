@@ -55,22 +55,18 @@ class CustomerController extends AdminController
         $rules = [
             'email' => 'required|email|string|max:100|unique:customers',
             'name' => 'required|string|max:100',
-            'code' => 'required|max:20|unique:customers',
             'active' => 'required'
         ];
         $message = 'Khách hàng '.$input['name'].' đã được tạo.';
 
         if ($id) {
             $rules['email'] = 'required|email|max:100|unique:customers,email,' . $input['id'];
-            $rules['code'] = 'required|max:20|unique:customers,code,' . $input['id'];
             $message = 'Khách hàng '.$input['name'].' đã được cập nhật.';
         }
         
         $validator = Validator::make($input, $rules, [
             'email.unique' => 'Email này đã được sử dụng.',
-            'code.unique' => 'Mã khách hàng này đã được sử dụng.',
             'email.required' => 'Vui lòng nhập email.',
-            'code.required' => 'Vui lòng nhập mã.',
             'name.required' => 'Vui lòng nhập tên.',
         ]);
 
@@ -105,5 +101,25 @@ class CustomerController extends AdminController
         return response()->json([
             'success' => true
         ]);
+    }
+
+    public function history($id, CustomerRepository $model)
+    {
+        $this->_data['title'] = 'Lịch sử mua hàng';
+        $customer = $model->getData($id);
+        if (!$customer) {
+            return redirect()->route('error', [404]);
+        }
+
+        if ($this->_request->ajax()) {
+
+            return $model->getHistoryByID($id, $this->_request);
+
+        }
+        $this->_data['customer'] = $customer;
+
+        $this->_pushBreadCrumbs($customer->name, route('admin.customers.view', ['id' => $customer->id]));
+        $this->_pushBreadCrumbs($this->_data['title']);
+        return view('admin.customers.history', $this->_data);
     }
 }

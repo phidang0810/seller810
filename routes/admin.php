@@ -35,12 +35,13 @@ Route::prefix('nha-cung-cap')
 
 Route::prefix('khach-hang')
 ->middleware('permission:customer_manager')->group(function () {
-    Route::get ('/', 'CustomerController@index')->name('admin.customer.index');
-    Route::get ('/chi-tiet', 'CustomerController@view')->name('admin.customer.view');
-    Route::get ('/them', 'CustomerController@view')->name('admin.customer.create');
-    Route::post ('/them', 'CustomerController@store')->name('admin.customer.store');
-    Route::delete ('/', 'CustomerController@delete')->name('admin.customer.delete');
-    Route::put ('/change-status', 'CustomerController@changeStatus')->name('admin.customer.changeStatus');
+    Route::get ('/', 'CustomerController@index')->name('admin.customers.index');
+    Route::get ('/lich-su/{id}', 'CustomerController@history')->name('admin.customers.history')->where('id', '[0-9]+');;
+    Route::get ('/chi-tiet', 'CustomerController@view')->name('admin.customers.view');
+    Route::get ('/them', 'CustomerController@view')->name('admin.customers.create');
+    Route::post ('/them', 'CustomerController@store')->name('admin.customers.store');
+    Route::delete ('/', 'CustomerController@delete')->name('admin.customers.delete');
+    Route::put ('/change-status', 'CustomerController@changeStatus')->name('admin.customers.changeStatus');
 
     Route::get ('/nhom/', 'GroupCustomerController@index')->name('admin.groupCustomer.index');
     Route::get ('/nhom/chi-tiet', 'GroupCustomerController@view')->name('admin.groupCustomer.view');

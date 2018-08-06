@@ -216,7 +216,7 @@
                 <div class="col-sm-3">
                     <div class="form-group">
                         <label>Tìm kiếm</label>
-                        <input type="text" placeholder="Nhập email, phon, họ tên" name="keyword" id="s-keyword" class="form-control" value="{{app('request')->input('keyword')}}">
+                        <input type="text" placeholder="Nhập email, SDT, họ tên" name="keyword" id="s-keyword" class="form-control" value="{{app('request')->input('keyword')}}">
                     </div>
                 </div>
 

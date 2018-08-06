@@ -63,7 +63,7 @@
                         <div class="form-group">
                             <label class="col-md-2 control-label">Mã Nhà Cung Cấp (<span class="text-danger">*</span>)</label>
                             <div class="col-md-5">
-                                <input type="text" name="code" placeholder="VD: CTV001" class="form-control required" value="@if(isset($data->code)){{$data->code}}@else{{old('code')}}@endif"/>
+                                <input type="text" name="code" readonly class="form-control required" value="@if(isset($data->code)){{$data->code}}@else{{old('code')}}@endif"/>
                             </div>
                         </div>
                     </div>

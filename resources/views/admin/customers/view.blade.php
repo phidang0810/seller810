@@ -93,9 +93,9 @@
 
                     <div class="row m-b">
                         <div class="form-group">
-                            <label class="col-md-2 control-label">Mã Cộng Tác Viên (<span class="text-danger">*</span>)</label>
+                            <label class="col-md-2 control-label">Mã Khách Hàng (<span class="text-danger">*</span>)</label>
                             <div class="col-md-5">
-                                <input type="text" name="code" placeholder="VD: CTV001" class="form-control required" value="@if(isset($data->code)){{$data->code}}@else{{old('code')}}@endif"/>
+                                <input type="text" readonly name="code" class="form-control required" value="@if(isset($data->code)){{$data->code}}@else{{old('code')}}@endif"/>
                             </div>
                         </div>
                     </div>
@@ -111,9 +111,18 @@
 
                     <div class="row m-b">
                         <div class="form-group">
-                            <label class="col-md-2 control-label">Địa chỉ</label>
+                            <label class="col-md-2 control-label">Địa Chỉ</label>
                             <div class="col-md-5">
                                 <input type="text" name="address" placeholder="VD: 5 Lữ Gia, phường 15, quận 11" class="form-control" value="@if(isset($data->address)){{$data->address}}@else{{old('address')}}@endif"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row m-b">
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">Ghi Chú</label>
+                            <div class="col-md-5">
+                                <textarea class="form-control" name="description" cols="10" rows="5">@if(isset($data->description)){{$data->description}}@else{{old('description')}}@endif</textarea>
                             </div>
                         </div>
                     </div>

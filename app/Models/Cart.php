@@ -12,6 +12,22 @@ class Cart extends Model
      * @var array
      */
     protected $fillable = [
-        'code', 'city_id', 'quantity', 'discount_amount', 'active'
+        'code',
+        'city_id',
+        'platform_id',
+        'partner_id',
+        'transport_id',
+        'quantity',
+        'discount_amount',
+        'partner_discount_amount',
+        'customer_discount_amount',
+        'total_discount_amount',
+        'price',
+        'total_price',
+        'shipping_fee',
+        'vat_percent',
+        'vat_amount',
+        'status',
+        'active'
     ];
 }

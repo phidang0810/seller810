@@ -59,12 +59,12 @@ class SupplierRepository
     {
         if ($id) {
             $model = Supplier::find($id);
+            $model->code = general_code($data['name'], $id, 4);
         } else {
             $model = new Supplier;
         }
         $model->name = $data['name'];
         $model->email = $data['email'];
-        $model->code = $data['code'];
         $model->tax_code = $data['tax_code'];
         $model->responsible_person = $data['responsible_person'];
         $model->active = $data['active'];
@@ -78,6 +78,11 @@ class SupplierRepository
             $model->city_id = $data['city_id'];
         }
         $model->save();
+
+        if (is_null($id)) {
+            $model->code = general_code($model->name, $model->id, 5);
+            $model->save();
+        }
 
         return $model;
     }

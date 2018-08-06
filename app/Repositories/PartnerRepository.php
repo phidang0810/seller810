@@ -60,12 +60,12 @@ class PartnerRepository
     {
         if ($id) {
             $model = Partner::find($id);
+            $model->code = general_code($data['name'], $id, 5);
         } else {
             $model = new Partner;
         }
         $model->name = $data['name'];
         $model->email = $data['email'];
-        $model->code = $data['code'];
         $model->discount_amount = preg_replace('/[^0-9]/', '', $data['discount_amount']);
         $model->active = $data['active'];
         if(isset($data['phone'])) {
@@ -78,6 +78,11 @@ class PartnerRepository
             $model->city_id = $data['city_id'];
         }
         $model->save();
+
+        if (is_null($id)) {
+            $model->code = general_code($model->name, $model->id, 6);
+            $model->save();
+        }
 
         return $model;
     }
