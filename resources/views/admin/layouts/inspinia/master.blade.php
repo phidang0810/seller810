@@ -14,6 +14,7 @@
     <link href="{{asset('themes/inspinia/css/plugins/jasny/jasny-bootstrap.min.css')}}" rel="stylesheet">
     <link href="{{asset('themes/inspinia//font-awesome/css/font-awesome.css')}}" rel="stylesheet">
     <link href="{{asset('themes/inspinia/css/plugins/colorpicker/bootstrap-colorpicker.min.css')}}" rel="stylesheet">
+    <link href="{{asset('themes/inspinia/css/plugins/datapicker/datepicker3.css')}}" rel="stylesheet">
 
     <!-- Data Tables -->
     <link href="{{asset('themes/inspinia/css/plugins/dataTables/dataTables.bootstrap.css')}}" rel="stylesheet">
@@ -65,10 +66,12 @@
 
             </nav>
         </div>
+        @if(!isset($hasSidebar) || $hasSidebar == true)
         @include('admin._partials._sidebar')
+        @endif
 
         <div id="page-wrapper" class="gray-bg">
-
+            @if(!isset($hasTitle) || $hasTitle == true)
             <div class="row wrapper border-bottom white-bg page-heading">
                 <div class="col-lg-10">
                     @if (isset($title))
@@ -77,6 +80,7 @@
                     @include('admin._partials._breadcrumbs')
                 </div>
             </div>
+            @endif
             <div class="wrapper wrapper-content animated fadeInRight">
                 @yield('content')
             </div>
@@ -104,6 +108,7 @@
     <script src="{{asset('themes/inspinia/js/plugins/dataTables/dataTables.tableTools.min.js')}}"></script>
 
     <script src="{{asset('themes/inspinia/js/plugins/summernote/summernote.min.js')}}"></script>
+    <script src="{{asset('themes/inspinia/js/plugins/datapicker/bootstrap-datepicker.js')}}"></script>
 
     <!-- Custom and plugin javascript -->
     <script src="{{asset('themes/inspinia/js/inspinia.js')}}"></script>

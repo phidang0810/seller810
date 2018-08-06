@@ -24,4 +24,14 @@ class Customer extends Model
     {
         return $this->belongsTo('App\Models\City');
     }
+
+    /**
+     * A customer can have many carts.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function carts() {
+
+        return $this->hasMany('App\Models\Cart');
+    }
 }

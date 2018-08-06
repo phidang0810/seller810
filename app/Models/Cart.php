@@ -30,4 +30,20 @@ class Cart extends Model
         'status',
         'active'
     ];
+
+    /**
+     * Get the customer that owns the cart.
+     */
+    public function customer()
+    {
+        return $this->belongsTo('App\Models\Customer');
+    }
+
+    /**
+     * Get the provider that owns the cart.
+     */
+    public function provider()
+    {
+        return $this->belongsTo('App\Models\Provider');
+    }
 }
