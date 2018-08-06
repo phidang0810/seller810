@@ -102,4 +102,18 @@ class CartController extends AdminController
             'success' => true
         ]);
     }
+
+    /**
+     * Show detail the application dashboard.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getCartDetail(CartRepository $cart){
+        $cartCode = $this->_request->get('cart_code');
+        $result = $cart->getCartDetail($cartCode);
+        return response()->json([
+            'success' => true,
+            'result' => $result
+        ]);
+    }
 }
