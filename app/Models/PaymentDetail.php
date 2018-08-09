@@ -17,6 +17,7 @@ class PaymentDetail extends Model
         'cart_id',
         'cart_detail_id',
         'product_id',
+        'product_detail_id',
         'quantity',
         'discount_amount',
         'price',

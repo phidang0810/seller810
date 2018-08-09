@@ -32,4 +32,14 @@ class Payment extends Model
         'active'
     ];
 
+    /**
+     * A product can have many photos.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function details() {
+
+        return $this->hasMany('App\Models\PaymentDetail');
+    }
+
 }

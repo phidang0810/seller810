@@ -15,18 +15,18 @@
     });
 
     function formatDate(date) {
-     var d = new Date(date),
-     hour = d.getHours();
-     minute = d.getMinutes();
-     month = '' + (d.getMonth() + 1),
-     day = '' + d.getDate(),
-     year = d.getFullYear();
+       var d = new Date(date),
+       hour = d.getHours();
+       minute = d.getMinutes();
+       month = '' + (d.getMonth() + 1),
+       day = '' + d.getDate(),
+       year = d.getFullYear();
 
-     if (month.length < 2) month = '0' + month;
-     if (day.length < 2) day = '0' + day;
+       if (month.length < 2) month = '0' + month;
+       if (day.length < 2) day = '0' + day;
 
-     return [hour, minute].join(':')+' '+[day, month, year].join('/');
- }
+       return [hour, minute].join(':')+' '+[day, month, year].join('/');
+   }
 
     //---> Get customer detail, cart detail
     function getRecordDetail(){
@@ -54,18 +54,37 @@
 
                     var htmlTable = parseTableCartDetail(data.result["cart_detail"]);
                     $('.cart-detail-wrapper').html(htmlTable);
-                    $('.c-total-money').text(getSummaryCart(data.result["cart_detail"])['total_price'].toLocaleString() + ' đ');
-                    $('.c-shipping-fee').text(getSummaryCart(data.result["cart_detail"])['shipping_fee'].toLocaleString() + ' đ');
-                    $('.c-amount').text(getSummaryCart(data.result["cart_detail"])['amount'].toLocaleString() + ' đ');
-                    $('#i-status-list').val(data.result["cart"].status);
-                }else{
-                    console.log('Data is null');
-                }
-            }).fail(function(jqXHR, textStatus){
-                console.log(textStatus);
-            })
 
-        });
+                    $('#i-status-list').val(data.result["cart"].status);
+                    // console.log(data.result["cart"].payment_status);
+                    $('#i-payment-status-list').val(data.result["cart"].payment_status);
+
+                    if (getSummaryCart(data.result["cart_detail"])['total_price'] !== null) {
+                        $('.c-total-money').text(getSummaryCart(data.result["cart_detail"])['total_price'].toLocaleString() + ' VNĐ');
+                    }else{
+                        $('.c-total-money').text(0 + ' VNĐ');
+                    }
+
+                    if (getSummaryCart(data.result["cart_detail"])['shipping_fee'] !== null) {
+                     $('.c-shipping-fee').text(getSummaryCart(data.result["cart_detail"])['shipping_fee'].toLocaleString() + ' VNĐ');
+                 }else{
+                    $('.c-shipping-fee').text(0 + ' VNĐ');
+                }
+
+                if (getSummaryCart(data.result["cart_detail"])['amount'] !== null) {
+                    $('.c-amount').text(getSummaryCart(data.result["cart_detail"])['amount'].toLocaleString() + ' VNĐ');
+                }else{
+                    $('.c-amount').text(0 + ' VNĐ');
+                }
+
+            }else{
+                console.log('Data is null');
+            }
+        }).fail(function(jqXHR, textStatus){
+            console.log(textStatus);
+        })
+
+    });
     }
 
     //---> Get customer detail, cart detail
@@ -73,21 +92,23 @@
 
         var cart_code = $("#code").text();
         var status_val = $("#i-status-list").val();
+        var payment_status_val = $("#i-payment-status-list").val();
+
         var alert_html = '<div class="alert alert-success alert-dismissable" id="i-alert-response">\
-                            <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>\
-                            <span></span>\
-                        </div>';
+        <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>\
+        <span></span>\
+        </div>';
         $.ajax({
             url: "{{route('admin.carts.updateStatus')}}",
             type: 'PUT',
             data:{
                 cart_code:cart_code,
-                status: status_val
+                status: status_val,
+                payment_status: payment_status_val
             },
             dataType:'json'
         }).done(function(data) {
             if (!$.isEmptyObject(data)) {
-                console.log(data);
                 $(".alert-wrapper").html(alert_html);
                 $("#i-alert-response span").text(data.message);
                 $("#i-alert-response").show();
@@ -122,7 +143,13 @@
         var amount = 0;
         totalPrice = arrCartDetails[0]["total_price"];
         shippingFee = arrCartDetails[0]["shipping_fee"];
-        amount = parseFloat(totalPrice) + parseFloat(shippingFee);
+        if (totalPrice != null && shippingFee == null) {
+            amount = parseFloat(totalPrice);
+        }else if(totalPrice != null && shippingFee != null){
+            amount = parseFloat(totalPrice) + parseFloat(shippingFee);
+        }else{
+            amount = 0;
+        }
         var objSummary = {
             total_price: totalPrice,
             shipping_fee: shippingFee,
@@ -132,6 +159,13 @@
     }
 
     $(document).ready(function () {
+        //---> Show menu on horizontal bar
+        var url_index = "{{route('admin.carts.index')}}";
+        if (location.href == url_index) {
+            $(".cart-menu-wrapper").show();
+            $(".cart-menu-wrapper .cart-index").addClass("active");
+        }
+        
         $('#date_range_picker').datepicker({
             keyboardNavigation: false,
             forceParse: false,
@@ -401,17 +435,20 @@ $("#save-cart-info").click(function(){
                     <label>Tình trạng</label>
                     <select class="form-control" name="status" id="s-status">
                         <option value=""> -- Tất cả --</option>
-                        <option @if(app('request')->has('status') && app('request')->input('status') == CART_NEW) selected
-                            @endif value="{{CART_NEW}}">Mới
+                        <option @if(app('request')->has('status') && app('request')->input('status') == EXCUTING) selected
+                            @endif value="{{EXCUTING}}">{{EXCUTING_TEXT}}
                         </option>
-                        <option @if(app('request')->has('status') && app('request')->input('status') == CART_COMPLETE) selected
-                            @endif value="{{CART_COMPLETE}}">Hoàn thành
+                        <option @if(app('request')->has('status') && app('request')->input('status') == TRANSPORTING) selected
+                            @endif value="{{TRANSPORTING}}">{{TRANSPORTING_TEXT}}
                         </option>
-                        <option @if(app('request')->has('status') && app('request')->input('status') == CART_IN_PROGRESS) selected
-                            @endif value="{{CART_IN_PROGRESS}}">Đang giao
+                        <option @if(app('request')->has('status') && app('request')->input('status') == TRANSPORTED) selected
+                            @endif value="{{TRANSPORTED}}">{{TRANSPORTED_TEXT}}
                         </option>
-                        <option @if(app('request')->has('status') && app('request')->input('status') == CART_CANCELED) selected
-                            @endif value="{{CART_CANCELED}}">Đã hủy
+                        <option @if(app('request')->has('status') && app('request')->input('status') == COMPLETED) selected
+                            @endif value="{{COMPLETED}}">{{COMPLETED_TEXT}}
+                        </option>
+                        <option @if(app('request')->has('status') && app('request')->input('status') == CANCELED) selected
+                            @endif value="{{CANCELED}}">{{CANCELED_TEXT}}
                         </option>
                     </select>
                 </div>
@@ -520,13 +557,26 @@ $("#save-cart-info").click(function(){
                         </div>
 
                         <div class="form-group">
+                            <label class="col-lg-5 control-label" style="text-align: left; padding-right: 0; width: 33.666667%;">Tình trạng thanh toán:</label>
+                            <div class="col-lg-7" style="padding-left: 0; text-align: left;">
+                                <select id="i-payment-status-list" name="payment_status" class="form-control m-b">
+                                    <option value="{{NOT_PAYING}}">{{NOT_PAYING_TEXT}}</option>
+                                    <option value="{{PAYING_NOT_ENOUGH}}">{{PAYING_NOT_ENOUGH_TEXT}}</option>
+                                    <option value="{{PAYING_OFF}}">{{PAYING_OFF_TEXT}}</option>
+                                    <option value="{{RECEIVED_PAYMENT}}">{{RECEIVED_PAYMENT_TEXT}}</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
                             <label class="col-lg-5 control-label" style="text-align: left; padding-right: 0; width: 33.666667%;">Tình trạng:</label>
                             <div class="col-lg-7" style="padding-left: 0; text-align: left;">
                                 <select id="i-status-list" class="form-control m-b" name="status">
-                                    <option value="{{CART_NEW}}">Mới</option>
-                                    <option value="{{CART_IN_PROGRESS}}">Đang giao</option>
-                                    <option value="{{CART_COMPLETE}}">Hoàn thành</option>
-                                    <option value="{{CART_CANCELED}}">Đã hủy</option>
+                                    <option value="{{EXCUTING}}">{{EXCUTING_TEXT}}</option>
+                                    <option value="{{TRANSPORTING}}">{{TRANSPORTING_TEXT}}</option>
+                                    <option value="{{TRANSPORTED}}">{{TRANSPORTED_TEXT}}</option>
+                                    <option value="{{COMPLETED}}">{{COMPLETED_TEXT}}</option>
+                                    <option value="{{CANCELED}}">{{CANCELED_TEXT}}</option>
                                 </select>
                             </div>
                         </div>

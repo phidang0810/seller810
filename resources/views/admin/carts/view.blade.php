@@ -133,6 +133,16 @@
     }
 
     $(document).ready(function() {
+        //---> Show menu on horizontal bar
+        var url_create = "{{route('admin.carts.create')}}";
+        var url_detail = "{{route('admin.carts.view')}}";
+        // console.log(url_detail+"  ---  "+location.href);
+        if (location.href == url_detail || location.href == url_create) {
+            console.log(url_detail+"  ---  "+location.href);
+            $(".cart-menu-wrapper").show();
+            $(".cart-menu-wrapper .cart-detail").addClass("active");
+        }
+
         printTableCartDetails();
 
         $("#bt-reset").click(function(){

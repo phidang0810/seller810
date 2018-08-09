@@ -397,7 +397,7 @@ tr.error input, tr.error select {
 
 .lbl-to{
 /*  padding-left: 5px;
-  padding-right: 5px;*/
+padding-right: 5px;*/
 }
 
 .pl-10{
@@ -414,3 +414,22 @@ tr.error input, tr.error select {
   display: none;
 }
 
+.font-16{
+  font-size: 16px;
+}
+
+.cart-menu-wrapper{
+  position: absolute;
+  left: 20%;
+  bottom: 0;
+  display: none;
+}
+
+.cart-menu-wrapper .navbar-top-links li a{
+  padding: 25px 10px;
+}
+
+
+.cart-menu-wrapper .navbar-top-links li.active{
+  border-bottom: 4px solid #676A6C;
+}

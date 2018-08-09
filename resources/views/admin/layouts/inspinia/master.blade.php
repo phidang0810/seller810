@@ -44,6 +44,20 @@
                         <a href="" title=""><img src="{{asset('themes/inspinia/img/logo.png')}}" alt=""></a>
                     </h1>
                 </div>
+                <div class="cart-menu-wrapper">
+                    <ul class="nav navbar-top-links navbar-left">
+                    <li class="cart-index">
+                        <a href="{{route('admin.carts.index')}}">
+                            <span class="font-16 text-uppercase" id="">Quản lý</span>
+                        </a>
+                    </li>
+                    <li class="cart-detail">
+                        <a href="{{route('admin.carts.create')}}">
+                            <span class="font-16 text-uppercase">Cửa hàng</span>
+                        </a>
+                    </li>
+                </ul>
+                </div>
                 <ul class="nav navbar-top-links navbar-right">
                     <li class="dropdown" id="notify-menu">
                         <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#" aria-expanded="false">

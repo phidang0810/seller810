@@ -192,10 +192,8 @@ class CartController extends AdminController
      * @return \Illuminate\Http\RedirectResponse
      */
     public function updateStatus(CartRepository $cart){
-        $cartCode = $this->_request->get('cart_code');
-        $status = $this->_request->get('status');
 
-        $data = $cart->updateStatus($cartCode, $status);
+        $data = $cart->updateStatus($this->_request);
         $message = 'Tình trạng đơn hàng đã được cập nhật.';
 
         return response()->json([
