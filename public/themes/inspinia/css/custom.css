@@ -241,7 +241,16 @@ input:checked + .slider:before {
   -ms-transform: translateX(18px);
   transform: translateX(18px);
 }
-
+.chart-legend ul li{
+  margin-bottom: 15px;
+}
+.legend-item{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  display:inline-block;
+  margin-right: 5px;
+}
 /* Rounded sliders */
 .slider.round {
   border-radius: 34px;

@@ -23,6 +23,15 @@ Route::prefix('cong-tac-vien')
         Route::put ('/change-status', 'PartnerController@changeStatus')->name('admin.partners.changeStatus');
     });
 
+Route::prefix('doanh-thu')
+    ->middleware('permission:partner_manager')->group(function () {
+        Route::get ('/', 'PaymentController@index')->name('admin.payments.index');
+        Route::get ('/data-payment', 'PaymentController@getPaymentChart')->name('admin.payments.getPaymentChart');
+        Route::get ('/top-product', 'PaymentController@getTopProductSell')->name('admin.payments.getTopProductSell');
+        Route::get ('/top-platform', 'PaymentController@getTopPlatformSell')->name('admin.payments.getTopPlatformSell');
+        Route::get ('/top-category', 'PaymentController@getTopCategorySell')->name('admin.payments.getTopCategorySell');
+    });
+
 Route::prefix('nha-cung-cap')
     ->middleware('permission:supplier_manager')->group(function () {
         Route::get ('/', 'SupplierController@index')->name('admin.suppliers.index');
