@@ -100,4 +100,5 @@ Route::prefix('don-hang')
     Route::delete ('/', 'CartController@delete')->name('admin.carts.delete');
     Route::put ('/change-status', 'CartController@changeStatus')->name('admin.carts.changeStatus');
     Route::get ('/thong-tin-khach-hang', 'CartController@getCartDetail')->name('admin.carts.getCartDetail');
+    Route::put ('/update-status', 'CartController@updateStatus')->name('admin.carts.updateStatus');
 });

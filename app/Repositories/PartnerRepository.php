@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Models\Cart;
 use App\Models\Partner;
 use Yajra\DataTables\Facades\DataTables;
+use Response;
 
 class PartnerRepository
 {
@@ -114,5 +115,30 @@ class PartnerRepository
         $model = Partner::find($id);
         $model->active = $status;
         return $model->save();
+    }
+
+    public function getPartners(){
+        $data = Partner::get();
+        return $data;
+    }
+
+    public function getPartnerOptions($id = 0){
+        return make_option($this->getPartners(), $id);
+    }
+
+    public function getPartnerDiscountAmount($request){
+        $partner_id = $request->get('partner_id');
+
+        $return = [
+            'partner_id' => $partner_id,
+            'message'   =>  'Lấy datas cho cộng tác viên thành công',
+        ];
+
+        if ($partner_id) {
+            $partner = Partner::find($partner_id);
+            $return['partner'] = $partner;
+        }
+
+        return Response::json($return);
     }
 }

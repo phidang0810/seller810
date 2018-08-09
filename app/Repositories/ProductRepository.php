@@ -95,6 +95,12 @@ Class ProductRepository
 		return $data;
 	}
 
+	public function getProducts()
+	{
+		$data = Product::get();
+		return $data;
+	}
+
 	public function createOrUpdate($data, $id = null)
 	{
 		if ($id) {
@@ -376,6 +382,119 @@ Class ProductRepository
 		$result = make_option($colors);
 
 		return $result;
+	}
+
+	public function getProductOptions(){
+		return make_option($this->getProducts());
+	}
+
+	public function getProductDatas($request){
+		$product_id = $request->get('product_id');
+		$color_id = $request->get('color_id');
+		$size_id = $request->get('size_id');
+
+		$return = [
+			'product_id' => $product_id,
+			'message'	=>	'Lấy datas cho product thành công',
+		];
+
+		if ($product_id) {
+			$product = Product::find($product_id);
+			$return['product'] = $product;
+		}
+
+		if ($product_id && $color_id && $size_id) {
+			$product_detail = ProductDetail::having('product_id', '=', $product_id)
+                ->having('color_id', '=', $color_id)
+                ->having('size_id', '=', $size_id)
+                ->first();
+
+			$return['product_detail'] = $product_detail;
+		}
+
+		return Response::json($return);
+
+	}
+
+	public function getProductDetailColorOptions($request){
+		$product_id = $request->get('product_id');
+
+		$return = [
+			'product_id' => $product_id,
+			'message'	=>	'Lấy color options cho product detail thành công',
+		];
+
+		if ($product_id) {
+			$product_details = ProductDetail::groupBy('color_id')
+                ->having('product_id', '=', $product_id)
+                ->get();
+
+
+            $color_ids = [];
+            foreach ($product_details as $key => $value) {
+            	$color_ids[] = $value['color_id'];
+            }
+
+            $colors = Color::whereIn('id', $color_ids)->get();
+
+			$return['colors'] = $colors;
+		}
+
+		return Response::json($return);
+	}
+
+	public function getProductDetailSizeOptions($request){
+		$product_id = $request->get('product_id');
+		$color_id = $request->get('color_id');
+
+		$return = [
+			'product_id' => $product_id,
+			'color_id' => $color_id,
+			'message'	=>	'Lấy size options cho product detail thành công',
+		];
+
+		if ($product_id && $color_id) {
+			$product_details = ProductDetail::having('product_id', '=', $product_id)
+                ->having('color_id', '=', $color_id)
+                ->get();
+
+        	$return['product_details'] = $product_details;
+
+            $size_ids = [];
+            foreach ($product_details as $key => $value) {
+            	$size_ids[] = $value['size_id'];
+            }
+
+            $sizes = Size::whereIn('id', $size_ids)->get();
+
+			$return['sizes'] = $sizes;
+		}
+
+		return Response::json($return);
+	}
+
+	function getProductDetailquantity($request){
+		$product_id = $request->get('product_id');
+		$color_id = $request->get('color_id');
+		$size_id = $request->get('size_id');
+
+		$return = [
+			'product_id' => $product_id,
+			'color_id' => $color_id,
+			'size_id' => $size_id,
+			'message'	=>	'Lấy quantity cho product detail thành công',
+		];
+
+		if ($product_id && $color_id && $size_id) {
+			$product_detail = ProductDetail::having('product_id', '=', $product_id)
+                ->having('color_id', '=', $color_id)
+                ->having('size_id', '=', $size_id)
+                ->first();
+
+			$return['quantity'] = $product_detail->quantity;
+		}
+
+		return Response::json($return);
 	}
 
 	public function getBrandOptions($id){

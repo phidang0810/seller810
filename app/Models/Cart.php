@@ -46,4 +46,14 @@ class Cart extends Model
     {
         return $this->belongsTo('App\Models\Provider');
     }
+
+    /**
+     * A product can have many photos.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function details() {
+
+        return $this->hasMany('App\Models\CartDetail');
+    }
 }

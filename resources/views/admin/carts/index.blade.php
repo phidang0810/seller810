@@ -15,18 +15,18 @@
     });
 
     function formatDate(date) {
-       var d = new Date(date),
-       hour = d.getHours();
-       minute = d.getMinutes();
-       month = '' + (d.getMonth() + 1),
-       day = '' + d.getDate(),
-       year = d.getFullYear();
+     var d = new Date(date),
+     hour = d.getHours();
+     minute = d.getMinutes();
+     month = '' + (d.getMonth() + 1),
+     day = '' + d.getDate(),
+     year = d.getFullYear();
 
-       if (month.length < 2) month = '0' + month;
-       if (day.length < 2) day = '0' + day;
+     if (month.length < 2) month = '0' + month;
+     if (day.length < 2) day = '0' + day;
 
-       return [hour, minute].join(':')+' '+[day, month, year].join('/');
-   }
+     return [hour, minute].join(':')+' '+[day, month, year].join('/');
+ }
 
     //---> Get customer detail, cart detail
     function getRecordDetail(){
@@ -39,7 +39,7 @@
                 },
                 dataType:'json'
             }).done(function(data) {
-                // console.log(data.result["cart_detail"]);
+
                 if (!$.isEmptyObject(data.result["cart"])) {
                     $("#customer_name").text(data.result["cart"].customer_name);
                     $("#customer_phone").text(data.result["cart"].customer_phone);
@@ -51,13 +51,13 @@
                     $("#transport_name").text(data.result["cart"].transport_name);
                     $("#transport_id").text(data.result["cart"].transport_id);
                     $("#code").text(data.result["cart"].code);
+
                     var htmlTable = parseTableCartDetail(data.result["cart_detail"]);
-                    // console.log(htmlTable);
                     $('.cart-detail-wrapper').html(htmlTable);
-                    // console.log(getSummaryCart(data.result["cart_detail"]));
                     $('.c-total-money').text(getSummaryCart(data.result["cart_detail"])['total_price'].toLocaleString() + ' đ');
                     $('.c-shipping-fee').text(getSummaryCart(data.result["cart_detail"])['shipping_fee'].toLocaleString() + ' đ');
                     $('.c-amount').text(getSummaryCart(data.result["cart_detail"])['amount'].toLocaleString() + ' đ');
+                    $('#i-status-list').val(data.result["cart"].status);
                 }else{
                     console.log('Data is null');
                 }
@@ -66,6 +66,37 @@
             })
 
         });
+    }
+
+    //---> Get customer detail, cart detail
+    function updateStatus(){
+
+        var cart_code = $("#code").text();
+        var status_val = $("#i-status-list").val();
+        var alert_html = '<div class="alert alert-success alert-dismissable" id="i-alert-response">\
+                            <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>\
+                            <span></span>\
+                        </div>';
+        $.ajax({
+            url: "{{route('admin.carts.updateStatus')}}",
+            type: 'PUT',
+            data:{
+                cart_code:cart_code,
+                status: status_val
+            },
+            dataType:'json'
+        }).done(function(data) {
+            if (!$.isEmptyObject(data)) {
+                console.log(data);
+                $(".alert-wrapper").html(alert_html);
+                $("#i-alert-response span").text(data.message);
+                $("#i-alert-response").show();
+            }else{
+                console.log('Data is null');
+            }
+        }).fail(function(jqXHR, textStatus){
+            console.log(textStatus);
+        })
     }
 
     function parseTableCartDetail(arrCartDetails){
@@ -108,7 +139,7 @@
             format: 'dd/mm/yyyy'
         });
 
-
+        var is_first_load = true;
         table = $('#dataTables').dataTable({
             searching: false,
             processing: true,
@@ -124,8 +155,8 @@
                     d.status = $('#s-status').val();
                     d.start_date = $('input[name=start]').val();
                     d.end_date = $('input[name=end]').val();
-                    console.log($('input[name=start]').val());
-                    console.log($('input[name=end]').val());
+                    // console.log($('input[name=start]').val());
+                    // console.log($('input[name=end]').val());
                 },
                 complete: function () {
                     var inputStatus = document.querySelectorAll('.js-switch');
@@ -200,7 +231,11 @@
 
                     //---> Get customer detail
                     getRecordDetail();
-                    $('#dataTables tbody > tr:first').click();
+                    if (is_first_load) {
+                        $('#dataTables tbody > tr:first').click();
+                        is_first_load = false;
+                    }
+                    
                 },
             },
             columns: [
@@ -305,6 +340,12 @@ $("#dataTables").on("click", '.bt-delete', function () {
 
     });
 });
+
+//---> Update status cart
+$("#save-cart-info").click(function(){
+    updateStatus();
+    table.fnDraw();
+});
 </script>
 @endsection
 @section('content')
@@ -360,11 +401,17 @@ $("#dataTables").on("click", '.bt-delete', function () {
                     <label>Tình trạng</label>
                     <select class="form-control" name="status" id="s-status">
                         <option value=""> -- Tất cả --</option>
-                        <option @if(app('request')->has('status') && app('request')->input('status') == ACTIVE) selected
-                            @endif value="{{ACTIVE}}">Đã kích hoạt
+                        <option @if(app('request')->has('status') && app('request')->input('status') == CART_NEW) selected
+                            @endif value="{{CART_NEW}}">Mới
                         </option>
-                        <option @if(app('request')->has('status') && app('request')->input('status') == INACTIVE) selected
-                            @endif value="{{INACTIVE}}">Chưa kích hoạt
+                        <option @if(app('request')->has('status') && app('request')->input('status') == CART_COMPLETE) selected
+                            @endif value="{{CART_COMPLETE}}">Hoàn thành
+                        </option>
+                        <option @if(app('request')->has('status') && app('request')->input('status') == CART_IN_PROGRESS) selected
+                            @endif value="{{CART_IN_PROGRESS}}">Đang giao
+                        </option>
+                        <option @if(app('request')->has('status') && app('request')->input('status') == CART_CANCELED) selected
+                            @endif value="{{CART_CANCELED}}">Đã hủy
                         </option>
                     </select>
                 </div>
@@ -386,6 +433,8 @@ $("#dataTables").on("click", '.bt-delete', function () {
 </form>
 </div>
 <div class="row">
+    <div class="col-md-12 alert-wrapper">
+    </div>
     <div class="col-md-8">
         <div class="ibox float-e-margins">
             @include('admin._partials._alert')
@@ -473,10 +522,11 @@ $("#dataTables").on("click", '.bt-delete', function () {
                         <div class="form-group">
                             <label class="col-lg-5 control-label" style="text-align: left; padding-right: 0; width: 33.666667%;">Tình trạng:</label>
                             <div class="col-lg-7" style="padding-left: 0; text-align: left;">
-                                <select class="form-control m-b" name="status">
-                                    <option>Hoàn thành</option>
-                                    <option>Đang giao</option>
-                                    <option>Chưa giao</option>
+                                <select id="i-status-list" class="form-control m-b" name="status">
+                                    <option value="{{CART_NEW}}">Mới</option>
+                                    <option value="{{CART_IN_PROGRESS}}">Đang giao</option>
+                                    <option value="{{CART_COMPLETE}}">Hoàn thành</option>
+                                    <option value="{{CART_CANCELED}}">Đã hủy</option>
                                 </select>
                             </div>
                         </div>
@@ -515,7 +565,7 @@ $("#dataTables").on("click", '.bt-delete', function () {
                         </div>
                         <div class="form-group">
                             <div class="col-lg-offset-2 col-lg-10 text-right">
-                                <button class="btn btn-sm btn-primary" type="submit">Lưu</button>
+                                <button id="save-cart-info" class="btn btn-sm btn-primary" type="button">Lưu</button>
                             </div>
                         </div>
                     </form>

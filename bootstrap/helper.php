@@ -4,13 +4,13 @@ function set_active($path, $active = 'active')
 	return call_user_func_array('Request::is', (array)$path) ? $active : '';
 }
 
-function make_option($array, $select = 0){
+function make_option($array, $select = 0, $field = 'name'){
 	$result = '';
 	foreach ($array as $key => $value) {
 		if ($value['id'] == $select) {
-			$result .= '<option value="'.$value['id'].'" selected="selected">'.$value['name'].'</option>';
+			$result .= '<option value="'.$value['id'].'" selected="selected">'.$value[$field].'</option>';
 		}else{
-			$result .= '<option value="'.$value['id'].'">'.$value['name'].'</option>';
+			$result .= '<option value="'.$value['id'].'">'.$value[$field].'</option>';
 		}
 	}
 	return $result;
@@ -122,4 +122,53 @@ function general_code($string, $id, $number)
         $code .= strtoupper(substr($s,0,1));
     }
     return $code . sprintf('%0' . $number . 'd', $id);
+}
+
+function parse_status($status){
+	$status_parsed = '';
+	switch ($status) {
+		case CART_NEW:
+			$status_parsed = '<span class="label label-info">'.'Mới'.'</span>';
+			break;
+
+		case CART_COMPLETE:
+			$status_parsed = '<span class="label label-success">'.'Hoàn thành'.'</span>';
+			break;
+
+		case CART_IN_PROGRESS:
+			$status_parsed = '<span class="label label-warning">'.'Đang giao'.'</span>';
+			break;
+
+		case CART_CANCELED:
+			$status_parsed = '<span class="label label-danger">'.'Đã hủy'.'</span>';
+			break;
+		
+		default:
+			$status_parsed = '<span class="label label-info">'.'Không có tình trạng'.'</span>';
+			break;
+	}
+	return $status_parsed;
+}
+
+function make_cart_status_options($selected = 0){
+	$array = [
+		array('id' => EXCUTING, 'name' => 'Đang xử lý'),
+		array('id' => TRANSPORTING, 'name' => 'Đang giao'),
+		array('id' => TRANSPORTED, 'name' => 'Đã giao'),
+		array('id' => COMPLETED, 'name' => 'Đã hoàn tất'),
+		array('id' => CANCELED, 'name' => 'Đã hủy'),
+	];
+
+	return make_option($array, $selected);
+}
+
+function make_payment_status_options($selected = 0){
+	$array = [
+		array('id' => NOT_PAYING, 'name' => 'Chưa thanh toán'),
+		array('id' => PAYING_NOT_ENOUGH, 'name' => 'Chưa thanh toán đủ'),
+		array('id' => PAYING_OFF, 'name' => 'Đã thanh toán'),
+		array('id' => RECEIVED_PAYMENT, 'name' => 'Đã nhận tiền'),
+	];
+
+	return make_option($array, $selected);
 }

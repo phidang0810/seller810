@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Models\Cart;
 use App\Models\Customer;
 use Yajra\DataTables\Facades\DataTables;
+use Response;
 
 class CustomerRepository
 {
@@ -145,5 +146,33 @@ class CustomerRepository
         $model = Customer::find($id);
         $model->active = $status;
         return $model->save();
+    }
+
+    public function getCustomers()
+    {
+        $data = Customer::get();
+        return $data;
+    }
+
+    public function getPhoneOptions($select = 0){
+        return make_option($this->getCustomers(), $select, 'phone');
+    }
+
+    public function getCustomer($request){
+        $customer_id = $request->get('customer_phone');
+
+        $return = [
+            'customer_id' => $customer_id,
+            'message'   =>  'Lấy datas cho khách hàng thành công',
+        ];
+
+        if ($customer_id) {
+            $customer = Customer::find($customer_id);
+            $customer->city;
+            $customer->group;
+            $return['customer'] = $customer;
+        }
+
+        return Response::json($return);
     }
 }

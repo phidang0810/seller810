@@ -410,4 +410,7 @@ tr.error input, tr.error select {
   }
 }
 
+#i-alert-response{
+  display: none;
+}
 
