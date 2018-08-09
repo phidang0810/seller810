@@ -210,6 +210,7 @@
                 dataType:'json'
             }).done(function(data) {
                 if (!$.isEmptyObject(data)) {
+                    $('#add_cart_details').prop('disabled', false);
                     $('input[name="product_quantity"]').attr('max', data.quantity);
                 }else{
                 }
@@ -232,6 +233,7 @@
                 dataType:'json'
             }).done(function(data) {
                 if (!$.isEmptyObject(data)) {
+                    $('#add_cart_details').prop('disabled', true);
                     cart_details.push({
                         'product_image':(data.product.photo) ? path_img_folder + data.product.photo : default_image,
                         'product_code':data.product.code,
@@ -362,7 +364,7 @@
                                     value=""/>
                                 </div>
                                 <div class="col-md-2">
-                                    <button type="button" class="btn btn-success pull-left c-add-info" id="add_cart_details">Thêm</button>
+                                    <button type="button" class="btn btn-success pull-left c-add-info" id="add_cart_details" disabled="true">Thêm</button>
                                 </div>
                             </div>
 

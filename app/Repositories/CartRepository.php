@@ -126,9 +126,9 @@ Class CartRepository
 	}
 
 	public function updateStatus($request){
-        $cartCode = $request->get('cart_code');
-        $status = $request->get('status');
-        $payment_status = $request->get('payment_status');
+		$cartCode = $request->get('cart_code');
+		$status = $request->get('status');
+		$payment_status = $request->get('payment_status');
 		$model = Cart::where('code','=',$cartCode)->first();
 		$model->status = $status;
 		$model->payment_status = $payment_status;
@@ -167,7 +167,13 @@ Class CartRepository
 
 		// Excute customer
 		if ($customer = Customer::find($data['customer_phone'])) {
-			$model->customer_id = $data['customer_phone'];
+			$customer->city_id = $data['customer_city'];
+			$customer->name = $data['customer_name'];
+			$customer->email = $data['customer_email'];
+			// $customer->phone = $data['customer_phone'];
+			$customer->address = $data['customer_address'];
+
+			$customer->save();
 		}else{
 			$customer = new Customer;
 
@@ -178,9 +184,9 @@ Class CartRepository
 			$customer->address = $data['customer_address'];
 
 			$customer->save();
-
-			$model->customer_id = $customer->id;
 		}
+		
+		$model->customer_id = $customer->id;
 
 
 		$model->transport_id = $data['transporting_service'];
@@ -245,31 +251,31 @@ Class CartRepository
 				$modelDetail = CartDetail::find($detail->id);
 				if ($modelDetail) {
 					if (!isset($detail->delete) || $detail->delete != true) {
-						$modelDetail->product_id = ($detail->product_name) ? $detail->product_name->id : 0;
-						$modelDetail->product_detail_id = ($detail->product_detail) ? $detail->product_detail->id : 0;
-						$modelDetail->quantity = ($detail->product_quantity) ? $detail->product_quantity : 0;
-						// $modelDetail->discount_amount = ($detail->discount_amount) ? $detail->discount_amount : 0;
-						$modelDetail->price = ($detail->product_price) ? $detail->product_price : 0;
-						$modelDetail->total_price = ($detail->total_price) ? $detail->total_price : 0;
+						$modelDetail->product_id = (isset($detail->product_name)) ? $detail->product_name->id : 0;
+						$modelDetail->product_detail_id = (isset($detail->product_detail)) ? $detail->product_detail->id : 0;
+						$modelDetail->quantity = (isset($detail->product_quantity)) ? $detail->product_quantity : 0;
+						$modelDetail->discount_amount = (isset($detail->discount_amount)) ? $detail->discount_amount : 0;
+						$modelDetail->price = (isset($detail->product_price)) ? $detail->product_price : 0;
+						$modelDetail->total_price = (isset($detail->total_price)) ? $detail->total_price : 0;
 						$modelDetail->save();
 					}
 				}
 			}else{
 				if (!isset($detail->delete) || $detail->delete != true) {
 					$modelDetail = new CartDetail([
-						'product_id' => ($detail->product_name) ? $detail->product_name->id : 0,
-						'product_detail_id' => ($detail->product_detail) ? $detail->product_detail->id : 0,
-						'quantity' => ($detail->product_quantity) ? $detail->product_quantity : 0,
-						// 'discount_amount' => ($detail->discount_amount) ? $detail->discount_amount : 0,
-						'price' => ($detail->product_price) ? $detail->product_price : 0,
-						'total_price' => ($detail->total_price) ? $detail->total_price : 0,
+						'product_id' => (isset($detail->product_name)) ? $detail->product_name->id : 0,
+						'product_detail_id' => (isset($detail->product_detail)) ? $detail->product_detail->id : 0,
+						'quantity' => (isset($detail->product_quantity)) ? $detail->product_quantity : 0,
+						'discount_amount' => (isset($detail->discount_amount)) ? $detail->discount_amount : 0,
+						'price' => (isset($detail->product_price)) ? $detail->product_price : 0,
+						'total_price' => (isset($detail->total_price)) ? $detail->total_price : 0,
 					]);
 					$model->details()->save($modelDetail);
 				}
 			}
 
 			// Subtract product detail quantity
-			if ($detail->product_detail) {
+			if (isset($detail->product_detail)) {
 				if ($modelProductDetail = ProductDetail::find($detail->product_detail->id)) {
 					$modelProductDetail->quantity -= $detail->product_quantity;
 					$modelProductDetail->save();
