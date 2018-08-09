@@ -138,7 +138,7 @@
         var url_detail = "{{route('admin.carts.view')}}";
         // console.log(url_detail+"  ---  "+location.href);
         if (location.href == url_detail || location.href == url_create) {
-            console.log(url_detail+"  ---  "+location.href);
+            // console.log(url_detail+"  ---  "+location.href);
             $(".cart-menu-wrapper").show();
             $(".cart-menu-wrapper .cart-detail").addClass("active");
         }
@@ -160,6 +160,8 @@
 
         // Load data for color options when product select is changed
         $('select[name="product_name"]').on('change', function(){
+            //---> validatae product
+            validateProductInfo($(this).val(), "name");
             $.ajax({
                 url: "{{route('admin.carts.view')}}",
                 data:{
@@ -179,6 +181,9 @@
 
         // Load data for size options when color select is changed
         $('select[name="product_color"]').on('change', function(){
+            //---> validatae color
+            validateProductInfo($(this).val(), "color");
+
             $('select[name="product_size"]').html('<option value="0"> -- Chọn kích thước -- </option>');
             $.ajax({
                 url: "{{route('admin.carts.view')}}",
@@ -200,6 +205,9 @@
 
         // Load data for quantity product when size select is changed
         $('select[name="product_size"]').on('change', function(){
+            //---> validatae color
+            validateProductInfo($(this).val(), "size");
+
             $.ajax({
                 url: "{{route('admin.carts.view')}}",
                 data:{
@@ -219,44 +227,78 @@
             })
         });
 
+        function validateProductInfo(elSelectVal, objectName){
+            var status = true;
+            if (elSelectVal == 0) {
+                console.log("#product-"+objectName+"-error");
+                if ($("#product-"+objectName+"-error").hasClass("hidden")) {
+                    console.log("remove hidden");
+                    $("#product-"+objectName+"-error").removeClass("hidden");
+                    $("#product-"+objectName+"-error").css("display","inline-block!important");
+                }
+                status = false;
+            }else{
+                if (!$("#product-"+objectName+"-error").hasClass("hidden")) {
+                    $("#product-"+objectName+"-error").addClass("hidden");
+                    $("#product-"+objectName+"-error").css("display","none!important");
+                }
+
+                $('#add_cart_details').removeAttr('disabled');
+                status = true;
+            }
+            return status;
+        }
+
         // When "Thêm" button is clicked -> Add new item to array cart_details, append new row to table
         $('#add_cart_details').click(function(){
-            var path_img_folder = window.location.origin + '/storage/';
-            $.ajax({
-                url: "{{route('admin.carts.view')}}",
-                data:{
-                    product_id:$('select[name="product_name"]').val(),
-                    color_id:$('select[name="product_color"]').val(),
-                    size_id:$('select[name="product_size"]').val(),
-                    get_data:true
-                },
-                dataType:'json'
-            }).done(function(data) {
-                if (!$.isEmptyObject(data)) {
-                    $('#add_cart_details').prop('disabled', true);
-                    cart_details.push({
-                        'product_image':(data.product.photo) ? path_img_folder + data.product.photo : default_image,
-                        'product_code':data.product.code,
-                        'product_price':data.product.sell_price,
-                        'product_editable_price':data.product.sell_price,
-                        'product_name':{id:$('select[name="product_name"]').val(), name:$('select[name="product_name"] option[value="'+$('select[name="product_name"]').val()+'"]').text()},
-                        'product_quantity':parseInt($('input[name="product_quantity"]').val()),
-                        'product_size':{id:$('select[name="product_size"]').val(), name:$('select[name="product_size"] option[value="'+$('select[name="product_size"]').val()+'"]').text()},
-                        'product_color':{id:$('select[name="product_color"]').val(), name:$('select[name="product_color"] option[value="'+$('select[name="product_color"]').val()+'"]').text()},
-                        'total_price':data.product.sell_price*$('input[name="product_quantity"]').val(),
-                        'product_detail':data.product_detail
-                    });
+            if (validateProductInfo($("select[name=product_name]").val(), "name") && validateProductInfo($("select[name=product_color]").val(), "color") && validateProductInfo($("select[name=product_size]").val(), "size")) {
+                // $('#add_cart_details').removeAttr('disabled');
+                $('button[value="save"]').removeAttr('disabled');
+                $('button[value="save_quit"]').removeAttr('disabled');
 
-                    var key = cart_details.length-1;
-                    var html = htmlEditCreateRowProductDetail(cart_details[key], key);
+                var path_img_folder = window.location.origin + '/storage/';
+                $.ajax({
+                    url: "{{route('admin.carts.view')}}",
+                    data:{
+                        product_id:$('select[name="product_name"]').val(),
+                        color_id:$('select[name="product_color"]').val(),
+                        size_id:$('select[name="product_size"]').val(),
+                        get_data:true
+                    },
+                    dataType:'json'
+                }).done(function(data) {
+                    if (!$.isEmptyObject(data)) {
+                        // $('#add_cart_details').prop('disabled', true);
+                        cart_details.push({
+                            'product_image':(data.product.photo) ? path_img_folder + data.product.photo : default_image,
+                            'product_code':data.product.code,
+                            'product_price':data.product.sell_price,
+                            'product_editable_price':data.product.sell_price,
+                            'product_name':{id:$('select[name="product_name"]').val(), name:$('select[name="product_name"] option[value="'+$('select[name="product_name"]').val()+'"]').text()},
+                            'product_quantity':parseInt($('input[name="product_quantity"]').val()),
+                            'product_size':{id:$('select[name="product_size"]').val(), name:$('select[name="product_size"] option[value="'+$('select[name="product_size"]').val()+'"]').text()},
+                            'product_color':{id:$('select[name="product_color"]').val(), name:$('select[name="product_color"] option[value="'+$('select[name="product_color"]').val()+'"]').text()},
+                            'total_price':data.product.sell_price*$('input[name="product_quantity"]').val(),
+                            'product_detail':data.product_detail
+                        });
 
-                    $('#i-cart-info tbody').append('<tr class="child" id="cart_detail_'+key+'">'+html+'</tr>');
-                    updateCartTotalInfo();
-                }else{
-                }
-            }).fail(function(jqXHR, textStatus){
-                alert('Có lỗi xảy ra, xin hãy làm mới trình duyệt');
-            });
+                        var key = cart_details.length-1;
+                        var html = htmlEditCreateRowProductDetail(cart_details[key], key);
+
+                        $('#i-cart-info tbody').append('<tr class="child" id="cart_detail_'+key+'">'+html+'</tr>');
+                        updateCartTotalInfo();
+                    }else{
+                    }
+                }).fail(function(jqXHR, textStatus){
+                    alert('Có lỗi xảy ra, xin hãy làm mới trình duyệt');
+                });
+            }else{
+                $('#add_cart_details').prop('disabled', true);
+                $('button[value="save"]').prop('disabled', true);
+                $('button[value="save_quit"]').prop('disabled', true);
+                console.log("Vui lòng nhập đủ thông tin");
+            }
+            
         });
 
         // Load customer data when customer phone select is changed
@@ -348,23 +390,26 @@
                                         <option value="0"> -- Chọn sản phẩm -- </option>
                                         {!! $product_options !!}
                                     </select>
+                                    <label id="product-name-error" class="error hidden" for="product_name1">Vui lòng chọn.</label>
                                 </div>
                                 <div class="col-md-2">
                                     <select name="product_color" class="form-control">
                                         <option value="0"> -- Chọn màu sắc -- </option>
                                     </select>
+                                    <label id="product-color-error" class="error hidden" for="product_color1">Vui lòng chọn.</label>
                                 </div>
                                 <div class="col-md-2">
                                     <select name="product_size" class="form-control">
                                         <option value="0"> -- Chọn kích thước -- </option>
                                     </select>
+                                    <label id="product-size-error" class="error hidden" for="product_size1">Vui lòng chọn.</label>
                                 </div>
                                 <div class="col-md-2">
                                     <input name="product_quantity" type="text" placeholder="Nhập số lượng" class="form-control m-b"
                                     value=""/>
                                 </div>
                                 <div class="col-md-2">
-                                    <button type="button" class="btn btn-success pull-left c-add-info" id="add_cart_details" disabled="true">Thêm</button>
+                                    <button type="button" class="btn btn-success pull-left c-add-info" id="add_cart_details">Thêm</button>
                                 </div>
                             </div>
 
