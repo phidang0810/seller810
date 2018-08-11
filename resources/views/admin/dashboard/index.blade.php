@@ -192,6 +192,53 @@
                 }
             });
 
+            table = $('#dataTables').dataTable({
+                searching: false,
+                processing: true,
+                serverSide: true,
+                "dom": 'rt<"#pagination"flp>',
+                ajax: {
+                    "url": "{{route('admin.carts.index')}}",
+                    "data": function ( d ) {
+                        d.status = $('#s-status').val();
+                    },
+                    complete: function(){
+                    }
+                },
+                columns: [
+                    {data: 'id'},
+                    {data: 'code'},
+                    {data: 'created_at'},
+                    {data: 'platform_name'}
+                ],
+                "aoColumnDefs": [
+                ],
+                "language": {
+                    "decimal": "",
+                    "emptyTable": "Không có dữ liệu hợp lệ",
+                    "info": "Hiển thị từ _START_ đến _END_ / _TOTAL_ kết quả",
+                    "infoEmpty": "Hiển thị từ 0 đến 0 trên 0 dòng",
+                    "infoFiltered": "(filtered from _MAX_ total entries)",
+                    "infoPostFix": "",
+                    "thousands": ",",
+                    "lengthMenu": "Hiển thị _MENU_ kết quả",
+                    "loadingRecords": "Đang tải...",
+                    "processing": "Đang xử lý...",
+                    "search": "Search:",
+                    "zeroRecords": "Không có kết quả nào được tìm thấy",
+                    "paginate": {
+                        "first": "Đầu",
+                        "last": "Cuối",
+                        "next": "Tiếp",
+                        "previous": "Trước"
+                    },
+                    "aria": {
+                        "sortAscending": ": activate to sort column ascending",
+                        "sortDescending": ": activate to sort column descending"
+                    }
+                }
+
+            });
         });
     </script>
 @endsection
@@ -234,6 +281,18 @@
             <div class="ibox float-e-margins">
                 <div class="ibox-content">
                     <h2 class="tt-page">DANH SÁCH ĐƠN HÀNG MỚI</h2>
+                    <table class="table table-striped table-hover" id="dataTables">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Mã Đơn Hàng</th>
+                            <th>Ngày Đặt</th>
+                            <th>Nguồn Đơn</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>

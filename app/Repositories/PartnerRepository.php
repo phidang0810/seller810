@@ -61,7 +61,7 @@ class PartnerRepository
     {
         if ($id) {
             $model = Partner::find($id);
-            $model->code = general_code($data['name'], $id, 5);
+            $model->code = general_code($data['name'], $id, 6);
         } else {
             $model = new Partner;
         }

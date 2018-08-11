@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Repositories\CategoryRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
 

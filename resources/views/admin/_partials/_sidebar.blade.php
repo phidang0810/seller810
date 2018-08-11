@@ -36,6 +36,17 @@
                     <a href="#"><i class="fa fa-users" aria-hidden="true"></i> <span class="nav-label">Quản Lý Khách Hàng</span><span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level">
                         <li class="{{ set_active(['quan-ly/khach-hang/nhom*']) }}"><a href="{{route('admin.groupCustomer.index')}}">Nhóm khách hàng</a></li>
+                        <li class="{{ set_active(['quan-ly/khach-hang*']) }}"><a href="{{route('admin.customers.index')}}">Khách hàng</a></li>
+                    </ul>
+                </li>
+            @endif
+
+            @if(key_exists('accountant_manager', Auth::user()->permissions))
+                <li class="{{ set_active(['quan-ly/ke-toan', 'quan-ly/ke-toan/*']) }} nav-item">
+                    <a href="#"><i class="fa fa-shopping-cart"></i> <span class="nav-label">Kế Toán</span><span class="fa arrow"></span></a>
+                    <ul class="nav nav-second-level">
+                        <li class="{{ set_active(['quan-ly/ke-toan/doanh-thu']) }}"><a href="{{route('admin.statistics.revenue')}}">Doanh Thu Bán Hàng</a></li>
+                        <li class="{{ set_active(['quan-ly/ke-toan/phieu-chi']) }}"><a href="{{route('admin.payslips.index')}}">Phiếu Chi</a></li>
                     </ul>
                 </li>
             @endif

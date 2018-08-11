@@ -102,3 +102,18 @@ Route::prefix('don-hang')
     Route::get ('/thong-tin-khach-hang', 'CartController@getCartDetail')->name('admin.carts.getCartDetail');
     Route::put ('/update-status', 'CartController@updateStatus')->name('admin.carts.updateStatus');
 });
+
+Route::prefix('thong-ke')
+    ->middleware('permission:accountant_manager')->group(function () {
+        Route::get ('/', 'StatisticsController@importProduct')->name('admin.statistics.importProduct');
+    });
+
+Route::prefix('ke-toan')
+    ->middleware('permission:accountant_manager')->group(function () {
+        Route::get ('/phieu-chi/', 'PayslipController@index')->name('admin.payslips.index');
+        Route::get ('/phieu-chi/chi-tiet', 'PayslipController@view')->name('admin.payslips.view');
+        Route::get ('/phieu-chi/them', 'PayslipController@view')->name('admin.payslips.create');
+        Route::post ('/phieu-chi/them', 'PayslipController@store')->name('admin.payslips.store');
+        Route::delete ('/phieu-chi/', 'PayslipController@delete')->name('admin.payslips.delete');
+        Route::get ('/doanh-thu', 'StatisticsController@revenue')->name('admin.statistics.revenue');
+    });

@@ -27,8 +27,8 @@ Class ProductRepository
 
 	public function dataTable($request)
 	{
-		$products = Product::select(['products.id', 'products.photo', 'products.code','products.name', 'products.quantity_available', 'products.price', 'products.sell_price', 'products.sizes', 'products.active', 'products.created_at']);
-
+		$products = Product::select(['products.id', 'products.category_ids', 'products.photo', 'products.code','products.name', 'products.quantity_available', 'products.quantity', 'products.price', 'products.sell_price', 'products.sizes', 'products.active', 'products.created_at', 'price*quantity as total_price']);
+        $categories = Category::get()->pluck('name', 'id')->toArray();
 		$dataTable = DataTables::eloquent($products)
 		->filter(function ($query) use ($request) {
 			if (trim($request->get('category')) !== "") {
@@ -47,6 +47,14 @@ Class ProductRepository
 
 			}
 		}, true)
+        ->addColumn('category', function($product) use ($categories) {
+            $html = '';
+            $categoryIDs = explode(',', $product->category_ids);
+            foreach ($categoryIDs as $categoryID) {
+                $html .= '<label class="label label-default">'.$categories[$categoryID].'</label>';
+            }
+            return $html;
+        })
 		->addColumn('action', function ($product) {
 			$html = '';
 			$html .= '<a href="' . route('admin.products.view', ['id' => $product->id]) . '" class="btn btn-xs btn-primary" style="margin-right: 5px"><i class="glyphicon glyphicon-edit"></i> Sửa</a>';
@@ -139,11 +147,14 @@ Class ProductRepository
 				$model->photo = null;
 			}
 		}
-
+        if (isset($data['categories'])) {
+            $model->category_ids = $data['categories'];
+        }
 		$model->save();
 
 		if (isset($data['categories'])) {
 			$this->addCategories($model->id, $data['categories']);
+
 		}
 
 		if (isset($data['details'])) {

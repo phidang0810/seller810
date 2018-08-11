@@ -34,3 +34,12 @@ define('TRANSPORTING_TEXT', 'Đang giao');
 define('TRANSPORTED_TEXT', 'Đã giao');
 define('COMPLETED_TEXT', 'Đã hoàn tất');
 define('CANCELED_TEXT', 'Đã hủy');
+
+define('PAYSLIP_PENDING', 1);
+define('PAYSLIP_APPROVED', 2);
+define('PAYSLIP_CANCEL', 3);
+define('PAYSLIP_TEXT', [
+    1 => 'Chưa xác nhận',
+    2 => 'Đã chi',
+    3 => 'Từ chối'
+]);
