@@ -52,46 +52,12 @@
     </div>
 
     <div class="form-group">
-        <label class="col-lg-5 control-label" style="text-align: left; padding-right: 0; width: 33.666667%;">Tình trạng thanh toán:</label>
-        <div class="col-lg-7" style="padding-left: 0; text-align: left;">
-            <select id="i-payment-status-list" name="payment_status" class="form-control m-b">
-                {!! $payment_status !!}}
-            </select>
-        </div>
-    </div>
-
-    <div class="form-group">
         <label class="col-lg-5 control-label" style="text-align: left; padding-right: 0; width: 33.666667%;">Tình trạng:</label>
         <div class="col-lg-7" style="padding-left: 0; text-align: left;">
             <select id="i-status-list" class="form-control m-b" name="status">
                 {!! $cart_status !!}}
             </select>
         </div>
-    </div>
-
-    <div class="form-group">
-        <label class="col-lg-5 control-label" style="text-align: left; padding-right: 0; width: 33.666667%;">Tổng cộng:</label>
-        <label id="total_price" class="col-lg-7 text-left control-label" style="padding-left: 0; text-align: left;">{{$result['cart']->total_price}}</label>
-    </div>
-
-    <div class="form-group">
-        <label class="col-lg-5 control-label" style="text-align: left; padding-right: 0; width: 33.666667%;">Phí vận chuyển:</label>
-        <label id="shipping_fee" class="col-lg-7 text-left control-label" style="padding-left: 0; text-align: left;">{{$result['cart']->shipping_fee}}</label>
-    </div>
-
-    <div class="form-group">
-        <label class="col-lg-5 control-label" style="text-align: left; padding-right: 0; width: 33.666667%;">Thuế:</label>
-        <label id="vat_amount" class="col-lg-7 text-left control-label" style="padding-left: 0; text-align: left;">{{$result['cart']->vat_amount}}</label>
-    </div>
-
-    <div class="form-group">
-        <label class="col-lg-5 control-label" style="text-align: left; padding-right: 0; width: 33.666667%;">Tổng chiết khấu:</label>
-        <label id="total_discount_amount" class="col-lg-7 text-left control-label" style="padding-left: 0; text-align: left;">{{$result['cart']->total_discount_amount}}</label>
-    </div>
-
-    <div class="form-group">
-        <label class="col-lg-5 control-label" style="text-align: left; padding-right: 0; width: 33.666667%;">Thành tiền:</label>
-        <label id="price" class="col-lg-7 text-left control-label" style="padding-left: 0; text-align: left;">{{$result['cart']->price }}</label>
     </div>
 
     <div class="text-left">
@@ -110,16 +76,60 @@
             </thead>
             <tfoot>
                 <tr>
-                    <td colspan="3">Tổng cộng</td>
-                    <td><span class="c-total-money"></span></td>
+                    <td colspan="2">Tổng cộng</td>
+                    <td colspan="2">
+                        <input type="text" name="total_price" placeholder="" class="form-control thousand-number m-b"
+                        value="{{$result['cart']->total_price}}" readonly="readonly" />
+                    </td>
                 </tr>
                 <tr>
-                    <td colspan="3">Phí vận chuyển</td>
-                    <td><span class="c-shipping-fee"></span></td>
+                    <td colspan="2">Thuế</td>
+                    <td colspan="2">
+                        <input type="text" name="vat_amount" placeholder="" class="form-control thousand-number m-b"
+                        value="{{$result['cart']->vat_amount}}" readonly="readonly" />
+                    </td>
                 </tr>
                 <tr>
-                    <td colspan="3" style="font-weight: 700;">Thành tiền</td>
-                    <td><span class="c-amount"></span></td>
+                    <td colspan="2">Phí vận chuyển</td>
+                    <td colspan="2">
+                        <input type="text" name="shipping_fee" placeholder="" class="form-control thousand-number m-b"
+                        value="{{$result['cart']->shipping_fee}}" readonly="readonly" />
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">Tổng chiết khấu</td>
+                    <td colspan="2">
+                        <input type="text" name="total_discount_amount" placeholder="" class="form-control thousand-number m-b"
+                        value="{{$result['cart']->total_discount_amount}}" readonly="readonly" />
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="font-weight: 700;">Thành tiền</td>
+                    <td colspan="2">
+                        <input type="text" name="price" placeholder="" class="form-control thousand-number m-b"
+                        value="{{$result['cart']->price}}" readonly="readonly" />
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">Đã thanh toán</td>
+                    <td colspan="2">
+                        <input type="text" name="paid_amount" placeholder="" class="form-control thousand-number m-b"
+                        value="{{$result['cart']->paid_amount}}" readonly="readonly" />
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="font-weight: 700;">Thanh toán thêm</td>
+                    <td colspan="2">
+                        <input type="text" name="pay_amount" placeholder="" class="form-control thousand-number m-b"
+                        value=""/>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">Còn lại</td>
+                    <td colspan="2">
+                        <input type="text" name="needed_paid" placeholder="" class="form-control thousand-number m-b"
+                        value="{{$result['cart']->needed_paid}}" readonly="readonly" />
+                    </td>
                 </tr>
             </tfoot>
             <tbody class="cart-detail-wrapper">
@@ -140,3 +150,24 @@
         </div>
     </div>
 </form>
+<script type="text/javascript">
+    var paid_amount = parseInt('{{($result['cart']->paid_amount) ? $result['cart']->paid_amount : 0}}');
+    var price = parseInt('{{$result['cart']->price}}');
+
+    function formatPrice(){
+        // Format prices
+        $('.thousand-number').toArray().forEach(function(field){
+            new Cleave(field, {
+                numeral: true,
+                numeralThousandsGroupStyle: 'thousand'
+            });
+        });
+    }
+    $(document).ready(function(){
+        $('input[name="pay_amount"]').on('change', function(){
+            var pay_amount = parseInt($('input[name="pay_amount"]').val());
+            $('input[name="needed_paid"]').val(price - paid_amount - pay_amount);
+        });
+        formatPrice();
+    });
+</script>

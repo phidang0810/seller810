@@ -80,6 +80,9 @@ class CartController extends AdminController
 
             // Get all partners
             $this->_data['partner_options'] = $partner->getPartnerOptions($this->_data['data']->partner_id);
+            
+            // Get all platforms
+            $this->_data['platform_options'] = $cart->getPlatformOptions($this->_data['data']->platform_id);
 
             // Get all cart status
             $this->_data['status_options'] = make_cart_status_options($this->_data['data']->status);
@@ -104,13 +107,14 @@ class CartController extends AdminController
 
             // Get all payment status
             $this->_data['payment_options'] = make_payment_status_options();
+
+            // Get all platforms
+            $this->_data['platform_options'] = $cart->getPlatformOptions();
         }
 
         // Get all products
         $this->_data['product_options'] = $product->getProductOptions();
 
-        // Get all platforms
-        $this->_data['platform_options'] = '';
 
         $this->_pushBreadCrumbs($this->_data['title']);
         return view('admin.carts.view', $this->_data);
@@ -199,14 +203,16 @@ class CartController extends AdminController
      * @return \Illuminate\Http\RedirectResponse
      */
     public function updateStatus(CartRepository $cart){
+        $result = [];
+        $result['success'] = true;
+        $result['data'] = $cart->updateStatus($this->_request);
+        $result['message'] = 'Tình trạng đơn hàng đã được cập nhật.';
 
-        $data = $cart->updateStatus($this->_request);
-        $message = 'Tình trạng đơn hàng đã được cập nhật.';
+        if ($result['data'] == false) {
+            $result['success'] = false;
+            $result['message'] = 'Khách hàng còn nợ không thể chuyển sang hoàn tất';
+        }
 
-        return response()->json([
-            'success' => true,
-            'result' => $data,
-            'message' => $message,
-        ]);
+        return response()->json($result);
     }
 }

@@ -69,11 +69,9 @@
         var status_val = $("#i-status-list").val();
         var payment_status_val = $("#i-payment-status-list").val();
         var platform_val = $("#i-platforms-list").val();
-
-        var alert_html = '<div class="alert alert-success alert-dismissable" id="i-alert-response">\
-        <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>\
-        <span></span>\
-        </div>';
+        var pay_amount_val = $('input[name="pay_amount"]').val();
+        var needed_paid_val = $('input[name="needed_paid"]').val();
+        
         $.ajax({
             url: "{{route('admin.carts.updateStatus')}}",
             type: 'PUT',
@@ -82,16 +80,30 @@
                 status: status_val,
                 payment_status: payment_status_val,
                 platform: platform_val,
+                pay_amount: pay_amount_val,
+                needed_paid: needed_paid_val,
             },
             dataType:'json'
         }).done(function(data) {
             if (!$.isEmptyObject(data)) {
+                if (data.success == true) {
+                    var alert_html = '<div class="alert alert-success alert-dismissable" id="i-alert-response">\
+                    <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>\
+                    <span></span>\
+                    </div>';
+                }else{
+                    var alert_html = '<div class="alert alert-warning alert-dismissable" id="i-alert-response">\
+                    <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>\
+                    <span></span>\
+                    </div>';
+                }
+                
                 $(".alert-wrapper").html(alert_html);
                 $("#i-alert-response span").text(data.message);
                 $("#i-alert-response").show();
                 $('html, body').animate({
                   scrollTop: 200
-                }, 800);
+              }, 800);
             }else{
                 console.log('Data is null');
             }

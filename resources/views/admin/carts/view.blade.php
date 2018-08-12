@@ -104,19 +104,20 @@
                 total_quantity += value.product_quantity;
             }
         });
+        vat_percent = $('input[name="vat_percent"]').val();
         $('.cart-total-info input[name="total_price"]').val(total_price);
         $('.cart-total-info input[name="quantity"]').val(total_quantity);
-        vat_amount = parseInt($('.cart-total-info input[name="total_price"]').val()) * parseInt($('input[name="vat_percent"]').val()) / 100;
+        vat_amount = parseInt($('.cart-total-info input[name="total_price"]').val()) * 10 / 100;
         $('.cart-total-info input[name="vat_amount"]').val(vat_amount);
 
         // Count price
         shipping_fee = ($('.cart-total-info input[name="shipping_fee"]').val()) ? parseInt($('.cart-total-info input[name="shipping_fee"]').val()) : 0;
         total_discount_amount = ($('.cart-total-info input[name="total_discount_amount"]').val()) ? parseInt($('.cart-total-info input[name="total_discount_amount"]').val()) : 0;
-        prepaid_amount = ($('.cart-total-info input[name="prepaid_amount"]').val()) ? parseInt($('.cart-total-info input[name="prepaid_amount"]').val()) : 0;
+        paid_amount = ($('.cart-total-info input[name="paid_amount"]').val()) ? parseInt($('.cart-total-info input[name="paid_amount"]').val()) : 0;
         price = total_price + vat_amount + shipping_fee - total_discount_amount;
         $('.cart-total-info input[name="price"]').val(price);
 
-        $('.cart-total-info input[name="needed_paid"]').val(price - prepaid_amount);
+        $('.cart-total-info input[name="needed_paid"]').val(price - paid_amount);
         $('input[name="cart_details"]').val(JSON.stringify(cart_details));
         formatPrice();
     }
@@ -344,7 +345,7 @@
                             'product_quantity':parseInt($('input[name="product_quantity"]').val()),
                             'product_size':{id:$('select[name="product_size"]').val(), name:$('select[name="product_size"] option[value="'+$('select[name="product_size"]').val()+'"]').text()},
                             'product_color':{id:$('select[name="product_color"]').val(), name:$('select[name="product_color"] option[value="'+$('select[name="product_color"]').val()+'"]').text()},
-                            'total_price':parseInt(data.product.sell_price*$('input[name="product_quantity"]').val()),
+                            'total_price':parseInt(data.product.sell_price)*parseInt($('input[name="product_quantity"]').val()),
                             'product_detail':data.product_detail
                         });
 
@@ -423,7 +424,7 @@
 
         // Update value for cart total info prepaid field when prepaid field update
         $('input[name="prepaid_amount"]').on('change', function(){
-            $('.cart-total-info input[name="prepaid_amount"]').val($(this).val());
+            $('.cart-total-info input[name="paid_amount"]').val($(this).val());
             updateCartTotalInfo();
         });
 
@@ -588,7 +589,7 @@
                                 <div class="form-group">
                                     <label class="col-md-4 control-label">Nguồn đơn</label>
                                     <div class="col-md-8">
-                                        <select name="platform" class="form-control m-b">
+                                        <select name="platform_id" class="form-control m-b">
                                             <option value="" selected>-- Chọn nguồn đơn --</option>
                                             {!! $platform_options !!}
                                         </select>
@@ -753,10 +754,10 @@
 
                                 <div class="row">
                                     <div class="form-group">
-                                        <label class="col-md-4 control-label">Trả trước</label>
+                                        <label class="col-md-4 control-label">Đã thanh toán</label>
                                         <div class="col-md-8">
-                                            <input type="text" name="prepaid_amount" placeholder="" class="thousand-number form-control m-b"
-                                            value="@if(isset($data->prepaid_amount)){{$data->prepaid_amount}}@else{{0}}@endif" readonly="readonly" />
+                                            <input type="text" name="paid_amount" placeholder="" class="thousand-number form-control m-b"
+                                            value="@if(isset($data->paid_amount)){{$data->paid_amount}}@else{{0}}@endif" readonly="readonly" />
                                         </div>
                                     </div>
                                 </div>

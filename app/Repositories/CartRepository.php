@@ -16,6 +16,7 @@ use App\Models\Product;
 use App\Models\ProductDetail;
 use App\Models\Transport;
 use App\Models\City;
+use App\Models\Platform;
 use App\Models\Payment;
 use App\Repositories\PaymentRepository;
 use Illuminate\Support\Facades\Cache;
@@ -99,7 +100,7 @@ Class CartRepository
 		$cart = Cart::select(['carts.id', 'carts.city_id', 'carts.partner_id', 'carts.customer_id', 
 			'carts.code', 'carts.quantity', 'carts.status', 'carts.active', 'carts.created_at', 
 			'carts.transport_id as transport_id', 'carts.total_price', 'carts.shipping_fee', 
-			'carts.vat_amount', 'carts.total_discount_amount', 'carts.price', 
+			'carts.vat_amount', 'carts.total_discount_amount', 'carts.price', 'carts.needed_paid', 'carts.paid_amount', 
 			'customers.name as customer_name', 'customers.phone as customer_phone', 'customers.email as customer_email', 
 			'customers.address as customer_address', 'cart_detail.product_id', 'carts.platform_id', 'platforms.name as platform_name', 
 			'transports.name as transport_name', 'carts.payment_status'])
@@ -128,13 +129,40 @@ Class CartRepository
 	public function updateStatus($request){
 		$cartCode = $request->get('cart_code');
 		$status = $request->get('status');
-		$payment_status = $request->get('payment_status');
-		$platform_id = $request->get('platform');
+		$platform_id = $request->get('platform_id');
+		$pay_amount = $request->get('pay_amount');
+		$needed_paid = $request->get('needed_paid');
 		$model = Cart::where('code','=',$cartCode)->first();
-		$model->status = $status;
-		$model->payment_status = $payment_status;
+		$model->paid_amount = $model->paid_amount + $pay_amount;
 		$model->platform_id = $platform_id;
+		$model->needed_paid = $needed_paid;
+		// excute payment_status
+		if ($model->paid_amount && $model->paid_amount > 0) {
+			$model->payment_status = 2;
+			if ($model->paid_amount >= $model->price) {
+				if ($model->platform_id != 0) {
+					$model->payment_status = 3;
+				}else{
+					$model->payment_status = 4;
+				}
+				
+			}
+		}else{
+			$model->payment_status = 1;
+		}
+
 		$model->save();
+
+		// Excute status
+		if ($status == 4) {
+			if ($model->payment_status == 3 || $model->payment_status == 4) {
+				$model->status = $status;
+
+				$model->save();
+			}else{
+				return false;
+			}
+		}
 		return $model;
 	}
 
@@ -145,6 +173,15 @@ Class CartRepository
 
 	public function getTransportOptions($id = 0){
 		return make_option($this->getTransports(), $id);
+	}
+
+	public function getPlatforms(){
+		$data = Platform::get();
+		return $data;
+	}
+
+	public function getPlatformOptions($id = 0){
+		return make_option($this->getPlatforms(), $id);
 	}
 
 	public function getCities(){
@@ -202,21 +239,28 @@ Class CartRepository
 		$model->vat_percent = 10;
 		$model->vat_amount = $data['vat_amount'];
 		$model->prepaid_amount = $data['prepaid_amount'];
+		$model->paid_amount = $data['paid_amount'];
 		$model->needed_paid = $data['needed_paid'];
 		$model->descritption = $data['descritption'];
+		$model->platform_id = $data['platform_id'];
 		// excute payment_status
-		if ($data['prepaid_amount'] && $data['prepaid_amount'] > 0) {
+		if ($data['paid_amount'] && $data['paid_amount'] > 0) {
 			$model->payment_status = 2;
-			if ($data['prepaid_amount'] >= $model->price) {
-				$model->payment_status = 3;
+			if ($data['paid_amount'] >= $model->price) {
+				if ($model->platform_id != 0) {
+					$model->payment_status = 3;
+				}else{
+					$model->payment_status = 4;
+				}
+				
 			}
 		}else{
 			$model->payment_status = 1;
 		}
 
 		// Excute status
-		if ($data['status'] == 4) {
-			if ($model->payment_status == 3 || $model->payment_status == 4) {
+		if ($data['status'] == 3 || $data['status'] == 4) {
+			if ($model->payment_status == 4) {
 				$model->status = $data['status'];
 			}else{
 				$model->status = 3;
