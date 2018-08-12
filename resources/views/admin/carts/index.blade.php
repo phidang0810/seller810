@@ -68,6 +68,7 @@
         var cart_code = $("#code").text();
         var status_val = $("#i-status-list").val();
         var payment_status_val = $("#i-payment-status-list").val();
+        var platform_val = $("#i-platforms-list").val();
 
         var alert_html = '<div class="alert alert-success alert-dismissable" id="i-alert-response">\
         <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>\
@@ -79,7 +80,8 @@
             data:{
                 cart_code:cart_code,
                 status: status_val,
-                payment_status: payment_status_val
+                payment_status: payment_status_val,
+                platform: platform_val,
             },
             dataType:'json'
         }).done(function(data) {

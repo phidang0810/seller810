@@ -6,6 +6,7 @@ use App\Repositories\CartRepository;
 use App\Repositories\ProductRepository;
 use App\Repositories\CustomerRepository;
 use App\Repositories\PartnerRepository;
+use App\Repositories\PlatformRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
@@ -177,12 +178,13 @@ class CartController extends AdminController
      *
      * @return \Illuminate\Http\Response
      */
-    public function getCartDetail(CartRepository $cart){
+    public function getCartDetail(CartRepository $cart, PlatformRepository $platform){
         $cartCode = $this->_request->get('cart_code');
         $result = $cart->getCartDetail($cartCode);
         $cart_status = make_cart_status_options($result['cart']->status);
         $payment_status = make_payment_status_options($result['cart']->payment_status);
-        $view = view("admin._partials._cart_details", compact(['result', 'cart_status', 'payment_status']))->render();
+        $platforms = $platform->getList();
+        $view = view("admin._partials._cart_details", compact(['result', 'cart_status', 'payment_status', 'platforms']))->render();
         
         return response()->json([
             'success' => true,

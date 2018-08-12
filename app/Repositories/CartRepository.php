@@ -101,12 +101,12 @@ Class CartRepository
 			'carts.transport_id as transport_id', 'carts.total_price', 'carts.shipping_fee', 
 			'carts.vat_amount', 'carts.total_discount_amount', 'carts.price', 
 			'customers.name as customer_name', 'customers.phone as customer_phone', 'customers.email as customer_email', 
-			'customers.address as customer_address', 'cart_detail.product_id', 'platforms.name as platform_name', 
+			'customers.address as customer_address', 'cart_detail.product_id', 'carts.platform_id', 'platforms.name as platform_name', 
 			'transports.name as transport_name', 'carts.payment_status'])
 		->join('customers', 'customers.id', '=', 'carts.customer_id')
 		->join('cart_detail', 'cart_detail.cart_id', '=', 'carts.id')
 		->join('products', 'products.id', '=', 'cart_detail.product_id')
-		->join('platforms', 'platforms.id', '=', 'carts.platform_id')
+		->leftjoin('platforms', 'platforms.id', '=', 'carts.platform_id')
 		->join('transports', 'transports.id', '=', 'carts.transport_id')
 		->where('carts.code', '=', $cartCode)
 		->first();
@@ -129,9 +129,11 @@ Class CartRepository
 		$cartCode = $request->get('cart_code');
 		$status = $request->get('status');
 		$payment_status = $request->get('payment_status');
+		$platform_id = $request->get('platform');
 		$model = Cart::where('code','=',$cartCode)->first();
 		$model->status = $status;
 		$model->payment_status = $payment_status;
+		$model->platform_id = $platform_id;
 		$model->save();
 		return $model;
 	}
