@@ -199,14 +199,30 @@ Class CartRepository
 		$model->total_price = preg_replace('/[^0-9]/', '', $data['total_price']);
 		$model->price = preg_replace('/[^0-9]/', '', $data['price']);
 		$model->shipping_fee = $data['shipping_fee'];
-		$model->vat_percent = $data['vat_percent'];
+		$model->vat_percent = 10;
 		$model->vat_amount = $data['vat_amount'];
 		$model->prepaid_amount = $data['prepaid_amount'];
 		$model->needed_paid = $data['needed_paid'];
 		$model->descritption = $data['descritption'];
-		$model->vat_percent = $data['vat_percent'];
-		// $model->payment_status = $data['payment_status'];
-		$model->status = $data['status'];
+		// excute payment_status
+		if ($data['prepaid_amount'] && $data['prepaid_amount'] > 0) {
+			$model->payment_status = 2;
+			if ($data['prepaid_amount'] >= $model->price) {
+				$model->payment_status = 3;
+			}
+		}else{
+			$model->payment_status = 1;
+		}
+
+		// Excute status
+		if ($data['status'] == 4) {
+			if ($model->payment_status == 3 || $model->payment_status == 4) {
+				$model->status = $data['status'];
+			}else{
+				$model->status = 3;
+			}
+		}
+		
 		// $model->active = $data['active'];
 		// $model->order = $data['order'];
 
