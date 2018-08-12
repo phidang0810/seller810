@@ -27,7 +27,7 @@ Class ProductRepository
 
 	public function dataTable($request)
 	{
-		$products = Product::select(['products.id', 'products.category_ids', 'products.photo', 'products.code','products.name', 'products.quantity_available', 'products.quantity', 'products.price', 'products.sell_price', 'products.sizes', 'products.active', 'products.created_at', 'price*quantity as total_price']);
+		$products = Product::select(['products.id', 'products.category_ids', 'products.photo', 'products.code','products.name', 'products.quantity_available', 'products.quantity', 'products.price', 'products.sell_price', 'products.sizes', 'products.active', 'products.created_at'/*, 'price*quantity as total_price'*/]);
         $categories = Category::get()->pluck('name', 'id')->toArray();
 		$dataTable = DataTables::eloquent($products)
 		->filter(function ($query) use ($request) {
@@ -47,14 +47,14 @@ Class ProductRepository
 
 			}
 		}, true)
-        ->addColumn('category', function($product) use ($categories) {
-            $html = '';
-            $categoryIDs = explode(',', $product->category_ids);
-            foreach ($categoryIDs as $categoryID) {
-                $html .= '<label class="label label-default">'.$categories[$categoryID].'</label>';
-            }
-            return $html;
-        })
+        // ->addColumn('category', function($product) use ($categories) {
+        //     $html = '';
+        //     $categoryIDs = explode(',', $product->category_ids);
+        //     foreach ($categoryIDs as $categoryID) {
+        //         $html .= '<label class="label label-default">'.$categories[$categoryID].'</label>';
+        //     }
+        //     return $html;
+        // })
 		->addColumn('action', function ($product) {
 			$html = '';
 			$html .= '<a href="' . route('admin.products.view', ['id' => $product->id]) . '" class="btn btn-xs btn-primary" style="margin-right: 5px"><i class="glyphicon glyphicon-edit"></i> Sửa</a>';
@@ -122,7 +122,7 @@ Class ProductRepository
 		$model->order = $data['order'];
 		$model->description = $data['description'];
 		$model->quantity = $data['quantity'];
-		$model->quantity_available = $data['quantity_available'];
+		$model->quantity_available = $data['quantity'];
 		$model->brand_id = $data['brand_id'];
 		$model->content = $data['content'];
 		$model->code = $data['code'];

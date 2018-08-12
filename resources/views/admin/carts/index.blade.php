@@ -29,6 +29,8 @@
    }
 
     //---> Get customer detail, cart detail
+    var cart_complete = "{{COMPLETED}}";
+    var cart_canceled = "{{CANCELED}}";
     function getRecordDetail(){
         $('#dataTables tbody > tr').click(function(){
             var cart_code = $(this).find('td:not(:empty):first').text();
@@ -41,50 +43,23 @@
             }).done(function(data) {
 
                 if (!$.isEmptyObject(data.result["cart"])) {
-                    $("#customer_name").text(data.result["cart"].customer_name);
-                    $("#customer_phone").text(data.result["cart"].customer_phone);
-                    $("#customer_email").text(data.result["cart"].customer_email);
-                    $("#customer_address").text(data.result["cart"].customer_address);
-                    var dateFormat = formatDate(data.result["cart"].created_at);
-                    $("#cart_created").text(dateFormat);
-                    $("#supplier_name").text(data.result["cart"].supplier_name);
-                    $("#transport_name").text(data.result["cart"].transport_name);
-                    $("#transport_id").text(data.result["cart"].transport_id);
-                    $("#code").text(data.result["cart"].code);
-
-                    var htmlTable = parseTableCartDetail(data.result["cart_detail"]);
-                    $('.cart-detail-wrapper').html(htmlTable);
-
-                    $('#i-status-list').val(data.result["cart"].status);
-                    // console.log(data.result["cart"].payment_status);
-                    $('#i-payment-status-list').val(data.result["cart"].payment_status);
-
-                    if (getSummaryCart(data.result["cart_detail"])['total_price'] !== null) {
-                        $('.c-total-money').text(getSummaryCart(data.result["cart_detail"])['total_price'].toLocaleString() + ' VNĐ');
-                    }else{
-                        $('.c-total-money').text(0 + ' VNĐ');
+                    var elCustomerInfo = $(".customer-info-wrapper");
+                    if (!$.isEmptyObject(data.result["cart"])) {
+                        elCustomerInfo.html(data.html);
+                        if (data.result["cart"].status == cart_complete || data.result["cart"].status == cart_canceled ) {
+                            $("#i-status-list").attr('readonly', true);
+                            $("#save-cart-info").attr('disabled', true);
+                        }
                     }
 
-                    if (getSummaryCart(data.result["cart_detail"])['shipping_fee'] !== null) {
-                     $('.c-shipping-fee').text(getSummaryCart(data.result["cart_detail"])['shipping_fee'].toLocaleString() + ' VNĐ');
-                 }else{
-                    $('.c-shipping-fee').text(0 + ' VNĐ');
-                }
-
-                if (getSummaryCart(data.result["cart_detail"])['amount'] !== null) {
-                    $('.c-amount').text(getSummaryCart(data.result["cart_detail"])['amount'].toLocaleString() + ' VNĐ');
                 }else{
-                    $('.c-amount').text(0 + ' VNĐ');
+                    console.log('Data is null');
                 }
+            }).fail(function(jqXHR, textStatus){
+                console.log(textStatus);
+            })
 
-            }else{
-                console.log('Data is null');
-            }
-        }).fail(function(jqXHR, textStatus){
-            console.log(textStatus);
-        })
-
-    });
+        });
     }
 
     //---> Get customer detail, cart detail
@@ -173,7 +148,6 @@
             format: 'dd/mm/yyyy'
         });
 
-        var is_first_load = true;
         table = $('#dataTables').dataTable({
             searching: false,
             processing: true,
@@ -185,12 +159,10 @@
                     d.code = $('#s-code').val();
                     d.customer_name = $('#s-customer-name').val();
                     d.customer_phone = $('#s-customer-phone').val();
-                    d.supplier_name = $('#s-supplier-name').val();
+                    d.platform_name = $('#s-platform-name').val();
                     d.status = $('#s-status').val();
                     d.start_date = $('input[name=start]').val();
                     d.end_date = $('input[name=end]').val();
-                    // console.log($('input[name=start]').val());
-                    // console.log($('input[name=end]').val());
                 },
                 complete: function () {
                     var inputStatus = document.querySelectorAll('.js-switch');
@@ -265,11 +237,6 @@
 
                     //---> Get customer detail
                     getRecordDetail();
-                    if (is_first_load) {
-                        $('#dataTables tbody > tr:first').click();
-                        is_first_load = false;
-                    }
-                    
                 },
             },
             columns: [
@@ -277,7 +244,7 @@
             {data: 'customer_name'},
             {data: 'customer_phone'},
             {data: 'created_at'},
-            {data: 'supplier_name'},
+            {data: 'platform_name'},
             {data: 'status'},
             ],
             "aoColumnDefs": [
@@ -376,10 +343,10 @@ $("#dataTables").on("click", '.bt-delete', function () {
 });
 
 //---> Update status cart
-$("#save-cart-info").click(function(){
+function updateCartStatus(){
     updateStatus();
     table.fnDraw();
-});
+}
 </script>
 @endsection
 @section('content')
@@ -425,8 +392,8 @@ $("#save-cart-info").click(function(){
             <div class="col-sm-2 pr-0 pl-10">
                 <div class="form-group">
                     <label>Nguồn đơn</label>
-                    <input type="text" placeholder="Nguồn đơn" name="supplier_name" id="s-supplier-name" class="form-control"
-                    value="{{app('request')->input('supplier_name')}}">
+                    <input type="text" placeholder="Nguồn đơn" name="platform_name" id="s-supplier-name" class="form-control"
+                    value="{{app('request')->input('platform_name')}}">
                 </div>
             </div>
 
@@ -510,115 +477,9 @@ $("#save-cart-info").click(function(){
                         <h3 class="text-uppercase">thông tin khách hàng</h3>
                     </div>
                     <div class="hr-line-dashed"></div>
-                    <form class="form-horizontal">
-                        <div class="form-group">
-                            <label class="col-lg-5 control-label" style="text-align: left; padding-right: 0; width: 33.666667%;">Tên khách hàng:</label>
-                            <label id="customer_name" class="col-lg-7 text-left control-label" style="padding-left: 0; text-align: left;"></label>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="col-lg-5 control-label" style="text-align: left; padding-right: 0; width: 33.666667%;">Số điện thoại:</label>
-                            <label id="customer_phone" class="col-lg-7 text-left control-label" style="padding-left: 0; text-align: left;"></label>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="col-lg-5 control-label" style="text-align: left; padding-right: 0; width: 33.666667%;">Email:</label>
-                            <label id="customer_email" class="col-lg-7 text-left control-label" style="padding-left: 0; text-align: left;"></label>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="col-lg-5 control-label" style="text-align: left; padding-right: 0; width: 33.666667%;">Địa chỉ:</label>
-                            <label id="customer_address" class="col-lg-7 text-left control-label" style="padding-left: 0; text-align: left;"></label>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="col-lg-5 control-label" style="text-align: left; padding-right: 0; width: 33.666667%;">Ngày mua:</label>
-                            <label id="cart_created" class="col-lg-7 text-left control-label" style="padding-left: 0; text-align: left;"></label>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="col-lg-5 control-label" style="text-align: left; padding-right: 0; width: 33.666667%;">Nguồn đơn:</label>
-                            <label id="supplier_name" class="col-lg-7 text-left control-label" style="padding-left: 0; text-align: left;"></label>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="col-lg-5 control-label" style="text-align: left; padding-right: 0; width: 33.666667%;">Nhà vận chuyển:</label>
-                            <label id="transport_name" class="col-lg-7 text-left control-label" style="padding-left: 0; text-align: left;"></label>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="col-lg-5 control-label" style="text-align: left; padding-right: 0; width: 33.666667%;">Mã vận đơn:</label>
-                            <label id='transport_id' class="col-lg-7 text-left control-label" style="padding-left: 0; text-align: left;"></label>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="col-lg-5 control-label" style="text-align: left; padding-right: 0; width: 33.666667%;">Mã đơn hàng:</label>
-                            <label id="code" class="col-lg-7 text-left control-label" style="padding-left: 0; text-align: left;"></label>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="col-lg-5 control-label" style="text-align: left; padding-right: 0; width: 33.666667%;">Tình trạng thanh toán:</label>
-                            <div class="col-lg-7" style="padding-left: 0; text-align: left;">
-                                <select id="i-payment-status-list" name="payment_status" class="form-control m-b">
-                                    <option value="{{NOT_PAYING}}">{{NOT_PAYING_TEXT}}</option>
-                                    <option value="{{PAYING_NOT_ENOUGH}}">{{PAYING_NOT_ENOUGH_TEXT}}</option>
-                                    <option value="{{PAYING_OFF}}">{{PAYING_OFF_TEXT}}</option>
-                                    <option value="{{RECEIVED_PAYMENT}}">{{RECEIVED_PAYMENT_TEXT}}</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="col-lg-5 control-label" style="text-align: left; padding-right: 0; width: 33.666667%;">Tình trạng:</label>
-                            <div class="col-lg-7" style="padding-left: 0; text-align: left;">
-                                <select id="i-status-list" class="form-control m-b" name="status">
-                                    <option value="{{EXCUTING}}">{{EXCUTING_TEXT}}</option>
-                                    <option value="{{TRANSPORTING}}">{{TRANSPORTING_TEXT}}</option>
-                                    <option value="{{TRANSPORTED}}">{{TRANSPORTED_TEXT}}</option>
-                                    <option value="{{COMPLETED}}">{{COMPLETED_TEXT}}</option>
-                                    <option value="{{CANCELED}}">{{CANCELED_TEXT}}</option>
-                                </select>
-                            </div>
-                        </div>
-                        
-                        <div class="text-left">
-                            <h3 class="text-uppercase">thông tin đơn hàng</h3>
-                        </div>
-                        <div class="hr-line-dashed"></div>
-                        <div class="ibox-content m-b">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>Mã barcode</th>
-                                        <th>Mã sản phẩm</th>
-                                        <th>Đơn giá</th>
-                                        <th>Số lượng</th>
-                                    </tr>
-                                </thead>
-                                <tfoot>
-                                    <tr>
-                                        <td colspan="3">Tổng cộng</td>
-                                        <td><span class="c-total-money"></span></td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="3">Phí vận chuyển</td>
-                                        <td><span class="c-shipping-fee"></span></td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="3" style="font-weight: 700;">Thành tiền</td>
-                                        <td><span class="c-amount"></span></td>
-                                    </tr>
-                                </tfoot>
-                                <tbody class="cart-detail-wrapper">
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="form-group">
-                            <div class="col-lg-offset-2 col-lg-10 text-right">
-                                <button id="save-cart-info" class="btn btn-sm btn-primary" type="button">Lưu</button>
-                            </div>
-                        </div>
-                    </form>
+                    <div class="customer-info-wrapper">
+                        <div class="lbl-no-info"><span>Dữ liệu rỗng</span></div>
+                    </div>
                 </div>
             </div>
         </div>
