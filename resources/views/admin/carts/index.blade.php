@@ -89,6 +89,9 @@
                 $(".alert-wrapper").html(alert_html);
                 $("#i-alert-response span").text(data.message);
                 $("#i-alert-response").show();
+                $('html, body').animate({
+                  scrollTop: 200
+                }, 800);
             }else{
                 console.log('Data is null');
             }
