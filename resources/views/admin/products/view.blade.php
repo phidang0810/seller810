@@ -56,7 +56,9 @@
     function printTableDetails(){
         var html = '';
         $.each(details, function(key, value){
-            html += '<tr class="child" id="product_detail_'+key+'">'+htmlEditCreateRowDetail(details[key], key)+'</tr>';
+            if (value.delete != true) {
+                html += '<tr class="child" id="product_detail_'+key+'">'+htmlEditCreateRowDetail(details[key], key)+'</tr>';
+            }
         });
         $('#i-product-info tbody').html(html);
         printDetailTotalQuantities();
@@ -81,6 +83,7 @@
     function deleteProductInfoItem(key) {
         details[key].delete = true;
         $('#product_detail_'+key).remove();
+        updateDetailsData();
         printDetailTotalQuantities();
     }
 
