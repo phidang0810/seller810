@@ -35,11 +35,11 @@
         // Color
         var html_detail_label_color = '<label>' + data.product_color.name + '</label>';
         // Price
-        var html_detail_label_price = '<label>' + data.product_price + '</label>';
+        var html_detail_label_price = '<input type="text" value="' + data.product_price + '" class="thousand-number form-control" readonly="readonly">';
         // Editable price
         var html_detail_input_price = '<input type="number" min="0" value="'+data['product_editable_price']+'" id="detail_editable_quantity_'+key+'" class="detail_editable_quantity form-control" >';
         // Count price
-        var html_detail_input_count_price = '<input type="number" value="' + data.total_price + '" id="detail_count_price_'+key+'" class="detail_count_price form-control" readonly="readonly">';
+        var html_detail_input_count_price = '<input type="text" value="' + data.total_price + '" id="detail_count_price_'+key+'" class="thousand-number detail_count_price form-control" readonly="readonly">';
 
         // Row html
         var html = '<td>'+html_detail_photo+'</td>\
@@ -52,6 +52,16 @@
         <td>'+html_detail_input_count_price+'</td>\
         <td><a href="javascript:;" onclick="deleteCartDetailItem('+key+');" class="bt-delete btn btn-xs btn-danger"><i class="fa fa-trash-o" aria-hidden="true"></i></a></td>';
         return html;
+    }
+
+    function formatPrice(){
+        // Format prices
+        // $('.thousand-number').toArray().forEach(function(field){
+        //     new Cleave(field, {
+        //         numeral: true,
+        //         numeralThousandsGroupStyle: 'thousand'
+        //     });
+        // });
     }
 
     // When "Xóa" on row is clicked -> Remove current row, add delete:true to item on array details
@@ -108,6 +118,7 @@
 
         $('.cart-total-info input[name="needed_paid"]').val(price - prepaid_amount);
         $('input[name="cart_details"]').val(JSON.stringify(cart_details));
+        formatPrice();
     }
 
     // When detail quantity, color, size change will count total again
@@ -219,7 +230,8 @@
             }).done(function(data) {
                 if (!$.isEmptyObject(data)) {
                     $('#add_cart_details').prop('disabled', false);
-                    $('input[name="product_quantity"]').attr('max', data.quantity);
+                    $('input[name="product_quantity"]').attr('max_avaiable', data.quantity);
+                    $('input[name="product_detail_id"]').val(data.detail_id);
                 }else{
                 }
             }).fail(function(jqXHR, textStatus){
@@ -227,12 +239,16 @@
             })
         });
 
+        // Number product changed
+        $('input[name="product_quantity"]').on('change', function(){
+            validateNumberProduct();
+        });
+
         function validateProductInfo(elSelectVal, objectName){
             var status = true;
             if (elSelectVal == 0) {
                 console.log("#product-"+objectName+"-error");
                 if ($("#product-"+objectName+"-error").hasClass("hidden")) {
-                    console.log("remove hidden");
                     $("#product-"+objectName+"-error").removeClass("hidden");
                     $("#product-"+objectName+"-error").css("display","inline-block!important");
                 }
@@ -249,9 +265,59 @@
             return status;
         }
 
+        function validateNumberProduct(){
+            var status = true;
+            var max = parseInt($('input[name="product_quantity"]').attr('max_avaiable'));
+            var val = parseInt($('input[name="product_quantity"]').val());
+
+            if (val <= 0 || val > max) {
+                if ($("#product-quantity-error").hasClass("hidden")) {
+                    $("#product-quantity-error").removeClass("hidden");
+                    $("#product-quantity-error").css("display","inline-block!important");
+                }
+                if (val <= 0) {
+                    $("#product-quantity-error").html('Số lượng sản phẩm phải lớn hơn 0');
+                }else{
+                    $("#product-quantity-error").html('Sản phẩm này chỉ còn '+max+' sản phẩm');
+                }
+                status = false;
+            }else{
+                if (!$("#product-quantity-error").hasClass("hidden")) {
+                    $("#product-quantity-error").addClass("hidden");
+                    $("#product-quantity-error").css("display","none!important");
+                }
+
+                $('#add_cart_details').removeAttr('disabled');
+                status = true;
+            }
+            return status;
+        }
+
+        function validateUniqueDetail(){
+            var status = true;
+            $.each(cart_details, function(key, value){
+                if (value.delete != true && value.product_detail.id == $('input[name="product_detail_id"]').val() ) {
+                    status = false;
+                }
+            });
+
+            if (status == false) {
+                if ($("#product-detail-id-error").hasClass("hidden")) {
+                    $("#product-detail-id-error").removeClass("hidden");
+                    $("#product-detail-id-error").css("display","inline-block!important");
+                }
+            }else{
+                if (!$("#product-detail-id-error").hasClass("hidden")) {
+                    $("#product-detail-id-error").addClass("hidden");
+                    $("#product-detail-id-error").css("display","none!important");
+                }
+            }
+            return status;
+        }
+
         // When "Thêm" button is clicked -> Add new item to array cart_details, append new row to table
         $('#add_cart_details').click(function(){
-            if (validateProductInfo($("select[name=product_name]").val(), "name") && validateProductInfo($("select[name=product_color]").val(), "color") && validateProductInfo($("select[name=product_size]").val(), "size")) {
+            if (validateProductInfo($("select[name=product_name]").val(), "name") && validateProductInfo($("select[name=product_color]").val(), "color") && validateProductInfo($("select[name=product_size]").val(), "size") && validateNumberProduct() && validateUniqueDetail()) {
                 // $('#add_cart_details').removeAttr('disabled');
                 $('button[value="save"]').removeAttr('disabled');
                 $('button[value="save_quit"]').removeAttr('disabled');
@@ -272,13 +338,13 @@
                         cart_details.push({
                             'product_image':(data.product.photo) ? path_img_folder + data.product.photo : default_image,
                             'product_code':data.product.code,
-                            'product_price':data.product.sell_price,
+                            'product_price':parseInt(data.product.sell_price),
                             'product_editable_price':data.product.sell_price,
                             'product_name':{id:$('select[name="product_name"]').val(), name:$('select[name="product_name"] option[value="'+$('select[name="product_name"]').val()+'"]').text()},
                             'product_quantity':parseInt($('input[name="product_quantity"]').val()),
                             'product_size':{id:$('select[name="product_size"]').val(), name:$('select[name="product_size"] option[value="'+$('select[name="product_size"]').val()+'"]').text()},
                             'product_color':{id:$('select[name="product_color"]').val(), name:$('select[name="product_color"] option[value="'+$('select[name="product_color"]').val()+'"]').text()},
-                            'total_price':data.product.sell_price*$('input[name="product_quantity"]').val(),
+                            'total_price':parseInt(data.product.sell_price*$('input[name="product_quantity"]').val()),
                             'product_detail':data.product_detail
                         });
 
@@ -298,7 +364,7 @@
                 $('button[value="save_quit"]').prop('disabled', true);
                 console.log("Vui lòng nhập đủ thông tin");
             }
-            
+
         });
 
         // Load customer data when customer phone select is changed
@@ -327,6 +393,12 @@
                 }).fail(function(jqXHR, textStatus){
                     alert('Có lỗi xảy ra, xin hãy làm mới trình duyệt');
                 })
+            }else{
+                $('input[name="customer_name"]').val("");
+                $('input[name="customer_email"]').val("");
+                $('input[name="customer_address"]').val("");
+                $('select[name="customer_city"]').val("");
+                $('input[name="customer_discount_amount"]').val(0);
             }
         });
 
@@ -360,6 +432,9 @@
             $('.cart-total-info input[name="shipping_fee"]').val($(this).val());
             updateCartTotalInfo();
         });
+
+        formatPrice();
+
     });
 </script>
 @endsection
@@ -406,10 +481,15 @@
                                 </div>
                                 <div class="col-md-2">
                                     <input name="product_quantity" type="text" placeholder="Nhập số lượng" class="form-control m-b"
-                                    value=""/>
+                                    value="0"/>
+                                    <label id="product-quantity-error" class="error hidden" for="product_quantity1">Vui lòng nhập vào số lượng.</label>
                                 </div>
                                 <div class="col-md-2">
                                     <button type="button" class="btn btn-success pull-left c-add-info" id="add_cart_details">Thêm</button>
+                                </div>
+                                <div class="col-md-12">
+                                    <input type="hidden" name="product_detail_id">
+                                    <label id="product-detail-id-error" class="error hidden" for="product_detail_id">Sản phẩm giống nhau không thể thêm nhiều lần</label>
                                 </div>
                             </div>
 
@@ -538,8 +618,8 @@
                                 <div class="form-group">
                                     <label class="col-md-4 control-label">Phí vận chuyển</label>
                                     <div class="col-md-8">
-                                        <input type="text" name="shipping_fee" placeholder="" class="form-control m-b"
-                                        value="@if(isset($data->shipping_fee)){{$data->shipping_fee}}@else{{old('shipping_fee')}}@endif"/>
+                                        <input type="text" name="shipping_fee" placeholder="" class="thousand-number form-control m-b"
+                                        value="@if(isset($data->shipping_fee)){{$data->shipping_fee}}@else{{0}}@endif"/>
                                     </div>
                                 </div>
                             </div>
@@ -560,8 +640,8 @@
                                 <div class="form-group">
                                     <label class="col-md-4 control-label">Chiết khấu cộng tác viên</label>
                                     <div class="col-md-8">
-                                        <input type="text" name="partner_discount_amount" placeholder="" class="form-control m-b"
-                                        value="@if(isset($data->partner_discount_amount)){{$data->partner_discount_amount}}@else{{old('partner_discount_amount')}}@endif" readonly="readonly" />
+                                        <input type="text" name="partner_discount_amount" placeholder="" class="thousand-number form-control m-b"
+                                        value="@if(isset($data->partner_discount_amount)){{$data->partner_discount_amount}}@else{{0}}@endif" readonly="readonly" />
                                     </div>
                                 </div>
                             </div>
@@ -570,18 +650,8 @@
                                 <div class="form-group">
                                     <label class="col-md-4 control-label">Chiết khấu khách hàng</label>
                                     <div class="col-md-8">
-                                        <input type="text" name="customer_discount_amount" placeholder="" class="form-control m-b"
-                                        value="@if(isset($data->customer_discount_amount)){{$data->customer_discount_amount}}@else{{old('customer_discount_amount')}}@endif" readonly="readonly" />
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="form-group">
-                                    <label class="col-md-4 control-label">Thuế (%)</label>
-                                    <div class="col-md-8">
-                                        <input type="text" name="vat_percent" placeholder="" class="form-control m-b"
-                                        value="10" readonly="readonly" />
+                                        <input type="text" name="customer_discount_amount" placeholder="" class="thousand-number form-control m-b"
+                                        value="@if(isset($data->customer_discount_amount)){{$data->customer_discount_amount}}@else{{0}}@endif" readonly="readonly" />
                                     </div>
                                 </div>
                             </div>
@@ -590,8 +660,8 @@
                                 <div class="form-group">
                                     <label class="col-md-4 control-label">Khách hàng trả trước</label>
                                     <div class="col-md-8">
-                                        <input type="text" name="prepaid_amount" placeholder="" class="form-control m-b"
-                                        value="@if(isset($data->prepaid_amount)){{$data->prepaid_amount}}@else{{old('prepaid_amount')}}@endif" />
+                                        <input type="text" name="prepaid_amount" placeholder="" class="thousand-number form-control m-b"
+                                        value="@if(isset($data->prepaid_amount)){{$data->prepaid_amount}}@else{{0}}@endif" />
                                     </div>
                                 </div>
                             </div>
@@ -601,18 +671,6 @@
                                     <label class="col-md-4 control-label">Ghi chú</label>
                                     <div class="col-md-8">
                                         <textarea class="form-control" name="descritption">@if(isset($data->descritption)){{$data->descritption}}@endif</textarea>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="form-group clearfix">
-                                    <label class="col-md-4 control-label">Trạng thái thanh toán</label>
-                                    <div class="col-md-8">
-                                        <select name="payment_status" class="form-control m-b">
-                                            <option value="" selected>-- Chọn trạng thái --</option>
-                                            {!! $payment_options !!}
-                                        </select>
                                     </div>
                                 </div>
                             </div>
@@ -634,8 +692,8 @@
                                     <div class="form-group">
                                         <label class="col-md-4 control-label">Tổng cộng</label>
                                         <div class="col-md-8">
-                                            <input type="text" name="total_price" placeholder="" class="form-control m-b"
-                                            value="@if(isset($data->total_price)){{$data->total_price}}@else{{old('total_price')}}@endif" readonly="readonly" />
+                                            <input type="text" name="total_price" placeholder="" class="thousand-number form-control m-b"
+                                            value="@if(isset($data->total_price)){{$data->total_price}}@else{{0}}@endif" readonly="readonly" />
                                         </div>
                                     </div>
                                 </div>
@@ -645,7 +703,7 @@
                                         <label class="col-md-4 control-label">Tổng số lượng</label>
                                         <div class="col-md-8">
                                             <input type="text" name="quantity" placeholder="" class="form-control m-b"
-                                            value="@if(isset($data->quantity)){{$data->quantity}}@else{{old('quantity')}}@endif" readonly="readonly" />
+                                            value="@if(isset($data->quantity)){{$data->quantity}}@else{{0}}@endif" readonly="readonly" />
                                         </div>
                                     </div>
                                 </div>
@@ -654,18 +712,21 @@
                                     <div class="form-group">
                                         <label class="col-md-4 control-label">Phí vận chuyển</label>
                                         <div class="col-md-8">
-                                            <input type="text" name="shipping_fee" placeholder="" class="form-control m-b"
-                                            value="@if(isset($data->shipping_fee)){{$data->shipping_fee}}@else{{old('shipping_fee')}}@endif" readonly="readonly" />
+                                            <input type="text" name="shipping_fee" placeholder="" class="thousand-number form-control m-b"
+                                            value="@if(isset($data->shipping_fee)){{$data->shipping_fee}}@else{{0}}@endif" readonly="readonly" />
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="row">
-                                    <div class="form-group">
+                                    <div class="form-group clearfix">
                                         <label class="col-md-4 control-label">Thuế</label>
                                         <div class="col-md-8">
-                                            <input type="text" name="vat_amount" placeholder="" class="form-control m-b"
-                                            value="@if(isset($data->vat_amount)){{$data->vat_amount}}@else{{old('vat_amount')}}@endif" readonly="readonly" />
+                                            <div class="input-group">
+                                                <span class="input-group-addon">10%</span>
+                                                <input type="text" name="vat_amount" placeholder="" class="thousand-number form-control m-b"
+                                                value="@if(isset($data->vat_amount)){{$data->vat_amount}}@else{{0}}@endif" readonly="readonly" />
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -674,8 +735,8 @@
                                     <div class="form-group">
                                         <label class="col-md-4 control-label">Tổng chiết khấu</label>
                                         <div class="col-md-8">
-                                            <input type="text" name="total_discount_amount" placeholder="" class="form-control m-b"
-                                            value="@if(isset($data->total_discount_amount)){{$data->total_discount_amount}}@else{{old('total_discount_amount')}}@endif" readonly="readonly" />
+                                            <input type="text" name="total_discount_amount" placeholder="" class="thousand-number form-control m-b"
+                                            value="@if(isset($data->total_discount_amount)){{$data->total_discount_amount}}@else{{0}}@endif" readonly="readonly" />
                                         </div>
                                     </div>
                                 </div>
@@ -684,8 +745,8 @@
                                     <div class="form-group">
                                         <label class="col-md-4 control-label">Thành tiền</label>
                                         <div class="col-md-8">
-                                            <input type="text" name="price" placeholder="" class="form-control m-b"
-                                            value="@if(isset($data->price)){{$data->price}}@else{{old('price')}}@endif" readonly="readonly" />
+                                            <input type="text" name="price" placeholder="" class="thousand-number form-control m-b"
+                                            value="@if(isset($data->price)){{$data->price}}@else{{0}}@endif" readonly="readonly" />
                                         </div>
                                     </div>
                                 </div>
@@ -694,8 +755,8 @@
                                     <div class="form-group">
                                         <label class="col-md-4 control-label">Trả trước</label>
                                         <div class="col-md-8">
-                                            <input type="text" name="prepaid_amount" placeholder="" class="form-control m-b"
-                                            value="@if(isset($data->prepaid_amount)){{$data->prepaid_amount}}@else{{old('prepaid_amount')}}@endif" readonly="readonly" />
+                                            <input type="text" name="prepaid_amount" placeholder="" class="thousand-number form-control m-b"
+                                            value="@if(isset($data->prepaid_amount)){{$data->prepaid_amount}}@else{{0}}@endif" readonly="readonly" />
                                         </div>
                                     </div>
                                 </div>
@@ -704,8 +765,8 @@
                                     <div class="form-group">
                                         <label class="col-md-4 control-label">Số tiền cần thanh toán</label>
                                         <div class="col-md-8">
-                                            <input type="text" name="needed_paid" placeholder="" class="form-control m-b"
-                                            value="@if(isset($data->needed_paid)){{$data->needed_paid}}@else{{old('needed_paid')}}@endif" readonly="readonly" />
+                                            <input type="text" name="needed_paid" placeholder="" class="thousand-number form-control m-b"
+                                            value="@if(isset($data->needed_paid)){{$data->needed_paid}}@else{{0}}@endif" readonly="readonly" />
                                         </div>
                                     </div>
                                 </div>

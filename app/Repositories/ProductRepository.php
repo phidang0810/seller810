@@ -504,6 +504,7 @@ Class ProductRepository
                 ->first();
 
 			$return['quantity'] = $product_detail->quantity;
+			$return['detail_id'] = $product_detail->id;
 		}
 
 		return Response::json($return);

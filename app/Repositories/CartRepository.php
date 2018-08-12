@@ -205,7 +205,7 @@ Class CartRepository
 		$model->needed_paid = $data['needed_paid'];
 		$model->descritption = $data['descritption'];
 		$model->vat_percent = $data['vat_percent'];
-		$model->payment_status = $data['payment_status'];
+		// $model->payment_status = $data['payment_status'];
 		$model->status = $data['status'];
 		// $model->active = $data['active'];
 		// $model->order = $data['order'];
