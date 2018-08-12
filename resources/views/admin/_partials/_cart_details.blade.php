@@ -91,7 +91,7 @@
 
     <div class="form-group">
         <label class="col-lg-5 control-label" style="text-align: left; padding-right: 0; width: 33.666667%;">Thành tiền:</label>
-        <label id="needed_paid" class="col-lg-7 text-left control-label" style="padding-left: 0; text-align: left;">{{$result['cart']->needed_paid }}</label>
+        <label id="price" class="col-lg-7 text-left control-label" style="padding-left: 0; text-align: left;">{{$result['cart']->price }}</label>
     </div>
 
     <div class="text-left">
