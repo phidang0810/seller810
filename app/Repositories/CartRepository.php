@@ -29,7 +29,7 @@ Class CartRepository
 	{
 		$carts = Cart::select(['carts.id', 'carts.city_id', 'carts.partner_id', 'carts.customer_id', 'carts.code', 'carts.quantity', 'carts.status', 'carts.active', 'carts.created_at', 'customers.name as customer_name', 'customers.phone as customer_phone', 'platforms.name as platform_name'])
 		->join('customers', 'customers.id', '=', 'carts.customer_id')
-		->join('platforms', 'platforms.id', '=', 'carts.platform_id');
+		->leftJoin('platforms', 'platforms.id', '=', 'carts.platform_id');
 
 		$dataTable = DataTables::eloquent($carts)
 		->filter(function ($query) use ($request) {
