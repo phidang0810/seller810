@@ -69,6 +69,31 @@
         </div>
     </div>
 
+    <div class="form-group">
+        <label class="col-lg-5 control-label" style="text-align: left; padding-right: 0; width: 33.666667%;">Tổng cộng:</label>
+        <label id="total_price" class="col-lg-7 text-left control-label" style="padding-left: 0; text-align: left;">{{$result['cart']->total_price}}</label>
+    </div>
+
+    <div class="form-group">
+        <label class="col-lg-5 control-label" style="text-align: left; padding-right: 0; width: 33.666667%;">Phí vận chuyển:</label>
+        <label id="shipping_fee" class="col-lg-7 text-left control-label" style="padding-left: 0; text-align: left;">{{$result['cart']->shipping_fee}}</label>
+    </div>
+
+    <div class="form-group">
+        <label class="col-lg-5 control-label" style="text-align: left; padding-right: 0; width: 33.666667%;">Thuế:</label>
+        <label id="vat_amount" class="col-lg-7 text-left control-label" style="padding-left: 0; text-align: left;">{{$result['cart']->vat_amount}}</label>
+    </div>
+
+    <div class="form-group">
+        <label class="col-lg-5 control-label" style="text-align: left; padding-right: 0; width: 33.666667%;">Tổng chiết khấu:</label>
+        <label id="total_discount_amount" class="col-lg-7 text-left control-label" style="padding-left: 0; text-align: left;">{{$result['cart']->total_discount_amount}}</label>
+    </div>
+
+    <div class="form-group">
+        <label class="col-lg-5 control-label" style="text-align: left; padding-right: 0; width: 33.666667%;">Thành tiền:</label>
+        <label id="needed_paid" class="col-lg-7 text-left control-label" style="padding-left: 0; text-align: left;">{{$result['cart']->needed_paid }}</label>
+    </div>
+
     <div class="text-left">
         <h3 class="text-uppercase">thông tin đơn hàng</h3>
     </div>

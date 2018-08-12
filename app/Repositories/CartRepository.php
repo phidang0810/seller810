@@ -96,7 +96,13 @@ Class CartRepository
 	}
 
 	public function getCartDetail($cartCode){
-		$cart = Cart::select(['carts.id', 'carts.city_id', 'carts.partner_id', 'carts.customer_id', 'carts.code', 'carts.quantity', 'carts.status', 'carts.active', 'carts.created_at', 'carts.transport_id as transport_id', 'customers.name as customer_name', 'customers.phone as customer_phone', 'customers.email as customer_email', 'customers.address as customer_address', 'cart_detail.product_id', 'platforms.name as platform_name', 'transports.name as transport_name', 'carts.payment_status'])
+		$cart = Cart::select(['carts.id', 'carts.city_id', 'carts.partner_id', 'carts.customer_id', 
+			'carts.code', 'carts.quantity', 'carts.status', 'carts.active', 'carts.created_at', 
+			'carts.transport_id as transport_id', 'carts.total_price', 'carts.shipping_fee', 
+			'carts.vat_amount', 'carts.total_discount_amount', 'carts.needed_paid', 
+			'customers.name as customer_name', 'customers.phone as customer_phone', 'customers.email as customer_email', 
+			'customers.address as customer_address', 'cart_detail.product_id', 'platforms.name as platform_name', 
+			'transports.name as transport_name', 'carts.payment_status'])
 		->join('customers', 'customers.id', '=', 'carts.customer_id')
 		->join('cart_detail', 'cart_detail.cart_id', '=', 'carts.id')
 		->join('products', 'products.id', '=', 'cart_detail.product_id')
