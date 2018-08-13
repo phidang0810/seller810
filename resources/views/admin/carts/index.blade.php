@@ -15,18 +15,18 @@
     });
 
     function formatDate(date) {
-       var d = new Date(date),
-       hour = d.getHours();
-       minute = d.getMinutes();
-       month = '' + (d.getMonth() + 1),
-       day = '' + d.getDate(),
-       year = d.getFullYear();
+     var d = new Date(date),
+     hour = d.getHours();
+     minute = d.getMinutes();
+     month = '' + (d.getMonth() + 1),
+     day = '' + d.getDate(),
+     year = d.getFullYear();
 
-       if (month.length < 2) month = '0' + month;
-       if (day.length < 2) day = '0' + day;
+     if (month.length < 2) month = '0' + month;
+     if (day.length < 2) day = '0' + day;
 
-       return [hour, minute].join(':')+' '+[day, month, year].join('/');
-   }
+     return [hour, minute].join(':')+' '+[day, month, year].join('/');
+ }
 
     //---> Get customer detail, cart detail
     var cart_complete = "{{COMPLETED}}";
@@ -409,8 +409,14 @@ function updateCartStatus(){
             <div class="col-sm-2 pr-0 pl-10">
                 <div class="form-group">
                     <label>Nguồn đơn</label>
-                    <input type="text" placeholder="Nguồn đơn" name="platform_name" id="s-supplier-name" class="form-control"
-                    value="{{app('request')->input('platform_name')}}">
+                    <!-- <input type="text" placeholder="Nguồn đơn" name="platform_name" id="s-supplier-name" class="form-control"
+                    value="{{app('request')->input('platform_name')}}"> -->
+                    <select id="s-platform-name" name="platform_name" class="form-control" placeholder="Chọn nguồn đơn">
+                        <option value="">-- Chọn nguồn đơn --</option>
+                        @foreach ($platforms as $platform)
+                        <option value="{{$platform->id}}">{{$platform->name}}</option>
+                        @endforeach
+                    </select>
                 </div>
             </div>
 
@@ -463,42 +469,38 @@ function updateCartStatus(){
                 <div class="text-left">
                     <h3 class="text-uppercase">Danh sách đơn hàng</h3>
                 </div>
-                <!-- <div class="text-right" style="padding: 10px 10px 0px 10px;">
-                    <a href="{{route('admin.carts.create')}}" class="btn btn-sm btn-primary"><i
-                        class="fa fa-plus"></i> Tạo Danh Mục</a>
-                    </div> -->
-                    <div class="hr-line-dashed"></div>
-                    <!-- Account list -->
-                    <table class="table table-striped table-hover" id="dataTables">
-                        <thead>
-                            <tr>
-                                <th>Mã đơn hàng</th>
-                                <th>Tên khách hàng</th>
-                                <th>Điện thoại</th>
-                                <th>Ngày Tạo</th>
-                                <th>Nguồn đơn</th>
-                                <th>Tình trạng</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
+                <div class="hr-line-dashed"></div>
+                <!-- Account list -->
+                <table class="table table-striped table-hover" id="dataTables">
+                    <thead>
+                        <tr>
+                            <th>Mã đơn hàng</th>
+                            <th>Tên khách hàng</th>
+                            <th>Điện thoại</th>
+                            <th>Ngày Tạo</th>
+                            <th>Nguồn đơn</th>
+                            <th>Tình trạng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
 
-                </div>
             </div>
         </div>
-        <div class="col-md-4 pl-0">
-            <div class="ibox float-e-margins">
-                <div class="ibox-content">
-                    <div class="text-left">
-                        <h3 class="text-uppercase">thông tin khách hàng</h3>
-                    </div>
-                    <div class="hr-line-dashed"></div>
-                    <div class="customer-info-wrapper">
-                        <div class="lbl-no-info"><span>Dữ liệu rỗng</span></div>
-                    </div>
+    </div>
+    <div class="col-md-4 pl-0">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <div class="text-left">
+                    <h3 class="text-uppercase">thông tin khách hàng</h3>
+                </div>
+                <div class="hr-line-dashed"></div>
+                <div class="customer-info-wrapper">
+                    <div class="lbl-no-info"><span>Dữ liệu rỗng</span></div>
                 </div>
             </div>
         </div>
     </div>
-    @endsection
+</div>
+@endsection

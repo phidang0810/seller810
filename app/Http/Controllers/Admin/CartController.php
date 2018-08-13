@@ -25,12 +25,13 @@ class CartController extends AdminController
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(CartRepository $cart){
+    public function index(CartRepository $cart, PlatformRepository $platform){
         if ($this->_request->ajax()){
             return $cart->dataTable($this->_request);
         }
 
         $this->_data['title'] = 'Đơn hàng';
+        $this->_data['platforms'] = $platform->getList();
 
         return view('admin.carts.index', $this->_data);
     }

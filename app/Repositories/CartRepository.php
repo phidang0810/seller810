@@ -21,6 +21,7 @@ use App\Models\Payment;
 use App\Repositories\PaymentRepository;
 use Illuminate\Support\Facades\Cache;
 use Yajra\DataTables\Facades\DataTables;
+use Carbon\Carbon;
 
 Class CartRepository
 {
@@ -52,22 +53,22 @@ Class CartRepository
 				});
 			}
 
-			if (trim($request->get('supplier_name')) !== "") {
+			if (trim($request->get('platform_name')) !== "") {
 				$query->where(function ($sub) use ($request) {
-					$sub->where('suppliers.name', 'like', '%' . $request->get('supplier_name') . '%');
+					$sub->where('carts.platform_id', $request->get('platform_name'));
 				});
 			}
 
 			if (trim($request->get('start_date')) !== "") {
-				$query->where(function ($sub) use ($request) {
-					$sub->where('carts.created_at', '>=', date_create($request->get('start_date')) );
-				});
-			}
+				$fromDate = Carbon::createFromFormat('d/m/Y H:i:s', $request->get('start_date').' 00:00:00')->toDateTimeString();
 
-			if (trim($request->get('end_date')) !== "") {
-				$query->where(function ($sub) use ($request) {
-					$sub->where('carts.created_at', '<=', date_create($request->get('end_date')));
-				});
+				if (trim($request->get('end_date')) !== "") {
+
+					$toDate = Carbon::createFromFormat('d/m/Y H:i:s', $request->get('end_date').' 23:59:59')->toDateTimeString();
+					$query->whereBetween('carts.created_at', [$fromDate, $toDate]);
+				} else {
+					$query->whereDate('carts.created_at', '>=', $fromDate);
+				}
 			}
 
 			if (trim($request->get('status')) !== "") {
@@ -104,17 +105,17 @@ Class CartRepository
 			'customers.name as customer_name', 'customers.phone as customer_phone', 'customers.email as customer_email', 
 			'customers.address as customer_address', 'cart_detail.product_id', 'carts.platform_id', 'platforms.name as platform_name', 
 			'transports.name as transport_name', 'carts.payment_status'])
-		->join('customers', 'customers.id', '=', 'carts.customer_id')
-		->join('cart_detail', 'cart_detail.cart_id', '=', 'carts.id')
-		->join('products', 'products.id', '=', 'cart_detail.product_id')
+		->leftjoin('customers', 'customers.id', '=', 'carts.customer_id')
+		->leftjoin('cart_detail', 'cart_detail.cart_id', '=', 'carts.id')
+		->leftjoin('products', 'products.id', '=', 'cart_detail.product_id')
 		->leftjoin('platforms', 'platforms.id', '=', 'carts.platform_id')
-		->join('transports', 'transports.id', '=', 'carts.transport_id')
+		->leftjoin('transports', 'transports.id', '=', 'carts.transport_id')
 		->where('carts.code', '=', $cartCode)
 		->first();
 
 		$cartDetails = Cart::select(['carts.id', 'cart_detail.quantity as quantity', 'cart_detail.price as price', 'carts.total_price as total_price', 'carts.shipping_fee as shipping_fee', 'carts.code', 'products.code as product_code', ])
-		->join('cart_detail', 'cart_detail.cart_id', '=', 'carts.id')
-		->join('products', 'products.id', '=', 'cart_detail.product_id')
+		->leftjoin('cart_detail', 'cart_detail.cart_id', '=', 'carts.id')
+		->leftjoin('products', 'products.id', '=', 'cart_detail.product_id')
 		->where('carts.code', '=', $cartCode)
 		->get();
 
