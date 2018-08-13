@@ -41,7 +41,7 @@
                 </div>
                 <div class="c-header-logo-wrapper">
                     <h1>
-                        <a href="" title=""><img src="{{asset('themes/inspinia/img/logo.png')}}" alt=""></a>
+                        <a href="{{route('admin.dashboard')}}" title=""><img src="{{asset('themes/inspinia/img/logo.png')}}" alt=""></a>
                     </h1>
                 </div>
                 <div class="cart-menu-wrapper">

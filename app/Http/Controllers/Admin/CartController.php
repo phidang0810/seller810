@@ -215,4 +215,22 @@ class CartController extends AdminController
 
         return response()->json($result);
     }
+
+    public function getProductAjax(ProductRepository $product){
+        $data = $product->getProductsV2($this->_request);
+        $message = 'Không có sản phẩm';
+        if (count($data)) {
+            $message = 'Sản phẩm được lấy thành công.';
+        }
+        return response()->json($data);
+    }
+
+    public function getPhoneAjax(CustomerRepository $customer){
+        $data = $customer->getCustomersV2($this->_request);
+        $message = 'Không có số điện thoại nào';
+        if (count($data)) {
+            $message = 'Số điện thoại được lấy thành công.';
+        }
+        return response()->json($data);
+    }
 }

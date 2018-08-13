@@ -164,8 +164,50 @@
         $("#mainForm").validate();
 
         // Init select2
-        $('select[name="product_name"]').select2();
+        var url_get_products = '{{route("admin.carts.getProductAjax")}}';
+        $('select[name="product_name"]').select2({
+            placeholder: '-- Chọn sản phẩm --',
+            ajax: {//---> Retrieve post data
+                url: url_get_products,
+                dataType: 'json',
+                delay: 250, //---> Delay in ms while typing when to perform a AJAX search
+                data: function (params) {
+                    return {
+                        q: params.term, //---> Search query
+                        action: 'mishagetposts', // AJAX action for admin-ajax.php
+                    };
+                },
+                processResults: function( data ) {
+                    return {
+                        results: data
+                    };
+                },
+                cache: true,
+            }
+        });
+
+        //---> Init select2 for customer phone number
+        var url_get_phone = '{{route("admin.carts.getPhoneAjax")}}';
         $('select[name="customer_phone"').select2({
+            tags:true,
+            placeholder: '-- Chọn số điện thoại --',
+            ajax: {//---> Retrieve post data
+                url: url_get_phone,
+                dataType: 'json',
+                delay: 250, //---> Delay in ms while typing when to perform a AJAX search
+                data: function (params) {
+                    return {
+                        q: params.term, //---> Search query
+                        action: 'mishagetposts', // AJAX action for admin-ajax.php
+                    };
+                },
+                processResults: function( data ) {
+                    return {
+                        results: data
+                    };
+                },
+                cache: true,
+            },
             tags:true
         });
         $('select[name="partner"]').select2();
@@ -461,14 +503,14 @@
                             </div>
 
                             <div class="row">
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <select name="product_name" class="form-control">
                                         <option value="0"> -- Chọn sản phẩm -- </option>
                                         {!! $product_options !!}
                                     </select>
                                     <label id="product-name-error" class="error hidden" for="product_name1">Vui lòng chọn.</label>
                                 </div>
-                                <div class="col-md-2">
+                                <div class="col-md-3">
                                     <select name="product_color" class="form-control">
                                         <option value="0"> -- Chọn màu sắc -- </option>
                                     </select>

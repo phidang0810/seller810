@@ -101,6 +101,8 @@ Route::prefix('don-hang')
     Route::put ('/change-status', 'CartController@changeStatus')->name('admin.carts.changeStatus');
     Route::get ('/thong-tin-khach-hang', 'CartController@getCartDetail')->name('admin.carts.getCartDetail');
     Route::put ('/update-status', 'CartController@updateStatus')->name('admin.carts.updateStatus');
+    Route::get ('/danh-sach-san-pham', 'CartController@getProductAjax')->name('admin.carts.getProductAjax');
+    Route::get ('/danh-sach-so-dien-thoai', 'CartController@getPhoneAjax')->name('admin.carts.getPhoneAjax');
 });
 
 Route::prefix('thong-ke')

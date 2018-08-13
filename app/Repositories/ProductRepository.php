@@ -545,4 +545,17 @@ Class ProductRepository
 	public function updateProductQuantityAvaiable(){
 		
 	}
+
+	public function getProductsV2($request)
+	{
+		$formatted_products = [];
+		$term = trim($request->q);
+
+        $products_list = Product::where('name','LIKE', '%'.$term.'%')->get();
+        foreach ($products_list as $product) {
+            $formatted_products[] = ['id' => $product->id, 'text' => $product->name];
+        }
+
+		return $formatted_products;
+	}
 }
