@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class ProductPhoto extends Model
 {
@@ -27,5 +28,17 @@ class ProductPhoto extends Model
     public function color() {
 
         return $this->hasOne('App\Models\Color', 'id', 'color_code');
+    }
+
+    public function deleteImageOnStorage(){
+        if ($this->origin) {
+           Storage::delete($this->origin);
+        }
+        if ($this->large) {
+           Storage::delete($this->large);
+        }
+        if ($this->thumb) {
+           Storage::delete($this->thumb);
+        }
     }
 }

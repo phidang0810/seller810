@@ -184,8 +184,24 @@ Class ProductRepository
 				$result['success'] = false;
 				continue;
 			}
+
 			if ($product->photo) {
 				Storage::delete($product->photo);
+			}
+			
+			if ($product->details) {
+				$product->details()->delete();
+			}
+			
+			if ($product->photos) {
+				foreach ($product->photos as $photo) {
+					$photo->deleteImageOnStorage();
+				}
+				$product->photos()->delete();
+			}
+
+			if ($product->categories) {
+				$product->categories()->detach();
 			}
 			$product->delete();
 		}
