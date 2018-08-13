@@ -56,12 +56,12 @@
 
     function formatPrice(){
         // Format prices
-        // $('.thousand-number').toArray().forEach(function(field){
-        //     new Cleave(field, {
-        //         numeral: true,
-        //         numeralThousandsGroupStyle: 'thousand'
-        //     });
-        // });
+        $('.thousand-number').toArray().forEach(function(field){
+            new Cleave(field, {
+                numeral: true,
+                numeralThousandsGroupStyle: 'thousand'
+            });
+        });
     }
 
     // When "Xóa" on row is clicked -> Remove current row, add delete:true to item on array details
@@ -94,6 +94,11 @@
         updateCartTotalInfo();
     }
 
+    // Function remove all character non-digit
+    function removeNonDigit(str){
+        return str.replace(/\D/g,'');
+    }
+
     // Function update cart total info
     function updateCartTotalInfo(){
         total_price = 0;
@@ -104,16 +109,15 @@
                 total_quantity += value.product_quantity;
             }
         });
-        vat_percent = $('input[name="vat_percent"]').val();
         $('.cart-total-info input[name="total_price"]').val(total_price);
         $('.cart-total-info input[name="quantity"]').val(total_quantity);
-        vat_amount = parseInt($('.cart-total-info input[name="total_price"]').val()) * 10 / 100;
+        vat_amount = parseInt(removeNonDigit($('.cart-total-info input[name="total_price"]').val())) * 10 / 100;
         $('.cart-total-info input[name="vat_amount"]').val(vat_amount);
 
         // Count price
-        shipping_fee = ($('.cart-total-info input[name="shipping_fee"]').val()) ? parseInt($('.cart-total-info input[name="shipping_fee"]').val()) : 0;
-        total_discount_amount = ($('.cart-total-info input[name="total_discount_amount"]').val()) ? parseInt($('.cart-total-info input[name="total_discount_amount"]').val()) : 0;
-        paid_amount = ($('.cart-total-info input[name="paid_amount"]').val()) ? parseInt($('.cart-total-info input[name="paid_amount"]').val()) : 0;
+        shipping_fee = ($('.cart-total-info input[name="shipping_fee"]').val()) ? parseInt(removeNonDigit($('.cart-total-info input[name="shipping_fee"]').val())) : 0;
+        total_discount_amount = ($('.cart-total-info input[name="total_discount_amount"]').val()) ? parseInt(removeNonDigit($('.cart-total-info input[name="total_discount_amount"]').val())) : 0;
+        paid_amount = ($('.cart-total-info input[name="paid_amount"]').val()) ? parseInt(removeNonDigit($('.cart-total-info input[name="paid_amount"]').val())) : 0;
         price = total_price + vat_amount + shipping_fee - total_discount_amount;
         $('.cart-total-info input[name="price"]').val(price);
 
@@ -129,8 +133,8 @@
 
     // Function update total amount
     function updateTotalDiscountAmount(){
-        customer_discount = (parseInt($('input[name="customer_discount_amount"]').val())) ? parseInt($('input[name="customer_discount_amount"]').val()) : 0;
-        partner_discount = (parseInt($('input[name="partner_discount_amount"]').val())) ? parseInt($('input[name="partner_discount_amount"]').val()) : 0;
+        customer_discount = (parseInt($('input[name="customer_discount_amount"]').val())) ? parseInt(removeNonDigit($('input[name="customer_discount_amount"]').val())) : 0;
+        partner_discount = (parseInt($('input[name="partner_discount_amount"]').val())) ? parseInt(removeNonDigit($('input[name="partner_discount_amount"]').val())) : 0;
         $('.cart-total-info input[name="total_discount_amount"]').val(customer_discount + partner_discount);
         updateCartTotalInfo();
     }
@@ -226,7 +230,31 @@
                 if (!$.isEmptyObject(data.colors)) {
                     html_color_options = '<option value="0"> -- Chọn màu sắc -- </option>' + generate_options(data.colors);
                     $('select[name="product_color"]').html(html_color_options);
+                    html_sizes_options = '<option value="0"> -- Chọn kích thước -- </option>';
+                    $('select[name="product_size"]').html(html_sizes_options);
+                    $('input[name="product_quantity"]').removeAttr('max_avaiable');
+                    $('input[name="product_quantity"]').val(0);
+                    $('input[name="product_detail_id"]').val(0);
+                    $('#add_cart_details').prop('disabled', true);
+                    $('.col-md-8 .ibox-content .error').each(function(){
+                        if (!$(this).hasClass('hidden')) {
+                            $(this).addClass('hidden');
+                        }
+                    });
                 }else{
+                    html_sizes_options = '<option value="0"> -- Chọn kích thước -- </option>';
+                    html_color_options = '<option value="0"> -- Chọn màu sắc -- </option>';
+                    $('select[name="product_color"]').html(html_color_options);
+                    $('select[name="product_size"]').html(html_sizes_options);
+                    $('input[name="product_quantity"]').removeAttr('max_avaiable');
+                    $('input[name="product_quantity"]').val(0);
+                    $('input[name="product_detail_id"]').val(0);
+                    $('#add_cart_details').prop('disabled', true);
+                    $('.col-md-8 .ibox-content .error').each(function(){
+                        if (!$(this).hasClass('hidden')) {
+                            $(this).addClass('hidden');
+                        }
+                    });
                 }
             }).fail(function(jqXHR, textStatus){
                 alert('Có lỗi xảy ra, xin hãy làm mới trình duyệt');
@@ -250,7 +278,17 @@
                 if (!$.isEmptyObject(data.sizes)) {
                     html_sizes_options = '<option value="0"> -- Chọn kích thước -- </option>' + generate_options(data.sizes);
                     $('select[name="product_size"]').html(html_sizes_options);
+                    $('input[name="product_quantity"]').removeAttr('max_avaiable');
+                    $('input[name="product_quantity"]').val(0);
+                    $('input[name="product_detail_id"]').val(0);
+                    $('#add_cart_details').prop('disabled', true);
                 }else{
+                    html_sizes_options = '<option value="0"> -- Chọn kích thước -- </option>';
+                    $('select[name="product_size"]').html(html_sizes_options);
+                    $('input[name="product_quantity"]').removeAttr('max_avaiable');
+                    $('input[name="product_quantity"]').val(0);
+                    $('input[name="product_detail_id"]').val(0);
+                    $('#add_cart_details').prop('disabled', true);
                 }
             }).fail(function(jqXHR, textStatus){
                 alert('Có lỗi xảy ra, xin hãy làm mới trình duyệt');
@@ -276,6 +314,10 @@
                     $('input[name="product_quantity"]').attr('max_avaiable', data.quantity);
                     $('input[name="product_detail_id"]').val(data.detail_id);
                 }else{
+                    $('input[name="product_quantity"]').removeAttr('max_avaiable');
+                    $('input[name="product_quantity"]').val(0);
+                    $('input[name="product_detail_id"]').val(0);
+                    $('#add_cart_details').prop('disabled', true);
                 }
             }).fail(function(jqXHR, textStatus){
                 alert('Có lỗi xảy ra, xin hãy làm mới trình duyệt');
@@ -412,15 +454,17 @@
 
         // Load customer data when customer phone select is changed
         $('select[name="customer_phone"]').on('change', function(){
-            if ($(this).find('option[value="'+$(this).val()+'"]').attr('data-select2-tag') != 'true') {
-                $.ajax({
-                    url: "{{route('admin.carts.view')}}",
-                    data:{
-                        customer_phone:$(this).val()
-                    },
-                    dataType:'json'
-                }).done(function(data) {
-                    if (!$.isEmptyObject(data)) {
+            var new_customer = ($(this).find('option[value="'+$(this).val()+'"]').attr('data-select2-tag')) ? $(this).find('option[value="'+$(this).val()+'"]').attr('data-select2-tag') : 'false';
+            $.ajax({
+                url: "{{route('admin.carts.view')}}",
+                data:{
+                    customer_phone:$(this).val(),
+                    new_customer:new_customer
+                },
+                dataType:'json'
+            }).done(function(data) {
+                if (!$.isEmptyObject(data)) {
+                    if (data.status == 'true') {
                         $('input[name="customer_name"]').val(data.customer.name);
                         $('input[name="customer_email"]').val(data.customer.email);
                         $('input[name="customer_address"]').val(data.customer.address);
@@ -432,17 +476,17 @@
                         }
                         updateTotalDiscountAmount();
                     }else{
+                        $('input[name="customer_name"]').val("");
+                        $('input[name="customer_email"]').val("");
+                        $('input[name="customer_address"]').val("");
+                        $('select[name="customer_city"]').val("");
+                        $('input[name="customer_discount_amount"]').val(0);
                     }
-                }).fail(function(jqXHR, textStatus){
-                    alert('Có lỗi xảy ra, xin hãy làm mới trình duyệt');
-                })
-            }else{
-                $('input[name="customer_name"]').val("");
-                $('input[name="customer_email"]').val("");
-                $('input[name="customer_address"]').val("");
-                $('select[name="customer_city"]').val("");
-                $('input[name="customer_discount_amount"]').val(0);
-            }
+                }else{
+                }
+            }).fail(function(jqXHR, textStatus){
+                alert('Có lỗi xảy ra, xin hãy làm mới trình duyệt');
+            })
         });
 
         // Load discount amount for partner

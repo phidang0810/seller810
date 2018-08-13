@@ -98,7 +98,7 @@ class CustomerRepository
         $model->email = $data['email'];
         $model->active = $data['active'];
         if(isset($data['phone'])) {
-            $model->phone = $data['phone'];
+            $model->phone = preg_replace('/\s+/', '', $data['phone']);
         }
         if(isset($data['address'])) {
             $model->address = $data['address'];
@@ -160,17 +160,33 @@ class CustomerRepository
 
     public function getCustomer($request){
         $customer_id = $request->get('customer_phone');
+        $new_customer = $request->get('new_customer');
 
         $return = [
+            'status'    =>  'true',
             'customer_id' => $customer_id,
             'message'   =>  'Lấy datas cho khách hàng thành công',
         ];
 
-        if ($customer_id) {
-            $customer = Customer::find($customer_id);
-            $customer->city;
-            $customer->group;
-            $return['customer'] = $customer;
+        if ($new_customer == 'false') {
+            if ($customer_id) {
+                $customer = Customer::find($customer_id);
+                $customer->city;
+                $customer->group;
+                $return['customer'] = $customer;
+            }else{
+                $return['status'] = 'false';
+            }
+        }else{
+            $customer_phone = preg_replace('/[^0-9]/', '', $customer_id);
+            $customer = Customer::where('phone', '=' ,$customer_phone)->first();
+            if ($customer) {
+                $customer->city;
+                $customer->group;
+                $return['customer'] = $customer;
+            }else{
+                $return['status'] = 'false';
+            }
         }
 
         return Response::json($return);
@@ -180,6 +196,7 @@ class CustomerRepository
     {
         $formatted_customers = [];
         $term = trim($request->q);
+        $term = preg_replace('/\s+/', '', $term);
 
         $customers_list = Customer::where('phone','LIKE', '%'.$term.'%')->get();
         foreach ($customers_list as $customer) {

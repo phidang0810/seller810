@@ -204,13 +204,14 @@ Class CartRepository
 
 		$model->city_id = $data['customer_city'];
 		$model->partner_id = $data['partner']; 
+		
+        $data['customer_phone'] = preg_replace('/\s+/', '', $data['customer_phone']);
 
 		// Excute customer
 		if ($customer = Customer::find($data['customer_phone'])) {
 			$customer->city_id = $data['customer_city'];
 			$customer->name = $data['customer_name'];
 			$customer->email = $data['customer_email'];
-			// $customer->phone = $data['customer_phone'];
 			$customer->address = $data['customer_address'];
 
 			$customer->save();
@@ -231,17 +232,17 @@ Class CartRepository
 
 		$model->transport_id = $data['transporting_service'];
 		$model->quantity = $data['quantity'];
-		$model->partner_discount_amount = $data['partner_discount_amount'];
-		$model->customer_discount_amount = $data['customer_discount_amount'];
-		$model->total_discount_amount = $data['total_discount_amount'];
+		$model->partner_discount_amount = preg_replace('/[^0-9]/', '', $data['partner_discount_amount']);
+		$model->customer_discount_amount = preg_replace('/[^0-9]/', '', $data['customer_discount_amount']);
+		$model->total_discount_amount = preg_replace('/[^0-9]/', '', $data['total_discount_amount']);
 		$model->total_price = preg_replace('/[^0-9]/', '', $data['total_price']);
 		$model->price = preg_replace('/[^0-9]/', '', $data['price']);
-		$model->shipping_fee = $data['shipping_fee'];
+		$model->shipping_fee = preg_replace('/[^0-9]/', '', $data['shipping_fee']);
 		$model->vat_percent = 10;
-		$model->vat_amount = $data['vat_amount'];
-		$model->prepaid_amount = $data['prepaid_amount'];
-		$model->paid_amount = $data['paid_amount'];
-		$model->needed_paid = $data['needed_paid'];
+		$model->vat_amount = preg_replace('/[^0-9]/', '', $data['vat_amount']);
+		$model->prepaid_amount = preg_replace('/[^0-9]/', '', $data['prepaid_amount']);
+		$model->paid_amount = preg_replace('/[^0-9]/', '', $data['paid_amount']);
+		$model->needed_paid = preg_replace('/[^0-9]/', '', $data['needed_paid']);
 		$model->descritption = $data['descritption'];
 		$model->platform_id = $data['platform_id'];
 		// excute payment_status

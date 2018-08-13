@@ -453,8 +453,7 @@ Class ProductRepository
 		];
 
 		if ($product_id) {
-			$product_details = ProductDetail::groupBy('color_id')
-                ->having('product_id', '=', $product_id)
+			$product_details = ProductDetail::having('product_id', '=', $product_id)
                 ->get();
 
 
