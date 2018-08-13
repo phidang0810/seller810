@@ -163,6 +163,9 @@ Class CartRepository
 			}else{
 				return false;
 			}
+		}else{
+			$model->status = $data['status'];
+			$model->save();
 		}
 		return $model;
 	}
@@ -205,7 +208,7 @@ Class CartRepository
 		$model->city_id = $data['customer_city'];
 		$model->partner_id = $data['partner']; 
 		
-        $data['customer_phone'] = preg_replace('/\s+/', '', $data['customer_phone']);
+		$data['customer_phone'] = preg_replace('/\s+/', '', $data['customer_phone']);
 
 		// Excute customer
 		if ($customer = Customer::find($data['customer_phone'])) {
@@ -261,12 +264,14 @@ Class CartRepository
 		}
 
 		// Excute status
-		if ($data['status'] == 3 || $data['status'] == 4) {
-			if ($model->payment_status == 4) {
+		if ($data['status'] == 4) {
+			if ($model->payment_status == 3 || $model->payment_status == 4) {
 				$model->status = $data['status'];
 			}else{
 				$model->status = 3;
 			}
+		}else{
+			$model->status = $data['status'];
 		}
 		
 		// $model->active = $data['active'];
