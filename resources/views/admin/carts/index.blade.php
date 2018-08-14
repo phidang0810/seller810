@@ -14,20 +14,6 @@
         }
     });
 
-    function formatDate(date) {
-     var d = new Date(date),
-     hour = d.getHours();
-     minute = d.getMinutes();
-     month = '' + (d.getMonth() + 1),
-     day = '' + d.getDate(),
-     year = d.getFullYear();
-
-     if (month.length < 2) month = '0' + month;
-     if (day.length < 2) day = '0' + day;
-
-     return [hour, minute].join(':')+' '+[day, month, year].join('/');
- }
-
     //---> Get customer detail, cart detail
     var cart_complete = "{{COMPLETED}}";
     var cart_canceled = "{{CANCELED}}";
@@ -41,7 +27,7 @@
                 },
                 dataType:'json'
             }).done(function(data) {
-
+                console.log(data);
                 if (!$.isEmptyObject(data.result["cart"])) {
                     var elCustomerInfo = $(".customer-info-wrapper");
                     if (!$.isEmptyObject(data.result["cart"])) {
@@ -55,7 +41,8 @@
                 }else{
                     console.log('Data is null');
                 }
-            }).fail(function(jqXHR, textStatus){
+            }).fail(function(jqXHR, textStatus, data){
+                console.log(data);
                 console.log(textStatus);
             })
 
@@ -110,44 +97,6 @@
         }).fail(function(jqXHR, textStatus){
             console.log(textStatus);
         })
-    }
-
-    function parseTableCartDetail(arrCartDetails){
-        var html = '';
-
-        if (arrCartDetails.length > 0) {
-            $.each(arrCartDetails, function( index, value ) {
-              html += '<tr>'
-              +'<td>'+value['barcode']+'</td>'
-              +'<td>'+value['product_code']+'</td>'
-              +'<td>'+value['price']+'</td>'
-              +'<td>'+value['quantity']+'</td>'
-              +'</tr>';
-          });
-        }
-
-        return html;
-    }
-
-    function getSummaryCart(arrCartDetails){
-        var totalPrice = 0;
-        var shippingFee = 0;
-        var amount = 0;
-        totalPrice = arrCartDetails[0]["total_price"];
-        shippingFee = arrCartDetails[0]["shipping_fee"];
-        if (totalPrice != null && shippingFee == null) {
-            amount = parseFloat(totalPrice);
-        }else if(totalPrice != null && shippingFee != null){
-            amount = parseFloat(totalPrice) + parseFloat(shippingFee);
-        }else{
-            amount = 0;
-        }
-        var objSummary = {
-            total_price: totalPrice,
-            shipping_fee: shippingFee,
-            amount: amount
-        };
-        return objSummary;
     }
 
     $(document).ready(function () {

@@ -113,7 +113,7 @@ Class CartRepository
 		->where('carts.code', '=', $cartCode)
 		->first();
 
-		$cartDetails = Cart::select(['carts.id', 'cart_detail.quantity as quantity', 'cart_detail.price as price', 'carts.total_price as total_price', 'carts.shipping_fee as shipping_fee', 'carts.code', 'products.code as product_code', ])
+		$cartDetails = Cart::select(['carts.id', 'cart_detail.quantity as quantity', 'cart_detail.price as price', 'carts.total_price as total_price', 'carts.shipping_fee as shipping_fee', 'carts.code', 'products.code as product_code'])
 		->leftjoin('cart_detail', 'cart_detail.cart_id', '=', 'carts.id')
 		->leftjoin('products', 'products.id', '=', 'cart_detail.product_id')
 		->where('carts.code', '=', $cartCode)

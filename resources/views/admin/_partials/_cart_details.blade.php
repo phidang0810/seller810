@@ -21,19 +21,11 @@
 
     <div class="form-group">
         <label class="col-lg-5 control-label" style="text-align: left; padding-right: 0; width: 33.666667%;">Ngày mua:</label>
-        <label id="cart_created" class="col-lg-7 text-left control-label" style="padding-left: 0; text-align: left;">{{$result['cart']->created_at->format('H:i d/m/y')}}</label>
+        <label id="cart_created" class="col-lg-7 text-left control-label" style="padding-left: 0; text-align: left;">{{$result['cart']->created_at}}</label>
     </div>
 
     <div class="form-group">
         <label class="col-lg-5 control-label" style="text-align: left; padding-right: 0; width: 33.666667%;">Nguồn đơn:</label>
-        <!-- <div class="col-lg-7" style="padding-left: 0; text-align: left;">
-            <select id="i-platforms-list" name="platform_name" class="form-control" placeholder="Chọn nguồn đơn">
-                <option value="0">-- Chọn nguồn đơn --</option>
-                @foreach ($platforms as $platform)
-                <option value="{{$platform->id}}" @if ($result['cart']->platform_id == $platform->id) selected @endif>{{$platform->name}}</option>
-                @endforeach
-            </select>
-        </div> -->
         <label id="platform_name" class="col-lg-7 text-left control-label" style="padding-left: 0; text-align: left;">{{$result['cart']->platform_name}}</label>
     </div>
 
