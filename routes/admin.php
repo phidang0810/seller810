@@ -108,6 +108,7 @@ Route::prefix('don-hang')
 Route::prefix('thong-ke')
     ->middleware('permission:accountant_manager')->group(function () {
         Route::get ('/', 'StatisticsController@importProduct')->name('admin.statistics.importProduct');
+        Route::get ('/doanh-thu', 'StatisticsController@revenueChart')->name('admin.statistics.revenueChart');
     });
 
 Route::prefix('ke-toan')

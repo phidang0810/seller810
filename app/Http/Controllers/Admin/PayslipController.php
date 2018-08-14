@@ -57,7 +57,7 @@ class PayslipController extends AdminController
         $message = 'Phiếu chi đã được tạo.';
 
         if ($id) {
-            $message = 'Phiếu chi '.$input['name'].' đã được cập nhật.';
+            $message = 'Phiếu chi '.$input['code'].' đã được cập nhật.';
         }
         
         $validator = Validator::make($input, $rules);

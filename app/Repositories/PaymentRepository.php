@@ -43,10 +43,10 @@ Class PaymentRepository
             ];
             $query = Payment::selectRaw('sum(total_price) as total, DAYOFWEEK(created_at) as day_of_week')
             ->whereRaw('YEARWEEK(created_at) = YEARWEEK(NOW())')
-            ->orderBy('created_at,asc')
+            ->orderBy('created_at','asc')
             ->groupBy('day_of_week')
             ->get();
-            $prices = $query->pluck('total,day_of_week')->toArray();
+            $prices = $query->pluck('total','day_of_week')->toArray();
             $valueArr = [];
             foreach($result['time'] as $k => $value) {
                 $dayOfWeek = $k+1;
@@ -67,7 +67,7 @@ Class PaymentRepository
             ];
             $query = Payment::selectRaw('sum(total_price) as total, DAYOFWEEK(created_at) as day_of_week')
             ->whereRaw('YEARWEEK(created_at) = YEARWEEK(NOW()) - 1')
-            ->orderBy('created_at,asc')
+            ->orderBy('created_at','asc')
             ->groupBy('day_of_week')
             ->get();
             $prices = $query->pluck('total,day_of_week')->toArray();
@@ -96,10 +96,10 @@ Class PaymentRepository
             ];
             $query = Payment::selectRaw('sum(total_price) as total, MONTH(created_at) as month')
             ->whereRaw('YEAR(created_at) = YEAR(CURDATE()) ')
-            ->orderBy('created_at,asc')
+            ->orderBy('created_at','asc')
             ->groupBy('month')
             ->get();
-            $prices = $query->pluck('total,month')->toArray();
+            $prices = $query->pluck('total','month')->toArray();
             $valueArr = [];
             foreach($result['time'] as $k => $value) {
                 $month = $k+1;
@@ -118,7 +118,7 @@ Class PaymentRepository
             }
             $query = Payment::selectRaw('sum(total_price) as total, YEAR(created_at) as year')
             ->whereRaw('YEAR(created_at) >= ' . $minYear)
-            ->orderBy('created_at,asc')
+            ->orderBy('created_at','asc')
             ->groupBy('year')
             ->get();
             $prices = $query->pluck('total,year')->toArray();
@@ -137,9 +137,9 @@ Class PaymentRepository
         $take = $search['limit'] ?? 4;
         $type = $search['type'] ?? 'pie';
         $data = PaymentDetail::selectRaw('products.name, SUM(payment_detail.quantity) as total')
-        ->join('products,products.id,=,payment_detail.product_id')
+        ->join('products','products.id','=','payment_detail.product_id')
         ->groupBy('payment_detail.product_id')
-        ->orderBy('total,desc')
+        ->orderBy('total','desc')
         ->take($take)
         ->get();
 
@@ -161,9 +161,9 @@ Class PaymentRepository
         $take = $search['limit'] ?? 4;
         $type = $search['type'] ?? 'pie';
         $data = Payment::selectRaw('platforms.name, COUNT(payments.platform_id) as total')
-        ->join('platforms,platforms.id,=,payments.platform_id')
+        ->join('platforms', 'platforms.id','=','payments.platform_id')
         ->groupBy('payments.platform_id')
-        ->orderBy('total,desc')
+        ->orderBy('total','desc')
         ->take($take)
         ->get();
 
@@ -185,10 +185,10 @@ Class PaymentRepository
         $take = $search['limit'] ?? 4;
         $type = $search['type'] ?? 'pie';
         $data = PaymentDetail::selectRaw('categories.name, COUNT(categories.id) as total')
-        ->join('product_category,product_category.product_id,=,payment_detail.product_id')
-        ->join('categories,categories.id,=,product_category.category_id')
+        ->join('product_category','product_category.product_id', '=', 'payment_detail.product_id')
+        ->join('categories','categories.id', '=', 'product_category.category_id')
         ->groupBy('categories.id')
-        ->orderBy('total,desc')
+        ->orderBy('total','desc')
         ->take($take)
         ->get();
 
@@ -267,11 +267,13 @@ Class PaymentRepository
 
     public function getRevenueDataTable($request)
     {
-        $products = PaymentDetail::selectRaw('products.name, products.code, products.photo, products.category_ids, payments.platform_id, SUM(payment_detail.quantity) as quantity, SUM(payment_detail.total_price) as total_price, (payment_detail.total_price - (products.price*payment_detail.quantity)) as profit, DATE(payment_detail.created_at) as created_at')
+        $products = PaymentDetail::selectRaw('products.name, products.code, products.photo, products.category_ids, payments.platform_id, SUM(payment_detail.quantity) as quantity, SUM(payment_detail.total_price) as total_price, (payment_detail.total_price - (products.price*payment_detail.quantity)) as profit, DATE(payment_detail.created_at) as created_at, COUNT(payments.cart_id) total_cart')
                     ->join('products' ,'products.id', '=', 'payment_detail.product_id')
                     ->join('payments', 'payments.id', '=', 'payment_detail.payment_id')
-                    ->groupBy('payment_detail.product_id')
-                    ->groupBy(DB::raw('DATE(payment_detail.created_at)'));
+                    ->groupBy('payment_detail.product_id');
+        if ($request->has('date')) {
+            $products->groupBy(DB::raw('DATE(payment_detail.created_at)'));
+        }
         $categories = Category::get()->pluck('name', 'id')->toArray();
         $platforms = Platform::get()->pluck('name','id')->toArray();
         $dataTable = DataTables::eloquent($products)
@@ -308,21 +310,19 @@ Class PaymentRepository
                 $html = '';
                 $categoryIDs = explode(',', $product->category_ids);
                 foreach ($categoryIDs as $categoryID) {
-                    $html .= '<label class="label label-default">'.$categories[$categoryID].'</label><br/>';
+                    $categoryName = $categories[$categoryID] ?? '';
+                    $html .= '<label class="label label-default">'.$categoryName.'</label><br/>';
                 }
                 return $html;
             })
             ->addColumn('total_price', function($product) use ($platforms) {
                 return format_price($product->total_price);
             })
-            ->addColumn('created_at', function($product) {
-                return $product->created_at->format('d-m-Y');
-            })
             ->addColumn('profit', function($product) {
                 return format_price($product->profit);
             })
             ->addColumn('platform', function($product) use ($platforms) {
-                return $platforms[$product->platform_id];
+                return $platforms[$product->platform_id] ?? '';
             })
 
             ->addColumn('photo', function ($product) {

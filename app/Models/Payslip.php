@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Payslip extends Model
+class Payslip extends BaseModel
 {
      /**
      * The attributes that are mass assignable.

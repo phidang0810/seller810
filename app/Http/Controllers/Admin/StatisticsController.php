@@ -43,10 +43,22 @@ class StatisticsController extends AdminController
             return $payment->getRevenueDataTable($this->_request);
         }
 
-        $this->_data['title'] = 'Chi Phí Nhập Hàng';
+        $this->_data['title'] = 'Doanh Thu Bán Hàng';
         $this->_data['categoriesTree'] = option_menu($category->getCategoriesTree(), "");
         $this->_data['platforms'] = $platform->getList();
 
         return view('admin.statistics.revenue', $this->_data);
+    }
+
+    public function revenueChart(PaymentRepository $payment, CategoryRepository $category)
+    {
+        if ($this->_request->ajax()) {
+            return $payment->getRevenueDataTable($this->_request);
+        }
+
+        $this->_data['title'] = 'Doanh Thu Bán Hàng';
+        $this->_data['categoriesTree'] = option_menu($category->getCategoriesTree(), "");
+
+        return view('admin.statistics.revenue_chart', $this->_data);
     }
 }

@@ -26,7 +26,6 @@
                         d.category_id = $('#s-category').val();
                         d.date_from = $('#date_from').val();
                         d.date_to = $('#date_to').val();
-                        d.date = true;
                     },
                     complete: function(){
                     }
@@ -36,14 +35,12 @@
                     {data: 'code'},
                     {data: 'category'},
                     {data: 'quantity'},
-                    {data: 'created_at'},
                     {data: 'total_price'},
                     {data: 'profit'},
-                    {data: 'platform'}
                 ],
                 "aoColumnDefs": [
                     // Column index begins at 0
-                    { "sClass": "text-right", "aTargets": [ 5,6 ] }
+                    { "sClass": "text-right", "aTargets": [ 3,4,5 ] }
                 ],
                 "language": {
                     "decimal": "",
@@ -125,17 +122,6 @@
 
             <div class="col-sm-3">
                 <div class="form-group">
-                    <label>Nguồn đơn</label>
-                    <select class="form-control" id="s-platform" name="s-platform">
-                        <option value=""> -- Tất cả -- </option>
-                        @foreach($platforms as $platform)
-                            <option @if(app('request')->input('role') == $platform->id) selected @endif value="{{$platform->id}}">{{$platform->name}}</option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-            <div class="col-sm-3">
-                <div class="form-group">
                     <label></label>
                     <button class="btn btn-sm btn-warning" type="submit" style="margin-bottom: 0;margin-top: 22px;">
                         <i class="fa fa-search"></i> Tìm kiếm
@@ -161,11 +147,9 @@
                         <th>Tên</th>
                         <th>Mã Sản Phẩm</th>
                         <th>Danh Mục</th>
-                        <th>Tổng Bán</th>
-                        <th>Ngày Bán</th>
+                        <th>Số Lượng Đơn</th>
                         <th>Doanh Thu</th>
                         <th>Lợi Nhuận</th>
-                        <th>Nguồn Đơn</th>
                     </tr>
                     </thead>
                     <tbody>

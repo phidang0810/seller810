@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 
-class ProductPhoto extends Model
+class ProductPhoto extends BaseModel
 {
 
     const THUMB = 150;
