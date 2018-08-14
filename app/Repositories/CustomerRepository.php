@@ -160,7 +160,7 @@ class CustomerRepository
 
     public function getCustomer($request){
         $customer_id = $request->get('customer_phone');
-        $new_customer = $request->get('new_customer');
+        $new_customer = ($request->get('new_customer')) ? $request->get('new_customer') : 'false';
 
         $return = [
             'status'    =>  'true',

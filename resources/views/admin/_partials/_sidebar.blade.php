@@ -94,8 +94,8 @@
             <li class="{{ set_active(['quan-ly/don-hang', 'quan-ly/don-hang/*']) }} nav-item">
                 <a href="#"><i class="fa fa-shopping-cart"></i> <span class="nav-label">Quản Lý Đơn Hàng</span><span class="fa arrow"></span></a>
                 <ul class="nav nav-second-level">
-                    <li class="{{ set_active(['quan-ly/san-pham']) }}"><a href="{{route('admin.carts.index')}}">Danh sách Đơn Hàng</a></li>
-                    <li class="{{ set_active(['quan-ly/san-pham/them']) }}"><a href="{{route('admin.carts.create')}}">Thêm Đơn Hàng</a></li>
+                    <li class="{{ set_active(['quan-ly/don-hang']) }}"><a href="{{route('admin.carts.index')}}">Danh sách Đơn Hàng</a></li>
+                    <li class="{{ set_active(['quan-ly/don-hang/them']) }}"><a href="{{route('admin.carts.create')}}">Thêm Đơn Hàng</a></li>
                 </ul>
             </li>
             @endif

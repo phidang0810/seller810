@@ -422,7 +422,7 @@ padding-right: 5px;*/
   position: absolute;
   left: 20%;
   bottom: 0;
-  display: none;
+  /*display: none;*/
 }
 
 .cart-menu-wrapper .navbar-top-links li a{
