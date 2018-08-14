@@ -58,27 +58,37 @@
     </div>
     <div class="hr-line-dashed"></div>
     <div class="ibox-content m-b">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Mã đơn hàng</th>
-                    <th>Mã sản phẩm</th>
-                    <th>Đơn giá</th>
-                    <th>Số lượng</th>
-                </tr>
-            </thead>
-            <tfoot>
-                <tr>
-                    <td colspan="2">Tổng cộng</td>
-                    <td colspan="2">
+    <style>
+        .table-borderless > tbody > tr > td,
+        .table-borderless > tbody > tr > th,
+        .table-borderless > tfoot > tr > td,
+        .table-borderless > tfoot > tr > th,
+        .table-borderless > thead > tr > td,
+        .table-borderless > thead > tr > th {
+            border: none;
+        }
+    </style>
+    <table class="table table-borderless">
+        <thead>
+            <tr>
+                <th>Mã đơn hàng</th>
+                <th>Mã sản phẩm</th>
+                <th>Đơn giá</th>
+                <th>Số lượng</th>
+            </tr>
+        </thead>
+        <tfoot>
+            <tr>
+                <td colspan="2">Tổng cộng</td>
+                <td colspan="2">
                         <!-- <input type="text" name="total_price" placeholder="" class="form-control thousand-number m-b"
-                        value="{{$result['cart']->total_price}}" readonly="readonly" /> -->
-                        <span class="thousand-number m-b">{{($result['cart']->total_price) ? $result['cart']->total_price : 0}}</span>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2">Thuế</td>
-                    <td colspan="2">
+                            value="{{$result['cart']->total_price}}" readonly="readonly" /> -->
+                            <span class="thousand-number m-b">{{($result['cart']->total_price) ? $result['cart']->total_price : 0}}</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Thuế</td>
+                        <td colspan="2">
                        <!--  <input type="text" name="vat_amount" placeholder="" class="form-control thousand-number m-b"
                         value="{{$result['cart']->vat_amount}}" readonly="readonly" /> -->
                         <span class="thousand-number m-b">{{($result['cart']->vat_amount) ? $result['cart']->vat_amount : 0}}</span>
@@ -88,74 +98,74 @@
                     <td colspan="2">Phí vận chuyển</td>
                     <td colspan="2">
                         <!-- <input type="text" name="shipping_fee" placeholder="" class="form-control thousand-number m-b"
-                        value="{{$result['cart']->shipping_fee}}" readonly="readonly" /> -->
-                        <span class="thousand-number m-b">{{($result['cart']->shipping_fee) ? $result['cart']->shipping_fee : 0}}</span>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2">Tổng chiết khấu</td>
-                    <td colspan="2">
+                            value="{{$result['cart']->shipping_fee}}" readonly="readonly" /> -->
+                            <span class="thousand-number m-b">{{($result['cart']->shipping_fee) ? $result['cart']->shipping_fee : 0}}</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Tổng chiết khấu</td>
+                        <td colspan="2">
                         <!-- <input type="text" name="total_discount_amount" placeholder="" class="form-control thousand-number m-b"
-                        value="{{$result['cart']->total_discount_amount}}" readonly="readonly" /> -->
-                        <span class="thousand-number m-b">{{($result['cart']->total_discount_amount) ? $result['cart']->total_discount_amount : 0}}</span>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2" style="font-weight: 700;">Thành tiền</td>
-                    <td colspan="2">
+                            value="{{$result['cart']->total_discount_amount}}" readonly="readonly" /> -->
+                            <span class="thousand-number m-b">{{($result['cart']->total_discount_amount) ? $result['cart']->total_discount_amount : 0}}</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="font-weight: 700;">Thành tiền</td>
+                        <td colspan="2">
                         <!-- <input type="text" name="price" placeholder="" class="form-control thousand-number m-b"
-                        value="{{$result['cart']->price}}" readonly="readonly" /> -->
-                        <span class="thousand-number m-b" style="font-weight: 700;">{{($result['cart']->price) ? $result['cart']->price : 0}}</span>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2" style="font-weight: 700;">Đã thanh toán</td>
-                    <td colspan="2" >
+                            value="{{$result['cart']->price}}" readonly="readonly" /> -->
+                            <span class="thousand-number m-b" style="font-weight: 700;">{{($result['cart']->price) ? $result['cart']->price : 0}}</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="font-weight: 700;">Đã thanh toán</td>
+                        <td colspan="2" >
                         <!-- <input type="text" name="paid_amount" placeholder="" class="form-control thousand-number m-b"
-                        value="{{$result['cart']->paid_amount}}" readonly="readonly" /> -->
-                        <span class="thousand-number m-b" style="font-weight: 700;">{{($result['cart']->paid_amount) ? $result['cart']->paid_amount : 0}}</span>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2" style="font-weight: 700;">Thanh toán thêm</td>
-                    <td colspan="2">
-                        <input type="text" name="pay_amount" placeholder="" class="form-control thousand-number m-b"
-                        value=""/>
-                        <!-- <span class="thousand-number m-b">{{$result['cart']->total_price}}</span> -->
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2">Còn lại</td>
-                    <td colspan="2">
+                            value="{{$result['cart']->paid_amount}}" readonly="readonly" /> -->
+                            <span class="thousand-number m-b" style="font-weight: 700;">{{($result['cart']->paid_amount) ? $result['cart']->paid_amount : 0}}</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="font-weight: 700;">Thanh toán thêm</td>
+                        <td colspan="2">
+                            <input type="text" name="pay_amount" placeholder="" class="form-control thousand-number m-b"
+                            value=""/>
+                            <!-- <span class="thousand-number m-b">{{$result['cart']->total_price}}</span> -->
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Còn lại</td>
+                        <td colspan="2">
                         <!-- <input type="text" name="needed_paid" placeholder="" class="form-control thousand-number m-b"
-                        value="{{$result['cart']->needed_paid}}" readonly="readonly" /> -->
-                        <span class="thousand-number m-b">{{$result['cart']->needed_paid}}</span>
-                    </td>
-                </tr>
-            </tfoot>
-            <tbody class="cart-detail-wrapper">
-                @foreach ($result['cart_details'] as $cart_detail)
-                <tr>
-                    <td>{{$cart_detail->code}}</td>
-                    <td>{{$cart_detail->product_code}}</td>
-                    <td>{{$cart_detail->price}}</td>
-                    <td>{{$cart_detail->quantity}}</td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
-    </div>
-    <div class="form-group">
-        <div class="col-lg-offset-2 col-lg-10 text-right">
-            <button id="save-cart-info" class="btn btn-sm btn-primary" type="button" onclick="updateCartStatus();">Lưu</button>
+                            value="{{$result['cart']->needed_paid}}" readonly="readonly" /> -->
+                            <span class="thousand-number m-b">{{$result['cart']->needed_paid}}</span>
+                        </td>
+                    </tr>
+                </tfoot>
+                <tbody class="cart-detail-wrapper">
+                    @foreach ($result['cart_details'] as $cart_detail)
+                    <tr>
+                        <td>{{$cart_detail->code}}</td>
+                        <td>{{$cart_detail->product_code}}</td>
+                        <td>{{$cart_detail->price}}</td>
+                        <td>{{$cart_detail->quantity}}</td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
         </div>
-    </div>
-</form>
-<script type="text/javascript">
-    var paid_amount = parseInt('{{($result['cart']->paid_amount) ? $result['cart']->paid_amount : 0}}');
-    var price = parseInt('{{$result['cart']->price}}');
+        <div class="form-group">
+            <div class="col-lg-offset-2 col-lg-10 text-right">
+                <button id="save-cart-info" class="btn btn-sm btn-primary" type="button" onclick="updateCartStatus();">Lưu</button>
+            </div>
+        </div>
+    </form>
+    <script type="text/javascript">
+        var paid_amount = parseInt('{{($result['cart']->paid_amount) ? $result['cart']->paid_amount : 0}}');
+        var price = parseInt('{{$result['cart']->price}}');
 
-    function formatPrice(){
+        function formatPrice(){
         // Format prices
         $('.thousand-number').toArray().forEach(function(field){
             new Cleave(field, {
