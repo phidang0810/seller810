@@ -27,7 +27,7 @@
                 },
                 dataType:'json'
             }).done(function(data) {
-                console.log(data);
+                // console.log(data);
                 if (!$.isEmptyObject(data.result["cart"])) {
                     var elCustomerInfo = $(".customer-info-wrapper");
                     if (!$.isEmptyObject(data.result["cart"])) {
