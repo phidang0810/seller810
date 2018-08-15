@@ -235,7 +235,7 @@
                     $('input[name="product_quantity"]').removeAttr('max_avaiable');
                     $('input[name="product_quantity"]').val(0);
                     $('input[name="product_detail_id"]').val(0);
-                    $('#add_cart_details').prop('disabled', true);
+                    // $('#add_cart_details').prop('disabled', true);
                     $('.col-md-8 .ibox-content .error').each(function(){
                         if (!$(this).hasClass('hidden')) {
                             $(this).addClass('hidden');
@@ -249,7 +249,7 @@
                     $('input[name="product_quantity"]').removeAttr('max_avaiable');
                     $('input[name="product_quantity"]').val(0);
                     $('input[name="product_detail_id"]').val(0);
-                    $('#add_cart_details').prop('disabled', true);
+                    // $('#add_cart_details').prop('disabled', true);
                     $('.col-md-8 .ibox-content .error').each(function(){
                         if (!$(this).hasClass('hidden')) {
                             $(this).addClass('hidden');
@@ -281,14 +281,14 @@
                     $('input[name="product_quantity"]').removeAttr('max_avaiable');
                     $('input[name="product_quantity"]').val(0);
                     $('input[name="product_detail_id"]').val(0);
-                    $('#add_cart_details').prop('disabled', true);
+                    // $('#add_cart_details').prop('disabled', true);
                 }else{
                     html_sizes_options = '<option value="0"> -- Chọn kích thước -- </option>';
                     $('select[name="product_size"]').html(html_sizes_options);
                     $('input[name="product_quantity"]').removeAttr('max_avaiable');
                     $('input[name="product_quantity"]').val(0);
                     $('input[name="product_detail_id"]').val(0);
-                    $('#add_cart_details').prop('disabled', true);
+                    // $('#add_cart_details').prop('disabled', true);
                 }
             }).fail(function(jqXHR, textStatus){
                 alert('Có lỗi xảy ra, xin hãy làm mới trình duyệt');
@@ -310,14 +310,14 @@
                 dataType:'json'
             }).done(function(data) {
                 if (!$.isEmptyObject(data)) {
-                    $('#add_cart_details').prop('disabled', false);
+                    // $('#add_cart_details').prop('disabled', false);
                     $('input[name="product_quantity"]').attr('max_avaiable', data.quantity);
                     $('input[name="product_detail_id"]').val(data.detail_id);
                 }else{
                     $('input[name="product_quantity"]').removeAttr('max_avaiable');
                     $('input[name="product_quantity"]').val(0);
                     $('input[name="product_detail_id"]').val(0);
-                    $('#add_cart_details').prop('disabled', true);
+                    // $('#add_cart_details').prop('disabled', true);
                 }
             }).fail(function(jqXHR, textStatus){
                 alert('Có lỗi xảy ra, xin hãy làm mới trình duyệt');
@@ -344,7 +344,7 @@
                     $("#product-"+objectName+"-error").css("display","none!important");
                 }
 
-                $('#add_cart_details').removeAttr('disabled');
+                // $('#add_cart_details').removeAttr('disabled');
                 status = true;
             }
             return status;
@@ -365,6 +365,7 @@
                 }else{
                     $("#product-quantity-error").html('Sản phẩm này chỉ còn '+max+' sản phẩm');
                 }
+                $('#add_cart_details').prop('disabled', true);
                 status = false;
             }else{
                 if (!$("#product-quantity-error").hasClass("hidden")) {
@@ -583,7 +584,7 @@
                                     <label id="product-quantity-error" class="error hidden" for="product_quantity1">Vui lòng nhập vào số lượng.</label>
                                 </div>
                                 <div class="col-md-2">
-                                    <button type="button" class="btn btn-success pull-left c-add-info" id="add_cart_details">Thêm</button>
+                                    <button type="button" class="btn btn-success pull-left c-add-info" id="add_cart_details" disabled="true">Thêm</button>
                                 </div>
                                 <div class="col-md-12">
                                     <input type="hidden" name="product_detail_id">

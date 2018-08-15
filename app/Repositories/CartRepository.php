@@ -263,7 +263,7 @@ Class CartRepository
 		}
 
 		// Excute status, if new then status is new
-		if ($id) {
+		if (!$id) {
 			$model->status = EXCUTING;
 		}else{
 			if ($data['status'] == 4) {
@@ -276,10 +276,6 @@ Class CartRepository
 				$model->status = $data['status'];
 			}
 		}
-		
-		
-		// $model->active = $data['active'];
-		// $model->order = $data['order'];
 
 		$model->save();
 
