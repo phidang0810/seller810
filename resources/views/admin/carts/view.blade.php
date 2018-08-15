@@ -135,7 +135,7 @@
     function updateTotalDiscountAmount(){
         customer_discount = (parseInt($('input[name="customer_discount_amount"]').val())) ? parseInt(removeNonDigit($('input[name="customer_discount_amount"]').val())) : 0;
         partner_discount = (parseInt($('input[name="partner_discount_amount"]').val())) ? parseInt(removeNonDigit($('input[name="partner_discount_amount"]').val())) : 0;
-        $('.cart-total-info input[name="total_discount_amount"]').val(customer_discount + partner_discount);
+        $('.cart-total-info input[name="total_discount_amount"]').val(-(customer_discount + partner_discount));
         updateCartTotalInfo();
     }
 
@@ -472,7 +472,9 @@
                             $('select[name="customer_city"]').val(data.customer.city.id);
                         }
                         if (!$.isEmptyObject(data.customer.group)) {
-                            $('input[name="customer_discount_amount"]').val(data.customer.group.discount_amount);
+                            $('input[name="customer_discount_amount"]').val(-data.customer.group.discount_amount);
+                        }else{
+                            $('input[name="customer_discount_amount"]').val(0);
                         }
                         updateTotalDiscountAmount();
                     }else{
@@ -491,6 +493,7 @@
 
         // Load discount amount for partner
         $('select[name="partner"]').on('change', function(){
+            $('input[name="partner_discount_amount"]').val(0);
             $.ajax({
                 url: "{{route('admin.carts.view')}}",
                 data:{
@@ -499,7 +502,7 @@
                 dataType:'json'
             }).done(function(data) {
                 if (!$.isEmptyObject(data)) {
-                    $('input[name="partner_discount_amount"]').val(data.partner.discount_amount);
+                    $('input[name="partner_discount_amount"]').val(-data.partner.discount_amount);
                     updateTotalDiscountAmount();
                 }else{
                 }
@@ -517,6 +520,15 @@
         $('input[name="shipping_fee"]').on('change', function(){
             $('.cart-total-info input[name="shipping_fee"]').val($(this).val());
             updateCartTotalInfo();
+        });
+
+        $('.negative-number').each(function(){
+            $(this).val(-$(this).val());
+        });
+
+        $('.negative-number').on('change', function(){
+            console.log('changed');
+            $(this).val(-$(this).val());
         });
 
         formatPrice();
@@ -687,7 +699,7 @@
                                     <label class="col-md-4 control-label">Chiết khấu khách hàng</label>
                                     <div class="col-md-8">
                                         <div class="input-group">
-                                            <input type="text" name="customer_discount_amount" placeholder="" class="thousand-number form-control m-b"
+                                            <input type="text" name="customer_discount_amount" placeholder="" class="thousand-number negative-number form-control m-b"
                                             value="@if(isset($data->customer_discount_amount)){{$data->customer_discount_amount}}@else{{0}}@endif" readonly="readonly" />
                                             <span class="input-group-addon input-readonly">VND</span>
                                         </div>
@@ -743,7 +755,7 @@
                                     <label class="col-md-4 control-label">Chiết khấu cộng tác viên</label>
                                     <div class="col-md-8">
                                         <div class="input-group">
-                                            <input type="text" name="partner_discount_amount" placeholder="" class="thousand-number form-control m-b"
+                                            <input type="text" name="partner_discount_amount" placeholder="" class="thousand-number negative-number form-control m-b"
                                             value="@if(isset($data->partner_discount_amount)){{$data->partner_discount_amount}}@else{{0}}@endif" readonly="readonly" />
                                             <span class="input-group-addon input-readonly">VND</span>
                                         </div>
@@ -815,7 +827,7 @@
                                         <label class="col-md-4 control-label">Tổng chiết khấu</label>
                                         <div class="col-md-8">
                                             <div class="input-group">
-                                                <input type="text" name="total_discount_amount" placeholder="" class="thousand-number form-control m-b"
+                                                <input type="text" name="total_discount_amount" placeholder="" class="thousand-number negative-number form-control m-b"
                                                 value="@if(isset($data->total_discount_amount)){{$data->total_discount_amount}}@else{{0}}@endif" readonly="readonly" />
                                                 <span class="input-group-addon input-readonly">VND</span>
                                             </div>
