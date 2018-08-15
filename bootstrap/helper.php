@@ -127,9 +127,9 @@ function general_code($string, $id, $number)
 function parse_status($status){
 	$status_parsed = '';
 	switch ($status) {
-		case EXCUTING:
-			$status_parsed = '<span class="label label-primary">'.EXCUTING_TEXT.'</span>';
-			break;
+		// case EXCUTING:
+		// 	$status_parsed = '<span class="label label-primary">'.EXCUTING_TEXT.'</span>';
+		// 	break;
 
 		case TRANSPORTING:
 			$status_parsed = '<span class="label label-info">'.TRANSPORTING_TEXT.'</span>';
@@ -148,7 +148,7 @@ function parse_status($status){
 			break;
 
 		default:
-			$status_parsed = '<span class="label label-info">'.'Không xác định'.'</span>';
+			$status_parsed = '<span class="label label-primary">'.EXCUTING_TEXT.'</span>';
 			break;
 	}
 	return $status_parsed;
@@ -156,7 +156,6 @@ function parse_status($status){
 
 function make_cart_status_options($selected = 0){
 	$array = [
-		array('id' => 0, 'name' => 'Không xác định'),
 		array('id' => EXCUTING, 'name' => 'Đang xử lý'),
 		array('id' => TRANSPORTING, 'name' => 'Đang giao'),
 		array('id' => TRANSPORTED, 'name' => 'Đã giao'),

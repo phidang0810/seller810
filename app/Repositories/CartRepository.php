@@ -243,7 +243,6 @@ Class CartRepository
 		$model->shipping_fee = preg_replace('/[^0-9]/', '', $data['shipping_fee']);
 		$model->vat_percent = 10;
 		$model->vat_amount = preg_replace('/[^0-9]/', '', $data['vat_amount']);
-		$model->prepaid_amount = preg_replace('/[^0-9]/', '', $data['prepaid_amount']);
 		$model->paid_amount = preg_replace('/[^0-9]/', '', $data['paid_amount']);
 		$model->needed_paid = preg_replace('/[^0-9]/', '', $data['needed_paid']);
 		$model->descritption = $data['descritption'];
@@ -263,16 +262,21 @@ Class CartRepository
 			$model->payment_status = 1;
 		}
 
-		// Excute status
-		if ($data['status'] == 4) {
-			if ($model->payment_status == 3 || $model->payment_status == 4) {
-				$model->status = $data['status'];
-			}else{
-				$model->status = 3;
-			}
+		// Excute status, if new then status is new
+		if ($id) {
+			$model->status = EXCUTING;
 		}else{
-			$model->status = $data['status'];
+			if ($data['status'] == 4) {
+				if ($model->payment_status == 3 || $model->payment_status == 4) {
+					$model->status = $data['status'];
+				}else{
+					$model->status = 3;
+				}
+			}else{
+				$model->status = $data['status'];
+			}
 		}
+		
 		
 		// $model->active = $data['active'];
 		// $model->order = $data['order'];
