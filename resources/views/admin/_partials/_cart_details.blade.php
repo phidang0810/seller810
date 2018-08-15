@@ -176,7 +176,15 @@
         }
         $(document).ready(function(){
             $('input[name="pay_amount"]').on('change', function(){
-                var pay_amount = parseInt($('input[name="pay_amount"]').val());
+                var pay_amount = $('input[name="pay_amount"]').val();
+                console.log(pay_amount);
+                if (pay_amount.includes(",")) {
+                    pay_amount = parseInt(pay_amount.replace(/\,/g, ""));
+                }else{
+                    pay_amount = parseInt(pay_amount);
+                }
+                
+                
                 $('.needed_paid').text(price - paid_amount - pay_amount);
                 $('.needed_paid').simpleMoneyFormat();
                 if($('.needed_paid').text() != '' || $('.needed_paid').text() != null){
