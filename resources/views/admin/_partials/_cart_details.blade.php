@@ -139,7 +139,7 @@
                         <td colspan="2">
                         <!-- <input type="text" name="needed_paid" placeholder="" class="form-control thousand-number m-b"
                             value="{{$result['cart']->needed_paid}}" readonly="readonly" /> -->
-                            <span class="thousand-number m-b">{{$result['cart']->needed_paid}}</span>
+                            <span class="thousand-number m-b needed_paid">{{$result['cart']->needed_paid}}</span>
                         </td>
                     </tr>
                 </tfoot>
@@ -166,25 +166,29 @@
         var price = parseInt('{{$result['cart']->price}}');
 
         function formatPrice(){
-        // Format prices
-        $('.thousand-number').toArray().forEach(function(field){
-            new Cleave(field, {
-                numeral: true,
-                numeralThousandsGroupStyle: 'thousand'
+            // Format prices
+            $('.thousand-number').toArray().forEach(function(field){
+                new Cleave(field, {
+                    numeral: true,
+                    numeralThousandsGroupStyle: 'thousand'
+                });
             });
-        });
-    }
-    $(document).ready(function(){
-        $('input[name="pay_amount"]').on('change', function(){
-            var pay_amount = parseInt($('input[name="pay_amount"]').val());
-            $('input[name="needed_paid"]').val(price - paid_amount - pay_amount);
-        });
-        // formatPrice();
-        $('.thousand-number').simpleMoneyFormat();
-        if($('.thousand-number').text() != '' || $('.thousand-number').text() != null){
-            $('.thousand-number').append(" VNĐ");
         }
-        $('.thousand-number').closest('td').css("text-align", "right");
+        $(document).ready(function(){
+            $('input[name="pay_amount"]').on('change', function(){
+                var pay_amount = parseInt($('input[name="pay_amount"]').val());
+                $('.needed_paid').text(price - paid_amount - pay_amount);
+                $('.needed_paid').simpleMoneyFormat();
+                if($('.needed_paid').text() != '' || $('.needed_paid').text() != null){
+                    $('.needed_paid').append(" VNĐ");
+                }
+            });
+            // formatPrice();
+            $('.thousand-number').simpleMoneyFormat();
+            if($('.thousand-number').text() != '' || $('.thousand-number').text() != null){
+                $('.thousand-number').append(" VNĐ");
+            }
+            $('.thousand-number').closest('td').css("text-align", "right");
 
-    });
-</script>
+        });
+    </script>

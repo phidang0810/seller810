@@ -54,19 +54,18 @@
 
         var cart_code = $("#code").text();
         var status_val = $("#i-status-list").val();
-        var payment_status_val = $("#i-payment-status-list").val();
-        var platform_val = $("#i-platforms-list").val();
+        // var payment_status_val = $("#i-payment-status-list").val();
+        // var platform_val = $("#i-platforms-list").val();
         var pay_amount_val = $('input[name="pay_amount"]').val();
-        var needed_paid_val = $('input[name="needed_paid"]').val();
-        
+        var needed_paid_val = $('.needed_paid').text();
         $.ajax({
             url: "{{route('admin.carts.updateStatus')}}",
             type: 'PUT',
             data:{
                 cart_code:cart_code,
                 status: status_val,
-                payment_status: payment_status_val,
-                platform: platform_val,
+                // payment_status: payment_status_val,
+                // platform: platform_val,
                 pay_amount: pay_amount_val,
                 needed_paid: needed_paid_val,
             },
@@ -245,15 +244,16 @@
 
                 });
 
-$('#fSearch').submit(function () {
-    table.fnDraw();
-    return false;
-});
+    $('#fSearch').submit(function () {
+        table.fnDraw();
+        return false;
+    });
 
-$('#bt-reset').click(function () {
-    $('#fSearch')[0].reset();
-    table.fnDraw();
-});
+    $('#bt-reset').click(function () {
+        $('#fSearch')[0].reset();
+        table.fnDraw();
+    });
+
 });
 
 $("#dataTables").on("click", '.bt-delete', function () {

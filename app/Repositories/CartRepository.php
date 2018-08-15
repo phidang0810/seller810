@@ -130,12 +130,12 @@ Class CartRepository
 	public function updateStatus($request){
 		$cartCode = $request->get('cart_code');
 		$status = $request->get('status');
-		$platform_id = $request->get('platform_id');
+		// $platform_id = $request->get('platform_id');
 		$pay_amount = $request->get('pay_amount');
 		$needed_paid = $request->get('needed_paid');
 		$model = Cart::where('code','=',$cartCode)->first();
 		$model->paid_amount = $model->paid_amount + $pay_amount;
-		$model->platform_id = $platform_id;
+		// $model->platform_id = $platform_id;
 		$model->needed_paid = $needed_paid;
 		// excute payment_status
 		if ($model->paid_amount && $model->paid_amount > 0) {
@@ -164,7 +164,7 @@ Class CartRepository
 				return false;
 			}
 		}else{
-			$model->status = $data['status'];
+			$model->status = $status;
 			$model->save();
 		}
 		return $model;
