@@ -318,6 +318,9 @@ Class PaymentRepository
             ->addColumn('total_price', function($product) use ($platforms) {
                 return format_price($product->total_price);
             })
+            ->addColumn('total_cart', function($product) use ($platforms) {
+                return format_number($product->total_cart);
+            })
             ->addColumn('profit', function($product) {
                 return format_price($product->profit);
             })

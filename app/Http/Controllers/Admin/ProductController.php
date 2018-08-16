@@ -90,7 +90,6 @@ class ProductController extends AdminController
             ->withErrors($validator)
             ->withInput();
         }
-print_r($input);die;
         $data = $product->createOrUpdate($input, $id);
 
         if($input['action'] === 'save') {

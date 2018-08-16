@@ -96,6 +96,11 @@ function format_price($price)
 	return number_format($price) . ' VND';
 }
 
+function format_number($price)
+{
+    return number_format($price);
+}
+
 function list_ids($array){
 	$return = array();
 	foreach ($array as $key => $value) {
