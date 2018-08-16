@@ -23,6 +23,49 @@ use Yajra\DataTables\Facades\DataTables;
 
 Class PaymentRepository
 {
+    private function _getDayOfWeeks()
+    {
+        return [
+            'Thứ 2',
+            'Thứ 3',
+            'Thứ 4',
+            'Thứ 5',
+            'Thứ 6',
+            'Thứ 7',
+            'Chủ Nhật',
+        ];
+    }
+
+    private function _getMonths()
+    {
+        return [
+            'Tháng 1',
+            '2',
+            '3',
+            '4',
+            '5',
+            '6',
+            '7',
+            '8',
+            '9',
+            '10',
+            '11',
+            '12'
+        ];
+    }
+
+    private function _getYears()
+    {
+        $year = date('Y');
+        $minYear = $year-9;
+        $result = [];
+        for($i = $minYear; $i <= $year; $i++) {
+            $result[] = $i;
+        }
+
+        return $result;
+    }
+
     public function getLineChartData($search)
     {
         $result = [
@@ -32,102 +75,188 @@ Class PaymentRepository
         $group = $search['date_filter'] ?? 'this_week';
         switch ($group) {
             case 'this_week':
-            $result['time'] = [
-                'Thứ 2',
-                'Thứ 3',
-                'Thứ 4',
-                'Thứ 5',
-                'Thứ 6',
-                'Thứ 7',
-                'Chủ Nhật',
-            ];
-            $query = Payment::selectRaw('sum(total_price) as total, DAYOFWEEK(created_at) as day_of_week')
-            ->whereRaw('YEARWEEK(created_at) = YEARWEEK(NOW())')
-            ->orderBy('created_at','asc')
-            ->groupBy('day_of_week')
-            ->get();
-            $prices = $query->pluck('total','day_of_week')->toArray();
-            $valueArr = [];
-            foreach($result['time'] as $k => $value) {
-                $dayOfWeek = $k+1;
-                $valueArr[$k] = key_exists($dayOfWeek, $prices) ? $prices[$dayOfWeek]:0;
-            }
-            $result['value'] = $valueArr;
+                $result['time'] = $this->_getDayOfWeeks();
+
+                $result['value'] = $this->_getPaymentThisWeek($result['time'], ['select' => 'amount']);
             break;
 
             case 'last_week':
-            $result['time'] = [
-                'Thứ 2',
-                'Thứ 3',
-                'Thứ 4',
-                'Thứ 5',
-                'Thứ 6',
-                'Thứ 7',
-                'Chủ Nhật',
-            ];
-            $query = Payment::selectRaw('sum(total_price) as total, DAYOFWEEK(created_at) as day_of_week')
-            ->whereRaw('YEARWEEK(created_at) = YEARWEEK(NOW()) - 1')
-            ->orderBy('created_at','asc')
-            ->groupBy('day_of_week')
-            ->get();
-            $prices = $query->pluck('total,day_of_week')->toArray();
-            $valueArr = [];
-            foreach($result['time'] as $k => $value) {
-                $dayOfWeek = $k+1;
-                $valueArr[$k] = key_exists($dayOfWeek, $prices) ? $prices[$dayOfWeek]:0;
-            }
-            $result['value'] = $valueArr;
-            break;
+                $result['time'] = $this->_getDayOfWeeks();
+                $result['value'] = $this->_getPaymentLastWeek($result['time'], ['select' => 'amount']);
+                break;
 
             case 'month':
-            $result['time'] = [
-                'Tháng 1',
-                '2',
-                '3',
-                '4',
-                '5',
-                '6',
-                '7',
-                '8',
-                '9',
-                '10',
-                '11',
-                '12'
-            ];
-            $query = Payment::selectRaw('sum(total_price) as total, MONTH(created_at) as month')
-            ->whereRaw('YEAR(created_at) = YEAR(CURDATE()) ')
-            ->orderBy('created_at','asc')
-            ->groupBy('month')
-            ->get();
-            $prices = $query->pluck('total','month')->toArray();
-            $valueArr = [];
-            foreach($result['time'] as $k => $value) {
-                $month = $k+1;
-                $valueArr[$k] = key_exists($month, $prices) ? $prices[$month]:0;
-            }
-            $result['value'] = $valueArr;
+                $result['time'] = $this->_getMonths();
+
+                $result['value'] = $this->_getPaymentMonthOfYear($result['time'], ['select' => 'amount']);
             break;
 
             case 'year':
-            $year = date('Y');
-            $minYear = $year-9;
-            $time = [];
-            for($i = $minYear; $i <= $year; $i++) {
-                $result['time'][] = $i;
-                $time[$i] = 'Năm ' . $i;
+                $result['time'] = $this->_getYears();
+                $result['value'] = $this->_getPaymentYears($result['time'], ['select' => 'amount']);
+            break;
+        }
+        return $result;
+    }
+
+    public function getMixChartData($search)
+    {
+        $result = [
+            'time' => [],
+            'value' => []
+        ];
+        $group = $search['date_filter'] ?? 'this_week';
+        switch ($group) {
+            case 'this_week':
+                $result['time'] = $this->_getDayOfWeeks();
+
+                $result['value']['amount'] = $this->_getPaymentThisWeek($result['time'], ['select' => 'amount']);
+                $result['value']['cancel_cart'] = $this->_getPaymentThisWeek($result['time'], [
+                    'select' => 'number_cart',
+                    'status' => CANCELED
+                ]);
+                $result['value']['total_cart'] = $this->_getPaymentThisWeek($result['time'], [
+                    'select' => 'number_cart'
+                ]);
+                break;
+
+            case 'last_week':
+                $result['time'] = $this->_getDayOfWeeks();
+                $result['value']['amount'] = $this->_getPaymentLastWeek($result['time'], ['select' => 'amount']);
+                $result['value']['cancel_cart'] = $this->_getPaymentLastWeek($result['time'], [
+                    'select' => 'number_cart',
+                    'status' => CANCELED
+                ]);
+                $result['value']['total_cart'] = $this->_getPaymentLastWeek($result['time'], [
+                    'select' => 'number_cart'
+                ]);
+                break;
+
+            case 'month':
+                $result['time'] = $this->_getMonths();
+
+                $result['value']['amount'] = $this->_getPaymentMonthOfYear($result['time'], ['select' => 'amount']);
+                $result['value']['cancel_cart'] = $this->_getPaymentMonthOfYear($result['time'], [
+                    'select' => 'number_cart',
+                    'status' => CANCELED
+                ]);
+                $result['value']['total_cart'] = $this->_getPaymentMonthOfYear($result['time'], [
+                    'select' => 'number_cart',
+                ]);
+                break;
+
+            case 'year':
+                $result['time'] = $this->_getYears();
+                $result['value']['amount'] = $this->_getPaymentYears($result['time'], ['select' => 'amount']);
+                $result['value']['cancel_cart'] = $this->_getPaymentYears($result['time'], [
+                    'select' => 'number_cart',
+                    'status' => CANCELED
+                ]);
+                $result['value']['total_cart'] = $this->_getPaymentYears($result['time'], [
+                    'select' => 'number_cart'
+                ]);
+                break;
+        }
+        return $result;
+    }
+
+    private function _getPaymentLastWeek($time, array $option = [])
+    {
+        if ($option['select'] === 'number_cart') {
+            $query = Payment::selectRaw('count(cart_id) as total, DAYOFWEEK(payments.created_at) as day_of_week')
+                ->join('carts', 'carts.id', '=', 'payments.cart_id');
+            if (key_exists('status', $option)) {
+                $query->where('carts.status', $option['status']);
             }
-            $query = Payment::selectRaw('sum(total_price) as total, YEAR(created_at) as year')
-            ->whereRaw('YEAR(created_at) >= ' . $minYear)
+        } else {
+            $query = Payment::selectRaw('sum(total_price) as total, DAYOFWEEK(payments.created_at) as day_of_week');
+        }
+        $query->whereRaw('YEARWEEK(created_at) = YEARWEEK(NOW()) - 1')
+            ->orderBy('payments.created_at','asc')
+            ->groupBy('day_of_week')
+            ->get();
+        $prices = $query->pluck('total','day_of_week')->toArray();
+        $valueArr = [];
+        foreach($time as $k => $value) {
+            $dayOfWeek = $k+1;
+            $valueArr[$k] = key_exists($dayOfWeek, $prices) ? $prices[$dayOfWeek]:0;
+        }
+        return $valueArr;
+    }
+
+    private function _getPaymentThisWeek($time, array $option = [])
+    {
+        if ($option['select'] === 'number_cart') {
+            $query = Payment::selectRaw('count(cart_id) as total, DAYOFWEEK(payments.created_at) as day_of_week')
+                ->join('carts', 'carts.id', '=', 'payments.cart_id');
+            if (key_exists('status', $option)) {
+                $query->where('carts.status', $option['status']);
+            }
+        } else {
+            $query = Payment::selectRaw('sum(total_price) as total, DAYOFWEEK(created_at) as day_of_week');
+        }
+        $query->whereRaw('YEARWEEK(payments.created_at) = YEARWEEK(NOW())')
+            ->orderBy('payments.created_at','asc')
+            ->groupBy('day_of_week')
+            ->get();
+        $prices = $query->pluck('total','day_of_week')->toArray();
+        $valueArr = [];
+        foreach($time as $k => $value) {
+            $dayOfWeek = $k+1;
+            $valueArr[$k] = key_exists($dayOfWeek, $prices) ? $prices[$dayOfWeek]:0;
+        }
+
+        return $valueArr;
+    }
+
+    private function _getPaymentMonthOfYear($time, array $option = [])
+    {
+        if ($option['select'] === 'number_cart') {
+            $query = Payment::selectRaw('count(cart_id) as total, MONTH(payments.created_at) as month')
+                ->join('carts', 'carts.id', '=', 'payments.cart_id');
+            if (key_exists('status', $option)) {
+                $query->where('carts.status', $option['status']);
+            }
+        } else {
+            $query = Payment::selectRaw('sum(total_price) as total, MONTH(payments.created_at) as month');
+        }
+
+        $query->whereRaw('YEAR(created_at) = YEAR(CURDATE()) ')
+            ->orderBy('payments.created_at','asc')
+            ->groupBy('month')
+            ->get();
+        $prices = $query->pluck('total','month')->toArray();
+        $valueArr = [];
+        foreach($time as $k => $value) {
+            $month = $k+1;
+            $valueArr[$k] = key_exists($month, $prices) ? $prices[$month]:0;
+        }
+
+        return $valueArr;
+    }
+
+    private function _getPaymentYears($time, array $option = [])
+    {
+        $result = [];
+        if ($option['select'] === 'number_cart') {
+            $query = Payment::selectRaw('count(cart_id) as total, YEAR(payments.created_at) as year')
+                ->join('carts', 'carts.id', '=', 'payments.cart_id');
+            if(key_exists('status', $option)) {
+                $query->where('carts.status', $option['status']);
+            }
+        } else {
+            $query = Payment::selectRaw('sum(total_price) as total, YEAR(payments.created_at) as year');
+        }
+
+           $query->whereRaw('YEAR(payments.created_at) >= ' . $time[0])
             ->orderBy('created_at','asc')
             ->groupBy('year')
             ->get();
-            $prices = $query->pluck('total,year')->toArray();
-            $index = 0;
-            foreach($time as $k => $value) {
-                $result['value'][$index] = key_exists($k, $prices) ? $prices[$k]:0;
-                $index++;
-            }
-            break;
+        $data = $query->pluck('total','year')->toArray();
+        $index = 0;
+        foreach($time as $value) {
+            $result[$index] = key_exists($value, $data) ? $data[$value]:0;
+            $index++;
         }
         return $result;
     }

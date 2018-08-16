@@ -61,4 +61,14 @@ class StatisticsController extends AdminController
 
         return view('admin.statistics.revenue_chart', $this->_data);
     }
+
+    public function getPaymentMixChart(PaymentRepository $payment)
+    {
+        $data = $payment->getMixChartData($this->_request);
+
+        return response()->json([
+            'success' => true,
+            'result' => $data
+        ]);
+    }
 }

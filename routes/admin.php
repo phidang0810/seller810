@@ -109,6 +109,7 @@ Route::prefix('thong-ke')
     ->middleware('permission:accountant_manager')->group(function () {
         Route::get ('/', 'StatisticsController@importProduct')->name('admin.statistics.importProduct');
         Route::get ('/doanh-thu', 'StatisticsController@revenueChart')->name('admin.statistics.revenueChart');
+        Route::get ('/doanh-thu/mix', 'StatisticsController@getPaymentMixChart')->name('admin.statistics.getPaymentMixChart');
     });
 
 Route::prefix('ke-toan')

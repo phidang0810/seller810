@@ -5,6 +5,7 @@
 @section('js')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
     <script>
+        var lineChart = null;
         function number_format(number, decimals, dec_point, thousands_sep) {
 // *     example: number_format(1234.56, 2, ',', ' ');
 // *     return: '1 234,56'
@@ -36,43 +37,46 @@
                 url: "{{route('admin.payments.getPaymentChart')}}",
                 data:search,
                 success: function(res){
-                    new Chart(document.getElementById("lineChart"), {
-                        "type": "line",
-                        "data": {
-                            "labels": res.result.time,
-                            "datasets": [{
-                                "label": "Doanh thu",
-                                "data": res.result.value,
-                                "fill": true,
-                                "borderColor": "rgb(75, 192, 192)",
-                                "backgroundColor": "rgba(75, 192, 192, 0.2)",
-                                "pointBackgroundColor":"rgba(75, 192, 192)",
-                                "borderWidth":2,
-                                "pointRadius":4,
-                                "lineTension": 0.1
-                            }]
-                        },
-                        "options": {
-                            scales: {
-                                yAxes: [{
-                                    ticks: {
-                                        beginAtZero:true,
-                                        callback: function(value, index, values) {
-                                            return number_format(value) + ' VND';
-                                        }
-                                    }
+                    if(lineChart) {
+                        lineChart.destroy();
+                    }
+                        lineChart = new Chart(document.getElementById("lineChart"), {
+                            "type": "line",
+                            "data": {
+                                "labels": res.result.time,
+                                "datasets": [{
+                                    "label": "Doanh thu",
+                                    "data": res.result.value,
+                                    "fill": true,
+                                    "borderColor": "rgb(75, 192, 192)",
+                                    "backgroundColor": "rgba(75, 192, 192, 0.2)",
+                                    "pointBackgroundColor":"rgba(75, 192, 192)",
+                                    "borderWidth":2,
+                                    "pointRadius":4,
+                                    "lineTension": 0.1
                                 }]
                             },
-                            tooltips: {
-                                callbacks: {
-                                    label: function(tooltipItem, chart){
-                                        var datasetLabel = chart.datasets[tooltipItem.datasetIndex].label || '';
-                                        return datasetLabel + ': ' + number_format(tooltipItem.yLabel, 2) + ' VND';
+                            "options": {
+                                scales: {
+                                    yAxes: [{
+                                        ticks: {
+                                            beginAtZero:true,
+                                            callback: function(value, index, values) {
+                                                return number_format(value) + ' VND';
+                                            }
+                                        }
+                                    }]
+                                },
+                                tooltips: {
+                                    callbacks: {
+                                        label: function(tooltipItem, chart){
+                                            var datasetLabel = chart.datasets[tooltipItem.datasetIndex].label || '';
+                                            return datasetLabel + ': ' + number_format(tooltipItem.yLabel, 2) + ' VND';
+                                        }
                                     }
                                 }
                             }
-                        }
-                    });
+                        });
                 }
             });
         }

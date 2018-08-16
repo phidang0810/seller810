@@ -86,90 +86,62 @@
                 format: 'dd/mm/yyyy'
             });
 
-            /*$.ajax({
-                url: "{{route('admin.payments.getTopPlatformSell')}}",
+            $.ajax({
+                url: "{{route('admin.statistics.getPaymentMixChart')}}",
                 success: function(res){
-                    var platformChart = new Chart(document.getElementById("pieChart"),{
-                        type: 'doughnut',
+                    var mixedChart = new Chart(document.getElementById("pieChart"), {
+                        type: 'bar',
                         data: {
-                            "labels": res.result.labels,
-                            "datasets": [{
-                                "data": res.result.values,
-                                "backgroundColor": ['rgb(0, 131, 202)', 'rgb(245, 100, 1)', 'rgb(253, 201, 35)', 'rgb(141, 198, 62)']
-                            }]
+                            datasets: [
+                                {
+                                    label: "Tổng đơn hàng",
+                                    data: res.result.value.total_cart,
+                                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                                    borderColor: 'rgba(54, 162, 235, 1)',
+                                    borderWidth: 1
+                                },
+                                {
+                                    label: "Đơn hàng hủy",
+                                    data: res.result.value.cancel_cart,
+                                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                                    borderColor: 'rgba(255,99,132,1)',
+                                    borderWidth: 1
+                                },
+                                {
+                                    label: "Doanh thu",
+                                    data: res.result.value.amount,
+                                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                                    borderColor: 'rgba(255,99,132,1)',
+                                    borderWidth: 1,
+                                    type: 'line',
+                                    yAxisID: 'y-axis-1'
+                                }
+                            ],
+                            labels: res.result.time
                         },
                         options: {
-                            legendCallback: function (chart) {
-                                var text = [];
-                                text.push('<ul class="' + chart.id + '-legend" style="list-style:none">');
-                                for (var i = 0; i < chart.data.datasets[0].data.length; i++) {
-                                    text.push('<li><span class="legend-item" style="background:' + chart.data.datasets[0].backgroundColor[i] + '" />&nbsp;');
-                                    if (chart.data.labels[i]) {
-                                        text.push(chart.data.labels[i]);
-                                        text.push('<span style="float:right">'+chart.data.datasets[0].data[i]+' đơn hàng</span>');
+                            scales: {
+                                yAxes: [{
+                                    ticks: {
+                                        beginAtZero:true
                                     }
-                                    text.push('</li>');
-                                }
-                                text.push('</ul>');
-
-                                return text.join('');
-                            },
-                            legend: {display: false}
+                                }, {
+                                    id: 'y-axis-1',
+                                    position: 'right',
+                                    ticks: {
+                                        beginAtZero: true,
+                                        callback: function(value, index, values) {
+                                            return value;
+                                        }
+                                    }
+                                }]
+                            }
                         }
                     });
-                    $("#pie-legend").html(platformChart.generateLegend());
-                }
-            });*/
-
-            var mixedChart = new Chart(document.getElementById("pieChart"), {
-                type: 'bar',
-                data: {
-                    datasets: [
-                        {
-                            label: "Set 1",
-                            data: [ 40, 60, 45 ],
-                            backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                            borderColor: 'rgba(54, 162, 235, 1)',
-                            borderWidth: 1
-                        },
-                        {
-                            label: "Set 2",
-                            data: [ 60, 70, 45 ],
-                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                            borderColor: 'rgba(255,99,132,1)',
-                            borderWidth: 1
-                        },
-                        {
-                            label: "Set 3",
-                            data: [ 7000, 9000, 2000 ],
-                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                            borderColor: 'rgba(255,99,132,1)',
-                            borderWidth: 1,
-                            type: 'line',
-                            yAxisID: 'y-axis-1'
-                        }
-                    ],
-                    labels: ['January', 'February', 'March', 'April']
-                },
-                options: {
-                    scales: {
-                        yAxes: [{
-                            ticks: {
-                                beginAtZero:true
-                            }
-                        }, {
-                                id: 'y-axis-1',
-                                position: 'right',
-                                ticks: {
-                                    beginAtZero: true,
-                                    callback: function(value, index, values) {
-                                        return value + '%';
-                                    }
-                                }
-                            }]
-                    }
                 }
             });
+
+
         });
     </script>
 @endsection
