@@ -14,20 +14,6 @@
         }
     });
 
-    function formatDate(date) {
-     var d = new Date(date),
-     hour = d.getHours();
-     minute = d.getMinutes();
-     month = '' + (d.getMonth() + 1),
-     day = '' + d.getDate(),
-     year = d.getFullYear();
-
-     if (month.length < 2) month = '0' + month;
-     if (day.length < 2) day = '0' + day;
-
-     return [hour, minute].join(':')+' '+[day, month, year].join('/');
- }
-
     //---> Get customer detail, cart detail
     var cart_complete = "{{COMPLETED}}";
     var cart_canceled = "{{CANCELED}}";
@@ -41,7 +27,7 @@
                 },
                 dataType:'json'
             }).done(function(data) {
-
+                // console.log(data);
                 if (!$.isEmptyObject(data.result["cart"])) {
                     var elCustomerInfo = $(".customer-info-wrapper");
                     if (!$.isEmptyObject(data.result["cart"])) {
@@ -55,11 +41,31 @@
                 }else{
                     console.log('Data is null');
                 }
-            }).fail(function(jqXHR, textStatus){
+            }).fail(function(jqXHR, textStatus, data){
+                console.log(data);
                 console.log(textStatus);
             })
 
         });
+    }
+
+    function formatMoney(money){
+        var number = 0;
+        money = money.replace(" ","");
+        if (money.includes(",")) {
+            money = money.replace(/\,/g, "");
+            
+            if (money.includes("VNĐ")) {
+                number = parseInt(money.replace("VNĐ", ""));
+            }else{
+                number = parseInt(money);
+            }
+            
+        }else{
+            number = parseInt(money);
+        }
+console.log(number);
+        return number;
     }
 
     //---> Get customer detail, cart detail
@@ -67,24 +73,25 @@
 
         var cart_code = $("#code").text();
         var status_val = $("#i-status-list").val();
-        var payment_status_val = $("#i-payment-status-list").val();
-        var platform_val = $("#i-platforms-list").val();
-        var pay_amount_val = $('input[name="pay_amount"]').val();
-        var needed_paid_val = $('input[name="needed_paid"]').val();
-        
+        // var payment_status_val = $("#i-payment-status-list").val();
+        // var platform_val = $("#i-platforms-list").val();
+        var pay_amount_val = ($('input[name="pay_amount"]').val()) ? formatMoney($('input[name="pay_amount"]').val()) : 0;
+        var needed_paid_val = formatMoney($('#needed_paid').text());
+        // console.log(pay_amount_val);return;
         $.ajax({
             url: "{{route('admin.carts.updateStatus')}}",
             type: 'PUT',
             data:{
                 cart_code:cart_code,
                 status: status_val,
-                payment_status: payment_status_val,
-                platform: platform_val,
+                // payment_status: payment_status_val,
+                // platform: platform_val,
                 pay_amount: pay_amount_val,
                 needed_paid: needed_paid_val,
             },
             dataType:'json'
         }).done(function(data) {
+            console.log(data);
             if (!$.isEmptyObject(data)) {
                 if (data.success == true) {
                     var alert_html = '<div class="alert alert-success alert-dismissable" id="i-alert-response">\
@@ -110,44 +117,6 @@
         }).fail(function(jqXHR, textStatus){
             console.log(textStatus);
         })
-    }
-
-    function parseTableCartDetail(arrCartDetails){
-        var html = '';
-
-        if (arrCartDetails.length > 0) {
-            $.each(arrCartDetails, function( index, value ) {
-              html += '<tr>'
-              +'<td>'+value['barcode']+'</td>'
-              +'<td>'+value['product_code']+'</td>'
-              +'<td>'+value['price']+'</td>'
-              +'<td>'+value['quantity']+'</td>'
-              +'</tr>';
-          });
-        }
-
-        return html;
-    }
-
-    function getSummaryCart(arrCartDetails){
-        var totalPrice = 0;
-        var shippingFee = 0;
-        var amount = 0;
-        totalPrice = arrCartDetails[0]["total_price"];
-        shippingFee = arrCartDetails[0]["shipping_fee"];
-        if (totalPrice != null && shippingFee == null) {
-            amount = parseFloat(totalPrice);
-        }else if(totalPrice != null && shippingFee != null){
-            amount = parseFloat(totalPrice) + parseFloat(shippingFee);
-        }else{
-            amount = 0;
-        }
-        var objSummary = {
-            total_price: totalPrice,
-            shipping_fee: shippingFee,
-            amount: amount
-        };
-        return objSummary;
     }
 
     $(document).ready(function () {
@@ -305,6 +274,7 @@ $('#bt-reset').click(function () {
     $('#fSearch')[0].reset();
     table.fnDraw();
 });
+
 });
 
 $("#dataTables").on("click", '.bt-delete', function () {
@@ -410,54 +380,54 @@ function updateCartStatus(){
                 <div class="form-group">
                     <label>Nguồn đơn</label>
                     <!-- <input type="text" placeholder="Nguồn đơn" name="platform_name" id="s-supplier-name" class="form-control"
-                    value="{{app('request')->input('platform_name')}}"> -->
-                    <select id="s-platform-name" name="platform_name" class="form-control" placeholder="Chọn nguồn đơn">
-                        <option value="">-- Chọn nguồn đơn --</option>
-                        @foreach ($platforms as $platform)
-                        <option value="{{$platform->id}}">{{$platform->name}}</option>
-                        @endforeach
-                    </select>
+                        value="{{app('request')->input('platform_name')}}"> -->
+                        <select id="s-platform-name" name="platform_name" class="form-control" placeholder="Chọn nguồn đơn">
+                            <option value="">-- Chọn nguồn đơn --</option>
+                            @foreach ($platforms as $platform)
+                            <option value="{{$platform->id}}">{{$platform->name}}</option>
+                            @endforeach
+                        </select>
+                    </div>
                 </div>
-            </div>
 
-            <div class="col-sm-2 pr-0 pl-10">
-                <div class="form-group">
-                    <label>Tình trạng</label>
-                    <select class="form-control" name="status" id="s-status">
-                        <option value=""> -- Tất cả --</option>
-                        <option @if(app('request')->has('status') && app('request')->input('status') == EXCUTING) selected
-                            @endif value="{{EXCUTING}}">{{EXCUTING_TEXT}}
-                        </option>
-                        <option @if(app('request')->has('status') && app('request')->input('status') == TRANSPORTING) selected
-                            @endif value="{{TRANSPORTING}}">{{TRANSPORTING_TEXT}}
-                        </option>
-                        <option @if(app('request')->has('status') && app('request')->input('status') == TRANSPORTED) selected
-                            @endif value="{{TRANSPORTED}}">{{TRANSPORTED_TEXT}}
-                        </option>
-                        <option @if(app('request')->has('status') && app('request')->input('status') == COMPLETED) selected
-                            @endif value="{{COMPLETED}}">{{COMPLETED_TEXT}}
-                        </option>
-                        <option @if(app('request')->has('status') && app('request')->input('status') == CANCELED) selected
-                            @endif value="{{CANCELED}}">{{CANCELED_TEXT}}
-                        </option>
-                    </select>
+                <div class="col-sm-2 pr-0 pl-10">
+                    <div class="form-group">
+                        <label>Tình trạng</label>
+                        <select class="form-control" name="status" id="s-status">
+                            <option value=""> -- Tất cả --</option>
+                            <option @if(app('request')->has('status') && app('request')->input('status') == EXCUTING) selected
+                                @endif value="{{EXCUTING}}">{{EXCUTING_TEXT}}
+                            </option>
+                            <option @if(app('request')->has('status') && app('request')->input('status') == TRANSPORTING) selected
+                                @endif value="{{TRANSPORTING}}">{{TRANSPORTING_TEXT}}
+                            </option>
+                            <option @if(app('request')->has('status') && app('request')->input('status') == TRANSPORTED) selected
+                                @endif value="{{TRANSPORTED}}">{{TRANSPORTED_TEXT}}
+                            </option>
+                            <option @if(app('request')->has('status') && app('request')->input('status') == COMPLETED) selected
+                                @endif value="{{COMPLETED}}">{{COMPLETED_TEXT}}
+                            </option>
+                            <option @if(app('request')->has('status') && app('request')->input('status') == CANCELED) selected
+                                @endif value="{{CANCELED}}">{{CANCELED_TEXT}}
+                            </option>
+                        </select>
+                    </div>
                 </div>
-            </div>
-            <div class="col-sm-3 pl-10">
-                <div class="form-group">
-                    <label></label>
-                    <button class="btn btn-sm btn-warning" type="submit" style="margin-bottom: 0;margin-top: 22px;">
-                        <i class="fa fa-search"></i> Tìm kiếm
+                <div class="col-sm-3 pl-10">
+                    <div class="form-group">
+                        <label></label>
+                        <button class="btn btn-sm btn-warning" type="submit" style="margin-bottom: 0;margin-top: 22px;">
+                            <i class="fa fa-search"></i> Tìm kiếm
+                        </button>
+                        <button class="btn btn-sm btn-default" type="button" id="bt-reset"
+                        style="margin-bottom: 0;margin-top: 22px; margin-right:5px">
+                        <i class="fa fa-refresh"></i> Làm mới
                     </button>
-                    <button class="btn btn-sm btn-default" type="button" id="bt-reset"
-                    style="margin-bottom: 0;margin-top: 22px; margin-right:5px">
-                    <i class="fa fa-refresh"></i> Làm mới
-                </button>
-            </div>
+                </div>
 
+            </div>
         </div>
-    </div>
-</form>
+    </form>
 </div>
 <div class="row">
     <div class="col-md-12 alert-wrapper">

@@ -113,7 +113,7 @@ Class CartRepository
 		->where('carts.code', '=', $cartCode)
 		->first();
 
-		$cartDetails = Cart::select(['carts.id', 'cart_detail.quantity as quantity', 'cart_detail.price as price', 'carts.total_price as total_price', 'carts.shipping_fee as shipping_fee', 'carts.code', 'products.code as product_code', ])
+		$cartDetails = Cart::select(['carts.id', 'cart_detail.quantity as quantity', 'cart_detail.price as price', 'carts.total_price as total_price', 'carts.shipping_fee as shipping_fee', 'carts.code', 'products.code as product_code'])
 		->leftjoin('cart_detail', 'cart_detail.cart_id', '=', 'carts.id')
 		->leftjoin('products', 'products.id', '=', 'cart_detail.product_id')
 		->where('carts.code', '=', $cartCode)
@@ -130,18 +130,19 @@ Class CartRepository
 	public function updateStatus($request){
 		$cartCode = $request->get('cart_code');
 		$status = $request->get('status');
-		$platform_id = $request->get('platform_id');
-		$pay_amount = $request->get('pay_amount');
+		// $platform_id = $request->get('platform_id');
+		$pay_amount = ($request->get('pay_amount') !== null) ? $request->get('pay_amount') : 0;
 		$needed_paid = $request->get('needed_paid');
 		$model = Cart::where('code','=',$cartCode)->first();
-		$model->paid_amount = $model->paid_amount + $pay_amount;
-		$model->platform_id = $platform_id;
+		$model->paid_amount = ($model->paid_amount) ? $model->paid_amount : 0;
+		$model->paid_amount += $pay_amount;
+		// $model->platform_id = $platform_id;
 		$model->needed_paid = $needed_paid;
 		// excute payment_status
 		if ($model->paid_amount && $model->paid_amount > 0) {
 			$model->payment_status = 2;
 			if ($model->paid_amount >= $model->price) {
-				if ($model->platform_id != 0) {
+				if ($model->platform_id && $model->platform_id != 0) {
 					$model->payment_status = 3;
 				}else{
 					$model->payment_status = 4;
@@ -164,10 +165,38 @@ Class CartRepository
 				return false;
 			}
 		}else{
-			$model->status = $data['status'];
+			if ($status == 5) {
+				if ($model->details) {
+					foreach ($model->details as $detail) {
+						$this->deleteDetails($detail->id);
+					}
+				}
+			}
+			$model->status = $status;
 			$model->save();
 		}
+
 		return $model;
+	}
+	
+	public function deleteDetails($id){
+		$modelDetail = CartDetail::find($id);
+		if ($modelDetail) {
+			$modelProductDetail = ProductDetail::find($modelDetail->product_detail_id);
+			if ($modelProductDetail) {
+				$modelProductDetail->quantity += $modelDetail->quantity;
+				$modelProductDetail->save();
+
+				$modelProduct = Product::find($modelDetail->product_id);
+				if ($modelProduct) {
+					$modelProduct->quantity_available += $modelProductDetail->quantity;
+					$modelProduct->save();
+				}
+			}
+
+			// Delete detail
+			$modelDetail->delete();
+		}
 	}
 
 	public function getTransports(){
@@ -243,7 +272,6 @@ Class CartRepository
 		$model->shipping_fee = preg_replace('/[^0-9]/', '', $data['shipping_fee']);
 		$model->vat_percent = 10;
 		$model->vat_amount = preg_replace('/[^0-9]/', '', $data['vat_amount']);
-		$model->prepaid_amount = preg_replace('/[^0-9]/', '', $data['prepaid_amount']);
 		$model->paid_amount = preg_replace('/[^0-9]/', '', $data['paid_amount']);
 		$model->needed_paid = preg_replace('/[^0-9]/', '', $data['needed_paid']);
 		$model->descritption = $data['descritption'];
@@ -263,19 +291,22 @@ Class CartRepository
 			$model->payment_status = 1;
 		}
 
-		// Excute status
-		if ($data['status'] == 4) {
-			if ($model->payment_status == 3 || $model->payment_status == 4) {
-				$model->status = $data['status'];
-			}else{
-				$model->status = 3;
-			}
+		// Excute status, if new then status is new
+		if (!$id) {
+			$model->status = EXCUTING;
 		}else{
-			$model->status = $data['status'];
+			if (isset($data['status'])) {
+				if ($data['status'] == 4) {
+					if ($model->payment_status == 3 || $model->payment_status == 4) {
+						$model->status = $data['status'];
+					}else{
+						$model->status = 3;
+					}
+				}else{
+					$model->status = $data['status'];
+				}
+			}
 		}
-		
-		// $model->active = $data['active'];
-		// $model->order = $data['order'];
 
 		$model->save();
 
@@ -308,7 +339,7 @@ Class CartRepository
 				$modelDetail = CartDetail::find($detail->id);
 				if ($modelDetail) {
 					if (isset($detail->delete) && $detail->delete == true) {
-						$modelDetail->delete();
+						$this->deleteDetails($modelDetail->id);
 					}
 				}
 			}

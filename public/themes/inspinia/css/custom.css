@@ -429,7 +429,14 @@ padding-right: 5px;*/
   padding: 25px 10px;
 }
 
-
 .cart-menu-wrapper .navbar-top-links li.active{
   border-bottom: 4px solid #676A6C;
+}
+
+span.input-group-addon.input-readonly {
+    background: #eee;
+}
+
+.font-bold{
+  font-weight: 700;
 }
