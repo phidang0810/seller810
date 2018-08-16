@@ -131,17 +131,18 @@ Class CartRepository
 		$cartCode = $request->get('cart_code');
 		$status = $request->get('status');
 		// $platform_id = $request->get('platform_id');
-		$pay_amount = $request->get('pay_amount');
+		$pay_amount = ($request->get('pay_amount') !== null) ? $request->get('pay_amount') : 0;
 		$needed_paid = $request->get('needed_paid');
 		$model = Cart::where('code','=',$cartCode)->first();
-		$model->paid_amount = $model->paid_amount + $pay_amount;
+		$model->paid_amount = ($model->paid_amount) ? $model->paid_amount : 0;
+		$model->paid_amount += $pay_amount;
 		// $model->platform_id = $platform_id;
 		$model->needed_paid = $needed_paid;
 		// excute payment_status
 		if ($model->paid_amount && $model->paid_amount > 0) {
 			$model->payment_status = 2;
 			if ($model->paid_amount >= $model->price) {
-				if ($model->platform_id != 0) {
+				if ($model->platform_id && $model->platform_id != 0) {
 					$model->payment_status = 3;
 				}else{
 					$model->payment_status = 4;
@@ -164,10 +165,38 @@ Class CartRepository
 				return false;
 			}
 		}else{
+			if ($status == 5) {
+				if ($model->details) {
+					foreach ($model->details as $detail) {
+						$this->deleteDetails($detail->id);
+					}
+				}
+			}
 			$model->status = $status;
 			$model->save();
 		}
+
 		return $model;
+	}
+	
+	public function deleteDetails($id){
+		$modelDetail = CartDetail::find($id);
+		if ($modelDetail) {
+			$modelProductDetail = ProductDetail::find($modelDetail->product_detail_id);
+			if ($modelProductDetail) {
+				$modelProductDetail->quantity += $modelDetail->quantity;
+				$modelProductDetail->save();
+
+				$modelProduct = Product::find($modelDetail->product_id);
+				if ($modelProduct) {
+					$modelProduct->quantity_available += $modelProductDetail->quantity;
+					$modelProduct->save();
+				}
+			}
+
+			// Delete detail
+			$modelDetail->delete();
+		}
 	}
 
 	public function getTransports(){
@@ -266,14 +295,16 @@ Class CartRepository
 		if (!$id) {
 			$model->status = EXCUTING;
 		}else{
-			if ($data['status'] == 4) {
-				if ($model->payment_status == 3 || $model->payment_status == 4) {
-					$model->status = $data['status'];
+			if (isset($data['status'])) {
+				if ($data['status'] == 4) {
+					if ($model->payment_status == 3 || $model->payment_status == 4) {
+						$model->status = $data['status'];
+					}else{
+						$model->status = 3;
+					}
 				}else{
-					$model->status = 3;
+					$model->status = $data['status'];
 				}
-			}else{
-				$model->status = $data['status'];
 			}
 		}
 
@@ -308,7 +339,7 @@ Class CartRepository
 				$modelDetail = CartDetail::find($detail->id);
 				if ($modelDetail) {
 					if (isset($detail->delete) && $detail->delete == true) {
-						$modelDetail->delete();
+						$this->deleteDetails($modelDetail->id);
 					}
 				}
 			}

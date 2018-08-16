@@ -58,7 +58,7 @@
     </div>
     <div class="hr-line-dashed"></div>
     <div class="ibox-content m-b">
-    <style>
+        <style>
         .table-borderless > tbody > tr > td,
         .table-borderless > tbody > tr > th,
         .table-borderless > tfoot > tr > td,
@@ -139,7 +139,7 @@
                         <td colspan="2">
                         <!-- <input type="text" name="needed_paid" placeholder="" class="form-control thousand-number m-b"
                             value="{{$result['cart']->needed_paid}}" readonly="readonly" /> -->
-                            <span class="thousand-number m-b needed_paid">{{$result['cart']->needed_paid}}</span>
+                            <span class="thousand-number m-b" id="needed_paid">{{$result['cart']->needed_paid}}</span>
                         </td>
                     </tr>
                 </tfoot>
@@ -176,19 +176,21 @@
         }
         $(document).ready(function(){
             $('input[name="pay_amount"]').on('change', function(){
-                var pay_amount = $('input[name="pay_amount"]').val();
+                var pay_amount = ($('input[name="pay_amount"]').val()) ? $('input[name="pay_amount"]').val() : 0;
                 console.log(pay_amount);
-                if (pay_amount.includes(",")) {
-                    pay_amount = parseInt(pay_amount.replace(/\,/g, ""));
-                }else{
-                    pay_amount = parseInt(pay_amount);
+                if (pay_amount) {
+                    if (pay_amount.includes(",")) {
+                        pay_amount = parseInt(pay_amount.replace(/\,/g, ""));
+                    }else{
+                        pay_amount = parseInt(pay_amount);
+                    }
                 }
                 
                 
-                $('.needed_paid').text(price - paid_amount - pay_amount);
-                $('.needed_paid').simpleMoneyFormat();
-                if($('.needed_paid').text() != '' || $('.needed_paid').text() != null){
-                    $('.needed_paid').append(" VNĐ");
+                $('#needed_paid').text(price - paid_amount - pay_amount);
+                $('#needed_paid').simpleMoneyFormat();
+                if($('#needed_paid').text() != '' || $('#needed_paid').text() != null){
+                    $('#needed_paid').append(" VNĐ");
                 }
             });
             // formatPrice();

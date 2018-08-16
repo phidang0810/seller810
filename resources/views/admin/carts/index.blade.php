@@ -75,8 +75,8 @@ console.log(number);
         var status_val = $("#i-status-list").val();
         // var payment_status_val = $("#i-payment-status-list").val();
         // var platform_val = $("#i-platforms-list").val();
-        var pay_amount_val = formatMoney($('input[name="pay_amount"]').val());
-        var needed_paid_val = formatMoney($('.needed_paid').text());
+        var pay_amount_val = ($('input[name="pay_amount"]').val()) ? formatMoney($('input[name="pay_amount"]').val()) : 0;
+        var needed_paid_val = formatMoney($('#needed_paid').text());
         // console.log(pay_amount_val);return;
         $.ajax({
             url: "{{route('admin.carts.updateStatus')}}",
@@ -91,6 +91,7 @@ console.log(number);
             },
             dataType:'json'
         }).done(function(data) {
+            console.log(data);
             if (!$.isEmptyObject(data)) {
                 if (data.success == true) {
                     var alert_html = '<div class="alert alert-success alert-dismissable" id="i-alert-response">\
