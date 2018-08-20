@@ -41,9 +41,6 @@ class PayslipRepository
             ->addColumn('price', function($data){
                 return format_price($data->price);
             })
-            ->addColumn('created_at', function($product) {
-                return $product->created_at->format('d-m-Y');
-            })
             ->addColumn('status', function ($data) {
                 $html = '';
                 $text = PAYSLIP_TEXT[$data->status];

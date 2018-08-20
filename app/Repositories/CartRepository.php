@@ -10,6 +10,7 @@ namespace App\Repositories;
 
 use App\Models\Cart;
 use App\Models\CartDetail;
+use App\Models\Category;
 use App\Models\Customer;
 use App\Models\Supplier;
 use App\Models\Product;
@@ -440,5 +441,86 @@ Class CartRepository
 		}
 		return $return;
 	}
+
+    public function getStaticsCartDataTable($request)
+    {
+        $products = CartDetail::selectRaw('products.name, products.code, carts.code as cart_code, products.photo, products.category_ids,carts.city_id, carts.platform_id, SUM(cart_detail.quantity) as quantity, SUM(cart_detail.total_price) as total_price, (cart_detail.total_price - (products.price*cart_detail.quantity)) as profit, DATE(cart_detail.created_at) as created_at, COUNT(carts.id) total_cart')
+            ->join('products' ,'products.id', '=', 'cart_detail.product_id')
+            ->join('carts' ,'carts.id', '=', 'cart_detail.cart_id')
+            ->groupBy('cart_detail.product_id');
+        if ($request->has('date')) {
+            $products->groupBy(DB::raw('DATE(cart_detail.created_at)'));
+        }
+        $categories = Category::get()->pluck('name', 'id')->toArray();
+        $platforms = Platform::get()->pluck('name','id')->toArray();
+        $cities = City::get()->pluck('name','id')->toArray();
+        $dataTable = DataTables::eloquent($products)
+            ->filter(function ($query) use ($request) {
+                if (trim($request->get('category')) !== "") {
+                    $query->join('product_category', 'products.id', '=', 'product_category.product_id')
+                        ->where('product_category.category_id', $request->get('category'));
+                }
+
+                if (trim($request->get('platform_id')) !== "") {
+                    $query->where('carts.platform_id', $request->get('platform_id'));
+                }
+
+                if (trim($request->get('date_from')) !== "") {
+                    $dateFrom = \DateTime::createFromFormat('d/m/Y', $request->get('date_from'));
+                    $dateFrom = $dateFrom->format('Y-m-d 00:00:00');
+                    $query->where('cart_detail.created_at', '>=', $dateFrom);
+                }
+
+                if (trim($request->get('date_to')) !== "") {
+                    $dateTo = \DateTime::createFromFormat('d/m/Y', $request->get('date_to'));
+                    $dateTo = $dateTo->format('Y-m-d 23:59:50');
+                    $query->where('cart_detail.created_at', '<=', $dateTo);
+                }
+
+                if (trim($request->get('keyword')) !== "") {
+                    $query->where(function ($sub) use ($request) {
+                        $sub->where('products.name,like,%' . $request->get('keyword') . '%');
+                        $sub->where('products.code,like,%' . $request->get('keyword') . '%');
+                    });
+                }
+            }, true)
+            ->addColumn('category', function($product) use ($categories) {
+                $html = '';
+                $categoryIDs = explode(',', $product->category_ids);
+                foreach ($categoryIDs as $categoryID) {
+                    $categoryName = $categories[$categoryID] ?? '';
+                    $html .= '<label class="label label-default">'.$categoryName.'</label><br/>';
+                }
+                return $html;
+            })
+            ->addColumn('total_price', function($product) use ($platforms) {
+                return format_price($product->total_price);
+            })
+            ->addColumn('total_cart', function($product) use ($platforms) {
+                return format_number($product->total_cart);
+            })
+            ->addColumn('profit', function($product) {
+                return format_price($product->profit);
+            })
+            ->addColumn('platform', function($product) use ($platforms) {
+                return $platforms[$product->platform_id] ?? '';
+            })
+            ->addColumn('city', function($product) use ($cities) {
+                return $cities[$product->city_id] ?? '';
+            })
+
+            ->addColumn('photo', function ($product) {
+                if ($product->photo) {
+                    $html = '<img style="width: 80px; height: 60px;" class="img-thumbnail" src="' . asset('storage/' . $product->photo). '" />';
+                } else {
+                    $html = ' <img alt="No Photo" style="width: 80px; height: 60px;" class="img-thumbnail" src="'.asset(NO_PHOTO).'" >';
+                }
+                return $html;
+            })
+            ->rawColumns(['category', 'platform', 'photo'])
+            ->toJson();
+
+        return $dataTable;
+    }
 
 }

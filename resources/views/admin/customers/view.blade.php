@@ -70,6 +70,9 @@
                                     @endforeach
                                 </select>
                             </div>
+                            @if(isset($data))
+                            <div class="col-md-2 text-right"><a class="btn btn-warning" href="{{route('admin.customers.history', [$data->id])}}"><i class="fa fa-history" aria-hidden="true"></i> Xem Lịch Sử</a></div>
+                            @endif
                         </div>
                     </div>
 
@@ -91,6 +94,7 @@
                         </div>
                     </div>
 
+                    @if(isset($data))
                     <div class="row m-b">
                         <div class="form-group">
                             <label class="col-md-2 control-label">Mã Khách Hàng (<span class="text-danger">*</span>)</label>
@@ -99,6 +103,7 @@
                             </div>
                         </div>
                     </div>
+                    @endif
 
                     <div class="row m-b">
                         <div class="form-group">

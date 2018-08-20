@@ -19,7 +19,7 @@
                 serverSide: true,
                 "dom": 'rt<"#pagination"flp>',
                 ajax: {
-                    "url": "{{route('admin.customers.history', [1])}}",
+                    "url": "{{route('admin.customers.history', [$customer->id])}}",
                     "data": function ( d ) {
                         d.keyword = $('#s-keyword').val();
                         d.group_customer_id = $('#s-group').val();

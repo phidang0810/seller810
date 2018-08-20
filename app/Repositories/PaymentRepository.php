@@ -73,27 +73,28 @@ Class PaymentRepository
             'value' => []
         ];
         $group = $search['date_filter'] ?? 'this_week';
+        $select = $search['select'] ?? 'amount';
         switch ($group) {
             case 'this_week':
                 $result['time'] = $this->_getDayOfWeeks();
 
-                $result['value'] = $this->_getPaymentThisWeek($result['time'], ['select' => 'amount']);
+                $result['value'] = $this->_getPaymentThisWeek($result['time'], ['select' => $select]);
             break;
 
             case 'last_week':
                 $result['time'] = $this->_getDayOfWeeks();
-                $result['value'] = $this->_getPaymentLastWeek($result['time'], ['select' => 'amount']);
+                $result['value'] = $this->_getPaymentLastWeek($result['time'], ['select' => $select]);
                 break;
 
             case 'month':
                 $result['time'] = $this->_getMonths();
 
-                $result['value'] = $this->_getPaymentMonthOfYear($result['time'], ['select' => 'amount']);
+                $result['value'] = $this->_getPaymentMonthOfYear($result['time'], ['select' => $select]);
             break;
 
             case 'year':
                 $result['time'] = $this->_getYears();
-                $result['value'] = $this->_getPaymentYears($result['time'], ['select' => 'amount']);
+                $result['value'] = $this->_getPaymentYears($result['time'], ['select' => $select]);
             break;
         }
         return $result;
@@ -163,7 +164,7 @@ Class PaymentRepository
     private function _getPaymentLastWeek($time, array $option = [])
     {
         if ($option['select'] === 'number_cart') {
-            $query = Cart::selectRaw('count(cart_id) as total, DAYOFWEEK(created_at) as day_of_week');
+            $query = Cart::selectRaw('count(carts.id) as total, DAYOFWEEK(created_at) as day_of_week');
             if (key_exists('status', $option)) {
                 $query->where('carts.status', $option['status']);
             }
@@ -186,7 +187,7 @@ Class PaymentRepository
     private function _getPaymentThisWeek($time, array $option = [])
     {
         if ($option['select'] === 'number_cart') {
-            $query = Cart::selectRaw('count(cart_id) as total, DAYOFWEEK(created_at) as day_of_week');
+            $query = Cart::selectRaw('count(carts.id) as total, DAYOFWEEK(created_at) as day_of_week');
             if (key_exists('status', $option)) {
                 $query->where('status', $option['status']);
             }
@@ -210,7 +211,7 @@ Class PaymentRepository
     private function _getPaymentMonthOfYear($time, array $option = [])
     {
         if ($option['select'] === 'number_cart') {
-            $query = Cart::selectRaw('count(cart_id) as total, MONTH(created_at) as month');
+            $query = Cart::selectRaw('count(carts.id) as total, MONTH(created_at) as month');
             if (key_exists('status', $option)) {
                 $query->where('carts.status', $option['status']);
             }
@@ -236,7 +237,7 @@ Class PaymentRepository
     {
         $result = [];
         if ($option['select'] === 'number_cart') {
-            $query = Cart::selectRaw('count(cart_id) as total, YEAR(created_at) as year');
+            $query = Cart::selectRaw('count(carts.id) as total, YEAR(created_at) as year');
             if(key_exists('status', $option)) {
                 $query->where('status', $option['status']);
             }

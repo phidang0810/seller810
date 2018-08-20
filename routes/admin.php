@@ -61,24 +61,21 @@ Route::prefix('khach-hang')
 });
 
 
-Route::prefix('danh-muc-san-pham')
+Route::prefix('kho-hang')
 ->middleware('permission:product_manager')->group(function () {
-    Route::get ('/', 'CategoryController@index')->name('admin.categories.index');
-    Route::get ('/chi-tiet', 'CategoryController@view')->name('admin.categories.view');
-    Route::get ('/them', 'CategoryController@view')->name('admin.categories.create');
-    Route::post ('/them', 'CategoryController@store')->name('admin.categories.store');
-    Route::delete ('/', 'CategoryController@delete')->name('admin.categories.delete');
-    Route::put ('/change-status', 'CategoryController@changeStatus')->name('admin.categories.changeStatus');
-});
+    Route::get ('/danh-muc-san-pham/', 'CategoryController@index')->name('admin.categories.index');
+    Route::get ('/danh-muc-san-pham/chi-tiet', 'CategoryController@view')->name('admin.categories.view');
+    Route::get ('/danh-muc-san-pham/them', 'CategoryController@view')->name('admin.categories.create');
+    Route::post ('/danh-muc-san-pham/them', 'CategoryController@store')->name('admin.categories.store');
+    Route::delete ('/danh-muc-san-pham/', 'CategoryController@delete')->name('admin.categories.delete');
+    Route::put ('/danh-muc-san-pham/change-status', 'CategoryController@changeStatus')->name('admin.categories.changeStatus');
 
-Route::prefix('mau-sac')
-->middleware('permission:product_manager')->group(function () {
-    Route::get ('/', 'ColorController@index')->name('admin.colors.index');
-    Route::get ('/chi-tiet', 'ColorController@view')->name('admin.colors.view');
-    Route::get ('/them', 'ColorController@view')->name('admin.colors.create');
-    Route::post ('/them', 'ColorController@store')->name('admin.colors.store');
-    Route::delete ('/', 'ColorController@delete')->name('admin.colors.delete');
-    Route::put ('/change-status', 'ColorController@changeStatus')->name('admin.colors.changeStatus');
+    Route::get ('/mau-sac/', 'ColorController@index')->name('admin.colors.index');
+    Route::get ('/mau-sac/chi-tiet', 'ColorController@view')->name('admin.colors.view');
+    Route::get ('/mau-sac/them', 'ColorController@view')->name('admin.colors.create');
+    Route::post ('/mau-sac/them', 'ColorController@store')->name('admin.colors.store');
+    Route::delete ('/mau-sac/', 'ColorController@delete')->name('admin.colors.delete');
+    Route::put ('/mau-sac/change-status', 'ColorController@changeStatus')->name('admin.colors.changeStatus');
 });
 
 Route::prefix('san-pham')
@@ -106,10 +103,11 @@ Route::prefix('don-hang')
 });
 
 Route::prefix('thong-ke')
-    ->middleware('permission:accountant_manager')->group(function () {
-        Route::get ('/', 'StatisticsController@importProduct')->name('admin.statistics.importProduct');
+    ->middleware('permission:report_manager')->group(function () {
+       // Route::get ('/', 'StatisticsController@importProduct')->name('admin.statistics.importProduct');
         Route::get ('/doanh-thu', 'StatisticsController@revenueChart')->name('admin.statistics.revenueChart');
-        Route::get ('/doanh-thu/mix', 'StatisticsController@getPaymentMixChart')->name('admin.statistics.getPaymentMixChart');
+        Route::get ('/don-hang', 'StatisticsController@cartChart')->name('admin.statistics.cartChart');
+       // Route::get ('/doanh-thu/mix', 'StatisticsController@getPaymentMixChart')->name('admin.statistics.getPaymentMixChart');
     });
 
 Route::prefix('ke-toan')

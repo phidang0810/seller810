@@ -19,21 +19,47 @@
                 <a href="{{route('admin.dashboard')}}"><i class="fa fa-home"></i> <span class="nav-label">Dashboards</span></a>
             </li>
 
+            @if(key_exists('product_manager', Auth::user()->permissions))
+                <li class="{{ set_active(['quan-ly/don-hang', 'quan-ly/don-hang/*']) }} nav-item">
+                    <a href="#"><i class="fa fa-shopping-cart"></i> <span class="nav-label">Quản Lý Bán Hàng</span><span class="fa arrow"></span></a>
+                    <ul class="nav nav-second-level">
+                        <li class="{{ set_active(['quan-ly/don-hang']) }}"><a href="{{route('admin.carts.index')}}">Danh sách Đơn Hàng</a></li>
+                        <li class="{{ set_active(['quan-ly/don-hang/them']) }}"><a href="{{route('admin.carts.create')}}">Thêm Đơn Hàng</a></li>
+                    </ul>
+                </li>
+            @endif
+
+            @if(key_exists('product_manager', Auth::user()->permissions))
+                <li class="{{ set_active(['quan-ly/san-pham', 'quan-ly/san-pham/*']) }} nav-item">
+                    <a href="#"><i class="fa fa-tasks "></i> <span class="nav-label">Quản Lý Sản Phẩm</span><span class="fa arrow"></span></a>
+                    <ul class="nav nav-second-level">
+                        <li class="{{ set_active(['quan-ly/san-pham']) }}"><a href="{{route('admin.products.index')}}">Danh sách Sản Phẩm</a></li>
+                    </ul>
+                </li>
+            @endif
+
+            @if(key_exists('warehouse_manager', Auth::user()->permissions))
+                <li class="{{ set_active(['quan-ly/kho-hang', 'quan-ly/kho-hang/*']) }} nav-item">
+                    <a href="#"><i class="fa fa-paint-brush"></i> <span class="nav-label">Quản Lý Kho Hàng</span><span class="fa arrow"></span></a>
+                    <ul class="nav nav-second-level">
+                        <li class="{{ set_active(['quan-ly/kho-hang']) }}"><a href="{{route('admin.products.index')}}">Kho Hàng</a></li>
+                        <li class="{{ set_active(['quan-ly/kho-hang/danh-muc-san-pham']) }}"><a href="{{route('admin.categories.index')}}">Danh mục sản phẩm</a></li>
+                        <li class="{{ set_active(['quan-ly/kho-hang/mau-sac']) }}"><a href="{{route('admin.colors.index')}}">Màu sắc</a></li>
+                    </ul>
+                </li>
+            @endif
+
             @if(key_exists('partner_manager', Auth::user()->permissions))
                 <li class="{{ set_active(['quan-ly/cong-tac-vien*']) }} nav-item">
                     <a href="{{route('admin.partners.index')}}"><i class="fa fa-users" aria-hidden="true"></i> <span class="nav-label">Cộng Tác Viên</span></a>
                 </li>
             @endif
             
-            @if(key_exists('supplier_manager', Auth::user()->permissions))
-                <li class="{{ set_active(['quan-ly/nha-cung-cap*']) }} nav-item">
-                    <a href="{{route('admin.suppliers.index')}}"><i class="fa fa-users" aria-hidden="true"></i> <span class="nav-label">Nhà Cung Cấp</span></a>
-                </li>
-            @endif
+
 
             @if(key_exists('customer_manager', Auth::user()->permissions))
                 <li class="{{ set_active(['quan-ly/khach-hang*']) }} nav-item">
-                    <a href="#"><i class="fa fa-users" aria-hidden="true"></i> <span class="nav-label">Quản Lý Khách Hàng</span><span class="fa arrow"></span></a>
+                    <a href="#"><i class="fa fa-users" aria-hidden="true"></i> <span class="nav-label">Khách Hàng</span><span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level">
                         <li class="{{ set_active(['quan-ly/khach-hang/nhom*']) }}"><a href="{{route('admin.groupCustomer.index')}}">Nhóm khách hàng</a></li>
                         <li class="{{ set_active(['quan-ly/khach-hang*']) }}"><a href="{{route('admin.customers.index')}}">Khách hàng</a></li>
@@ -51,6 +77,12 @@
                 </li>
             @endif
 
+            @if(key_exists('supplier_manager', Auth::user()->permissions))
+                <li class="{{ set_active(['quan-ly/nha-cung-cap*']) }} nav-item">
+                    <a href="{{route('admin.suppliers.index')}}"><i class="fa fa-users" aria-hidden="true"></i> <span class="nav-label">Nhà Cung Cấp</span></a>
+                </li>
+            @endif
+
             @if(key_exists('user_manager', Auth::user()->permissions))
             <li class="{{ set_active(['quan-ly/thanh-vien*']) }} nav-item">
                 <a href="#"><i class="fa fa-user"></i> <span class="nav-label">Quản Lý Tài Khoản</span><span class="fa arrow"></span></a>
@@ -60,44 +92,14 @@
             </li>
             @endif
 
-            @if(key_exists('product_manager', Auth::user()->permissions))
-            <li class="{{ set_active(['quan-ly/danh-muc-san-pham*']) }} nav-item">
-                <a href="#"><i class="fa fa-user"></i> <span class="nav-label">Quản Lý Danh mục</span><span class="fa arrow"></span></a>
-                <ul class="nav nav-second-level">
-                    <li class="{{ set_active(['quan-ly/danh-muc-san-pham']) }}"><a href="{{route('admin.categories.index')}}">Danh sách danh mục</a></li>
-                    <li class="{{ set_active(['quan-ly/danh-muc-san-pham/them']) }}"><a href="{{route('admin.categories.create')}}">Thêm danh mục</a></li>
-                </ul>
-            </li>
-            @endif
-
-            @if(key_exists('product_manager', Auth::user()->permissions))
-            <li class="{{ set_active(['quan-ly/mau-sac', 'quan-ly/mau-sac/*']) }} nav-item">
-                <a href="#"><i class="fa fa-paint-brush"></i> <span class="nav-label">Quản Lý Màu sắc</span><span class="fa arrow"></span></a>
-                <ul class="nav nav-second-level">
-                    <li class="{{ set_active(['quan-ly/mau-sac']) }}"><a href="{{route('admin.colors.index')}}">Danh sách Màu sắc</a></li>
-                    <li class="{{ set_active(['quan-ly/mau-sac/them']) }}"><a href="{{route('admin.colors.create')}}">Thêm màu sắc</a></li>
-                </ul>
-            </li>
-            @endif
-            
-            @if(key_exists('product_manager', Auth::user()->permissions))
-            <li class="{{ set_active(['quan-ly/san-pham', 'quan-ly/san-pham/*']) }} nav-item">
-                <a href="#"><i class="fa fa-tasks "></i> <span class="nav-label">Quản Lý Sản Phẩm</span><span class="fa arrow"></span></a>
-                <ul class="nav nav-second-level">
-                    <li class="{{ set_active(['quan-ly/san-pham']) }}"><a href="{{route('admin.products.index')}}">Danh sách Sản Phẩm</a></li>
-                    <li class="{{ set_active(['quan-ly/san-pham/them']) }}"><a href="{{route('admin.products.create')}}">Thêm Sản Phẩm</a></li>
-                </ul>
-            </li>
-            @endif
-
-            @if(key_exists('product_manager', Auth::user()->permissions))
-            <li class="{{ set_active(['quan-ly/don-hang', 'quan-ly/don-hang/*']) }} nav-item">
-                <a href="#"><i class="fa fa-shopping-cart"></i> <span class="nav-label">Quản Lý Đơn Hàng</span><span class="fa arrow"></span></a>
-                <ul class="nav nav-second-level">
-                    <li class="{{ set_active(['quan-ly/don-hang']) }}"><a href="{{route('admin.carts.index')}}">Danh sách Đơn Hàng</a></li>
-                    <li class="{{ set_active(['quan-ly/don-hang/them']) }}"><a href="{{route('admin.carts.create')}}">Thêm Đơn Hàng</a></li>
-                </ul>
-            </li>
+            @if(key_exists('report_manager', Auth::user()->permissions))
+                <li class="{{ set_active(['quan-ly/thong-ke', 'quan-ly/thong-ke/*']) }} nav-item">
+                    <a href="#"><i class="fa fa-shopping-cart"></i> <span class="nav-label">Thống Kê</span><span class="fa arrow"></span></a>
+                    <ul class="nav nav-second-level">
+                        <li class="{{ set_active(['quan-ly/ke-toan/doanh-thu']) }}"><a href="{{route('admin.statistics.revenueChart')}}">Doanh Thu</a></li>
+                        <li class="{{ set_active(['quan-ly/ke-toan/don-hang']) }}"><a href="{{route('admin.statistics.cartChart')}}">Đơn Hàng</a></li>
+                    </ul>
+                </li>
             @endif
 
         </ul>

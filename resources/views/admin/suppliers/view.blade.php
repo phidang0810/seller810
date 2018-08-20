@@ -59,14 +59,16 @@
                         </div>
                     </div>
 
+                    @if(isset($data))
                     <div class="row m-b">
                         <div class="form-group">
                             <label class="col-md-2 control-label">Mã Nhà Cung Cấp (<span class="text-danger">*</span>)</label>
                             <div class="col-md-5">
-                                <input type="text" name="code" readonly class="form-control required" value="@if(isset($data->code)){{$data->code}}@else{{old('code')}}@endif"/>
+                                <input type="text" name="code" readonly class="form-control" value="@if(isset($data->code)){{$data->code}}@else{{old('code')}}@endif"/>
                             </div>
                         </div>
                     </div>
+                    @endif
 
                     <div class="row m-b">
                         <div class="form-group">

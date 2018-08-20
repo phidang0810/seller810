@@ -56,7 +56,7 @@ Class ColorRepository
 			if ($color->code) {
 				$html = '<span class="c-code-name">'.$color->name.' <i class="fa fa-square" aria-hidden="true" style="color: '.$color->code.';"></i></span>';
 			} else {
-				$html = '';
+				$html = $color->name;
 			}
 			return $html;
 		})
@@ -120,7 +120,7 @@ Class ColorRepository
 				continue;
 			}
 			if ($color->photo) {
-                Storage::delete($user->photo);
+                Storage::delete($color->photo);
             }
 			$color->delete();
 		}

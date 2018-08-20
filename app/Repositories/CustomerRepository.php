@@ -13,7 +13,7 @@ class CustomerRepository
     public function dataTable($request)
     {
         $data = Customer::selectRaw('customers.id, group_customers.name as group_name, customers.active, customers.name,code, phone, address, email, customers.group_customer_id, customers.created_at')
-        ->join('group_customers', 'group_customers.id', '=', 'customers.group_customer_id');
+        ->leftJoin('group_customers', 'group_customers.id', '=', 'customers.group_customer_id');
         $dataTable = DataTables::eloquent($data)
         ->filter(function ($query) use ($request) {
             if (trim($request->get('status')) !== "") {
@@ -33,7 +33,8 @@ class CustomerRepository
             }
         }, true)
         ->addColumn('action', function ($data) {
-            $html = '<a href="' . route('admin.customers.view', ['id' => $data->id]) . '" class="btn btn-xs btn-primary" style="margin-right: 5px"><i class="glyphicon glyphicon-edit"></i> Sửa</a>';
+            $html = '<a href="' . route('admin.customers.history', [$data->id]) . '" class="btn btn-xs btn-warning" style="margin-right: 5px"><i class="fa fa-history" aria-hidden="true"></i> Lịch sử</a>';
+            $html .= '<a href="' . route('admin.customers.view', ['id' => $data->id]) . '" class="btn btn-xs btn-primary" style="margin-right: 5px"><i class="glyphicon glyphicon-edit"></i> Sửa</a>';
             $html .= '<a href="#" class="bt-delete btn btn-xs btn-danger" data-id="' . $data->id . '" data-name="' . $data->name . '">';
             $html .= '<i class="fa fa-trash-o" aria-hidden="true"></i> Xóa</a>';
 

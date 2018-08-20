@@ -52,7 +52,7 @@ class SupplierController extends AdminController
         $rules = [
             'email' => 'required|email|string|max:100',
             'name' => 'required|string|max:50||unique:suppliers',
-            'code' => 'required|max:20',
+            'code' => 'max:20',
             'tax_code' => 'required|max:30|unique:suppliers',
             'active' => 'required'
         ];

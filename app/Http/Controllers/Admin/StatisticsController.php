@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Repositories\CartRepository;
 use App\Repositories\CategoryRepository;
 use App\Repositories\PaymentRepository;
 use App\Repositories\PlatformRepository;
@@ -50,16 +51,24 @@ class StatisticsController extends AdminController
         return view('admin.statistics.revenue', $this->_data);
     }
 
-    public function revenueChart(PaymentRepository $payment, CategoryRepository $category)
+    public function revenueChart(CategoryRepository $category)
     {
-        if ($this->_request->ajax()) {
-            return $payment->getRevenueDataTable($this->_request);
-        }
-
         $this->_data['title'] = 'Doanh Thu Bán Hàng';
         $this->_data['categoriesTree'] = option_menu($category->getCategoriesTree(), "");
 
         return view('admin.statistics.revenue_chart', $this->_data);
+    }
+
+    public function cartChart(CartRepository $cart, CategoryRepository $category)
+    {
+        if ($this->_request->ajax()) {
+            return $cart->getStaticsCartDataTable($this->_request);
+        }
+
+        $this->_data['title'] = 'Thống Kê Đơn Hàng';
+        $this->_data['categoriesTree'] = option_menu($category->getCategoriesTree(), "");
+
+        return view('admin.statistics.cart_chart', $this->_data);
     }
 
     public function getPaymentMixChart(PaymentRepository $payment)

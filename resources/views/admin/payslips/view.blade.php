@@ -69,6 +69,7 @@
                         </div>
                     </div>
 
+                    @if(isset($data))
                     <div class="row m-b">
                         <div class="form-group">
                             <label class="col-md-2 control-label">Mã Phiếu Chi (<span class="text-danger">*</span>)</label>
@@ -77,6 +78,7 @@
                             </div>
                         </div>
                     </div>
+                    @endif
 
                     <div class="row m-b">
                         <div class="form-group">
@@ -102,7 +104,7 @@
                             <div class="col-md-3">
                                 <select class="form-control" name="status">
                                     @foreach($status as $key => $item)
-                                        <option value="{{$key}}" @if(isset($data->status) && $data->status === $key) selected @endif>{{$item}}</option>
+                                        <option value="{{$key}}" @if(isset($data->status) && $data->status == $key) selected @endif>{{$item}}</option>
                                     @endforeach
                                 </select>
                             </div>

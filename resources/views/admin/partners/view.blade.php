@@ -73,6 +73,7 @@
                         </div>
                     </div>
 
+                    @if(isset($data))
                     <div class="row m-b">
                         <div class="form-group">
                             <label class="col-md-2 control-label">Mã Cộng Tác Viên (<span class="text-danger">*</span>)</label>
@@ -81,6 +82,7 @@
                             </div>
                         </div>
                     </div>
+                    @endif
 
                     <div class="row m-b">
                         <div class="form-group">

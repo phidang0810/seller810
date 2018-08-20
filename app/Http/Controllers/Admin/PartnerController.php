@@ -52,7 +52,7 @@ class PartnerController extends AdminController
         $rules = [
             'email' => 'required|email|string|max:100|unique:partners',
             'name' => 'required|string|max:100',
-            'code' => 'required|max:20',
+            'code' => 'max:20',
             'active' => 'required'
         ];
         $message = 'Cộng tác viên '.$input['name'].' đã được tạo.';

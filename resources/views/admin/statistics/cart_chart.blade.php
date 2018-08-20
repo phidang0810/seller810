@@ -17,6 +17,7 @@
         });
         function getDataLineChart(search)
         {
+            search.select = 'number_cart';
             $.ajax({
                 url: "{{route('admin.payments.getPaymentChart')}}",
                 data:search,
@@ -29,7 +30,7 @@
                         "data": {
                             "labels": res.result.time,
                             "datasets": [{
-                                "label": "Doanh thu",
+                                "label": "Đơn hàng",
                                 "data": res.result.value,
                                 "fill": true,
                                 "borderColor": "rgb(75, 192, 192)",
@@ -46,7 +47,7 @@
                                     ticks: {
                                         beginAtZero:true,
                                         callback: function(value, index, values) {
-                                            return number_format(value) + ' VND';
+                                            return number_format(value);
                                         }
                                     }
                                 }]
@@ -120,7 +121,7 @@
                                     text.push('<li><span class="legend-item" style="background:' + chart.data.datasets[0].backgroundColor[i] + '" />&nbsp;');
                                     if (chart.data.labels[i]) {
                                         text.push(chart.data.labels[i]);
-                                        text.push('<span style="float:right">'+number_format(chart.data.datasets[0].data[i])+' VND</span>');
+                                        text.push('<span style="float:right">'+number_format(chart.data.datasets[0].data[i])+' đơn hàng</span>');
                                     }
                                     text.push('</li>');
                                 }
@@ -170,7 +171,7 @@
                                     text.push('<li><span class="legend-item" style="background:' + chart.data.datasets[0].backgroundColor[i] + '" />&nbsp;');
                                     if (chart.data.labels[i]) {
                                         text.push(chart.data.labels[i]);
-                                        text.push('<span style="float:right">'+number_format(chart.data.datasets[0].data[i])+' VND</span>');
+                                        text.push('<span style="float:right">'+number_format(chart.data.datasets[0].data[i])+' đơn hàng</span>');
                                     }
                                     text.push('</li>');
                                 }
@@ -219,7 +220,7 @@
                                     text.push('<li><span class="legend-item" style="background:' + chart.data.datasets[0].backgroundColor[i] + '" />&nbsp;');
                                     if (chart.data.labels[i]) {
                                         text.push(chart.data.labels[i]);
-                                        text.push('<span style="float:right">'+number_format(chart.data.datasets[0].data[i])+' VND</span>');
+                                        text.push('<span style="float:right">'+number_format(chart.data.datasets[0].data[i])+' đơn hàng</span>');
                                     }
                                     text.push('</li>');
                                 }
@@ -239,7 +240,7 @@
         {
             var search = {
                 date: $('select[name="pie_date"]').val(),
-                select: 'amount'
+                select: 'count'
             };
 
             var type = $('select[name="pie_type"]').val();
@@ -262,7 +263,7 @@
                 serverSide: true,
                 "dom": 'rt<"#pagination"flp>',
                 ajax: {
-                    "url": "{{route('admin.statistics.revenue')}}",
+                    "url": "{{route('admin.statistics.cartChart')}}",
                     "data": function ( d ) {
                         d.keyword = $('#s-keyword').val();
                         d.platform_id = $('#s-platform').val();
@@ -274,12 +275,13 @@
                     }
                 },
                 columns: [
+                    {data: 'cart_code'},
                     {data: 'name'},
                     {data: 'code'},
                     {data: 'category'},
                     {data: 'total_cart'},
-                    {data: 'total_price'},
-                    {data: 'profit'}
+                    {data: 'platform'},
+                    {data: 'city'}
                 ],
                 "aoColumnDefs": [
                     // Column index begins at 0
@@ -351,7 +353,7 @@
     <div class="col-sm-8">
         <div class="ibox float-e-margins pl-15 pr-15">
             <div class="ibox-content">
-                <h2 class="tt-page">THỐNG KÊ DOANH THU</h2>
+                <h2 class="tt-page">DANH SÁCH ĐƠN HÀNG MỚI</h2>
                 <div class="row">
                     <div class="col-md-7">
                     </div>
@@ -380,7 +382,7 @@
     </div>
     <div class="col-sm-4">
         <div class="ibox-content">
-            <h2 class="tt-page">THÔNG KÊ DOANH THU THEO TOP</h2>
+            <h2 class="tt-page">THÔNG KÊ ĐƠN HÀNG THEO TOP</h2>
             <div class="row">
                 <div class="col-md-6">
                     <select name="pie_type" class="form-control">
@@ -462,12 +464,13 @@
                 <table class="table table-striped table-hover" id="dataTables">
                     <thead>
                     <tr>
+                        <th>Mã Đơn Hàng</th>
                         <th>Tên</th>
                         <th>Mã Sản Phẩm</th>
                         <th>Danh Mục</th>
                         <th>Số Lượng Đơn</th>
-                        <th>Doanh Thu</th>
-                        <th>Lợi Nhuận</th>
+                        <th>Nguồn Đơn</th>
+                        <th>Vùng</th>
                     </tr>
                     </thead>
                     <tbody>
