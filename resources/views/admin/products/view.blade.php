@@ -379,7 +379,7 @@
                                                     <div class="form-group">
                                                         <label class="col-md-3 control-label">Mã sản phẩm</label>
                                                         <div class="col-md-3">
-                                                            <input type="text" name="code" placeholder="" class="form-control m-b validate-ajax"
+                                                            <input type="text" name="barcode_text" placeholder="" class="form-control m-b validate-ajax"
                                                             value="@if(isset($data->barcode_text)){{$data->barcode_text}}@else{{old('barcode_text')}}@endif" readonly="true" />
                                                         </div>
                                                         <label class="col-md-2 control-label">Số lượng</label>
@@ -391,12 +391,16 @@
                                                 </div>
 
                                                 <div class="row">
-                                                    <div class="form-group">
+                                                    <div class="form-group clearfix">
                                                         <label class="col-md-3 control-label">Barcode</label>
-                                                        <div class="col-md-4">
-                                                            <input type="text" name="barcode" placeholder="" class="form-control m-b validate-ajax"
-                                                            value="@if(isset($data->barcode)){{$data->barcode}}@else{{old('barcode')}}@endif"/>
+                                                        @if($data->barcode)
+                                                        <div class="col-md-6">
+                                                            <img id="barcode_image" src="{{asset('storage/' .$data->barcode)}}" alt="barcode">
                                                         </div>
+                                                        <div class="col-md-3">
+                                                            <button class="btn btn-primary">In barcode</button>
+                                                        </div>
+                                                        @endif
                                                     </div>
                                                 </div>
 

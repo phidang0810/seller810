@@ -20,6 +20,7 @@ use Yajra\DataTables\Facades\DataTables;
 use App\Libraries\Photo;
 use Illuminate\Support\Facades\Storage;
 use Response;
+use DNS1D;
 
 Class ProductRepository
 {
@@ -126,7 +127,7 @@ Class ProductRepository
 		$model->brand_id = $data['brand_id'];
 		$model->content = $data['content'];
 		// $model->code = $data['code'];
-		$model->barcode = $data['barcode'];
+		// $model->barcode = $data['barcode'];
 		$model->meta_keyword = $data['meta_keyword'];
 		$model->meta_description = $data['meta_description'];
 		$model->meta_robot = $data['meta_robot'];
@@ -157,7 +158,17 @@ Class ProductRepository
 
 			// Generate product code based on category code
 			$category = $this->lowestLevelCategory($model->id);
+			$old_barcode_text = $model->barcode_text;
 			$model->barcode_text = general_product_code($category->code, $model->id, 7);
+
+			if ($model->barcode) {
+				if ($old_barcode_text != $model->barcode_text) {
+					Storage::delete($model->barcode);
+				}
+			}
+			Storage::disk('public')->put('barcodes/'.$model->barcode_text.'.png', base64_decode(DNS1D::getBarcodePNG($model->barcode_text, 'C128')));
+			$model->barcode = 'public/barcodes/'.$model->barcode_text.'.png';
+			
 			$model->save();
 		}
 

@@ -13,7 +13,8 @@
         "intervention/image": "^2.3",
         "yajra/laravel-datatables-oracle": "~8.0",
         "league/flysystem-aws-s3-v3": "^1.0",
-        "aws/aws-sdk-php": "^3.54"
+        "aws/aws-sdk-php": "^3.54",
+        "milon/barcode": "^5.3"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

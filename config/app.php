@@ -178,9 +178,10 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
-		Barryvdh\DomPDF\ServiceProvider::class,
-		Intervention\Image\ImageServiceProvider::class,
+        Barryvdh\DomPDF\ServiceProvider::class,
+        Intervention\Image\ImageServiceProvider::class,
         Yajra\DataTables\DataTablesServiceProvider::class,
+        Milon\Barcode\BarcodeServiceProvider::class,
     ],
 
     /*
@@ -229,10 +230,12 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
 
-		'SSH' => Collective\Remote\RemoteFacade::class,
-		'PDF' => Barryvdh\DomPDF\Facade::class,
-		'Image' => Intervention\Image\Facades\Image::class,
+        'SSH' => Collective\Remote\RemoteFacade::class,
+        'PDF' => Barryvdh\DomPDF\Facade::class,
+        'Image' => Intervention\Image\Facades\Image::class,
         'DataTables' => Yajra\DataTables\Facades\DataTables::class,
+        'DNS1D' => Milon\Barcode\Facades\DNS1DFacade::class,
+        'DNS2D' => Milon\Barcode\Facades\DNS2DFacade::class,
     ],
 
 ];
