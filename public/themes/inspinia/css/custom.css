@@ -470,3 +470,11 @@ span.input-group-addon.input-readonly {
 .font-bold{
   font-weight: 700;
 }
+
+.text-right{
+  text-align: right;
+}
+
+table.table-hover tbody tr td:hover{
+  cursor: pointer;
+}

@@ -129,7 +129,7 @@
                     <tr>
                         <td colspan="2" style="font-weight: 700;">Thanh toán thêm</td>
                         <td colspan="2">
-                            <input type="text" name="pay_amount" placeholder="" class="form-control thousand-number m-b"
+                            <input type="text" name="pay_amount" placeholder="" class="form-control input-thousand-number m-b"
                             value=""/>
                             <!-- <span class="thousand-number m-b">{{$result['cart']->total_price}}</span> -->
                         </td>
@@ -149,7 +149,7 @@
                         <td>{{$cart_detail->code}}</td>
                         <td>{{$cart_detail->product_code}}</td>
                         <td>{{$cart_detail->price}}</td>
-                        <td>{{$cart_detail->quantity}}</td>
+                        <td class="text-right">{{$cart_detail->quantity}}</td>
                     </tr>
                     @endforeach
                 </tbody>
@@ -167,7 +167,7 @@
 
         function formatPrice(){
             // Format prices
-            $('.thousand-number').toArray().forEach(function(field){
+            $('.input-thousand-number').toArray().forEach(function(field){
                 new Cleave(field, {
                     numeral: true,
                     numeralThousandsGroupStyle: 'thousand'
@@ -175,6 +175,8 @@
             });
         }
         $(document).ready(function(){
+            formatPrice();
+            
             $('input[name="pay_amount"]').on('change', function(){
                 var pay_amount = ($('input[name="pay_amount"]').val()) ? $('input[name="pay_amount"]').val() : 0;
                 console.log(pay_amount);

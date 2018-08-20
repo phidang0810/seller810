@@ -453,7 +453,7 @@ Class ProductRepository
 		];
 
 		if ($product_id) {
-			$product_details = ProductDetail::having('product_id', '=', $product_id)
+			$product_details = ProductDetail::having('product_id', '=', $product_id)->having('quantity', '>', 0)
                 ->get();
 
 
@@ -481,7 +481,7 @@ Class ProductRepository
 		];
 
 		if ($product_id && $color_id) {
-			$product_details = ProductDetail::having('product_id', '=', $product_id)
+			$product_details = ProductDetail::having('product_id', '=', $product_id)->having('quantity', '>', 0)
                 ->having('color_id', '=', $color_id)
                 ->get();
 
@@ -516,6 +516,7 @@ Class ProductRepository
 			$product_detail = ProductDetail::having('product_id', '=', $product_id)
                 ->having('color_id', '=', $color_id)
                 ->having('size_id', '=', $size_id)
+                ->having('quantity', '>', 0)
                 ->first();
 
 			$return['quantity'] = $product_detail->quantity;
@@ -566,7 +567,7 @@ Class ProductRepository
 		$formatted_products = [];
 		$term = trim($request->q);
 
-        $products_list = Product::where('name','LIKE', '%'.$term.'%')->get();
+        $products_list = Product::where('name','LIKE', '%'.$term.'%')->where('quantity_available', '>', 0)->get();
         foreach ($products_list as $product) {
             $formatted_products[] = ['id' => $product->id, 'text' => $product->name];
         }

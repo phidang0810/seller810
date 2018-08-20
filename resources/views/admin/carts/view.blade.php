@@ -700,7 +700,7 @@
                                     <label class="col-md-4 control-label">Chiết khấu khách hàng</label>
                                     <div class="col-md-8">
                                         <div class="input-group">
-                                            <input type="text" name="customer_discount_amount" placeholder="" class="thousand-number negative-number form-control m-b"
+                                            <input type="text" name="customer_discount_amount" placeholder="" class="thousand-number negative-number text-right form-control m-b"
                                             value="@if(isset($data->customer_discount_amount)){{$data->customer_discount_amount}}@else{{0}}@endif" readonly="readonly" />
                                             <span class="input-group-addon input-readonly">VND</span>
                                         </div>
@@ -731,7 +731,7 @@
                                     <label class="col-md-4 control-label">Phí vận chuyển</label>
                                     <div class="col-md-8">
                                         <div class="input-group">
-                                            <input type="text" name="shipping_fee" placeholder="" class="thousand-number form-control m-b"
+                                            <input type="text" name="shipping_fee" placeholder="" class="thousand-number text-right form-control m-b"
                                             value="@if(isset($data->shipping_fee)){{$data->shipping_fee}}@else{{0}}@endif"/>
                                             <span class="input-group-addon">VND</span>
                                         </div>
@@ -756,7 +756,7 @@
                                     <label class="col-md-4 control-label">Chiết khấu cộng tác viên</label>
                                     <div class="col-md-8">
                                         <div class="input-group">
-                                            <input type="text" name="partner_discount_amount" placeholder="" class="thousand-number negative-number form-control m-b"
+                                            <input type="text" name="partner_discount_amount" placeholder="" class="thousand-number text-right negative-number form-control m-b"
                                             value="@if(isset($data->partner_discount_amount)){{$data->partner_discount_amount}}@else{{0}}@endif" readonly="readonly" />
                                             <span class="input-group-addon input-readonly">VND</span>
                                         </div>
@@ -779,7 +779,7 @@
                                         <label class="col-md-4 control-label">Tổng cộng</label>
                                         <div class="col-md-8">
                                             <div class="input-group">
-                                                <input type="text" name="total_price" placeholder="" class="thousand-number form-control m-b"
+                                                <input type="text" name="total_price" placeholder="" class="thousand-number text-right form-control m-b"
                                                 value="@if(isset($data->total_price)){{$data->total_price}}@else{{0}}@endif" readonly="readonly" />
                                                 <span class="input-group-addon input-readonly">VND</span>
                                             </div>
@@ -791,7 +791,7 @@
                                     <div class="form-group">
                                         <label class="col-md-4 control-label">Tổng số lượng</label>
                                         <div class="col-md-8">
-                                            <input type="text" name="quantity" placeholder="" class="form-control m-b"
+                                            <input type="text" name="quantity" placeholder="" class="text-right form-control m-b"
                                             value="@if(isset($data->quantity)){{$data->quantity}}@else{{0}}@endif" readonly="readonly" />
                                         </div>
                                     </div>
@@ -802,7 +802,7 @@
                                         <label class="col-md-4 control-label">Thuế (10%)</label>
                                         <div class="col-md-8">
                                             <div class="input-group">
-                                                <input type="text" name="vat_amount" placeholder="" class="thousand-number form-control m-b"
+                                                <input type="text" name="vat_amount" placeholder="" class="thousand-number text-right form-control m-b"
                                                 value="@if(isset($data->vat_amount)){{$data->vat_amount}}@else{{0}}@endif" readonly="readonly" />
                                                 <span class="input-group-addon input-readonly">VND</span>
                                             </div>
@@ -815,7 +815,7 @@
                                         <label class="col-md-4 control-label">Phí vận chuyển</label>
                                         <div class="col-md-8">
                                             <div class="input-group">
-                                                <input type="text" name="shipping_fee" placeholder="" class="thousand-number form-control m-b"
+                                                <input type="text" name="shipping_fee" placeholder="" class="thousand-number text-right form-control m-b"
                                                 value="@if(isset($data->shipping_fee)){{$data->shipping_fee}}@else{{0}}@endif" readonly="readonly" />
                                                 <span class="input-group-addon input-readonly">VND</span>
                                             </div>
@@ -828,7 +828,7 @@
                                         <label class="col-md-4 control-label">Tổng chiết khấu</label>
                                         <div class="col-md-8">
                                             <div class="input-group">
-                                                <input type="text" name="total_discount_amount" placeholder="" class="thousand-number negative-number form-control m-b"
+                                                <input type="text" name="total_discount_amount" placeholder="" class="thousand-number text-right negative-number form-control m-b"
                                                 value="@if(isset($data->total_discount_amount)){{$data->total_discount_amount}}@else{{0}}@endif" readonly="readonly" />
                                                 <span class="input-group-addon input-readonly">VND</span>
                                             </div>
@@ -841,7 +841,7 @@
                                         <label class="col-md-4 control-label">Thành tiền</label>
                                         <div class="col-md-8">
                                             <div class="input-group">
-                                                <input type="text" name="price" placeholder="" class="thousand-number form-control m-b"
+                                                <input type="text" name="price" placeholder="" class="thousand-number text-right form-control m-b"
                                                 value="@if(isset($data->price)){{$data->price}}@else{{0}}@endif" readonly="readonly" />
                                                 <span class="input-group-addon input-readonly">VND</span>
                                             </div>
@@ -854,7 +854,7 @@
                                         <label class="col-md-4 control-label">Đã thanh toán</label>
                                         <div class="col-md-8">
                                             <div class="input-group">
-                                                <input type="text" name="paid_amount" placeholder="" class="thousand-number form-control m-b"
+                                                <input type="text" name="paid_amount" placeholder="" class="thousand-number text-right form-control m-b"
                                                 value="@if(isset($data->paid_amount)){{$data->paid_amount}}@else{{0}}@endif" />
                                                 <span class="input-group-addon">VND</span>
                                             </div>
@@ -867,7 +867,7 @@
                                         <label class="col-md-4 control-label">Số tiền cần thanh toán</label>
                                         <div class="col-md-8">
                                             <div class="input-group">
-                                                <input type="text" name="needed_paid" placeholder="" class="thousand-number form-control m-b"
+                                                <input type="text" name="needed_paid" placeholder="" class="thousand-number text-right form-control m-b"
                                                 value="@if(isset($data->needed_paid)){{$data->needed_paid}}@else{{0}}@endif" readonly="readonly" />
                                                 <span class="input-group-addon input-readonly">VND</span>
                                             </div>
