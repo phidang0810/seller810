@@ -1,6 +1,30 @@
 *{
   font-size: 12px;
 }
+.login-bg{
+  background: url('../img/bg.png') no-repeat;
+  background-size: cover;
+}
+.loginColumns{
+  background-color: #fff;
+  transform: translate(-50%,-50%);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  min-width:600px;
+   padding: 70px 20px 20px 20px;
+}
+.login-row{
+  position:relative;
+  display: block;
+}
+.login-row i{
+  position: absolute;
+  right: 10px;
+  top: 8px;
+  color: #a5a5a5;
+  font-size: 16px;
+}
 .v-center {
   display: flex;
   justify-content: left;
@@ -162,6 +186,12 @@ ul.nav-second-level{
 @media (min-width: 768px){
   .lead, .lead b {
     font-size: 16px;
+  }
+}
+@media (max-width: 640px) {
+  .loginColumns{
+    max-width:98%;
+    min-width:98%
   }
 }
 .switchery > small {

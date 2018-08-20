@@ -13,48 +13,55 @@
 
     <link href="{{asset('themes/inspinia/css/animate.css')}}" rel="stylesheet">
     <link href="{{asset('themes/inspinia/css/style.css')}}" rel="stylesheet">
+    <link href="{{asset('themes/inspinia/css/custom.css')}}" rel="stylesheet">
 
 </head>
 
-<body class="gray-bg">
-<div class="loginColumns animated fadeInDown">
+<body class="gray-bg login-bg">
+<div class="loginColumns fadeInDown">
     <div class="row">
 
         <div class="col-md-6">
-            <h2 class="font-bold">Welcome to DHD Film</h2>
-            <p>Our Story</p>
-            <p>DHD Films is an award winning, full-service video production and motion graphics studio based in Dallas, Texas. </p>
-            <p>We tell compelling stories designed to help build powerful brands. </p>
-            <p>Our clients include Fortune 500 companies, innovative startups, government and creative agencies. </p>
-            <p>We specialize in the creation and deployment of visual campaigns using video, the fastest growing communications medium.</p>
-
-        </div>
-        <div class="col-md-6">
-            <div class="ibox-content">
-                <form class="m-t" role="form" action="{{ route('login') }}" method="POST">
-                        {{ csrf_field() }}
-                        <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
-                            <input id="email" type="email" class="form-control" placeholder="example@yopmail.com" name="email" value="{{ old('email') }}" required autofocus>
-
-                            @if ($errors->has('email'))
-                                <span class="help-block">
-                                        <strong>{{ $errors->first('email') }}</strong>
-                                    </span>
-                            @endif
-
-                        </div>
-                        <div class="form-group{{ $errors->has('password') ? ' has-error' : '' }}">
-                            <input id="password" type="password" class="form-control" placeholder="password" name="password" required>
-
-                            @if ($errors->has('password'))
-                                <span class="help-block">
-                                        <strong>{{ $errors->first('password') }}</strong>
-                                    </span>
-                            @endif
-                        </div>
-                    <button type="submit" class="btn btn-primary block full-width m-b">Login</button>
+            <h1 style="text-align: center;
+    font-weight: bold;
+    margin-bottom: 70px;">LOGIN
+                <span style="font-size: 12px;
+    display: block;
+    border-bottom: 5px solid #ccc;
+    width: 40px;
+    margin: auto;
+    margin-top: 5px;"></span>
+            </h1>
+            <div class="">
+                <form role="form" action="{{ route('login') }}" method="POST">
+                    {{ csrf_field() }}
+                    <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
+                        <span class="login-row">
+                            <input id="email" type="email" class="form-control" placeholder="Email" name="email" value="{{ old('email') }}" required autofocus>
+                            <i class="fa fa-user" aria-hidden="true"></i>
+                        </span>
+                    </div>
+                    <div class="form-group{{ $errors->has('password') ? ' has-error' : '' }}">
+                        <span class="login-row">
+                            <input id="password" type="password" class="form-control" placeholder="Mật khẩu" name="password" required>
+                            <i class="fa fa-key" aria-hidden="true"></i>
+                        </span>
+                    </div>
+                    <button type="submit" class="btn btn-primary block full-width m-b">Đăng nhập</button>
                 </form>
             </div>
+        </div>
+        <div class="col-md-6">
+            @if ($errors->has('email'))
+                <span class="help-block text-danger">
+                    <strong>{{ $errors->first('email') }}</strong>
+                </span>
+            @endif
+            @if ($errors->has('password'))
+                <span class="help-block text-danger">
+                    <strong>{{ $errors->first('password') }}</strong>
+                </span>
+            @endif
         </div>
     </div>
     <hr/>

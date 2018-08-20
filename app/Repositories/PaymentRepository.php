@@ -163,16 +163,15 @@ Class PaymentRepository
     private function _getPaymentLastWeek($time, array $option = [])
     {
         if ($option['select'] === 'number_cart') {
-            $query = Payment::selectRaw('count(cart_id) as total, DAYOFWEEK(payments.created_at) as day_of_week')
-                ->join('carts', 'carts.id', '=', 'payments.cart_id');
+            $query = Cart::selectRaw('count(cart_id) as total, DAYOFWEEK(created_at) as day_of_week');
             if (key_exists('status', $option)) {
                 $query->where('carts.status', $option['status']);
             }
         } else {
-            $query = Payment::selectRaw('sum(total_price) as total, DAYOFWEEK(payments.created_at) as day_of_week');
+            $query = Payment::selectRaw('sum(total_price) as total, DAYOFWEEK(created_at) as day_of_week');
         }
         $query->whereRaw('YEARWEEK(created_at) = YEARWEEK(NOW()) - 1')
-            ->orderBy('payments.created_at','asc')
+            ->orderBy('created_at','asc')
             ->groupBy('day_of_week')
             ->get();
         $prices = $query->pluck('total','day_of_week')->toArray();
@@ -187,16 +186,15 @@ Class PaymentRepository
     private function _getPaymentThisWeek($time, array $option = [])
     {
         if ($option['select'] === 'number_cart') {
-            $query = Payment::selectRaw('count(cart_id) as total, DAYOFWEEK(payments.created_at) as day_of_week')
-                ->join('carts', 'carts.id', '=', 'payments.cart_id');
+            $query = Cart::selectRaw('count(cart_id) as total, DAYOFWEEK(created_at) as day_of_week');
             if (key_exists('status', $option)) {
-                $query->where('carts.status', $option['status']);
+                $query->where('status', $option['status']);
             }
         } else {
             $query = Payment::selectRaw('sum(total_price) as total, DAYOFWEEK(created_at) as day_of_week');
         }
-        $query->whereRaw('YEARWEEK(payments.created_at) = YEARWEEK(NOW())')
-            ->orderBy('payments.created_at','asc')
+        $query->whereRaw('YEARWEEK(created_at) = YEARWEEK(NOW())')
+            ->orderBy('created_at','asc')
             ->groupBy('day_of_week')
             ->get();
         $prices = $query->pluck('total','day_of_week')->toArray();
@@ -212,17 +210,16 @@ Class PaymentRepository
     private function _getPaymentMonthOfYear($time, array $option = [])
     {
         if ($option['select'] === 'number_cart') {
-            $query = Payment::selectRaw('count(cart_id) as total, MONTH(payments.created_at) as month')
-                ->join('carts', 'carts.id', '=', 'payments.cart_id');
+            $query = Cart::selectRaw('count(cart_id) as total, MONTH(created_at) as month');
             if (key_exists('status', $option)) {
                 $query->where('carts.status', $option['status']);
             }
         } else {
-            $query = Payment::selectRaw('sum(total_price) as total, MONTH(payments.created_at) as month');
+            $query = Payment::selectRaw('sum(total_price) as total, MONTH(created_at) as month');
         }
 
         $query->whereRaw('YEAR(created_at) = YEAR(CURDATE()) ')
-            ->orderBy('payments.created_at','asc')
+            ->orderBy('created_at','asc')
             ->groupBy('month')
             ->get();
         $prices = $query->pluck('total','month')->toArray();
@@ -239,16 +236,15 @@ Class PaymentRepository
     {
         $result = [];
         if ($option['select'] === 'number_cart') {
-            $query = Payment::selectRaw('count(cart_id) as total, YEAR(payments.created_at) as year')
-                ->join('carts', 'carts.id', '=', 'payments.cart_id');
+            $query = Cart::selectRaw('count(cart_id) as total, YEAR(created_at) as year');
             if(key_exists('status', $option)) {
-                $query->where('carts.status', $option['status']);
+                $query->where('status', $option['status']);
             }
         } else {
-            $query = Payment::selectRaw('sum(total_price) as total, YEAR(payments.created_at) as year');
+            $query = Payment::selectRaw('sum(total_price) as total, YEAR(created_at) as year');
         }
 
-           $query->whereRaw('YEAR(payments.created_at) >= ' . $time[0])
+           $query->whereRaw('YEAR(created_at) >= ' . $time[0])
             ->orderBy('created_at','asc')
             ->groupBy('year')
             ->get();
@@ -265,9 +261,17 @@ Class PaymentRepository
     {
         $take = $search['limit'] ?? 4;
         $type = $search['type'] ?? 'pie';
-        $data = PaymentDetail::selectRaw('products.name, SUM(payment_detail.quantity) as total')
-        ->join('products','products.id','=','payment_detail.product_id')
-        ->groupBy('payment_detail.product_id')
+        $select = $search['select'] ?? 'count';
+        if ($select === 'count') {
+            $data = PaymentDetail::selectRaw('products.name, SUM(payment_detail.quantity) as total');
+        } else {
+            $data = PaymentDetail::selectRaw('products.name, SUM(payment_detail.total_price) as total');
+        }
+        $data = $data->join('products','products.id','=','payment_detail.product_id');
+        if(isset($search['date'])) {
+            $data = $this->_addFilterDate($data, $search['date'], 'payment_detail');
+        }
+        $data = $data->groupBy('payment_detail.product_id')
         ->orderBy('total','desc')
         ->take($take)
         ->get();
@@ -285,13 +289,56 @@ Class PaymentRepository
         return $result;
     }
 
+    private function _addFilterDate($builder, $date, $table)
+    {
+        switch ($date) {
+            case 'last_week':
+                $builder->whereRaw('YEARWEEK(' . $table . '.created_at) = YEARWEEK(NOW()) - 1');
+
+                break;
+
+            case 'this_week':
+                $builder->whereRaw('YEARWEEK(' . $table . '.created_at) = YEARWEEK(NOW())');
+                break;
+
+            case 'last_month':
+                $builder->whereRaw('YEAR(' . $table . '.created_at) = YEAR(CURRENT_DATE - INTERVAL 1 MONTH)
+                                    AND MONTH(' . $table . '.created_at) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH)');
+                break;
+
+            case 'this_month':
+                $builder->whereRaw('YEAR(' . $table . '.created_at) = YEAR(CURRENT_DATE)
+                                    AND MONTH(' . $table . '.created_at) = MONTH(CURRENT_DATE)');
+                break;
+
+            case 'last_year':
+                $builder->whereRaw('YEAR(' . $table . '.created_at) = YEAR(CURDATE())-1');
+                break;
+
+            case 'this_year':
+                $builder->whereRaw('YEAR(' . $table . '.created_at) = YEAR(CURDATE()) ');
+                break;
+        }
+
+        return $builder;
+
+    }
+
     public function getTopPlatformSell($search)
     {
         $take = $search['limit'] ?? 4;
         $type = $search['type'] ?? 'pie';
-        $data = Payment::selectRaw('platforms.name, COUNT(payments.platform_id) as total')
-        ->join('platforms', 'platforms.id','=','payments.platform_id')
-        ->groupBy('payments.platform_id')
+        $select = $search['select'] ?? 'count';
+        if ($select === 'count') {
+            $data = Payment::selectRaw('platforms.name, COUNT(payments.platform_id) as total');
+        } else {
+            $data = Payment::selectRaw('platforms.name, SUM(payments.total_price) as total');
+        }
+        $data = $data->join('platforms', 'platforms.id','=','payments.platform_id');
+        if(isset($search['date'])) {
+            $data = $this->_addFilterDate($data, $search['date'], 'payments');
+        }
+        $data = $data->groupBy('payments.platform_id')
         ->orderBy('total','desc')
         ->take($take)
         ->get();
@@ -313,9 +360,17 @@ Class PaymentRepository
     {
         $take = $search['limit'] ?? 4;
         $type = $search['type'] ?? 'pie';
-        $data = PaymentDetail::selectRaw('categories.name, COUNT(categories.id) as total')
-        ->join('product_category','product_category.product_id', '=', 'payment_detail.product_id')
-        ->join('categories','categories.id', '=', 'product_category.category_id')
+        $select = $search['select'] ?? 'count';
+        if ($select === 'count') {
+            $data = PaymentDetail::selectRaw('categories.name, COUNT(categories.id) as total');
+        } else {
+            $data = PaymentDetail::selectRaw('categories.name, SUM(payment_detail.total_price) as total');
+        }
+        $data = $data->join('product_category','product_category.product_id', '=', 'payment_detail.product_id');
+        if(isset($search['date'])) {
+            $data = $this->_addFilterDate($data, $search['date'], 'payment_detail');
+        }
+        $data = $data->join('categories','categories.id', '=', 'product_category.category_id')
         ->groupBy('categories.id')
         ->orderBy('total','desc')
         ->take($take)

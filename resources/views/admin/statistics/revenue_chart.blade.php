@@ -8,11 +8,253 @@
     <!-- Page-Level Scripts -->
     <script>
         var table;
+        var lineChart = null;
+        var pieChart = null;
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
+        function getDataLineChart(search)
+        {
+            $.ajax({
+                url: "{{route('admin.payments.getPaymentChart')}}",
+                data:search,
+                success: function(res){
+                    if(lineChart) {
+                        lineChart.destroy();
+                    }
+                    lineChart = new Chart(document.getElementById("lineChart"), {
+                        "type": "line",
+                        "data": {
+                            "labels": res.result.time,
+                            "datasets": [{
+                                "label": "Doanh thu",
+                                "data": res.result.value,
+                                "fill": true,
+                                "borderColor": "rgb(75, 192, 192)",
+                                "backgroundColor": "rgba(75, 192, 192, 0.2)",
+                                "pointBackgroundColor":"rgba(75, 192, 192)",
+                                "borderWidth":2,
+                                "pointRadius":4,
+                                "lineTension": 0.1
+                            }]
+                        },
+                        "options": {
+                            scales: {
+                                yAxes: [{
+                                    ticks: {
+                                        beginAtZero:true,
+                                        callback: function(value, index, values) {
+                                            return number_format(value) + ' VND';
+                                        }
+                                    }
+                                }]
+                            },
+                            tooltips: {
+                                callbacks: {
+                                    label: function(tooltipItem, chart){
+                                        var datasetLabel = chart.datasets[tooltipItem.datasetIndex].label || '';
+                                        return datasetLabel + ': ' + number_format(tooltipItem.yLabel, 2) + ' VND';
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+            });
+        }
+        function number_format(number, decimals, dec_point, thousands_sep) {
+            number = (number + '').replace(',', '').replace(' ', '');
+            var n = !isFinite(+number) ? 0 : +number,
+                prec = !isFinite(+decimals) ? 0 : Math.abs(decimals),
+                sep = (typeof thousands_sep === 'undefined') ? ',' : thousands_sep,
+                dec = (typeof dec_point === 'undefined') ? '.' : dec_point,
+                s = '',
+                toFixedFix = function (n, prec) {
+                    var k = Math.pow(10, prec);
+                    return '' + Math.round(n * k) / k;
+                };
+            // Fix for IE parseFloat(0.55).toFixed(0) = 0;
+            s = (prec ? toFixedFix(n, prec) : '' + Math.round(n)).split('.');
+            if (s[0].length > 3) {
+                s[0] = s[0].replace(/\B(?=(?:\d{3})+(?!\d))/g, sep);
+            }
+            if ((s[1] || '').length < prec) {
+                s[1] = s[1] || '';
+                s[1] += new Array(prec - s[1].length + 1).join('0');
+            }
+            return s.join(dec);
+        }
+
+        function getTopProductChart(search)
+        {
+            $.ajax({
+                url: "{{route('admin.payments.getTopProductSell')}}",
+                data:search,
+                success: function(res){
+                    if(pieChart) {
+                        pieChart.destroy();
+                    }
+                    if (res.result.values.length === 0) {
+                        $('#pie-error').text('Dữ liệu rỗng');
+                        $('#pie-legend').html('');
+                        return;
+                    } else {
+                        $('#pie-error').text('');
+                    }
+                    pieChart = new Chart(document.getElementById("pieChart"),{
+                        type: 'doughnut',
+                        data: {
+                            "labels": res.result.labels,
+                            "datasets": [{
+                                "data": res.result.values,
+                                "backgroundColor": ['rgb(0, 131, 202)', 'rgb(245, 100, 1)', 'rgb(253, 201, 35)', 'rgb(141, 198, 62)']
+                            }]
+                        },
+                        options: {
+                            legendCallback: function (chart) {
+                                var text = [];
+                                text.push('<ul class="' + chart.id + '-legend" style="list-style:none">');
+                                for (var i = 0; i < chart.data.datasets[0].data.length; i++) {
+                                    text.push('<li><span class="legend-item" style="background:' + chart.data.datasets[0].backgroundColor[i] + '" />&nbsp;');
+                                    if (chart.data.labels[i]) {
+                                        text.push(chart.data.labels[i]);
+                                        text.push('<span style="float:right">'+number_format(chart.data.datasets[0].data[i])+' VND</span>');
+                                    }
+                                    text.push('</li>');
+                                }
+                                text.push('</ul>');
+
+                                return text.join('');
+                            },
+                            legend: {display: false}
+                        }
+                    });
+                    $("#pie-legend").html(pieChart.generateLegend());
+                }
+            });
+
+        }
+
+        function getTopCategoryChart(search)
+        {
+            $.ajax({
+                url: "{{route('admin.payments.getTopCategorySell')}}",
+                data:search,
+                success: function(res){
+                    if(pieChart) {
+                        pieChart.destroy();
+                    }
+                    if (res.result.values.length === 0) {
+                        $('#pie-error').text('Dữ liệu rỗng');
+                        $('#pie-legend').html('');
+                        return;
+                    } else {
+                        $('#pie-error').text('');
+                    }
+                    pieChart = new Chart(document.getElementById("pieChart"),{
+                        type: 'doughnut',
+                        data: {
+                            "labels": res.result.labels,
+                            "datasets": [{
+                                "data": res.result.values,
+                                "backgroundColor": ['rgb(0, 131, 202)', 'rgb(245, 100, 1)', 'rgb(253, 201, 35)', 'rgb(141, 198, 62)']
+                            }]
+                        },
+                        options: {
+                            legendCallback: function (chart) {
+                                var text = [];
+                                text.push('<ul class="' + chart.id + '-legend" style="list-style:none">');
+                                for (var i = 0; i < chart.data.datasets[0].data.length; i++) {
+                                    text.push('<li><span class="legend-item" style="background:' + chart.data.datasets[0].backgroundColor[i] + '" />&nbsp;');
+                                    if (chart.data.labels[i]) {
+                                        text.push(chart.data.labels[i]);
+                                        text.push('<span style="float:right">'+number_format(chart.data.datasets[0].data[i])+' VND</span>');
+                                    }
+                                    text.push('</li>');
+                                }
+                                text.push('</ul>');
+
+                                return text.join('');
+                            },
+                            legend: {display: false}
+                        }
+                    });
+                    $("#pie-legend").html(pieChart.generateLegend());
+                }
+            });
+        }
+
+        function getTopPlatformChart(search)
+        {
+            $.ajax({
+                url: "{{route('admin.payments.getTopPlatformSell')}}",
+                data:search,
+                success: function(res){
+                    if(pieChart) {
+                        pieChart.destroy();
+                    }
+                    if (res.result.values.length === 0) {
+                        $('#pie-error').text('Dữ liệu rỗng');
+                        $('#pie-legend').html('');
+                        return;
+                    } else {
+                        $('#pie-error').text('');
+                    }
+                    pieChart = new Chart(document.getElementById("pieChart"),{
+                        type: 'doughnut',
+                        data: {
+                            "labels": res.result.labels,
+                            "datasets": [{
+                                "data": res.result.values,
+                                "backgroundColor": ['rgb(0, 131, 202)', 'rgb(245, 100, 1)', 'rgb(253, 201, 35)', 'rgb(141, 198, 62)']
+                            }]
+                        },
+                        options: {
+                            legendCallback: function (chart) {
+                                var text = [];
+                                text.push('<ul class="' + chart.id + '-legend" style="list-style:none">');
+                                for (var i = 0; i < chart.data.datasets[0].data.length; i++) {
+                                    text.push('<li><span class="legend-item" style="background:' + chart.data.datasets[0].backgroundColor[i] + '" />&nbsp;');
+                                    if (chart.data.labels[i]) {
+                                        text.push(chart.data.labels[i]);
+                                        text.push('<span style="float:right">'+number_format(chart.data.datasets[0].data[i])+' VND</span>');
+                                    }
+                                    text.push('</li>');
+                                }
+                                text.push('</ul>');
+
+                                return text.join('');
+                            },
+                            legend: {display: false}
+                        }
+                    });
+                    $("#pie-legend").html(pieChart.generateLegend());
+                }
+            });
+        }
+
+        function loadPieChart()
+        {
+            var search = {
+                date: $('select[name="pie_date"]').val(),
+                select: 'amount'
+            };
+
+            var type = $('select[name="pie_type"]').val();
+            if(type === 'category') {
+                getTopCategoryChart(search);
+            }
+
+            if(type === 'product') {
+                getTopProductChart(search);
+            }
+
+            if(type === 'platform') {
+                getTopPlatformChart(search);
+            }
+        }
         $(document).ready(function() {
             table = $('#dataTables').dataTable({
                 searching: false,
@@ -86,103 +328,87 @@
                 format: 'dd/mm/yyyy'
             });
 
-            $.ajax({
-                url: "{{route('admin.statistics.getPaymentMixChart')}}",
-                success: function(res){
-                    var mixedChart = new Chart(document.getElementById("pieChart"), {
-                        type: 'bar',
-                        data: {
-                            datasets: [
-                                {
-                                    label: "Tổng đơn hàng",
-                                    data: res.result.value.total_cart,
-                                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                                    borderColor: 'rgba(54, 162, 235, 1)',
-                                    borderWidth: 1
-                                },
-                                {
-                                    label: "Đơn hàng hủy",
-                                    data: res.result.value.cancel_cart,
-                                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                                    borderColor: 'rgba(255,99,132,1)',
-                                    borderWidth: 1
-                                },
-                                {
-                                    label: "Doanh thu",
-                                    data: res.result.value.amount,
-                                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                                    borderColor: 'rgba(255,99,132,1)',
-                                    borderWidth: 1,
-                                    type: 'line',
-                                    yAxisID: 'y-axis-1'
-                                }
-                            ],
-                            labels: res.result.time
-                        },
-                        options: {
-                            scales: {
-                                yAxes: [{
-                                    ticks: {
-                                        beginAtZero:true
-                                    }
-                                }, {
-                                    id: 'y-axis-1',
-                                    position: 'right',
-                                    ticks: {
-                                        beginAtZero: true,
-                                        callback: function(value, index, values) {
-                                            return value;
-                                        }
-                                    }
-                                }]
-                            }
-                        }
-                    });
-                }
+            getDataLineChart({
+                date_filter: $('input[name="date_filter"]:checked').val()
+            });
+            $('input[name="date_filter"]').change(function(){
+                var search = {date_filter: $(this).val()};
+                getDataLineChart(search);
             });
 
-
+            $('select[name="pie_type"]').change(function(){
+                loadPieChart();
+            });
+            $('select[name="pie_date"]').change(function(){
+                loadPieChart();
+            });
+            loadPieChart();
         });
     </script>
 @endsection
 @section('content')
 <div class="row">
-    <div class="col-sm-12">
-        <div class="ibox float-e-margins pl-15 pr-15">
-            <div class="ibox-content">
-
-            </div>
-        </div>
-    </div>
-
-    <div class="col-sm-12">
+    <div class="col-sm-8">
         <div class="ibox float-e-margins pl-15 pr-15">
             <div class="ibox-content">
                 <h2 class="tt-page">DANH SÁCH ĐƠN HÀNG MỚI</h2>
                 <div class="row">
-                    <div class="col-md-6">
-                        <select name="pie-type" class="form-control">
-                            <option>Danh mục</option>
-                            <option>Sản phẩm</option>
-                        </select>
+                    <div class="col-md-7">
                     </div>
-                    <div class="col-md-6">
-                        <select name="pie-time" class="form-control">
-                            <option>Tuần này</option>
-                            <option>Tuần trước</option>
-                        </select>
+                    <div class="col-md-5 text-right">
+                        <div class="btn-group" data-toggle="buttons">
+                            <label class="btn btn-default btn-sm">
+                                <input type="radio" name="date_filter" value="last_week"> Tuần trước
+                            </label>
+                            <label class="btn btn-default btn-sm active">
+                                <input type="radio" name="date_filter" value="this_week"> Tuần này
+                            </label>
+                            <label class="btn btn-default btn-sm">
+                                <input type="radio" name="date_filter" value="month"> Tháng
+                            </label>
+                            <label class="btn btn-default btn-sm">
+                                <input type="radio" name="date_filter" value="year"> Năm
+                            </label>
+                        </div>
                     </div>
                 </div>
-                <div class="pie-chart" style="padding:20px">
-                    <div class="pie" style="margin:auto;margin-bottom: 20px">
-                        <canvas id="pieChart"></canvas>
-                    </div>
-                    <div id="pie-legend" class="chart-legend"></div>
+                <div class="" style="padding:20px">
+                    <canvas id="lineChart"></canvas>
                 </div>
             </div>
         </div>
     </div>
-
+    <div class="col-sm-4">
+        <div class="ibox-content">
+            <h2 class="tt-page">THÔNG KÊ DOANH THU THEO TOP</h2>
+            <div class="row">
+                <div class="col-md-6">
+                    <select name="pie_type" class="form-control">
+                        <option value="category" @if(app('request')->input('pie_type') == "category") selected @endif>Danh mục</option>
+                        <option value="product" @if(app('request')->input('pie_type') == "product") selected @endif>Sản phẩm</option>
+                        <option value="platform" @if(app('request')->input('pie_type') == "platform") selected @endif>Nguồn đơn</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <select name="pie_date" class="form-control">
+                        <option value="last_weed" @if(app('request')->input('pie_date') == "last_weed") selected @endif>Tuần trước</option>
+                        <option value="this_week" @if(app('request')->input('pie_date') == "this_week") selected @endif>Tuần này</option>
+                        <option value="last_month" @if(app('request')->input('pie_date') == "last_month") selected @endif>Tháng trước</option>
+                        <option value="this_month" @if(app('request')->input('pie_date') == "this_month") selected @endif>Tháng này</option>
+                        <option value="last_year" @if(app('request')->input('pie_date') == "last_year") selected @endif>Năm trước</option>
+                        <option value="this_year" @if(app('request')->input('pie_date') == "this_year") selected @endif>Năm nay</option>
+                    </select>
+                </div>
+            </div>
+            <div class="pie-chart" style="padding:20px">
+                <div class="pie" style="margin:auto;margin-bottom: 20px">
+                    <div id="pie-error" class="text-center"></div>
+                    <canvas id="pieChart"></canvas>
+                </div>
+                <div id="pie-legend" class="chart-legend"></div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <div class="row">

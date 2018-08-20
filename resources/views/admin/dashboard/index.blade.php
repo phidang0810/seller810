@@ -7,8 +7,6 @@
     <script>
         var lineChart = null;
         function number_format(number, decimals, dec_point, thousands_sep) {
-// *     example: number_format(1234.56, 2, ',', ' ');
-// *     return: '1 234,56'
             number = (number + '').replace(',', '').replace(' ', '');
             var n = !isFinite(+number) ? 0 : +number,
                 prec = !isFinite(+decimals) ? 0 : Math.abs(decimals),
@@ -93,6 +91,7 @@
 
             $.ajax({
                 url: "{{route('admin.payments.getTopProductSell')}}",
+                data:{select:'count'},
                 success: function(res){
                     var productChart = new Chart(document.getElementById("pieChartProduct"),{
                         type: 'doughnut',
@@ -128,6 +127,7 @@
 
             $.ajax({
                 url: "{{route('admin.payments.getTopPlatformSell')}}",
+                data:{select:'count'},
                 success: function(res){
                     var platformChart = new Chart(document.getElementById("pieChartPlatform"),{
                         type: 'doughnut',
@@ -163,6 +163,7 @@
 
             $.ajax({
                 url: "{{route('admin.payments.getTopCategorySell')}}",
+                data:{select:'count'},
                 success: function(res){
                     var categoryChart = new Chart(document.getElementById("pieChartCategory"),{
                         type: 'doughnut',
