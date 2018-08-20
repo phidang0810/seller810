@@ -13,7 +13,14 @@
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         }
     });
+    function formar_money(){
+        $('tbody .thousand-number').simpleMoneyFormat();
+        if($('tbody .thousand-number.money').text() != '' || $('.thousand-number.money').text() != null){
+            $('tbody .thousand-number.money').append(" VNĐ");
+        }
+    }
     $(document).ready(function() {
+        formar_money();
         table = $('#dataTables').dataTable({
             searching: false,
             processing: true,
@@ -27,6 +34,7 @@
                     d.category = $('#s-category').val();
                 },
                 complete: function(){
+                    formar_money();
                     var inputStatus = document.querySelectorAll('.js-switch');
                     var elems = Array.prototype.slice.call(inputStatus);
 
@@ -103,7 +111,7 @@
             {data: 'id'},
             {data: 'photo'},
             {data: 'name'},
-            {data: 'code'},
+            {data: 'barcode_text'},
             {data: 'category'},
             {data: 'quantity_available'},
             {data: 'price'},
@@ -113,6 +121,8 @@
             ],
             "aoColumnDefs": [
                     // Column index begins at 0
+                    { "sClass": "thousand-number text-align", "aTargets": [ 5 ] },
+                    { "sClass": "thousand-number money text-align", "aTargets": [ 6,7 ] },
                     { "sClass": "text-center", "aTargets": [ 8 ] },
                     { "sClass": "text-right", "aTargets": [ 9 ] }
                     ],
@@ -273,8 +283,8 @@ $("#dataTables").on("click", '.bt-delete', function(){
                         <th>Mã sản phẩm</th>
                         <th>Danh mục</th>
                         <th>Số lượng tồn</th>
+                        <th>Giá nhập</th>
                         <th>Giá bán</th>
-                        <th>Giá bán buôn</th>
                         <th>Trạng Thái</th>
                         <th></th>
                     </tr>

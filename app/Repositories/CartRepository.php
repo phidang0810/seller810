@@ -114,7 +114,7 @@ Class CartRepository
 		->where('carts.code', '=', $cartCode)
 		->first();
 
-		$cartDetails = Cart::select(['carts.id', 'cart_detail.quantity as quantity', 'cart_detail.price as price', 'carts.total_price as total_price', 'carts.shipping_fee as shipping_fee', 'carts.code', 'products.code as product_code'])
+		$cartDetails = Cart::select(['carts.id', 'cart_detail.quantity as quantity', 'cart_detail.price as price', 'carts.total_price as total_price', 'carts.shipping_fee as shipping_fee', 'carts.code', 'products.barcode_text as product_code'])
 		->leftjoin('cart_detail', 'cart_detail.cart_id', '=', 'carts.id')
 		->leftjoin('products', 'products.id', '=', 'cart_detail.product_id')
 		->where('carts.code', '=', $cartCode)
@@ -177,6 +177,13 @@ Class CartRepository
 			$model->save();
 		}
 
+		// Excute if cart status is COMPLETED then copy cart & cart detail to payment & payment detail
+		if ($model->status == COMPLETED) {
+			$model->details;
+			$payment_repo = new PaymentRepository();
+			$payment = $payment_repo->createOrUpdate($model);
+		}
+
 		return $model;
 	}
 	
@@ -187,12 +194,12 @@ Class CartRepository
 			if ($modelProductDetail) {
 				$modelProductDetail->quantity += $modelDetail->quantity;
 				$modelProductDetail->save();
+			}
 
-				$modelProduct = Product::find($modelDetail->product_id);
-				if ($modelProduct) {
-					$modelProduct->quantity_available += $modelProductDetail->quantity;
-					$modelProduct->save();
-				}
+			$modelProduct = Product::find($modelDetail->product_id);
+			if ($modelProduct) {
+				$modelProduct->quantity_available += $modelDetail->quantity;
+				$modelProduct->save();
 			}
 
 			// Delete detail
@@ -258,6 +265,9 @@ Class CartRepository
 			$customer->address = $data['customer_address'];
 
 			$customer->save();
+
+			$customer->code = general_code($customer->name, $customer->id, 5);
+			$customer->save();
 		}
 		
 		$model->customer_id = $customer->id;
@@ -322,7 +332,7 @@ Class CartRepository
 		}
 
 		// Excute if cart status is COMPLETED then copy cart & cart detail to payment & payment detail
-		if ($model->status = COMPLETED) {
+		if ($model->status == COMPLETED) {
 			$model->details;
 			$payment_repo = new PaymentRepository();
 			$payment = $payment_repo->createOrUpdate($model);
@@ -339,19 +349,8 @@ Class CartRepository
 			if (isset($detail->id)) {
 				$modelDetail = CartDetail::find($detail->id);
 				if ($modelDetail) {
-					if (isset($detail->delete) && $detail->delete == true) {
-						$this->deleteDetails($modelDetail->id);
-					}
-				}
-			}
-		}
-
-		foreach ($details as $detail) {
-
-			if (isset($detail->id)) {
-				$modelDetail = CartDetail::find($detail->id);
-				if ($modelDetail) {
 					if (!isset($detail->delete) || $detail->delete != true) {
+						$old_quantity = $modelDetail->quantity;
 						$modelDetail->product_id = (isset($detail->product_name)) ? $detail->product_name->id : 0;
 						$modelDetail->product_detail_id = (isset($detail->product_detail)) ? $detail->product_detail->id : 0;
 						$modelDetail->quantity = (isset($detail->product_quantity)) ? $detail->product_quantity : 0;
@@ -359,6 +358,19 @@ Class CartRepository
 						$modelDetail->price = (isset($detail->product_price)) ? $detail->product_price : 0;
 						$modelDetail->total_price = (isset($detail->total_price)) ? $detail->total_price : 0;
 						$modelDetail->save();
+						if (isset($detail->product_detail)) {
+							if ($modelProductDetail = ProductDetail::find($detail->product_detail->id)) {
+								$modelProductDetail->quantity -= $detail->product_quantity - $old_quantity;
+								$modelProductDetail->save();
+							}
+
+							if ($modelProduct = Product::find($detail->product_detail->product_id)) {
+								$modelProduct->quantity_available -= $detail->product_quantity - $old_quantity;
+								$modelProduct->save();
+							}
+						}
+					}else{
+						$this->deleteDetails($modelDetail->id);
 					}
 				}
 			}else{
@@ -372,22 +384,19 @@ Class CartRepository
 						'total_price' => (isset($detail->total_price)) ? $detail->total_price : 0,
 					]);
 					$model->details()->save($modelDetail);
-				}
-			}
+					if (isset($detail->product_detail)) {
+						if ($modelProductDetail = ProductDetail::find($detail->product_detail->id)) {
+							$modelProductDetail->quantity -= $detail->product_quantity;
+							$modelProductDetail->save();
+						}
 
-			// Subtract product detail quantity
-			if (isset($detail->product_detail)) {
-				if ($modelProductDetail = ProductDetail::find($detail->product_detail->id)) {
-					$modelProductDetail->quantity -= $detail->product_quantity;
-					$modelProductDetail->save();
-				}
-				
-				if ($modelProduct = Product::find($detail->product_detail->product_id)) {
-					$modelProduct->quantity_available -= $detail->product_quantity;
-					$modelProduct->save();
+						if ($modelProduct = Product::find($detail->product_detail->product_id)) {
+							$modelProduct->quantity_available -= $detail->product_quantity;
+							$modelProduct->save();
+						}
+					}
 				}
 			}
-			
 		}
 	}
 
@@ -410,7 +419,7 @@ Class CartRepository
 			$return[] = [
 				'id' => $value->id,
 				'product_image' => ($value->product->photo) ? asset('storage/' . $value->product->photo) : asset(NO_PHOTO),
-				'product_code' => ($value->product->code) ? $value->product->code : 0,
+				'product_code' => ($value->product->barcode_text) ? $value->product->barcode_text : 0,
 				'product_price' => ($value->price) ? $value->price : 0,
 				'total_price' => ($value->total_price) ? $value->total_price : 0,
 				'product_quantity' => ($value->quantity) ? $value->quantity : 0,

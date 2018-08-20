@@ -423,7 +423,7 @@
                         // $('#add_cart_details').prop('disabled', true);
                         cart_details.push({
                             'product_image':(data.product.photo) ? path_img_folder + data.product.photo : default_image,
-                            'product_code':data.product.code,
+                            'product_code':data.product.barcode_text,
                             'product_price':parseInt(data.product.sell_price),
                             'product_editable_price':data.product.sell_price,
                             'product_name':{id:$('select[name="product_name"]').val(), name:$('select[name="product_name"] option[value="'+$('select[name="product_name"]').val()+'"]').text()},

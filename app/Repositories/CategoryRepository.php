@@ -80,6 +80,7 @@ Class CategoryRepository
         if ($data['parent_id']) {
             $parent = Category::find($data['parent_id']);
         }
+        $model->code = $data['code'];
         $model->parent_id = ($data['parent_id']) ? $data['parent_id'] : null;
         $model->level = ($data['parent_id']) ? $parent->level + 1 : 1;
         $model->description = $data['description'];

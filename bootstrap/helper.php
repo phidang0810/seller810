@@ -131,6 +131,17 @@ function general_code($string, $id, $number)
     return $result;
 }
 
+function general_product_code($string, $id, $number)
+{
+    $arr = explode(' ', trim($string));
+    $code = '';
+    foreach($arr as $s)
+    {
+        $code .= strtoupper($s);
+    }
+    return $code . sprintf('%0' . $number . 'd', $id);
+}
+
 function parse_status($status){
 	$status_parsed = '';
 	switch ($status) {

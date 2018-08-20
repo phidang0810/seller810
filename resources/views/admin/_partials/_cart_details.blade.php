@@ -71,7 +71,6 @@
     <table class="table table-borderless">
         <thead>
             <tr>
-                <th>Mã đơn hàng</th>
                 <th>Mã sản phẩm</th>
                 <th>Đơn giá</th>
                 <th>Số lượng</th>
@@ -79,77 +78,76 @@
         </thead>
         <tfoot>
             <tr>
-                <td colspan="2">Tổng cộng</td>
-                <td colspan="2">
-                        <!-- <input type="text" name="total_price" placeholder="" class="form-control thousand-number m-b"
+                <td colspan="1">Tổng cộng</td>
+                <td colspan="2" class="text-right">
+                        <!-- <input type="text" name="total_price" placeholder="" class="form-control thousand-number money m-b"
                             value="{{$result['cart']->total_price}}" readonly="readonly" /> -->
-                            <span class="thousand-number m-b">{{($result['cart']->total_price) ? $result['cart']->total_price : 0}}</span>
+                            <span class="thousand-number money m-b">{{($result['cart']->total_price) ? $result['cart']->total_price : 0}}</span>
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="2">Thuế</td>
-                        <td colspan="2">
-                       <!--  <input type="text" name="vat_amount" placeholder="" class="form-control thousand-number m-b"
+                        <td colspan="1">Thuế</td>
+                        <td colspan="2" class="text-right">
+                       <!--  <input type="text" name="vat_amount" placeholder="" class="form-control thousand-number money m-b"
                         value="{{$result['cart']->vat_amount}}" readonly="readonly" /> -->
-                        <span class="thousand-number m-b">{{($result['cart']->vat_amount) ? $result['cart']->vat_amount : 0}}</span>
+                        <span class="thousand-number money m-b">{{($result['cart']->vat_amount) ? $result['cart']->vat_amount : 0}}</span>
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="2">Phí vận chuyển</td>
-                    <td colspan="2">
-                        <!-- <input type="text" name="shipping_fee" placeholder="" class="form-control thousand-number m-b"
+                    <td colspan="1">Phí vận chuyển</td>
+                    <td colspan="2" class="text-right">
+                        <!-- <input type="text" name="shipping_fee" placeholder="" class="form-control thousand-number money m-b"
                             value="{{$result['cart']->shipping_fee}}" readonly="readonly" /> -->
-                            <span class="thousand-number m-b">{{($result['cart']->shipping_fee) ? $result['cart']->shipping_fee : 0}}</span>
+                            <span class="thousand-number money m-b">{{($result['cart']->shipping_fee) ? $result['cart']->shipping_fee : 0}}</span>
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="2">Tổng chiết khấu</td>
-                        <td colspan="2">
-                        <!-- <input type="text" name="total_discount_amount" placeholder="" class="form-control thousand-number m-b"
+                        <td colspan="1">Tổng chiết khấu</td>
+                        <td colspan="2" class="text-right">
+                        <!-- <input type="text" name="total_discount_amount" placeholder="" class="form-control thousand-number money m-b"
                             value="{{$result['cart']->total_discount_amount}}" readonly="readonly" /> -->
-                            <span class="thousand-number m-b">{{($result['cart']->total_discount_amount) ? $result['cart']->total_discount_amount : 0}}</span>
+                            <span class="thousand-number money m-b">{{($result['cart']->total_discount_amount) ? $result['cart']->total_discount_amount : 0}}</span>
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="2" style="font-weight: 700;">Thành tiền</td>
-                        <td colspan="2">
-                        <!-- <input type="text" name="price" placeholder="" class="form-control thousand-number m-b"
+                        <td colspan="1" style="font-weight: 700;">Thành tiền</td>
+                        <td colspan="2" class="text-right">
+                        <!-- <input type="text" name="price" placeholder="" class="form-control thousand-number money m-b"
                             value="{{$result['cart']->price}}" readonly="readonly" /> -->
-                            <span class="thousand-number m-b" style="font-weight: 700;">{{($result['cart']->price) ? $result['cart']->price : 0}}</span>
+                            <span class="thousand-number money m-b" style="font-weight: 700;">{{($result['cart']->price) ? $result['cart']->price : 0}}</span>
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="2" style="font-weight: 700;">Đã thanh toán</td>
-                        <td colspan="2" >
-                        <!-- <input type="text" name="paid_amount" placeholder="" class="form-control thousand-number m-b"
+                        <td colspan="1" style="font-weight: 700;">Đã thanh toán</td>
+                        <td colspan="2" class="text-right">
+                        <!-- <input type="text" name="paid_amount" placeholder="" class="form-control thousand-number money m-b"
                             value="{{$result['cart']->paid_amount}}" readonly="readonly" /> -->
-                            <span class="thousand-number m-b" style="font-weight: 700;">{{($result['cart']->paid_amount) ? $result['cart']->paid_amount : 0}}</span>
+                            <span class="thousand-number money m-b" style="font-weight: 700;">{{($result['cart']->paid_amount) ? $result['cart']->paid_amount : 0}}</span>
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="2" style="font-weight: 700;">Thanh toán thêm</td>
-                        <td colspan="2">
-                            <input type="text" name="pay_amount" placeholder="" class="form-control input-thousand-number m-b"
+                        <td colspan="1" style="font-weight: 700;">Thanh toán thêm</td>
+                        <td colspan="2" class="text-right">
+                            <input type="text" name="pay_amount" placeholder="" class="form-control input-thousand-number money m-b"
                             value=""/>
-                            <!-- <span class="thousand-number m-b">{{$result['cart']->total_price}}</span> -->
+                            <!-- <span class="thousand-number money m-b">{{$result['cart']->total_price}}</span> -->
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="2">Còn lại</td>
-                        <td colspan="2">
-                        <!-- <input type="text" name="needed_paid" placeholder="" class="form-control thousand-number m-b"
+                        <td colspan="1">Còn lại</td>
+                        <td colspan="2" class="text-right">
+                        <!-- <input type="text" name="needed_paid" placeholder="" class="form-control thousand-number money m-b"
                             value="{{$result['cart']->needed_paid}}" readonly="readonly" /> -->
-                            <span class="thousand-number m-b" id="needed_paid">{{$result['cart']->needed_paid}}</span>
+                            <span class="thousand-number money m-b" id="needed_paid">{{$result['cart']->needed_paid}}</span>
                         </td>
                     </tr>
                 </tfoot>
                 <tbody class="cart-detail-wrapper">
                     @foreach ($result['cart_details'] as $cart_detail)
                     <tr>
-                        <td>{{$cart_detail->code}}</td>
-                        <td>{{$cart_detail->product_code}}</td>
-                        <td>{{$cart_detail->price}}</td>
-                        <td class="text-right">{{$cart_detail->quantity}}</td>
+                        <td colspan="1">{{$cart_detail->product_code}}</td>
+                        <td class="thousand-number money text-right" colspan="1">{{$cart_detail->price}}</td>
+                        <td class="thousand-number text-right" colspan="1">{{$cart_detail->quantity}}</td>
                     </tr>
                     @endforeach
                 </tbody>
@@ -167,7 +165,7 @@
 
         function formatPrice(){
             // Format prices
-            $('.input-thousand-number').toArray().forEach(function(field){
+            $('.input-thousand-number money').toArray().forEach(function(field){
                 new Cleave(field, {
                     numeral: true,
                     numeralThousandsGroupStyle: 'thousand'
@@ -197,10 +195,10 @@
             });
             // formatPrice();
             $('.thousand-number').simpleMoneyFormat();
-            if($('.thousand-number').text() != '' || $('.thousand-number').text() != null){
-                $('.thousand-number').append(" VNĐ");
+            if($('.thousand-number.money').text() != '' || $('.thousand-number.money').text() != null){
+                $('.thousand-number.money').append(" VNĐ");
             }
-            $('.thousand-number').closest('td').css("text-align", "right");
+            // $('.thousand-number money').closest('td').css("text-align", "right");
 
         });
     </script>

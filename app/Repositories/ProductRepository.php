@@ -27,7 +27,7 @@ Class ProductRepository
 
 	public function dataTable($request)
 	{
-		$products = Product::select(['products.id', 'products.category_ids', 'products.photo', 'products.code','products.name', 'products.quantity_available', 'products.quantity', 'products.price', 'products.sell_price', 'products.sizes', 'products.active', 'products.created_at'/*, 'price*quantity as total_price'*/]);
+		$products = Product::select(['products.id', 'products.category_ids', 'products.photo', 'products.barcode_text','products.name', 'products.quantity_available', 'products.quantity', 'products.price', 'products.sell_price', 'products.sizes', 'products.active', 'products.created_at'/*, 'price*quantity as total_price'*/]);
         $categories = Category::get()->pluck('name', 'id')->toArray();
 		$dataTable = DataTables::eloquent($products)
 		->filter(function ($query) use ($request) {
@@ -125,7 +125,7 @@ Class ProductRepository
 		$model->quantity_available = $data['quantity'];
 		$model->brand_id = $data['brand_id'];
 		$model->content = $data['content'];
-		$model->code = $data['code'];
+		// $model->code = $data['code'];
 		$model->barcode = $data['barcode'];
 		$model->meta_keyword = $data['meta_keyword'];
 		$model->meta_description = $data['meta_description'];
@@ -155,6 +155,10 @@ Class ProductRepository
 		if (isset($data['categories'])) {
 			$this->addCategories($model->id, $data['categories']);
 
+			// Generate product code based on category code
+			$category = $this->lowestLevelCategory($model->id);
+			$model->barcode_text = general_product_code($category->code, $model->id, 7);
+			$model->save();
 		}
 
 		if (isset($data['details'])) {

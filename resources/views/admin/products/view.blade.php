@@ -380,7 +380,7 @@
                                                         <label class="col-md-3 control-label">Mã sản phẩm</label>
                                                         <div class="col-md-3">
                                                             <input type="text" name="code" placeholder="" class="form-control m-b validate-ajax"
-                                                            value="@if(isset($data->code)){{$data->code}}@else{{old('code')}}@endif"/>
+                                                            value="@if(isset($data->barcode_text)){{$data->barcode_text}}@else{{old('barcode_text')}}@endif" readonly="true" />
                                                         </div>
                                                         <label class="col-md-2 control-label">Số lượng</label>
                                                         <div class="col-md-3">

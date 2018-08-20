@@ -50,6 +50,15 @@
 
                             <div class="row">
                                 <div class="form-group">
+                                    <label class="col-md-2 control-label">Mã danh mục (<span class="text-danger">*</span>)</label>
+                                    <div class="col-md-5">
+                                        <input type="text" name="code" placeholder="" class="form-control required m-b" value="@if(isset($data->code)){{$data->code}}@else{{old('code')}}@endif"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group">
                                     <label class="col-md-2 control-label">Mô tả</label>
                                     <div class="col-md-5">
                                         <textarea name="description" id="" cols="30" rows="10"  class="form-control m-b">@if(isset($data->description)){{$data->description}}@else{{old('description')}}@endif</textarea>
