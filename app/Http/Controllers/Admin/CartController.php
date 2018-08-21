@@ -133,9 +133,10 @@ class CartController extends AdminController
             $id = $input['id'] ?? null;
 
             $data = $cart->createOrUpdate($input, $id);
+            $result = $cart->getCartDetail($data->code);
 
             $return = [
-                'data' => $data,
+                'data' => $result,
                 'id' => $data->id,
                 'message'   =>  'Save cart data successfull',
             ];

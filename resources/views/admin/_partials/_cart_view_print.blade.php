@@ -1,4 +1,4 @@
-<!-- BEGIN: Print cart -->
+<!--  BEGIN: Print cart -->
 <div id="print-section">
     <div class="row">
         <div class="col-md-12">
@@ -37,7 +37,7 @@
         <div class="col-sm-6" >
             <div class="form-group">
                 <label class="col-sm-4 control-label font-bold">Ngày mua:</label>
-                <label class="col-sm-8 control-label">21/8/2018</label>
+                <label class="col-sm-8 control-label lbl-customer-created"></label>
             </div>
         </div>
         <div class="col-sm-6">
@@ -48,8 +48,8 @@
         </div>
         <div class="col-sm-6">
             <div class="form-group">
-                <label class="col-sm-4 control-label font-bold" style="color: red;">Mã đơn hàng:</label>
-                <label class="col-sm-8 control-label">@if(isset($data)){{$data}}@endif</label>
+                <label class="col-sm-4 control-label font-bold">Mã đơn hàng:</label>
+                <label class="col-sm-8 control-label lbl-customer-code"></label>
             </div>
         </div>
         <div class="col-sm-6">
@@ -60,30 +60,21 @@
         </div>
     </div>
     <div class="table-wrapper">
-        <table class="table bordered">
+        <table class="table bordered tbl-list-product table-borderless">
             <thead>
-              <tr>
-                <th></th>
-                <th>Tên sản phẩm</th>
-                <th>Mã sản phẩm</th>
-                <th>Số lượng</th>
-                <th>Giá</th>
-                <th>Tổng giá</th>
-                <th>Giá sỉ</th>
-            </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
-    </tbody>
-</table>
+                <tr>
+                    <th>Tên sản phẩm</th>
+                    <th>Mã sản phẩm</th>
+                    <th>Số lượng</th>
+                    <th width="10%">Giá</th>
+                    <!-- <th>Tổng giá</th> -->
+                </tr>
+            </thead>
+            <tfoot>
+            </tfoot>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
 </div>
-</div>
-<!-- END: Print cart -->
+<!-- END: Print cart

@@ -471,11 +471,6 @@
                         $('input[name="customer_email"]').val(data.customer.email);
                         $('input[name="customer_address"]').val(data.customer.address);
 
-                        //---> Apply for print
-                        $('.lbl-customer-name').text(data.customer.name);
-                        $('.lbl-customer-phone').text(data.customer.phone);
-                        $('.lbl-customer-address').text(data.customer.address);
-
                         if (!$.isEmptyObject(data.customer.city)) {
                             $('select[name="customer_city"]').val(data.customer.city.id);
                         }
@@ -543,6 +538,46 @@
 
     });
 
+    function parseProductTable(arrProducts){
+        var html = '';
+        if (arrProducts.length > 0) {
+            $.each(arrProducts, function( index, value ) {
+              html += '<tr>';
+              html += '<td>'+value['product_name']+'</td>';
+              html += '<td>'+value['product_code']+'</td>';
+              html += '<td>'+value['quantity']+'</td>';
+              html += '<td class"thousand-number" style="text-align:right;">'+value['price']+'</td>';
+              // html += '<td>'+value['total_price']+'</td>';
+              html += '</tr>';
+            });
+        }
+        return html;
+    }
+
+    function parseSummaryProduct(cart){
+        var html = '<tr><td colspan="3" style="text-align:right" >Tổng cộng:</td><td class="thousand-number" style="text-align:right">'+cart['total_price']+'</td></tr>';
+        html += '<tr><td colspan="3" style="text-align:right">Thuế:</td><td class="thousand-number" style="text-align:right">'+cart['vat_amount']+'</td></tr>';
+        html += '<tr><td colspan="3" style="text-align:right">Phí vận chuyển:</td><td class="thousand-number" style="text-align:right">'+cart['shipping_fee']+'</td></tr>';
+        html += '<tr><td colspan="3" style="text-align:right">Tổng chiết khấu:</td><td class="thousand-number" style="text-align:right">'+cart['total_discount_amount']+'</td></tr>';
+        html += '<tr><td colspan="3" style="text-align:right">Thành tiền:</td><td class="thousand-number" style="text-align:right">'+cart['price']+'</td></tr>';
+        $('.tbl-list-product > tfoot').html(html);
+    }
+    
+    function getDataToPrint(data){
+        //---> Apply for print
+        $('.lbl-customer-name').text(data['data']['cart']['customer_name']);
+        $('.lbl-customer-phone').text(data['data']['cart']['customer_phone']);
+        $('.lbl-customer-address').text(data['data']['cart']['customer_address']);
+        $('.lbl-customer-created').text(data['data']['cart']['created_at']);
+        $('.lbl-customer-code').text(data['data']['cart']['code']);
+        $('.tbl-list-product > tbody').html(parseProductTable(data['data']['cart_details']));
+        parseSummaryProduct(data['data']['cart']);
+        setTimeout(function(){
+            $('.thousand-number').simpleMoneyFormat();
+            $('.thousand-number').append(" VNĐ");
+        },300);
+    }
+
     //---> Print
     // $('button[value="save_print"]').printThis();
     $('button[value="save_print"]').click(function(event){
@@ -555,7 +590,8 @@
             dataType:'json'
         }).done(function(data) {
             if (!$.isEmptyObject(data)) {
-
+                console.log(data);
+                getDataToPrint(data);
                 print_el.removeClass("hidden");
                 print_el.printThis({
                     header: null,
