@@ -66,7 +66,7 @@
                     <th>Tên sản phẩm</th>
                     <th>Mã sản phẩm</th>
                     <th>Số lượng</th>
-                    <th width="10%">Giá</th>
+                    <th width="15%" style="text-align: right;">Giá</th>
                     <!-- <th>Tổng giá</th> -->
                 </tr>
             </thead>
