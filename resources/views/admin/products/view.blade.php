@@ -274,6 +274,13 @@
         })
     });
 
+    function print_barcode(){
+        var print_el = $("#barcode_image");
+        print_el.printThis({
+            header: null,
+        });
+    }
+
     $(document).ready(function ($) {
         $( "#mainForm" ).submit(function( event ) {
             var searchIDs = $("#mainForm .list-tree-section input:checkbox:checked").map(function(){
@@ -398,7 +405,7 @@
                                                             <img id="barcode_image" src="{{asset('storage/' .$data->barcode)}}" alt="barcode">
                                                         </div>
                                                         <div class="col-md-3">
-                                                            <button class="btn btn-primary">In barcode</button>
+                                                            <a class="btn btn-primary" onclick="print_barcode();">In barcode</a>
                                                         </div>
                                                         @endif
                                                     </div>
