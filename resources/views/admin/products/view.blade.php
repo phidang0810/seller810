@@ -397,19 +397,19 @@
                                                     </div>
                                                 </div>
 
+                                                @if(isset($data->barcode))
                                                 <div class="row">
                                                     <div class="form-group clearfix">
                                                         <label class="col-md-3 control-label">Barcode</label>
-                                                        @if($data->barcode)
                                                         <div class="col-md-6">
                                                             <img id="barcode_image" src="{{asset('storage/' .$data->barcode)}}" alt="barcode">
                                                         </div>
                                                         <div class="col-md-3">
                                                             <a class="btn btn-primary" onclick="print_barcode();">In barcode</a>
                                                         </div>
-                                                        @endif
                                                     </div>
                                                 </div>
+                                                @endif
 
                                                 <div class="row">
                                                     <div class="form-group">
