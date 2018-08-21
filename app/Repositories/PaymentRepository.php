@@ -331,7 +331,7 @@ Class PaymentRepository
         $type = $search['type'] ?? 'pie';
         $select = $search['select'] ?? 'count';
         if ($select === 'count') {
-            $data = Payment::selectRaw('platforms.name, COUNT(payments.platform_id) as total');
+            $data = Payment::selectRaw('platforms.name, COUNT(payments.cart_id) as total');
         } else {
             $data = Payment::selectRaw('platforms.name, SUM(payments.total_price) as total');
         }
@@ -363,7 +363,7 @@ Class PaymentRepository
         $type = $search['type'] ?? 'pie';
         $select = $search['select'] ?? 'count';
         if ($select === 'count') {
-            $data = PaymentDetail::selectRaw('categories.name, COUNT(categories.id) as total');
+            $data = PaymentDetail::selectRaw('categories.name, COUNT(DISTINCT payment_detail.cart_id) as total');
         } else {
             $data = PaymentDetail::selectRaw('categories.name, SUM(payment_detail.total_price) as total');
         }
@@ -452,7 +452,7 @@ Class PaymentRepository
 
     public function getRevenueDataTable($request)
     {
-        $products = PaymentDetail::selectRaw('products.name, products.code, products.photo, products.category_ids, payments.platform_id, SUM(payment_detail.quantity) as quantity, SUM(payment_detail.total_price) as total_price, (payment_detail.total_price - (products.price*payment_detail.quantity)) as profit, DATE(payment_detail.created_at) as created_at, COUNT(payments.cart_id) total_cart')
+        $products = PaymentDetail::selectRaw('products.name, products.barcode_text, products.photo, products.category_ids, payments.platform_id, SUM(payment_detail.quantity) as quantity, SUM(payment_detail.total_price) as total_price, (payment_detail.total_price - (products.price*payment_detail.quantity)) as profit, DATE(payment_detail.created_at) as created_at, COUNT(payments.cart_id) total_cart')
                     ->join('products' ,'products.id', '=', 'payment_detail.product_id')
                     ->join('payments', 'payments.id', '=', 'payment_detail.payment_id')
                     ->groupBy('payment_detail.product_id');
@@ -486,8 +486,8 @@ Class PaymentRepository
 
                 if (trim($request->get('keyword')) !== "") {
                     $query->where(function ($sub) use ($request) {
-                        $sub->where('products.name,like,%' . $request->get('keyword') . '%');
-                        $sub->where('products.code,like,%' . $request->get('keyword') . '%');
+                        $sub->where('products.name','like','%' . $request->get('keyword') . '%');
+                        $sub->where('products.barcode_text','like','%' . $request->get('keyword') . '%');
                     });
                 }
             }, true)

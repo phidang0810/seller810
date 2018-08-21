@@ -33,7 +33,7 @@
                 },
                 columns: [
                     {data: 'name'},
-                    {data: 'code'},
+                    {data: 'barcode_text'},
                     {data: 'category'},
                     {data: 'quantity'},
                     {data: 'created_at'},

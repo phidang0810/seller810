@@ -102,6 +102,15 @@
                 </li>
             @endif
 
+            @if(key_exists('setting_manager', Auth::user()->permissions))
+                <li class="{{ set_active(['quan-ly/cai-dat', 'quan-ly/cai-dat/*']) }} nav-item">
+                    <a href="#"><i class="fa fa-shopping-cart"></i> <span class="nav-label">Cài Đặt</span><span class="fa arrow"></span></a>
+                    <ul class="nav nav-second-level">
+                        <li class="{{ set_active(['quan-ly/cai-dat/phong-ban']) }}"><a href="{{route('admin.roles.index')}}">Phòng Ban</a></li>
+                    </ul>
+                </li>
+            @endif
+
         </ul>
 
     </div>

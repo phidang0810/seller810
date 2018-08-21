@@ -121,7 +121,7 @@
                                     text.push('<li><span class="legend-item" style="background:' + chart.data.datasets[0].backgroundColor[i] + '" />&nbsp;');
                                     if (chart.data.labels[i]) {
                                         text.push(chart.data.labels[i]);
-                                        text.push('<span style="float:right">'+number_format(chart.data.datasets[0].data[i])+' đơn hàng</span>');
+                                        text.push('<span style="float:right">'+number_format(chart.data.datasets[0].data[i])+' cái</span>');
                                     }
                                     text.push('</li>');
                                 }
@@ -277,7 +277,7 @@
                 columns: [
                     {data: 'cart_code'},
                     {data: 'name'},
-                    {data: 'code'},
+                    {data: 'barcode_text'},
                     {data: 'category'},
                     {data: 'total_cart'},
                     {data: 'platform'},
@@ -285,7 +285,6 @@
                 ],
                 "aoColumnDefs": [
                     // Column index begins at 0
-                    { "sClass": "text-right", "aTargets": [ 3,4,5 ] }
                 ],
                 "language": {
                     "decimal": "",

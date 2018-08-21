@@ -275,7 +275,7 @@
                 },
                 columns: [
                     {data: 'name'},
-                    {data: 'code'},
+                    {data: 'barcode_text'},
                     {data: 'category'},
                     {data: 'total_cart'},
                     {data: 'total_price'},

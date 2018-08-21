@@ -3,6 +3,16 @@ Route::get ('/', 'DashboardController@index')->name('admin.dashboard');
 Route::get ('roles', 'RoleController@index')->name('admin.roles.index');
 Route::get ('roles/create', 'RoleController@create')->name('admin.roles.create');
 
+Route::prefix('cai-dat')
+    ->middleware('permission:setting_manager')->group(function () {
+        Route::get ('/phong-ban/', 'RoleController@index')->name('admin.roles.index');
+        Route::get ('/phong-ban/chi-tiet', 'RoleController@view')->name('admin.roles.view');
+        Route::get ('/phong-ban/them', 'RoleController@view')->name('admin.roles.create');
+        Route::post ('/phong-ban/them', 'RoleController@store')->name('admin.roles.store');
+        Route::delete ('/phong-ban/', 'RoleController@delete')->name('admin.roles.delete');
+        Route::put ('/phong-ban/change-status', 'RoleController@changeStatus')->name('admin.roles.changeStatus');
+    });
+
 Route::prefix('thanh-vien')
 ->middleware('permission:user_manager')->group(function () {
     Route::get ('/', 'UserController@index')->name('admin.users.index');
