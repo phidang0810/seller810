@@ -546,7 +546,7 @@
               html += '<td>'+value['product_name']+'</td>';
               html += '<td>'+value['product_code']+'</td>';
               html += '<td>'+value['quantity']+'</td>';
-              html += '<td class"thousand-number" style="text-align:right;">'+value['price']+'</td>';
+              html += '<td class="thousand-number" style="text-align:right;">'+value['price']+'</td>';
               // html += '<td>'+value['total_price']+'</td>';
               html += '</tr>';
             });
