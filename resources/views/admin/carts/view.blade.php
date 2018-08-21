@@ -466,7 +466,7 @@
             }).done(function(data) {
                 if (!$.isEmptyObject(data)) {
                     if (data.status == 'true') {
-                        console.log(data);
+                        // console.log(data);
                         $('input[name="customer_name"]').val(data.customer.name);
                         $('input[name="customer_email"]').val(data.customer.email);
                         $('input[name="customer_address"]').val(data.customer.address);
@@ -545,12 +545,26 @@
 
     //---> Print
     // $('button[value="save_print"]').printThis();
-    $('button[value="save_print"]').click(function(){
+    $('button[value="save_print"]').click(function(event){
         var print_el = $("#print-section");
-        print_el.removeClass("hidden");
-        print_el.printThis({
-            header: null,
+        event.preventDefault();
+        $.ajax({
+            url: "{{route('admin.carts.store')}}",
+            data:$("#mainForm").serialize(),
+            method:"POST",
+            dataType:'json'
+        }).done(function(data) {
+            if (!$.isEmptyObject(data)) {
 
+                print_el.removeClass("hidden");
+                print_el.printThis({
+                    header: null,
+
+                });
+            }else{
+            }
+        }).fail(function(jqXHR, textStatus){
+            alert('Có lỗi xảy ra, xin hãy làm mới trình duyệt');
         });
     });
 </script>

@@ -10,6 +10,7 @@ use App\Repositories\PlatformRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
+use Response;
 
 class CartController extends AdminController
 {
@@ -127,6 +128,20 @@ class CartController extends AdminController
      */
     public function store(CartRepository $cart)
     {
+        if ($this->_request->ajax()) {
+            $input = $this->_request->all();
+            $id = $input['id'] ?? null;
+
+            $data = $cart->createOrUpdate($input, $id);
+
+            $return = [
+                'data' => $data,
+                'id' => $data->id,
+                'message'   =>  'Save cart data successfull',
+            ];
+
+            return Response::json($return);
+        }
         $input = $this->_request->all();
         $id = $input['id'] ?? null;
 
