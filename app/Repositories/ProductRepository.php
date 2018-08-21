@@ -170,6 +170,19 @@ Class ProductRepository
 			$model->barcode = 'public/barcodes/'.$model->barcode_text.'.png';
 			
 			$model->save();
+		}else{
+			$old_barcode_text = $model->barcode_text;
+			$model->barcode_text = general_product_code('SP', $model->id, 7);
+
+			if ($model->barcode) {
+				if ($old_barcode_text != $model->barcode_text) {
+					Storage::delete($model->barcode);
+				}
+			}
+			Storage::disk('public')->put('barcodes/'.$model->barcode_text.'.png', base64_decode(DNS1D::getBarcodePNG($model->barcode_text, 'C128')));
+			$model->barcode = 'public/barcodes/'.$model->barcode_text.'.png';
+			
+			$model->save();
 		}
 
 		if (isset($data['details'])) {
