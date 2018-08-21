@@ -150,9 +150,13 @@ class CartController extends AdminController
         }
 
         $data = $cart->createOrUpdate($input, $id);
-
+        // dd($data);
         if($input['action'] === 'save') {
             return redirect()->route('admin.carts.view')->withSuccess($message);
+        }
+
+        if($input['action'] === 'save_print') {
+            // return redirect()->route('admin.carts.view', ['id' => $data->id])->withSuccess($message);
         }
 
         return redirect()->route('admin.carts.index')->withSuccess($message);

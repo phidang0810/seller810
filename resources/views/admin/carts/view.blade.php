@@ -406,7 +406,7 @@
             if (validateProductInfo($("select[name=product_name]").val(), "name") && validateProductInfo($("select[name=product_color]").val(), "color") && validateProductInfo($("select[name=product_size]").val(), "size") && validateNumberProduct() && validateUniqueDetail()) {
                 // $('#add_cart_details').removeAttr('disabled');
                 $('button[value="save"]').removeAttr('disabled');
-                $('button[value="save_quit"]').removeAttr('disabled');
+                $('button[value="save_print"]').removeAttr('disabled');
 
                 var path_img_folder = window.location.origin + '/storage/';
                 $.ajax({
@@ -447,7 +447,7 @@
             }else{
                 $('#add_cart_details').prop('disabled', true);
                 $('button[value="save"]').prop('disabled', true);
-                $('button[value="save_quit"]').prop('disabled', true);
+                $('button[value="save_print"]').prop('disabled', true);
                 console.log("Vui lòng nhập đủ thông tin");
             }
 
@@ -466,9 +466,16 @@
             }).done(function(data) {
                 if (!$.isEmptyObject(data)) {
                     if (data.status == 'true') {
+                        console.log(data);
                         $('input[name="customer_name"]').val(data.customer.name);
                         $('input[name="customer_email"]').val(data.customer.email);
                         $('input[name="customer_address"]').val(data.customer.address);
+
+                        //---> Apply for print
+                        $('.lbl-customer-name').text(data.customer.name);
+                        $('.lbl-customer-phone').text(data.customer.phone);
+                        $('.lbl-customer-address').text(data.customer.address);
+
                         if (!$.isEmptyObject(data.customer.city)) {
                             $('select[name="customer_city"]').val(data.customer.city.id);
                         }
@@ -534,6 +541,17 @@
 
         formatPrice();
 
+    });
+
+    //---> Print
+    // $('button[value="save_print"]').printThis();
+    $('button[value="save_print"]').click(function(){
+        var print_el = $("#print-section");
+        print_el.removeClass("hidden");
+        print_el.printThis({
+            header: null,
+
+        });
     });
 </script>
 @endsection
@@ -881,7 +899,7 @@
                                     <div class="text-right">
                                         <button type="button" class="btn btn-default" id="bt-reset"><i class="fa fa-refresh"></i> Làm mới</button>
                                         <button type="submit" name="action" class="btn btn-success" value="save"><i class="fa fa-save"></i> Lưu</button>
-                                        <button type="submit" name="action" class="btn btn-primary" value="save_quit"><i class="fa fa-save"></i> Lưu &amp; In</button>
+                                        <button type="submit" name="action" class="btn btn-primary" value="save_print"><i class="fa fa-save"></i> Lưu &amp; In</button>
                                     </div>
                                 </div>
                             </div>
@@ -893,4 +911,5 @@
         </div>
     </div>
 </div>
+@include('admin._partials._cart_view_print')
 @endsection

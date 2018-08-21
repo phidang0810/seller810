@@ -10,7 +10,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
-    <link href="{{asset('themes/inspinia/css/bootstrap.min.css')}}" rel="stylesheet">
+    <link href="{{asset('themes/inspinia/css/bootstrap.min.css')}}" rel="stylesheet"  media='all'>
     <link href="{{asset('themes/inspinia/css/plugins/jasny/jasny-bootstrap.min.css')}}" rel="stylesheet">
     <link href="{{asset('themes/inspinia//font-awesome/css/font-awesome.css')}}" rel="stylesheet">
     <link href="{{asset('themes/inspinia/css/plugins/colorpicker/bootstrap-colorpicker.min.css')}}" rel="stylesheet">
@@ -137,6 +137,7 @@
     <script src="{{asset('themes/inspinia/js/plugins/switchery/switchery.js')}}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
     <script src="{{asset('themes/inspinia/js/plugins/money-format/simple.money.format.js')}}"></script>
+    <script src="{{asset('themes/inspinia/js/plugins/print-this/printThis.js')}}"></script>
     <script>
         $.extend( $.validator.messages, {
             required: "Vui lòng nhập.",
