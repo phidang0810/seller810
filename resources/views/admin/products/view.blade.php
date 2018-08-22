@@ -384,12 +384,7 @@
 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-3 control-label">Mã sản phẩm</label>
-                                                        <div class="col-md-3">
-                                                            <input type="text" name="barcode_text" placeholder="" class="form-control m-b validate-ajax"
-                                                            value="@if(isset($data->barcode_text)){{$data->barcode_text}}@else{{old('barcode_text')}}@endif" readonly="true" />
-                                                        </div>
-                                                        <label class="col-md-2 control-label">Số lượng</label>
+                                                        <label class="col-md-3 control-label">Số lượng</label>
                                                         <div class="col-md-3">
                                                             <input readonly type="text" name="quantity" placeholder="0" class="form-control m-b c-quatity-input"
                                                             value="@if(isset($data->quantity)){{$data->quantity}}@else{{old('quantity')}}@endif"/>
@@ -401,11 +396,14 @@
                                                 <div class="row">
                                                     <div class="form-group clearfix">
                                                         <label class="col-md-3 control-label">Barcode</label>
-                                                        <div class="col-md-6">
-                                                            <img id="barcode_image" src="{{asset('storage/' .$data->barcode)}}" alt="barcode">
-                                                        </div>
-                                                        <div class="col-md-3">
-                                                            <a class="btn btn-primary" onclick="print_barcode();">In barcode</a>
+                                                        <div class="col-md-9">
+                                                            <div id="barcode_image" class="pull-left">
+                                                                <img src="{{asset('storage/' .$data->barcode)}}" alt="barcode">
+                                                                <div>@if(isset($data->barcode_text)){{$data->barcode_text}}@else{{old('barcode_text')}}@endif</div>
+                                                            </div>
+                                                            <div class="pull-right">
+                                                                <a class="btn btn-primary" onclick="print_barcode();">In barcode</a>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>

@@ -167,7 +167,7 @@ Class ProductRepository
 					Storage::delete($model->barcode);
 				}
 			}
-			Storage::disk('public')->put('barcodes/'.$model->barcode_text.'.png', base64_decode(DNS1D::getBarcodePNG($model->barcode_text, 'C128',2,22,array(1,1,1), true)));
+			Storage::disk('public')->put('barcodes/'.$model->barcode_text.'.png', base64_decode(DNS1D::getBarcodePNG($model->barcode_text, 'C128',2,33)));
 			$model->barcode = 'public/barcodes/'.$model->barcode_text.'.png';
 			
 			$model->save();
@@ -180,7 +180,7 @@ Class ProductRepository
 					Storage::delete($model->barcode);
 				}
 			}
-			Storage::disk('public')->put('barcodes/'.$model->barcode_text.'.png', base64_decode(DNS1D::getBarcodePNG($model->barcode_text, 'C128')));
+			Storage::disk('public')->put('barcodes/'.$model->barcode_text.'.png', base64_decode(DNS1D::getBarcodePNG($model->barcode_text, 'C128',2,33)));
 			$model->barcode = 'public/barcodes/'.$model->barcode_text.'.png';
 			
 			$model->save();

@@ -622,3 +622,10 @@ table.table-hover tbody tr td:hover{
  }
 }
 
+div#barcode_image {
+  text-align: center;
+}
+
+div#barcode_image div {
+ font-size: 14px;
+}
