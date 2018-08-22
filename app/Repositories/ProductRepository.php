@@ -158,6 +158,7 @@ Class ProductRepository
 
 			// Generate product code based on category code
 			$category = $this->lowestLevelCategory($model->id);
+			$model->main_cate = $category->id;
 			$old_barcode_text = $model->barcode_text;
 			$model->barcode_text = general_product_code($category->code, $model->id, 7);
 
@@ -166,7 +167,7 @@ Class ProductRepository
 					Storage::delete($model->barcode);
 				}
 			}
-			Storage::disk('public')->put('barcodes/'.$model->barcode_text.'.png', base64_decode(DNS1D::getBarcodePNG($model->barcode_text, 'C128')));
+			Storage::disk('public')->put('barcodes/'.$model->barcode_text.'.png', base64_decode(DNS1D::getBarcodePNG($model->barcode_text, 'C128',2,22,array(1,1,1), true)));
 			$model->barcode = 'public/barcodes/'.$model->barcode_text.'.png';
 			
 			$model->save();
