@@ -698,25 +698,27 @@ function getDataToPrint(data){
                             <div class="row">
                                 <div class="form-group">
                                     <div class="col-md-12">
-                                        <table id="i-cart-info" class="table">
-                                            <thead>
-                                                <tr>
-                                                    <th>Hình ảnh</th>
-                                                    <th>Tên sản phẩm</th>
-                                                    <th>Số lượng</th>
-                                                    <th>Mã sản phẩm</th>
-                                                    <th>Size</th>
-                                                    <th>Màu</th>
-                                                    <th>Đơn Giá</th>
-                                                    <th>Thành tiền</th>
-                                                    <th></th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                            </tbody>
-                                            <tfoot>
-                                            </tfoot>
-                                        </table>
+                                        <div class="table-responsive">
+                                            <table id="i-cart-info" class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Hình ảnh</th>
+                                                        <th>Tên sản phẩm</th>
+                                                        <th>Số lượng</th>
+                                                        <th>Mã sản phẩm</th>
+                                                        <th>Size</th>
+                                                        <th>Màu</th>
+                                                        <th>Đơn Giá</th>
+                                                        <th>Thành tiền</th>
+                                                        <th></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                </tbody>
+                                                <tfoot>
+                                                </tfoot>
+                                            </table>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

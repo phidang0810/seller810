@@ -305,10 +305,7 @@
                 }
             }
         });
-
-        //---> Init summer note
-        $('.summernote').summernote();
-
+        
         printTableDetails();
         printTablePhotos();
         // print_table_photos(photos);
@@ -485,20 +482,22 @@
                                                             <button type="button" class="btn btn-success pull-right c-add-info" id="add_details">Thêm</button>
                                                         </div>
                                                         <div class="col-md-9">
-                                                            <table id="i-product-info" class="table">
-                                                                <thead>
-                                                                    <tr>
-                                                                        <th>Màu sắc</th>
-                                                                        <th>Kích thước</th>
-                                                                        <th>Số lượng</th>
-                                                                        <th></th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                </tbody>
-                                                                <tfoot>
-                                                                </tfoot>
-                                                            </table>
+                                                            <div class="table-responsive">
+                                                                <table id="i-product-info" class="table">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th>Màu sắc</th>
+                                                                            <th>Kích thước</th>
+                                                                            <th>Số lượng</th>
+                                                                            <th></th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                    </tbody>
+                                                                    <tfoot>
+                                                                    </tfoot>
+                                                                </table>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -552,21 +551,23 @@
                                             <div class="row">
                                                 <div class="form-group">
                                                     <div class="col-md-9">
-                                                        <table id="i-product-photos" class="table">
-                                                            <thead>
-                                                                <tr>
-                                                                    <th>Hình</th>
-                                                                    <th>Màu</th>
-                                                                    <th>Tên</th>
-                                                                    <th>Số thứ tự</th>
-                                                                    <th></th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
+                                                        <div class="table-responsive">
+                                                            <table id="i-product-photos" class="table">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>Hình</th>
+                                                                        <th>Màu</th>
+                                                                        <th>Tên</th>
+                                                                        <th>Số thứ tự</th>
+                                                                        <th></th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
 
 
-                                                            </tbody>
-                                                        </table>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
