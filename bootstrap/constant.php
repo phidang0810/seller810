@@ -22,11 +22,12 @@ define('PAYING_OFF_TEXT', 'Đã thanh toán');
 define('RECEIVED_PAYMENT_TEXT', 'Đã nhận tiền');
 
 // cart status: chưa giao, đang giao, đã giao, đã hoàn tất, đã hủy
-define('EXCUTING', 1);
-define('TRANSPORTING', 2);
-define('TRANSPORTED', 3);
-define('COMPLETED', 4);
-define('CANCELED', 5);
+define('CART_NEW', 1);
+define('EXCUTING', 2);
+define('CART_TRANSPORTING', 3);
+define('TRANSPORTED', 4);
+define('COMPLETED', 5);
+define('CANCELED', 6);
 
 // cart status: chưa giao, đang giao, đã giao, đã hoàn tất, đã hủy
 define('EXCUTING_TEXT', 'Đang xử lý');

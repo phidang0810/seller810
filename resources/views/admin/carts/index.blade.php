@@ -398,8 +398,8 @@ function updateCartStatus(){
                             <option @if(app('request')->has('status') && app('request')->input('status') == EXCUTING) selected
                                 @endif value="{{EXCUTING}}">{{EXCUTING_TEXT}}
                             </option>
-                            <option @if(app('request')->has('status') && app('request')->input('status') == TRANSPORTING) selected
-                                @endif value="{{TRANSPORTING}}">{{TRANSPORTING_TEXT}}
+                            <option @if(app('request')->has('status') && app('request')->input('status') == CART_TRANSPORTING) selected
+                                @endif value="{{CART_TRANSPORTING}}">{{TRANSPORTING_TEXT}}
                             </option>
                             <option @if(app('request')->has('status') && app('request')->input('status') == TRANSPORTED) selected
                                 @endif value="{{TRANSPORTED}}">{{TRANSPORTED_TEXT}}

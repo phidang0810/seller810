@@ -158,4 +158,9 @@ class UserRepository
         $model->active = $status;
         return $model->save();
     }
+    public function getTotalUser()
+    {
+        $data = User::where('active', ACTIVE)->count();
+        return $data;
+    }
 }

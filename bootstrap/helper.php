@@ -149,7 +149,7 @@ function parse_status($status){
 		// 	$status_parsed = '<span class="label label-primary">'.EXCUTING_TEXT.'</span>';
 		// 	break;
 
-		case TRANSPORTING:
+		case CART_TRANSPORTING:
 			$status_parsed = '<span class="label label-info">'.TRANSPORTING_TEXT.'</span>';
 			break;
 

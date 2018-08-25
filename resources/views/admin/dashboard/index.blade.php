@@ -32,7 +32,7 @@
         function getDataLineChart(search)
         {
             $.ajax({
-                url: "{{route('admin.payments.getPaymentChart')}}",
+                url: "{{route('admin.statistics.getPaymentChart')}}",
                 data:search,
                 success: function(res){
                     if(lineChart) {
@@ -90,7 +90,7 @@
 
 
             $.ajax({
-                url: "{{route('admin.payments.getTopProductSell')}}",
+                url: "{{route('admin.statistics.getTopProductSell')}}",
                 data:{select:'count'},
                 success: function(res){
                     var productChart = new Chart(document.getElementById("pieChartProduct"),{
@@ -126,7 +126,7 @@
             });
 
             $.ajax({
-                url: "{{route('admin.payments.getTopPlatformSell')}}",
+                url: "{{route('admin.statistics.getTopPlatformSell')}}",
                 data:{select:'count'},
                 success: function(res){
                     var platformChart = new Chart(document.getElementById("pieChartPlatform"),{
@@ -162,7 +162,7 @@
             });
 
             $.ajax({
-                url: "{{route('admin.payments.getTopCategorySell')}}",
+                url: "{{route('admin.statistics.getTopCategorySell')}}",
                 data:{select:'count'},
                 success: function(res){
                     var categoryChart = new Chart(document.getElementById("pieChartCategory"),{
@@ -253,27 +253,63 @@
         <div class="ibox-content">
             <div class="row">
                 <div class="col-xs-4 col-sm-2 text-center" style="border-right: 1px solid #ccc">
-                    <h3>20</h3>
+                    <h3>
+                        @if(key_exists('product_manager', Auth::user()->permissions))
+                            <a href="{{route('admin.carts.index')}}?status={{CART_NEW}}">{{$cart_new}}</a>
+                        @else
+                            {{$cart_new}}
+                        @endif
+                    </h3>
                     <small>ĐƠN HÀNG MỚI</small>
                 </div>
                 <div class="col-xs-4 col-sm-2 text-center" style="border-right: 1px solid #ccc">
-                    <h3>20</h3>
-                    <small>ĐƠN HÀNG MỚI</small>
+                   <h3>
+                       @if(key_exists('product_manager', Auth::user()->permissions))
+                            <a href="{{route('admin.carts.index')}}?status={{EXCUTING}}">{{$cart_processing}}</a>
+                        @else
+                            {{$cart_processing}}
+                        @endif
+                    </h3>
+                    <small>ĐƠN CHỜ XÁC NHẬN</small>
                 </div>
                 <div class="col-xs-4 col-sm-2 text-center" style="border-right: 1px solid #ccc">
-                    <h3>20</h3>
-                    <small>ĐƠN HÀNG MỚI</small>
+                    <h3>
+                        @if(key_exists('product_manager', Auth::user()->permissions))
+                            <a href="{{route('admin.carts.index')}}?status={{CART_TRANSPORTING}}">{{$cart_transporting}}</a>
+                        @else
+                            {{$cart_transporting}}
+                        @endif
+                    </h3>
+                    <small>ĐƠN HÀNG ĐANG GIAO</small>
                 </div>
                 <div class="col-xs-4 col-sm-2 text-center" style="border-right: 1px solid #ccc">
-                    <h3>20</h3>
+                    <h3>
+                        @if(key_exists('product_manager', Auth::user()->permissions))
+                            <a href="{{route('admin.product_available.index')}}?private_search=need_import">{{$product_need_import}}</a>
+                        @else
+                            {{$product_need_import}}
+                        @endif
+                    </h3>
                     <small>SẢN PHẨM SẮP HẾT</small>
                 </div>
                 <div class="col-xs-4 col-sm-2 text-center" style="border-right: 1px solid #ccc">
-                    <h3>20</h3>
-                    <small>ĐƠN HÀNG ĐANG CHỜ XÁC NHẬN</small>
+                    <h3>
+                        @if(key_exists('product_manager', Auth::user()->permissions))
+                            <a href="{{route('admin.product_available.index')}}?private_search=out_of_stock">{{$product_out_of_stock}}</a>
+                        @else
+                            {{$product_out_of_stock}}
+                        @endif
+                    </h3>
+                    <small>SẢN PHẨM HẾT HÀNG</small>
                 </div>
                 <div class="col-xs-4 col-sm-2 text-center">
-                    <h3>20</h3>
+                    <h3>
+                        @if(key_exists('user_manager', Auth::user()->permissions))
+                            <a href="{{route('admin.users.index')}}">{{$user}}</a>
+                        @else
+                            {{$user}}
+                        @endif
+                    </h3>
                     <small>NHÂN VIÊN</small>
                 </div>
             </div>
@@ -335,7 +371,7 @@
         <div class="col-md-4">
             <div class="ibox float-e-margins">
                 <div class="ibox-content">
-                    <h2 class="tt-page">SẢN PHẨM BÁN CHẠY <a href="#" class="pull-right">Xem tất cả</a></h2>
+                    <h2 class="tt-page">SẢN PHẨM BÁN CHẠY <a href="@if(key_exists('report_manager', Auth::user()->permissions)) {{route('admin.statistics.cartChart')}}?pie_type=product&pie_date=this_week @endif" class="pull-right">Xem tất cả</a></h2>
                     <div class="pie-chart" style="padding:20px">
                         <div class="pie" style="max-width:200px;margin:auto;margin-bottom: 20px">
                             <canvas id="pieChartProduct"></canvas>
@@ -348,7 +384,7 @@
         <div class="col-md-4">
             <div class="ibox float-e-margins">
                 <div class="ibox-content">
-                    <h2 class="tt-page">TOP NGUỒN ĐƠN HÀNG <a href="#" class="pull-right">Xem tất cả</a></h2>
+                    <h2 class="tt-page">TOP NGUỒN ĐƠN HÀNG <a href="@if(key_exists('report_manager', Auth::user()->permissions)) {{route('admin.statistics.cartChart')}}?pie_type=platform&pie_date=this_week @endif" class="pull-right">Xem tất cả</a></h2>
                     <div class="pie-chart" style="padding:20px">
                         <div class="pie" style="max-width:200px;margin:auto;margin-bottom: 20px">
                             <canvas id="pieChartPlatform"></canvas>
@@ -362,7 +398,7 @@
         <div class="col-md-4">
             <div class="ibox float-e-margins">
                 <div class="ibox-content">
-                    <h2 class="tt-page">TOP DANH MỤC BÁN CHẠY <a href="#" class="pull-right">Xem tất cả</a></h2>
+                    <h2 class="tt-page">TOP DANH MỤC BÁN CHẠY <a href="@if(key_exists('report_manager', Auth::user()->permissions)) {{route('admin.statistics.cartChart')}}?pie_type=category&pie_date=this_week @endif" class="pull-right">Xem tất cả</a></h2>
                     <div class="pie-chart" style="padding:20px">
                         <div class="pie" style="max-width:200px;margin:auto;margin-bottom: 20px">
                             <canvas id="pieChartCategory"></canvas>

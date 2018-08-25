@@ -41,6 +41,14 @@ Class ProductRepository
 				$query->where('products.active', $request->get('status'));
 			}
 
+            if (trim($request->get('private_search')) == "out_of_stock") {
+                $query->where('products.quantity_available', 0);
+            }
+
+            if (trim($request->get('private_search')) == "need_import") {
+                $query->where('products.quantity_available', '<=', 10);
+            }
+
 			if (trim($request->get('keyword')) !== "") {
 				$query->where(function ($sub) use ($request) {
 					$sub->where('products.name', 'like', '%' . $request->get('keyword') . '%');
@@ -612,4 +620,21 @@ Class ProductRepository
 
 		return $formatted_products;
 	}
+
+	public function getTotalProductNeedImport()
+    {
+	    $data = Product::where('active', ACTIVE)
+            ->where('quantity_available', '<=', 10)
+        ->count();
+	    return $data;
+    }
+
+    public function getTotalProductUnAvailable()
+    {
+        $data = Product::where('active', ACTIVE)
+            ->where('quantity_available', '=', 0)
+        ->count();
+
+        return $data;
+    }
 }

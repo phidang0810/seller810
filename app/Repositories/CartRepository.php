@@ -529,4 +529,10 @@ Class CartRepository
         return $dataTable;
     }
 
+    public function getTotalCart($status)
+    {
+        $data = Cart::where('status', $status)->count();
+        return $data;
+    }
+
 }

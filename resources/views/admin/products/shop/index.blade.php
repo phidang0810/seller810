@@ -32,6 +32,7 @@
                     d.keyword = $('#s-keyword').val();
                     d.status = $('#s-status').val();
                     d.category = $('#s-category').val();
+                    d.private_search = $('#private_search').val();
                 },
                 complete: function(){}
             },
@@ -157,6 +158,7 @@ $("#dataTables").on("click", '.bt-delete', function(){
             <div class="col-sm-3">
                 <div class="form-group">
                     <label>Tên</label>
+                    <input type="hidden" id="private_search" value="{{app('request')->input('private_search')}}" />
                     <input type="text" placeholder="Nhập tên" name="keyword" id="s-keyword" class="form-control" value="{{app('request')->input('keyword')}}">
                 </div>
             </div>
