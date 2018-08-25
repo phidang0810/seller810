@@ -84,7 +84,7 @@
         <tfoot>
             <tr>
                 <td colspan="1">Tổng cộng</td>
-                <td colspan="2" class="text-right">
+                <td colspan="3" class="text-right">
                         <!-- <input type="text" name="total_price" placeholder="" class="form-control thousand-number money m-b"
                             value="{{$result['cart']->total_price}}" readonly="readonly" /> -->
                             <span class="thousand-number money m-b">{{($result['cart']->total_price) ? $result['cart']->total_price : 0}}</span>
@@ -92,7 +92,7 @@
                     </tr>
                     <tr>
                         <td colspan="1">Thuế</td>
-                        <td colspan="2" class="text-right">
+                        <td colspan="3" class="text-right">
                        <!--  <input type="text" name="vat_amount" placeholder="" class="form-control thousand-number money m-b"
                         value="{{$result['cart']->vat_amount}}" readonly="readonly" /> -->
                         <span class="thousand-number money m-b">{{($result['cart']->vat_amount) ? $result['cart']->vat_amount : 0}}</span>
@@ -100,7 +100,7 @@
                 </tr>
                 <tr>
                     <td colspan="1">Phí vận chuyển</td>
-                    <td colspan="2" class="text-right">
+                    <td colspan="3" class="text-right">
                         <!-- <input type="text" name="shipping_fee" placeholder="" class="form-control thousand-number money m-b"
                             value="{{$result['cart']->shipping_fee}}" readonly="readonly" /> -->
                             <span class="thousand-number money m-b">{{($result['cart']->shipping_fee) ? $result['cart']->shipping_fee : 0}}</span>
@@ -108,7 +108,7 @@
                     </tr>
                     <tr>
                         <td colspan="1">Tổng chiết khấu</td>
-                        <td colspan="2" class="text-right">
+                        <td colspan="3" class="text-right">
                         <!-- <input type="text" name="total_discount_amount" placeholder="" class="form-control thousand-number money m-b"
                             value="{{$result['cart']->total_discount_amount}}" readonly="readonly" /> -->
                             <span class="thousand-number money m-b">{{($result['cart']->total_discount_amount) ? $result['cart']->total_discount_amount : 0}}</span>
@@ -116,7 +116,7 @@
                     </tr>
                     <tr>
                         <td colspan="1" style="font-weight: 700;">Thành tiền</td>
-                        <td colspan="2" class="text-right">
+                        <td colspan="3" class="text-right">
                         <!-- <input type="text" name="price" placeholder="" class="form-control thousand-number money m-b"
                             value="{{$result['cart']->price}}" readonly="readonly" /> -->
                             <span class="thousand-number money m-b" style="font-weight: 700;">{{($result['cart']->price) ? $result['cart']->price : 0}}</span>
@@ -124,7 +124,7 @@
                     </tr>
                     <tr>
                         <td colspan="1" style="font-weight: 700;">Đã thanh toán</td>
-                        <td colspan="2" class="text-right">
+                        <td colspan="3" class="text-right">
                         <!-- <input type="text" name="paid_amount" placeholder="" class="form-control thousand-number money m-b"
                             value="{{$result['cart']->paid_amount}}" readonly="readonly" /> -->
                             <span class="thousand-number money m-b" style="font-weight: 700;">{{($result['cart']->paid_amount) ? $result['cart']->paid_amount : 0}}</span>
@@ -132,7 +132,7 @@
                     </tr>
                     <tr>
                         <td colspan="1" style="font-weight: 700;">Thanh toán thêm</td>
-                        <td colspan="2" class="text-right">
+                        <td colspan="3" class="text-right">
                             <input type="text" name="pay_amount" placeholder="" class="form-control input-thousand-number money m-b"
                             value=""/>
                             <!-- <span class="thousand-number money m-b">{{$result['cart']->total_price}}</span> -->
@@ -140,7 +140,7 @@
                     </tr>
                     <tr>
                         <td colspan="1">Còn lại</td>
-                        <td colspan="2" class="text-right">
+                        <td colspan="3" class="text-right">
                         <!-- <input type="text" name="needed_paid" placeholder="" class="form-control thousand-number money m-b"
                             value="{{$result['cart']->needed_paid}}" readonly="readonly" /> -->
                             <span class="thousand-number money m-b" id="needed_paid">{{$result['cart']->needed_paid}}</span>
