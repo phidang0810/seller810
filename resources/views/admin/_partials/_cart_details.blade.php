@@ -67,6 +67,10 @@
         .table-borderless > thead > tr > th {
             border: none;
         }
+
+        .table-borderless > tbody > tr:last-child{
+            border-bottom: 1px solid #ccc;
+        }
     </style>
     <table class="table table-borderless">
         <thead>
