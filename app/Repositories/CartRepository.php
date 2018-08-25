@@ -80,7 +80,7 @@ Class CartRepository
 			
 		}, true)
 		->addColumn('created_at', function ($cart) {
-			$html = date('d/m/Y', strtotime($cart->created_at));
+			$html = $cart->created_at;//date('d/m/Y', strtotime($cart->created_at));
 			return $html;
 		})
 		->addColumn('status', function ($cart) {
@@ -88,6 +88,9 @@ Class CartRepository
 			return $html;
 		})
 		->rawColumns(['created_at', 'status'])
+		->order(function ($query) {
+			$query->orderBy('created_at', 'desc');
+		})
 		->toJson();
 		return $dataTable;
 	}
@@ -141,24 +144,24 @@ Class CartRepository
 		$model->needed_paid = $needed_paid;
 		// excute payment_status
 		if ($model->paid_amount && $model->paid_amount > 0) {
-			$model->payment_status = 2;
+			$model->payment_status = PAYING_NOT_ENOUGH;
 			if ($model->paid_amount >= $model->price) {
 				if ($model->platform_id && $model->platform_id != 0) {
-					$model->payment_status = 3;
+					$model->payment_status = PAYING_OFF;
 				}else{
-					$model->payment_status = 4;
+					$model->payment_status = RECEIVED_PAYMENT;
 				}
 				
 			}
 		}else{
-			$model->payment_status = 1;
+			$model->payment_status = NOT_PAYING;
 		}
 
 		$model->save();
 
 		// Excute status
-		if ($status == 4) {
-			if ($model->payment_status == 3 || $model->payment_status == 4) {
+		if ($status == CART_COMPLETED) {
+			if ($model->payment_status == PAYING_OFF || $model->payment_status == RECEIVED_PAYMENT) {
 				$model->status = $status;
 
 				$model->save();
@@ -166,7 +169,7 @@ Class CartRepository
 				return false;
 			}
 		}else{
-			if ($status == 5) {
+			if ($status == CART_CANCELED) {
 				if ($model->details) {
 					foreach ($model->details as $detail) {
 						$this->deleteDetails($detail->id);
@@ -178,7 +181,7 @@ Class CartRepository
 		}
 
 		// Excute if cart status is COMPLETED then copy cart & cart detail to payment & payment detail
-		if ($model->status == COMPLETED) {
+		if ($model->status == CART_COMPLETED) {
 			$model->details;
 			$payment_repo = new PaymentRepository();
 			$payment = $payment_repo->createOrUpdate($model);
@@ -289,29 +292,29 @@ Class CartRepository
 		$model->platform_id = $data['platform_id'];
 		// excute payment_status
 		if ($data['paid_amount'] && $data['paid_amount'] > 0) {
-			$model->payment_status = 2;
+			$model->payment_status = PAYING_NOT_ENOUGH;
 			if ($data['paid_amount'] >= $model->price) {
 				if ($model->platform_id != 0) {
-					$model->payment_status = 3;
+					$model->payment_status = PAYING_OFF;
 				}else{
-					$model->payment_status = 4;
+					$model->payment_status = RECEIVED_PAYMENT;
 				}
 				
 			}
 		}else{
-			$model->payment_status = 1;
+			$model->payment_status = NOT_PAYING;
 		}
 
 		// Excute status, if new then status is new
 		if (!$id) {
-			$model->status = EXCUTING;
+			$model->status = CART_NEW;
 		}else{
 			if (isset($data['status'])) {
-				if ($data['status'] == 4) {
-					if ($model->payment_status == 3 || $model->payment_status == 4) {
+				if ($data['status'] == CART_COMPLETED) {
+					if ($model->payment_status == PAYING_OFF || $model->payment_status == RECEIVED_PAYMENT) {
 						$model->status = $data['status'];
 					}else{
-						$model->status = 3;
+						$model->status = CART_TRANSPORTED;
 					}
 				}else{
 					$model->status = $data['status'];
@@ -332,7 +335,7 @@ Class CartRepository
 		}
 
 		// Excute if cart status is COMPLETED then copy cart & cart detail to payment & payment detail
-		if ($model->status == COMPLETED) {
+		if ($model->status == CART_COMPLETED) {
 			$model->details;
 			$payment_repo = new PaymentRepository();
 			$payment = $payment_repo->createOrUpdate($model);
@@ -451,88 +454,88 @@ Class CartRepository
 		return $return;
 	}
 
-    public function getStaticsCartDataTable($request)
-    {
-        $products = CartDetail::selectRaw('products.name, products.main_cate, products.barcode_text, carts.code as cart_code, products.photo, products.category_ids,carts.city_id, carts.platform_id, SUM(cart_detail.quantity) as quantity, SUM(cart_detail.total_price) as total_price, (cart_detail.total_price - (products.price*cart_detail.quantity)) as profit, DATE(cart_detail.created_at) as created_at, COUNT(carts.id) total_cart')
-            ->join('products' ,'products.id', '=', 'cart_detail.product_id')
-            ->join('carts' ,'carts.id', '=', 'cart_detail.cart_id')
-            ->groupBy('cart_detail.product_id');
-        if ($request->has('date')) {
-            $products->groupBy(DB::raw('DATE(cart_detail.created_at)'));
-        }
-        $categories = Category::get()->pluck('name', 'id')->toArray();
-        $platforms = Platform::get()->pluck('name','id')->toArray();
-        $cities = City::get()->pluck('name','id')->toArray();
-        $dataTable = DataTables::eloquent($products)
-            ->filter(function ($query) use ($request) {
-                if (trim($request->get('category')) !== "") {
-                    $query->join('product_category', 'products.id', '=', 'product_category.product_id')
-                        ->where('product_category.category_id', $request->get('category'));
-                }
+	public function getStaticsCartDataTable($request)
+	{
+		$products = CartDetail::selectRaw('products.name, products.main_cate, products.barcode_text, carts.code as cart_code, products.photo, products.category_ids,carts.city_id, carts.platform_id, SUM(cart_detail.quantity) as quantity, SUM(cart_detail.total_price) as total_price, (cart_detail.total_price - (products.price*cart_detail.quantity)) as profit, DATE(cart_detail.created_at) as created_at, COUNT(carts.id) total_cart')
+		->join('products' ,'products.id', '=', 'cart_detail.product_id')
+		->join('carts' ,'carts.id', '=', 'cart_detail.cart_id')
+		->groupBy('cart_detail.product_id');
+		if ($request->has('date')) {
+			$products->groupBy(DB::raw('DATE(cart_detail.created_at)'));
+		}
+		$categories = Category::get()->pluck('name', 'id')->toArray();
+		$platforms = Platform::get()->pluck('name','id')->toArray();
+		$cities = City::get()->pluck('name','id')->toArray();
+		$dataTable = DataTables::eloquent($products)
+		->filter(function ($query) use ($request) {
+			if (trim($request->get('category')) !== "") {
+				$query->join('product_category', 'products.id', '=', 'product_category.product_id')
+				->where('product_category.category_id', $request->get('category'));
+			}
 
-                if (trim($request->get('platform_id')) !== "") {
-                    $query->where('carts.platform_id', $request->get('platform_id'));
-                }
+			if (trim($request->get('platform_id')) !== "") {
+				$query->where('carts.platform_id', $request->get('platform_id'));
+			}
 
-                if (trim($request->get('date_from')) !== "") {
-                    $dateFrom = \DateTime::createFromFormat('d/m/Y', $request->get('date_from'));
-                    $dateFrom = $dateFrom->format('Y-m-d 00:00:00');
-                    $query->where('cart_detail.created_at', '>=', $dateFrom);
-                }
+			if (trim($request->get('date_from')) !== "") {
+				$dateFrom = \DateTime::createFromFormat('d/m/Y', $request->get('date_from'));
+				$dateFrom = $dateFrom->format('Y-m-d 00:00:00');
+				$query->where('cart_detail.created_at', '>=', $dateFrom);
+			}
 
-                if (trim($request->get('date_to')) !== "") {
-                    $dateTo = \DateTime::createFromFormat('d/m/Y', $request->get('date_to'));
-                    $dateTo = $dateTo->format('Y-m-d 23:59:50');
-                    $query->where('cart_detail.created_at', '<=', $dateTo);
-                }
+			if (trim($request->get('date_to')) !== "") {
+				$dateTo = \DateTime::createFromFormat('d/m/Y', $request->get('date_to'));
+				$dateTo = $dateTo->format('Y-m-d 23:59:50');
+				$query->where('cart_detail.created_at', '<=', $dateTo);
+			}
 
-                if (trim($request->get('keyword')) !== "") {
-                    $query->where(function ($sub) use ($request) {
-                        $sub->where('products.name','like','%' . $request->get('keyword') . '%');
-                        $sub->where('products.barcode_text','like','%' . $request->get('keyword') . '%');
-                    });
-                }
-            }, true)
-            ->addColumn('category', function($product) use ($categories) {
-                $html = '';
-                $categoryName = $categories[$product->main_cate] ?? '';
-                $html .= '<label class="label label-default">'.$categoryName.'</label><br/>';
-                return $html;
-            })
-            ->addColumn('total_price', function($product) use ($platforms) {
-                return format_price($product->total_price);
-            })
-            ->addColumn('total_cart', function($product) use ($platforms) {
-                return format_number($product->total_cart);
-            })
-            ->addColumn('profit', function($product) {
-                return format_price($product->profit);
-            })
-            ->addColumn('platform', function($product) use ($platforms) {
-                return $platforms[$product->platform_id] ?? '';
-            })
-            ->addColumn('city', function($product) use ($cities) {
-                return $cities[$product->city_id] ?? '';
-            })
+			if (trim($request->get('keyword')) !== "") {
+				$query->where(function ($sub) use ($request) {
+					$sub->where('products.name','like','%' . $request->get('keyword') . '%');
+					$sub->where('products.barcode_text','like','%' . $request->get('keyword') . '%');
+				});
+			}
+		}, true)
+		->addColumn('category', function($product) use ($categories) {
+			$html = '';
+			$categoryName = $categories[$product->main_cate] ?? '';
+			$html .= '<label class="label label-default">'.$categoryName.'</label><br/>';
+			return $html;
+		})
+		->addColumn('total_price', function($product) use ($platforms) {
+			return format_price($product->total_price);
+		})
+		->addColumn('total_cart', function($product) use ($platforms) {
+			return format_number($product->total_cart);
+		})
+		->addColumn('profit', function($product) {
+			return format_price($product->profit);
+		})
+		->addColumn('platform', function($product) use ($platforms) {
+			return $platforms[$product->platform_id] ?? '';
+		})
+		->addColumn('city', function($product) use ($cities) {
+			return $cities[$product->city_id] ?? '';
+		})
 
-            ->addColumn('photo', function ($product) {
-                if ($product->photo) {
-                    $html = '<img style="width: 80px; height: 60px;" class="img-thumbnail" src="' . asset('storage/' . $product->photo). '" />';
-                } else {
-                    $html = ' <img alt="No Photo" style="width: 80px; height: 60px;" class="img-thumbnail" src="'.asset(NO_PHOTO).'" >';
-                }
-                return $html;
-            })
-            ->rawColumns(['category', 'platform', 'photo'])
-            ->toJson();
+		->addColumn('photo', function ($product) {
+			if ($product->photo) {
+				$html = '<img style="width: 80px; height: 60px;" class="img-thumbnail" src="' . asset('storage/' . $product->photo). '" />';
+			} else {
+				$html = ' <img alt="No Photo" style="width: 80px; height: 60px;" class="img-thumbnail" src="'.asset(NO_PHOTO).'" >';
+			}
+			return $html;
+		})
+		->rawColumns(['category', 'platform', 'photo'])
+		->toJson();
 
-        return $dataTable;
-    }
+		return $dataTable;
+	}
 
-    public function getTotalCart($status)
-    {
-        $data = Cart::where('status', $status)->count();
-        return $data;
-    }
+	public function getTotalCart($status)
+	{
+		$data = Cart::where('status', $status)->count();
+		return $data;
+	}
 
 }

@@ -145,28 +145,28 @@ function general_product_code($string, $id, $number)
 function parse_status($status){
 	$status_parsed = '';
 	switch ($status) {
-		// case EXCUTING:
-		// 	$status_parsed = '<span class="label label-primary">'.EXCUTING_TEXT.'</span>';
-		// 	break;
+		case CART_NEW:
+			$status_parsed = '<span class="label label-primary">'.CART_TEXT[CART_NEW].'</span>';
+			break;
 
 		case CART_TRANSPORTING:
-			$status_parsed = '<span class="label label-info">'.TRANSPORTING_TEXT.'</span>';
+			$status_parsed = '<span class="label label-info">'.CART_TEXT[CART_TRANSPORTING].'</span>';
 			break;
 
-		case TRANSPORTED:
-			$status_parsed = '<span class="label label-warning">'.TRANSPORTED_TEXT.'</span>';
+		case CART_TRANSPORTED:
+			$status_parsed = '<span class="label label-warning">'.CART_TEXT[CART_TRANSPORTED].'</span>';
 			break;
 
-		case COMPLETED:
-			$status_parsed = '<span class="label label-success">'.COMPLETED_TEXT.'</span>';
+		case CART_COMPLETED:
+			$status_parsed = '<span class="label label-success">'.CART_TEXT[CART_COMPLETED].'</span>';
 			break;
 
-		case CANCELED:
-			$status_parsed = '<span class="label label-danger">'.CANCELED_TEXT.'</span>';
+		case CART_CANCELED:
+			$status_parsed = '<span class="label label-danger">'.CART_TEXT[CART_CANCELED].'</span>';
 			break;
 
 		default:
-			$status_parsed = '<span class="label label-primary">'.EXCUTING_TEXT.'</span>';
+			$status_parsed = '<span class="label label-primary">'.CART_TEXT[CART_EXCUTING].'</span>';
 			break;
 	}
 	return $status_parsed;
@@ -174,11 +174,12 @@ function parse_status($status){
 
 function make_cart_status_options($selected = 0){
 	$array = [
-		array('id' => EXCUTING, 'name' => 'Đang xử lý'),
-		array('id' => CART_TRANSPORTING, 'name' => 'Đang giao'),
-		array('id' => TRANSPORTED, 'name' => 'Đã giao'),
-		array('id' => COMPLETED, 'name' => 'Đã hoàn tất'),
-		array('id' => CANCELED, 'name' => 'Đã hủy'),
+		array('id' => CART_NEW, 'name' => CART_TEXT[CART_NEW]),
+		array('id' => CART_EXCUTING, 'name' => CART_TEXT[CART_EXCUTING]),
+		array('id' => CART_TRANSPORTING, 'name' => CART_TEXT[CART_TRANSPORTING]),
+		array('id' => CART_TRANSPORTED, 'name' => CART_TEXT[CART_TRANSPORTED]),
+		array('id' => CART_COMPLETED, 'name' => CART_TEXT[CART_COMPLETED]),
+		array('id' => CART_CANCELED, 'name' => CART_TEXT[CART_CANCELED]),
 	];
 
 	return make_option($array, $selected);

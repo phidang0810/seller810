@@ -34,28 +34,30 @@
     <div id="wrapper">
         <div class="row border-bottom">
             <nav class="navbar navbar-static-top bg-white" role="navigation" style="margin-bottom: 0">
-                <div class="navbar-header hidden">
-                    <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i> </a>
-                </div>
                 <div class="c-header-logo-wrapper">
                     <h1>
                         <a href="{{route('admin.dashboard')}}" title=""><img src="{{asset('themes/inspinia/img/logo.png')}}" alt="logo" width="150px"></a>
                     </h1>
                 </div>
+                <div class="navbar-header">
+                    <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i> </a>
+                </div>
+                @if(key_exists('shop_manager', Auth::user()->permissions))
                 <div class="cart-menu-wrapper">
                     <ul class="nav navbar-top-links navbar-left">
-                    <li class="cart-index">
-                        <a href="{{route('admin.carts.index')}}">
-                            <span class="font-16 text-uppercase" id="">Quản lý</span>
-                        </a>
-                    </li>
-                    <li class="cart-detail">
-                        <a href="{{route('admin.carts.create')}}">
-                            <span class="font-16 text-uppercase">Cửa hàng</span>
-                        </a>
-                    </li>
-                </ul>
+                        <li class="cart-index">
+                            <a href="{{route('admin.carts.index')}}">
+                                <span class="font-16 text-uppercase" id="">Quản lý</span>
+                            </a>
+                        </li>
+                        <li class="cart-detail">
+                            <a href="{{route('admin.carts.create')}}">
+                                <span class="font-16 text-uppercase">Cửa hàng</span>
+                            </a>
+                        </li>
+                    </ul>
                 </div>
+                @endif
                 <ul class="nav navbar-top-links navbar-right">
                     <li class="dropdown" id="notify-menu">
                         <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#" aria-expanded="false">

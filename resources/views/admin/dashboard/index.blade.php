@@ -266,7 +266,7 @@
                 <div class="col-xs-4 col-sm-2 text-center" style="border-right: 1px solid #ccc">
                    <h3>
                        @if(key_exists('product_manager', Auth::user()->permissions))
-                            <a href="{{route('admin.carts.index')}}?status={{EXCUTING}}">{{$cart_processing}}</a>
+                            <a href="{{route('admin.carts.index')}}?status={{CART_EXCUTING}}">{{$cart_processing}}</a>
                         @else
                             {{$cart_processing}}
                         @endif

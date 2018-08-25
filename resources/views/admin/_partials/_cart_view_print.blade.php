@@ -65,8 +65,9 @@
                 <tr>
                     <th>Tên sản phẩm</th>
                     <th>Mã sản phẩm</th>
-                    <th>Số lượng</th>
-                    <th width="15%" style="text-align: right;">Giá</th>
+                    <th style="text-align: right;">Đơn giá</th>
+                    <th style="text-align: right;">Số lượng</th>
+                    <th width="15%" style="text-align: right;">Thành tiền</th>
                     <!-- <th>Tổng giá</th> -->
                 </tr>
             </thead>

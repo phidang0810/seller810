@@ -23,18 +23,19 @@ define('RECEIVED_PAYMENT_TEXT', 'Đã nhận tiền');
 
 // cart status: chưa giao, đang giao, đã giao, đã hoàn tất, đã hủy
 define('CART_NEW', 1);
-define('EXCUTING', 2);
+define('CART_EXCUTING', 2);
 define('CART_TRANSPORTING', 3);
-define('TRANSPORTED', 4);
-define('COMPLETED', 5);
-define('CANCELED', 6);
-
-// cart status: chưa giao, đang giao, đã giao, đã hoàn tất, đã hủy
-define('EXCUTING_TEXT', 'Đang xử lý');
-define('TRANSPORTING_TEXT', 'Đang giao');
-define('TRANSPORTED_TEXT', 'Đã giao');
-define('COMPLETED_TEXT', 'Đã hoàn tất');
-define('CANCELED_TEXT', 'Đã hủy');
+define('CART_TRANSPORTED', 4);
+define('CART_COMPLETED', 5);
+define('CART_CANCELED', 6);
+define('CART_TEXT', [
+	1	=>	'Mới tạo',
+	2	=>	'Đang xử lý',
+	3	=>	'Đang giao',
+	4	=>	'Đã giao',
+	5	=>	'Đã hoàn tất',
+	6	=>	'Đã hủy',
+]);
 
 define('PAYSLIP_PENDING', 1);
 define('PAYSLIP_APPROVED', 2);
