@@ -683,3 +683,9 @@ div#barcode_image div {
 .pagination>.disabled>span, .pagination>.disabled>span:hover, .pagination>.disabled>span:focus, .pagination>.disabled>a, .pagination>.disabled>a:hover, .pagination>.disabled>a:focus{
   background-color: transparent;
 }
+
+@media screen and (max-width: 425px){
+  .xs-12-mg-bt-mobile .col-xs-12{
+    margin-bottom: 5px;
+  }
+}

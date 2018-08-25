@@ -660,32 +660,32 @@ function getDataToPrint(data){
                                 </div>
                             </div>
 
-                            <div class="row">
-                                <div class="col-md-3">
+                            <div class="row xs-12-mg-bt-mobile">
+                                <div class="col-md-3 col-sm-3 col-xs-12">
                                     <select name="product_name" class="form-control">
                                         <option value="0"> -- Chọn sản phẩm -- </option>
                                         {!! $product_options !!}
                                     </select>
                                     <label id="product-name-error" class="error hidden" for="product_name1">Vui lòng chọn.</label>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-3 col-sm-3 col-xs-12">
                                     <select name="product_color" class="form-control">
                                         <option value="0"> -- Chọn màu sắc -- </option>
                                     </select>
                                     <label id="product-color-error" class="error hidden" for="product_color1">Vui lòng chọn.</label>
                                 </div>
-                                <div class="col-md-2">
+                                <div class="col-md-2 col-sm-2 col-xs-12">
                                     <select name="product_size" class="form-control">
                                         <option value="0"> -- Chọn kích thước -- </option>
                                     </select>
                                     <label id="product-size-error" class="error hidden" for="product_size1">Vui lòng chọn.</label>
                                 </div>
-                                <div class="col-md-2">
+                                <div class="col-md-2 col-sm-2 col-xs-12">
                                     <input name="product_quantity" type="text" placeholder="Nhập số lượng" class="form-control m-b"
                                     value="0"/>
                                     <label id="product-quantity-error" class="error hidden" for="product_quantity1">Vui lòng nhập vào số lượng.</label>
                                 </div>
-                                <div class="col-md-2">
+                                <div class="col-md-2 col-sm-2 col-xs-12">
                                     <button type="button" class="btn btn-success pull-left c-add-info" id="add_cart_details" disabled="true">Thêm</button>
                                 </div>
                                 <div class="col-md-12">
