@@ -18,7 +18,7 @@
         function getDataLineChart(search)
         {
             $.ajax({
-                url: "{{route('admin.payments.getPaymentChart')}}",
+                url: "{{route('admin.statistics.getPaymentChart')}}",
                 data:search,
                 success: function(res){
                     if(lineChart) {
@@ -90,7 +90,7 @@
         function getTopProductChart(search)
         {
             $.ajax({
-                url: "{{route('admin.payments.getTopProductSell')}}",
+                url: "{{route('admin.statistics.getTopProductSell')}}",
                 data:search,
                 success: function(res){
                     if(pieChart) {
@@ -140,7 +140,7 @@
         function getTopCategoryChart(search)
         {
             $.ajax({
-                url: "{{route('admin.payments.getTopCategorySell')}}",
+                url: "{{route('admin.statistics.getTopCategorySell')}}",
                 data:search,
                 success: function(res){
                     if(pieChart) {
@@ -189,7 +189,7 @@
         function getTopPlatformChart(search)
         {
             $.ajax({
-                url: "{{route('admin.payments.getTopPlatformSell')}}",
+                url: "{{route('admin.statistics.getTopPlatformSell')}}",
                 data:search,
                 success: function(res){
                     if(pieChart) {
@@ -391,7 +391,7 @@
                 </div>
                 <div class="col-md-6">
                     <select name="pie_date" class="form-control">
-                        <option value="last_weed" @if(app('request')->input('pie_date') == "last_weed") selected @endif>Tuần trước</option>
+                        <option value="last_week" @if(app('request')->input('pie_date') == "last_week") selected @endif>Tuần trước</option>
                         <option value="this_week" @if(app('request')->input('pie_date') == "this_week") selected @endif>Tuần này</option>
                         <option value="last_month" @if(app('request')->input('pie_date') == "last_month") selected @endif>Tháng trước</option>
                         <option value="this_month" @if(app('request')->input('pie_date') == "this_month") selected @endif>Tháng này</option>

@@ -453,7 +453,7 @@ Class CartRepository
 
     public function getStaticsCartDataTable($request)
     {
-        $products = CartDetail::selectRaw('products.name, products.barcode_text, carts.code as cart_code, products.photo, products.category_ids,carts.city_id, carts.platform_id, SUM(cart_detail.quantity) as quantity, SUM(cart_detail.total_price) as total_price, (cart_detail.total_price - (products.price*cart_detail.quantity)) as profit, DATE(cart_detail.created_at) as created_at, COUNT(carts.id) total_cart')
+        $products = CartDetail::selectRaw('products.name, products.main_cate, products.barcode_text, carts.code as cart_code, products.photo, products.category_ids,carts.city_id, carts.platform_id, SUM(cart_detail.quantity) as quantity, SUM(cart_detail.total_price) as total_price, (cart_detail.total_price - (products.price*cart_detail.quantity)) as profit, DATE(cart_detail.created_at) as created_at, COUNT(carts.id) total_cart')
             ->join('products' ,'products.id', '=', 'cart_detail.product_id')
             ->join('carts' ,'carts.id', '=', 'cart_detail.cart_id')
             ->groupBy('cart_detail.product_id');
@@ -495,11 +495,8 @@ Class CartRepository
             }, true)
             ->addColumn('category', function($product) use ($categories) {
                 $html = '';
-                $categoryIDs = explode(',', $product->category_ids);
-                foreach ($categoryIDs as $categoryID) {
-                    $categoryName = $categories[$categoryID] ?? '';
-                    $html .= '<label class="label label-default">'.$categoryName.'</label><br/>';
-                }
+                $categoryName = $categories[$product->main_cate] ?? '';
+                $html .= '<label class="label label-default">'.$categoryName.'</label><br/>';
                 return $html;
             })
             ->addColumn('total_price', function($product) use ($platforms) {

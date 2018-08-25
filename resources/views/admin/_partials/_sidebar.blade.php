@@ -18,7 +18,6 @@
             <li class="{{ set_active(['quan-ly']) }} nav-item">
                 <a href="{{route('admin.dashboard')}}"><i class="fa fa-home"></i> <span class="nav-label">Dashboards</span></a>
             </li>
-
             @if(key_exists('product_manager', Auth::user()->permissions))
                 <li class="{{ set_active(['quan-ly/don-hang', 'quan-ly/don-hang/*']) }} nav-item">
                     <a href="#"><i class="fa fa-shopping-cart"></i> <span class="nav-label">Quản Lý Bán Hàng</span><span class="fa arrow"></span></a>
@@ -33,7 +32,7 @@
                 <li class="{{ set_active(['quan-ly/san-pham', 'quan-ly/san-pham/*']) }} nav-item">
                     <a href="#"><i class="fa fa-tasks "></i> <span class="nav-label">Quản Lý Sản Phẩm</span><span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level">
-                        <li class="{{ set_active(['quan-ly/san-pham']) }}"><a href="{{route('admin.products.index')}}">Danh sách Sản Phẩm</a></li>
+                        <li class="{{ set_active(['quan-ly/san-pham']) }}"><a href="{{route('admin.product_available.index')}}">Danh sách Sản Phẩm</a></li>
                     </ul>
                 </li>
             @endif
@@ -51,7 +50,7 @@
 
             @if(key_exists('partner_manager', Auth::user()->permissions))
                 <li class="{{ set_active(['quan-ly/cong-tac-vien*']) }} nav-item">
-                    <a href="{{route('admin.partners.index')}}"><i class="fa fa-users" aria-hidden="true"></i> <span class="nav-label">Cộng Tác Viên</span></a>
+                    <a href="{{route('admin.partners.index')}}"><i class="fa fa-star-half-o" aria-hidden="true"></i><span class="nav-label">Cộng Tác Viên</span></a>
                 </li>
             @endif
             
@@ -69,7 +68,7 @@
 
             @if(key_exists('accountant_manager', Auth::user()->permissions))
                 <li class="{{ set_active(['quan-ly/ke-toan', 'quan-ly/ke-toan/*']) }} nav-item">
-                    <a href="#"><i class="fa fa-shopping-cart"></i> <span class="nav-label">Kế Toán</span><span class="fa arrow"></span></a>
+                    <a href="#"><i class="fa fa-calculator" aria-hidden="true"></i> <span class="nav-label">Kế Toán</span><span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level">
                         <li class="{{ set_active(['quan-ly/ke-toan/doanh-thu']) }}"><a href="{{route('admin.statistics.revenue')}}">Doanh Thu Bán Hàng</a></li>
                         <li class="{{ set_active(['quan-ly/ke-toan/phieu-chi']) }}"><a href="{{route('admin.payslips.index')}}">Phiếu Chi</a></li>
@@ -79,7 +78,7 @@
 
             @if(key_exists('supplier_manager', Auth::user()->permissions))
                 <li class="{{ set_active(['quan-ly/nha-cung-cap*']) }} nav-item">
-                    <a href="{{route('admin.suppliers.index')}}"><i class="fa fa-users" aria-hidden="true"></i> <span class="nav-label">Nhà Cung Cấp</span></a>
+                    <a href="{{route('admin.suppliers.index')}}"><i class="fa fa-university" aria-hidden="true"></i> <span class="nav-label">Nhà Cung Cấp</span></a>
                 </li>
             @endif
 
@@ -94,7 +93,7 @@
 
             @if(key_exists('report_manager', Auth::user()->permissions))
                 <li class="{{ set_active(['quan-ly/thong-ke', 'quan-ly/thong-ke/*']) }} nav-item">
-                    <a href="#"><i class="fa fa-shopping-cart"></i> <span class="nav-label">Thống Kê</span><span class="fa arrow"></span></a>
+                    <a href="#"><i class="fa fa-bar-chart" aria-hidden="true"></i><span class="nav-label">Thống Kê</span><span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level">
                         <li class="{{ set_active(['quan-ly/ke-toan/doanh-thu']) }}"><a href="{{route('admin.statistics.revenueChart')}}">Doanh Thu</a></li>
                         <li class="{{ set_active(['quan-ly/ke-toan/don-hang']) }}"><a href="{{route('admin.statistics.cartChart')}}">Đơn Hàng</a></li>
@@ -104,7 +103,7 @@
 
             @if(key_exists('setting_manager', Auth::user()->permissions))
                 <li class="{{ set_active(['quan-ly/cai-dat', 'quan-ly/cai-dat/*']) }} nav-item">
-                    <a href="#"><i class="fa fa-shopping-cart"></i> <span class="nav-label">Cài Đặt</span><span class="fa arrow"></span></a>
+                    <a href="#"><i class="fa fa-cog" aria-hidden="true"></i> <span class="nav-label">Cài Đặt</span><span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level">
                         <li class="{{ set_active(['quan-ly/cai-dat/phong-ban']) }}"><a href="{{route('admin.roles.index')}}">Phòng Ban</a></li>
                     </ul>

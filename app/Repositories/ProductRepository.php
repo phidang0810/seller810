@@ -84,6 +84,12 @@ Class ProductRepository
 			$category = $this->lowestLevelCategory($product->id);
 			return ($category) ? $category->name : "";
 		})
+            ->addColumn('quantity_available', function ($product) {
+                return number_format($product->quantity_available);
+            })
+            ->addColumn('sell_price', function ($product) {
+                return number_format($product->sell_price) . ' VND';
+            })
 		->addColumn('name', function($product){
 			$html = '';
 			$html .= '<p>'.$product->name.'</p>';
@@ -131,7 +137,10 @@ Class ProductRepository
 		$model->meta_keyword = $data['meta_keyword'];
 		$model->meta_description = $data['meta_description'];
 		$model->meta_robot = $data['meta_robot'];
-		$model->price = preg_replace('/[^0-9]/', '', $data['price']);
+		if(key_exists('price', $data)) {
+            $model->price = preg_replace('/[^0-9]/', '', $data['price']);
+        }
+
 		$model->sell_price = preg_replace('/[^0-9]/', '', $data['sell_price']);
 		if(isset($data['photo'])) {
 

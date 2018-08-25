@@ -80,4 +80,56 @@ class StatisticsController extends AdminController
             'result' => $data
         ]);
     }
+
+    public function getPaymentChart(PaymentRepository $payment)
+    {
+        $input = $this->_request;
+        $data = $payment->getLineChartData($input);
+
+        return response()->json([
+            'success' => true,
+            'result' => $data
+        ]);
+    }
+
+    public function getCartBarChart(PaymentRepository $payment)
+    {
+        $input = $this->_request;
+        $data = $payment->getBarChartData($input);
+
+        return response()->json([
+            'success' => true,
+            'result' => $data
+        ]);
+    }
+
+    public function getTopProductSell(PaymentRepository $payment)
+    {
+        $data = $payment->getTopProductSell($this->_request);
+
+        return response()->json([
+            'success' => true,
+            'result' => $data
+        ]);
+    }
+
+    public function getTopPlatformSell(PaymentRepository $payment)
+    {
+        $data = $payment->getTopPlatformSell($this->_request);
+
+        return response()->json([
+            'success' => true,
+            'result' => $data
+        ]);
+    }
+
+    public function getTopCategorySell(PaymentRepository $payment)
+    {
+        $data = $payment->getTopCategorySell($this->_request);
+
+        return response()->json([
+            'success' => true,
+            'result' => $data
+        ]);
+    }
 }

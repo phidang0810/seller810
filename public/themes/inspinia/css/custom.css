@@ -14,6 +14,9 @@
   min-width:600px;
   padding: 70px 20px 20px 20px;
 }
+.nav > li > a{
+  color:#777777
+}
 .login-row{
   position:relative;
   display: block;
@@ -91,8 +94,8 @@ body{
 }
 
 .navbar-default .nav > li > a:hover, .navbar-default .nav > li > a:focus{
-  background-color: #FFF;
-  color: #293846;
+  background-color: #adadad;
+  color: #ffffff;
 }
 
 .nav > li.active{
@@ -121,9 +124,12 @@ body{
   font-weight: 700;
 }
 
-
 .nav > li.active > a{
   color: #293846;
+}
+.nav ul li.active a{
+  background-color: #1fb393;
+  color: #ffffff;
 }
 
 ul.nav-second-level{

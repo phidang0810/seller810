@@ -33,15 +33,6 @@ Route::prefix('cong-tac-vien')
         Route::put ('/change-status', 'PartnerController@changeStatus')->name('admin.partners.changeStatus');
     });
 
-Route::prefix('doanh-thu')
-    ->middleware('permission:partner_manager')->group(function () {
-        Route::get ('/', 'PaymentController@index')->name('admin.payments.index');
-        Route::get ('/data-payment', 'PaymentController@getPaymentChart')->name('admin.payments.getPaymentChart');
-        Route::get ('/top-product', 'PaymentController@getTopProductSell')->name('admin.payments.getTopProductSell');
-        Route::get ('/top-platform', 'PaymentController@getTopPlatformSell')->name('admin.payments.getTopPlatformSell');
-        Route::get ('/top-category', 'PaymentController@getTopCategorySell')->name('admin.payments.getTopCategorySell');
-    });
-
 Route::prefix('nha-cung-cap')
     ->middleware('permission:supplier_manager')->group(function () {
         Route::get ('/', 'SupplierController@index')->name('admin.suppliers.index');
@@ -86,20 +77,25 @@ Route::prefix('kho-hang')
     Route::post ('/mau-sac/them', 'ColorController@store')->name('admin.colors.store');
     Route::delete ('/mau-sac/', 'ColorController@delete')->name('admin.colors.delete');
     Route::put ('/mau-sac/change-status', 'ColorController@changeStatus')->name('admin.colors.changeStatus');
+
+        Route::get ('/', 'ProductController@index')->name('admin.products.index');
+        Route::get ('/chi-tiet', 'ProductController@view')->name('admin.products.view');
+        Route::get ('/them', 'ProductController@view')->name('admin.products.create');
+        Route::post ('/them', 'ProductController@store')->name('admin.products.store');
+        Route::delete ('/', 'ProductController@delete')->name('admin.products.delete');
+        Route::put ('/change-status', 'ProductController@changeStatus')->name('admin.products.changeStatus');
 });
 
 Route::prefix('san-pham')
 ->middleware('permission:product_manager')->group(function () {
-    Route::get ('/', 'ProductController@index')->name('admin.products.index');
-    Route::get ('/chi-tiet', 'ProductController@view')->name('admin.products.view');
-    Route::get ('/them', 'ProductController@view')->name('admin.products.create');
-    Route::post ('/them', 'ProductController@store')->name('admin.products.store');
-    Route::delete ('/', 'ProductController@delete')->name('admin.products.delete');
-    Route::put ('/change-status', 'ProductController@changeStatus')->name('admin.products.changeStatus');
+        Route::get ('/', 'ProductAvailableController@index')->name('admin.product_available.index');
+        Route::get ('/chi-tiet', 'ProductAvailableController@view')->name('admin.product_available.view');
+        Route::post ('/them', 'ProductAvailableController@store')->name('admin.product_available.store');
+        Route::delete ('/', 'ProductAvailableController@delete')->name('admin.product_available.delete');
 });
 
 Route::prefix('don-hang')
-->middleware('permission:product_manager')->group(function () {
+->middleware('permission:shop_manager')->group(function () {
     Route::get ('/', 'CartController@index')->name('admin.carts.index');
     Route::get ('/chi-tiet', 'CartController@view')->name('admin.carts.view');
     Route::get ('/them', 'CartController@view')->name('admin.carts.create');
@@ -117,6 +113,12 @@ Route::prefix('thong-ke')
        // Route::get ('/', 'StatisticsController@importProduct')->name('admin.statistics.importProduct');
         Route::get ('/doanh-thu', 'StatisticsController@revenueChart')->name('admin.statistics.revenueChart');
         Route::get ('/don-hang', 'StatisticsController@cartChart')->name('admin.statistics.cartChart');
+
+        Route::get ('/data-payment', 'StatisticsController@getPaymentChart')->name('admin.statistics.getPaymentChart');
+        Route::get ('/cart-barchart', 'StatisticsController@getCartBarChart')->name('admin.statistics.getCartBarChart');
+        Route::get ('/top-product', 'StatisticsController@getTopProductSell')->name('admin.statistics.getTopProductSell');
+        Route::get ('/top-platform', 'StatisticsController@getTopPlatformSell')->name('admin.statistics.getTopPlatformSell');
+        Route::get ('/top-category', 'StatisticsController@getTopCategorySell')->name('admin.statistics.getTopCategorySell');
        // Route::get ('/doanh-thu/mix', 'StatisticsController@getPaymentMixChart')->name('admin.statistics.getPaymentMixChart');
     });
 

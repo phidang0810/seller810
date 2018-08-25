@@ -79,7 +79,7 @@ Class PaymentRepository
                 $result['time'] = $this->_getDayOfWeeks();
 
                 $result['value'] = $this->_getPaymentThisWeek($result['time'], ['select' => $select]);
-            break;
+                break;
 
             case 'last_week':
                 $result['time'] = $this->_getDayOfWeeks();
@@ -90,11 +90,61 @@ Class PaymentRepository
                 $result['time'] = $this->_getMonths();
 
                 $result['value'] = $this->_getPaymentMonthOfYear($result['time'], ['select' => $select]);
+                break;
+
+            case 'year':
+                $result['time'] = $this->_getYears();
+                $result['value'] = $this->_getPaymentYears($result['time'],['select' => $select]);
+                break;
+        }
+        return $result;
+    }
+
+    public function getBarChartData($search)
+    {
+        $result = [
+            'time' => [],
+            'value' => []
+        ];
+        $group = $search['date_filter'] ?? 'this_week';
+        $select = $search['select'] ?? 'amount';
+        switch ($group) {
+            case 'this_week':
+                $result['time'] = $this->_getDayOfWeeks();
+
+                $result['total'] = $this->_getPaymentThisWeek($result['time'], ['select' => $select]);
+                $result['cancel'] = $this->_getPaymentThisWeek($result['time'], [
+                    'select' => $select,
+                    'status' => CANCELED
+                ]);
+            break;
+
+            case 'last_week':
+                $result['time'] = $this->_getDayOfWeeks();
+                $result['total'] = $this->_getPaymentLastWeek($result['time'], ['select' => $select]);
+                $result['cancel'] = $this->_getPaymentLastWeek($result['time'], [
+                    'select' => $select,
+                    'status' => CANCELED
+                ]);
+                break;
+
+            case 'month':
+                $result['time'] = $this->_getMonths();
+
+                $result['total'] = $this->_getPaymentMonthOfYear($result['time'], ['select' => $select]);
+                $result['cancel'] = $this->_getPaymentMonthOfYear($result['time'], [
+                    'select' => $select,
+                    'status' => CANCELED
+                ]);
             break;
 
             case 'year':
                 $result['time'] = $this->_getYears();
-                $result['value'] = $this->_getPaymentYears($result['time'], ['select' => $select]);
+                $result['total'] = $this->_getPaymentYears($result['time'],['select' => $select]);
+                $result['cancel'] = $this->_getPaymentYears($result['time'], [
+                    'select' => $select,
+                    'status' => CANCELED
+                ]);
             break;
         }
         return $result;
@@ -199,12 +249,12 @@ Class PaymentRepository
             ->groupBy('day_of_week')
             ->get();
         $prices = $query->pluck('total','day_of_week')->toArray();
+
         $valueArr = [];
         foreach($time as $k => $value) {
             $dayOfWeek = $k+1;
             $valueArr[$k] = key_exists($dayOfWeek, $prices) ? $prices[$dayOfWeek]:0;
         }
-
         return $valueArr;
     }
 
@@ -264,15 +314,18 @@ Class PaymentRepository
         $type = $search['type'] ?? 'pie';
         $select = $search['select'] ?? 'count';
         if ($select === 'count') {
-            $data = PaymentDetail::selectRaw('products.name, SUM(payment_detail.quantity) as total');
+            $data = CartDetail::selectRaw('products.name, SUM(cart_detail.quantity) as total')
+                ->join('products','products.id','=','cart_detail.product_id');
+            $table = 'cart_detail';
         } else {
-            $data = PaymentDetail::selectRaw('products.name, SUM(payment_detail.total_price) as total');
+            $data = PaymentDetail::selectRaw('products.name, SUM(payment_detail.total_price) as total')
+                ->join('products','products.id','=','payment_detail.product_id');
+            $table = 'payment_detail';
         }
-        $data = $data->join('products','products.id','=','payment_detail.product_id');
         if(isset($search['date'])) {
-            $data = $this->_addFilterDate($data, $search['date'], 'payment_detail');
+            $data = $this->_addFilterDate($data, $search['date'], $table);
         }
-        $data = $data->groupBy('payment_detail.product_id')
+        $data = $data->groupBy('products.id')
         ->orderBy('total','desc')
         ->take($take)
         ->get();
@@ -331,15 +384,18 @@ Class PaymentRepository
         $type = $search['type'] ?? 'pie';
         $select = $search['select'] ?? 'count';
         if ($select === 'count') {
-            $data = Payment::selectRaw('platforms.name, COUNT(payments.cart_id) as total');
+            $data = Cart::selectRaw('platforms.name, COUNT(carts.id) as total')
+                ->join('platforms', 'platforms.id','=','carts.platform_id');
+            $table = 'carts';
         } else {
-            $data = Payment::selectRaw('platforms.name, SUM(payments.total_price) as total');
+            $data = Payment::selectRaw('platforms.name, SUM(payments.total_price) as total')
+                ->join('platforms', 'platforms.id','=','payments.platform_id');
+            $table = 'payments';
         }
-        $data = $data->join('platforms', 'platforms.id','=','payments.platform_id');
         if(isset($search['date'])) {
-            $data = $this->_addFilterDate($data, $search['date'], 'payments');
+            $data = $this->_addFilterDate($data, $search['date'], $table);
         }
-        $data = $data->groupBy('payments.platform_id')
+        $data = $data->groupBy('platforms.id')
         ->orderBy('total','desc')
         ->take($take)
         ->get();
@@ -363,15 +419,18 @@ Class PaymentRepository
         $type = $search['type'] ?? 'pie';
         $select = $search['select'] ?? 'count';
         if ($select === 'count') {
-            $data = PaymentDetail::selectRaw('categories.name, COUNT(DISTINCT payment_detail.cart_id) as total');
+            $data = CartDetail::selectRaw('categories.name, COUNT(DISTINCT cart_detail.cart_id) as total')
+                ->join('products','products.id', '=', 'cart_detail.product_id');
+            $table = 'cart_detail';
         } else {
-            $data = PaymentDetail::selectRaw('categories.name, SUM(payment_detail.total_price) as total');
+            $data = PaymentDetail::selectRaw('categories.name, SUM(payment_detail.total_price) as total')
+                ->join('products','products.id', '=', 'payment_detail.product_id');
+            $table = 'payment_detail';
         }
-        $data = $data->join('product_category','product_category.product_id', '=', 'payment_detail.product_id');
         if(isset($search['date'])) {
-            $data = $this->_addFilterDate($data, $search['date'], 'payment_detail');
+            $data = $this->_addFilterDate($data, $search['date'], $table);
         }
-        $data = $data->join('categories','categories.id', '=', 'product_category.category_id')
+        $data = $data->join('categories','categories.id', '=', 'products.main_cate')
         ->groupBy('categories.id')
         ->orderBy('total','desc')
         ->take($take)
@@ -452,7 +511,7 @@ Class PaymentRepository
 
     public function getRevenueDataTable($request)
     {
-        $products = PaymentDetail::selectRaw('products.name, products.barcode_text, products.photo, products.category_ids, payments.platform_id, SUM(payment_detail.quantity) as quantity, SUM(payment_detail.total_price) as total_price, (payment_detail.total_price - (products.price*payment_detail.quantity)) as profit, DATE(payment_detail.created_at) as created_at, COUNT(payments.cart_id) total_cart')
+        $products = PaymentDetail::selectRaw('products.name, products.main_cate, products.barcode_text, products.photo, products.category_ids, payments.platform_id, SUM(payment_detail.quantity) as quantity, SUM(payment_detail.total_price) as total_price, (payment_detail.total_price - (products.price*payment_detail.quantity)) as profit, DATE(payment_detail.created_at) as created_at, COUNT(payments.cart_id) total_cart')
                     ->join('products' ,'products.id', '=', 'payment_detail.product_id')
                     ->join('payments', 'payments.id', '=', 'payment_detail.payment_id')
                     ->groupBy('payment_detail.product_id');
@@ -493,11 +552,8 @@ Class PaymentRepository
             }, true)
             ->addColumn('category', function($product) use ($categories) {
                 $html = '';
-                $categoryIDs = explode(',', $product->category_ids);
-                foreach ($categoryIDs as $categoryID) {
-                    $categoryName = $categories[$categoryID] ?? '';
-                    $html .= '<label class="label label-default">'.$categoryName.'</label><br/>';
-                }
+                $categoryName = $categories[$product->main_cate] ?? '';
+                $html .= '<label class="label label-default">'.$categoryName.'</label><br/>';
                 return $html;
             })
             ->addColumn('total_price', function($product) use ($platforms) {
