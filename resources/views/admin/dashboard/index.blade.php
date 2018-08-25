@@ -198,6 +198,7 @@
             });
 
             table = $('#dataTables').dataTable({
+                responsive: true,
                 searching: false,
                 processing: true,
                 serverSide: true,
@@ -251,7 +252,7 @@
 @section('content')
     <div class="ibox float-e-margins">
         <div class="ibox-content">
-            <div class="row">
+            <div class="row tt-number">
                 <div class="col-xs-4 col-sm-2 text-center" style="border-right: 1px solid #ccc">
                     <h3>
                         @if(key_exists('product_manager', Auth::user()->permissions))
@@ -319,7 +320,7 @@
 
     <div class="row">
         <div class="col-md-5">
-            <div class="ibox float-e-margins">
+            <div class="ibox float-e-margins mb">
                 <div class="ibox-content">
                     <h2 class="tt-page">DANH SÁCH ĐƠN HÀNG MỚI</h2>
                     <table class="table table-striped table-hover" id="dataTables">

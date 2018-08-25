@@ -78,6 +78,13 @@ Route::prefix('kho-hang')
     Route::delete ('/mau-sac/', 'ColorController@delete')->name('admin.colors.delete');
     Route::put ('/mau-sac/change-status', 'ColorController@changeStatus')->name('admin.colors.changeStatus');
 
+        Route::get ('/size/', 'SizeController@index')->name('admin.size.index');
+        Route::get ('/size/chi-tiet', 'SizeController@view')->name('admin.size.view');
+        Route::get ('/size/them', 'SizeController@view')->name('admin.size.create');
+        Route::post ('/size/them', 'SizeController@store')->name('admin.size.store');
+        Route::delete ('/size/', 'SizeController@delete')->name('admin.size.delete');
+        Route::put ('/size/change-status', 'SizeController@changeStatus')->name('admin.size.changeStatus');
+
         Route::get ('/', 'ProductController@index')->name('admin.products.index');
         Route::get ('/chi-tiet', 'ProductController@view')->name('admin.products.view');
         Route::get ('/them', 'ProductController@view')->name('admin.products.create');

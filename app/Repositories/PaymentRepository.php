@@ -552,9 +552,6 @@ Class PaymentRepository
             }, true)
             ->addColumn('category', function($product) use ($categories) {
                 $html = '';
-                $categoryName = $categories[$product->main_cate] ?? '';
-                $html .= '<label class="label label-default">'.$categoryName.'</label><br/>';
-                return $html;
             })
             ->addColumn('total_price', function($product) use ($platforms) {
                 return format_price($product->total_price);

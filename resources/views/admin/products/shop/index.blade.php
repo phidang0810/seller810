@@ -22,6 +22,7 @@
     $(document).ready(function() {
         formar_money();
         table = $('#dataTables').dataTable({
+            responsive: true,
             searching: false,
             processing: true,
             serverSide: true,
@@ -154,7 +155,7 @@ $("#dataTables").on("click", '.bt-delete', function(){
 <div class="row">
     <!-- Search form -->
     <form role="form" id="fSearch">
-        <div class="row v-center">
+        <div class="row ">
             <div class="col-sm-3">
                 <div class="form-group">
                     <label>Tên</label>
@@ -185,8 +186,7 @@ $("#dataTables").on("click", '.bt-delete', function(){
                 </div>
             </div>
             <div class="col-sm-3">
-                <div class="form-group">
-                    <label></label>
+                <div class="form-group" style="display: flex">
                     <button class="btn btn-sm btn-warning" type="submit" style="margin-bottom: 0;margin-top: 22px;">
                         <i class="fa fa-search"></i> Tìm kiếm
                     </button>

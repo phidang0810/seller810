@@ -135,7 +135,7 @@ console.log(number);
         });
 
         table = $('#dataTables').dataTable({
-            searching: false,
+            responsive: true,searching: false,
             processing: true,
             serverSide: true,
             "dom": 'rt<"#pagination"flp>',
@@ -340,8 +340,8 @@ function updateCartStatus(){
 <div class="row">
     <!-- Search form -->
     <form role="form" id="fSearch">
-        <div class="row v-center">
-            <div class="col-sm-2 pr-0">
+        <div class="row ">
+            <div class="col-sm-3">
                 <div class="form-group">
                     <label>Mã đơn hàng</label>
                     <input type="text" placeholder="Nhập mã" name="code" id="s-code" class="form-control"
@@ -349,7 +349,7 @@ function updateCartStatus(){
                 </div>
             </div>
 
-            <div class="col-sm-2 pr-0 pl-10">
+            <div class="col-sm-3">
                 <div class="form-group">
                     <label>Tên khách hàng</label>
                     <input type="text" placeholder="Nhập tên" name="customer_name" id="s-customer-name" class="form-control"
@@ -357,15 +357,16 @@ function updateCartStatus(){
                 </div>
             </div>
 
-            <div class="col-sm-2 pr-0 pl-10">
+            <div class="col-sm-3">
                 <div class="form-group">
                     <label>Điện thoại</label>
                     <input type="text" placeholder="Điện thoại" name="customer_phone" id="s-customer-phone" class="form-control"
                     value="{{app('request')->input('customer_phone')}}">
                 </div>
             </div>
-
-            <div class="col-sm-4 pr-0 pl-10 w-28-per">
+        </div>
+        <div class="row ">
+            <div class="col-sm-3">
                 <div class="form-group">
                     <label>Ngày bán</label>
                     <div class="input-daterange input-group" id="date_range_picker">
@@ -376,7 +377,7 @@ function updateCartStatus(){
                 </div>
             </div>
 
-            <div class="col-sm-2 pr-0 pl-10">
+            <div class="col-sm-3">
                 <div class="form-group">
                     <label>Nguồn đơn</label>
                     <!-- <input type="text" placeholder="Nguồn đơn" name="platform_name" id="s-supplier-name" class="form-control"
@@ -390,7 +391,7 @@ function updateCartStatus(){
                     </div>
                 </div>
 
-                <div class="col-sm-2 pr-0 pl-10">
+                <div class="col-sm-3">
                     <div class="form-group">
                         <label>Tình trạng</label>
                         <select class="form-control" name="status" id="s-status">
@@ -413,9 +414,8 @@ function updateCartStatus(){
                         </select>
                     </div>
                 </div>
-                <div class="col-sm-3 pl-10">
-                    <div class="form-group">
-                        <label></label>
+                <div class="col-sm-3">
+                    <div class="form-group" style="display: flex">
                         <button class="btn btn-sm btn-warning" type="submit" style="margin-bottom: 0;margin-top: 22px;">
                             <i class="fa fa-search"></i> Tìm kiếm
                         </button>
@@ -433,7 +433,7 @@ function updateCartStatus(){
     <div class="col-md-12 alert-wrapper">
     </div>
     <div class="col-md-8">
-        <div class="ibox float-e-margins">
+        <div class="ibox float-e-margins mb">
             @include('admin._partials._alert')
             <div class="ibox-content">
                 <div class="text-left">

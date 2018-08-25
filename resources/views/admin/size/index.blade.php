@@ -6,8 +6,8 @@
 @section('js')
     <!-- Page-Level Scripts -->
     <script>
-        var url_delete = "{{route('admin.suppliers.delete')}}";
-        var url_change_status = "{{route('admin.suppliers.changeStatus')}}";
+        var url_delete = "{{route('admin.size.delete')}}";
+        var url_change_status = "{{route('admin.size.changeStatus')}}";
         var table;
         $.ajaxSetup({
             headers: {
@@ -21,10 +21,9 @@
                 serverSide: true,
                 "dom": 'rt<"#pagination"flp>',
                 ajax: {
-                    "url": "{{route('admin.suppliers.index')}}",
+                    "url": "{{route('admin.size.index')}}",
                     "data": function ( d ) {
                         d.keyword = $('#s-keyword').val();
-                        d.status = $('#s-status').val();
                     },
                     complete: function(){
                         var inputStatus = document.querySelectorAll('.js-switch');
@@ -67,7 +66,7 @@
                                                     if (response.success) {
                                                         swal({
                                                             title: "Thành công!",
-                                                            text: "Bạn đã " + status + " của " + name + " thành công.",
+                                                            text: "Bạn đã " + status + " size " + name + " thành công.",
                                                             html: true,
                                                             type: "success",
                                                             confirmButtonClass: "btn-primary",
@@ -96,24 +95,17 @@
                                     });
                             };
                         });
-
                     }
                 },
                 columns: [
-                    {data: 'id'},
                     {data: 'name'},
-                    {data: 'code'},
-                    {data: 'tax_code'},
-                    {data: 'responsible_person'},
-                    {data: 'email'},
-                    {data: 'phone'},
+                    {data: 'created_at'},
                     {data: 'status'},
                     {data: 'action'}
                 ],
                 "aoColumnDefs": [
                     // Column index begins at 0
-                    { "sClass": "text-center", "aTargets": [ 7 ] },
-                    { "sClass": "text-right", "aTargets": [ 8 ] }
+                    { "sClass": "text-right", "aTargets": [ 3 ] }
                 ],
                 "language": {
                     "decimal": "",
@@ -179,7 +171,7 @@
                             if (response.success) {
                                 swal({
                                     title: "Thành công!",
-                                    text: "Nhà cung cấp " + name + " đã bị xóa.",
+                                    text: "Size " + name + " đã bị xóa.",
                                     html: true,
                                     type: "success",
                                     confirmButtonClass: "btn-primary",
@@ -215,11 +207,9 @@
                 <div class="col-sm-3">
                     <div class="form-group">
                         <label>Tìm kiếm</label>
-                        <input type="text" placeholder="Nhập email, SDT, tên" name="keyword" id="s-keyword" class="form-control" value="{{app('request')->input('keyword')}}">
+                        <input type="text" placeholder="Nhập tên" name="keyword" id="s-keyword" class="form-control" value="{{app('request')->input('keyword')}}">
                     </div>
                 </div>
-
-
                 <div class="col-sm-3">
                     <div class="form-group">
                         <label>Chọn trạng thái</label>
@@ -230,6 +220,7 @@
                         </select>
                     </div>
                 </div>
+
                 <div class="col-sm-3">
                     <div class="form-group" style="display: flex">
                         <button class="btn btn-sm btn-warning" type="submit" style="margin-bottom: 0;margin-top: 22px;">
@@ -249,20 +240,15 @@
             @include('admin._partials._alert')
             <div class="ibox-content">
                 <div class="text-right" style="padding: 10px 10px 0px 10px;">
-                    <a href="{{route('admin.suppliers.create')}}" class="btn btn-sm btn-primary"><i class="fa fa-plus"></i> Thêm Nhà Cung Cấp</a>
+                    <a href="{{route('admin.size.create')}}" class="btn btn-sm btn-primary"><i class="fa fa-plus"></i> Thêm Size</a>
                 </div>
                 <div class="hr-line-dashed"></div>
                 <!-- Account list -->
                 <table class="table table-striped table-hover" id="dataTables">
                     <thead>
                     <tr>
-                        <th>ID</th>
                         <th>Tên</th>
-                        <th>Mã</th>
-                        <th>Mã Số Thuế</th>
-                        <th>Người Đại Diện</th>
-                        <th>Email</th>
-                        <th>Điện Thoại</th>
+                        <th>Ngày Tạo</th>
                         <th>Trạng Thái</th>
                         <th></th>
                     </tr>

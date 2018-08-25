@@ -16,7 +16,7 @@
         });
         $(document).ready(function() {
             table = $('#dataTables').dataTable({
-                searching: false,
+                responsive: true,searching: false,
                 processing: true,
                 serverSide: true,
                 "dom": 'rt<"#pagination"flp>',

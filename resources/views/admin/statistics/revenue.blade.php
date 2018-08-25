@@ -14,6 +14,7 @@
         });
         $(document).ready(function() {
             table = $('#dataTables').dataTable({
+                responsive: true,
                 searching: false,
                 processing: true,
                 serverSide: true,
@@ -32,6 +33,12 @@
                     }
                 },
                 columns: [
+                    {   // Responsive control column
+                        data: null,
+                        defaultContent: '',
+                        className: 'control',
+                        orderable: false
+                    },
                     {data: 'name'},
                     {data: 'barcode_text'},
                     {data: 'category'},
@@ -94,15 +101,15 @@
 <div class="row">
     <!-- Search form -->
     <form role="form" id="fSearch">
-        <div class="row v-center">
-            <div class="col-sm-3">
+        <div class="row">
+            <div class="col-sm-2">
                 <div class="form-group">
                     <label>Tên hoặc mã sản phẩm</label>
                     <input type="text" placeholder="Nhập tên hoặc mã sản phẩm" name="keyword" id="s-keyword" class="form-control" value="{{app('request')->input('keyword')}}">
                 </div>
             </div>
 
-            <div class="col-sm-3">
+            <div class="col-sm-2">
                 <div class="form-group">
                     <label>Chọn danh mục</label>
                     <select class="form-control" name="category" id="s-category">
@@ -123,7 +130,7 @@
                 </div>
             </div>
 
-            <div class="col-sm-3">
+            <div class="col-sm-2">
                 <div class="form-group">
                     <label>Nguồn đơn</label>
                     <select class="form-control" id="s-platform" name="s-platform">
@@ -135,8 +142,7 @@
                 </div>
             </div>
             <div class="col-sm-3">
-                <div class="form-group">
-                    <label></label>
+                <div class="form-group" style="display: flex">
                     <button class="btn btn-sm btn-warning" type="submit" style="margin-bottom: 0;margin-top: 22px;">
                         <i class="fa fa-search"></i> Tìm kiếm
                     </button>
@@ -155,9 +161,10 @@
             <div class="ibox-content">
                 <div class="hr-line-dashed"></div>
                 <!-- Account list -->
-                <table class="table table-striped table-hover" id="dataTables">
+                <table class="table table-striped responsive table-hover" id="dataTables">
                     <thead>
                     <tr>
+                        <th></th>
                         <th>Tên</th>
                         <th>Mã Sản Phẩm</th>
                         <th>Danh Mục</th>

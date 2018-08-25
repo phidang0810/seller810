@@ -17,9 +17,7 @@
     <link href="{{asset('themes/inspinia/css/plugins/datapicker/datepicker3.css')}}" rel="stylesheet">
 
     <!-- Data Tables -->
-    <link href="{{asset('themes/inspinia/css/plugins/dataTables/dataTables.bootstrap.css')}}" rel="stylesheet">
-    <link href="{{asset('themes/inspinia/css/plugins/dataTables/dataTables.responsive.css')}}" rel="stylesheet">
-    <link href="{{asset('themes/inspinia/css/plugins/dataTables/dataTables.tableTools.min.css')}}" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs/dt-1.10.18/r-2.2.2/datatables.min.css"/>
     <link href="{{asset('themes/inspinia/css/plugins/swal/sweetalert.css')}}" rel="stylesheet">
     <link href="{{asset('themes/inspinia/css/plugins/toastr/toastr.min.css')}}" rel="stylesheet">
 
@@ -41,7 +39,7 @@
                 </div>
                 <div class="c-header-logo-wrapper">
                     <h1>
-                        <a href="{{route('admin.dashboard')}}" title=""><img src="{{asset('themes/inspinia/img/logo.png')}}" alt=""></a>
+                        <a href="{{route('admin.dashboard')}}" title=""><img src="{{asset('themes/inspinia/img/logo.png')}}" alt="logo" width="150px"></a>
                     </h1>
                 </div>
                 <div class="cart-menu-wrapper">
@@ -85,15 +83,16 @@
         @endif
 
         <div id="page-wrapper" class="gray-bg">
+
             @if(!isset($hasTitle) || $hasTitle == true)
-            <div class="row wrapper border-bottom white-bg page-heading">
-                <div class="col-lg-10">
-                    @if (isset($title))
-                    <h2>{{$title}}</h2>
-                    @endif
-                    @include('admin._partials._breadcrumbs')
+                <div class="ibox float-e-margins" style="margin-top: 10px;margin-bottom: 20px">
+                    <div class="ibox-content">
+                        @if (isset($title))
+                            <h2>{{$title}}</h2>
+                        @endif
+                        @include('admin._partials._breadcrumbs')
+                    </div>
                 </div>
-            </div>
             @endif
             <div class="wrapper wrapper-content animated fadeInRight">
                 @yield('content')
@@ -116,10 +115,8 @@
     <script src="{{asset('themes/inspinia/js/plugins/jeditable/jquery.jeditable.js')}}"></script>
 
     <!-- Data Tables -->
-    <script src="{{asset('themes/inspinia/js/plugins/dataTables/jquery.dataTables.js')}}"></script>
-    <script src="{{asset('themes/inspinia/js/plugins/dataTables/dataTables.bootstrap.js')}}"></script>
-    <script src="{{asset('themes/inspinia/js/plugins/dataTables/dataTables.responsive.js')}}"></script>
-    <script src="{{asset('themes/inspinia/js/plugins/dataTables/dataTables.tableTools.min.js')}}"></script>
+
+    <script type="text/javascript" src="https://cdn.datatables.net/v/bs/dt-1.10.18/r-2.2.2/datatables.min.js" />
 
     <script src="{{asset('themes/inspinia/js/plugins/summernote/summernote.min.js')}}"></script>
     <script src="{{asset('themes/inspinia/js/plugins/datapicker/bootstrap-datepicker.js')}}"></script>

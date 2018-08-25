@@ -175,7 +175,7 @@ function parse_status($status){
 function make_cart_status_options($selected = 0){
 	$array = [
 		array('id' => EXCUTING, 'name' => 'Đang xử lý'),
-		array('id' => TRANSPORTING, 'name' => 'Đang giao'),
+		array('id' => CART_TRANSPORTING, 'name' => 'Đang giao'),
 		array('id' => TRANSPORTED, 'name' => 'Đã giao'),
 		array('id' => COMPLETED, 'name' => 'Đã hoàn tất'),
 		array('id' => CANCELED, 'name' => 'Đã hủy'),

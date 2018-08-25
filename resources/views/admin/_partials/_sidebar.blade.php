@@ -18,7 +18,7 @@
             <li class="{{ set_active(['quan-ly']) }} nav-item">
                 <a href="{{route('admin.dashboard')}}"><i class="fa fa-home"></i> <span class="nav-label">Dashboards</span></a>
             </li>
-            @if(key_exists('product_manager', Auth::user()->permissions))
+            @if(key_exists('shop_manager', Auth::user()->permissions))
                 <li class="{{ set_active(['quan-ly/don-hang', 'quan-ly/don-hang/*']) }} nav-item">
                     <a href="#"><i class="fa fa-shopping-cart"></i> <span class="nav-label">Quản Lý Bán Hàng</span><span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level">
@@ -42,8 +42,9 @@
                     <a href="#"><i class="fa fa-paint-brush"></i> <span class="nav-label">Quản Lý Kho Hàng</span><span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level">
                         <li class="{{ set_active(['quan-ly/kho-hang']) }}"><a href="{{route('admin.products.index')}}">Kho Hàng</a></li>
-                        <li class="{{ set_active(['quan-ly/kho-hang/danh-muc-san-pham']) }}"><a href="{{route('admin.categories.index')}}">Danh mục sản phẩm</a></li>
+                        <li class="{{ set_active(['quan-ly/kho-hang/danh-muc-san-pham']) }}"><a href="{{route('admin.categories.index')}}">Sản phẩm</a></li>
                         <li class="{{ set_active(['quan-ly/kho-hang/mau-sac']) }}"><a href="{{route('admin.colors.index')}}">Màu sắc</a></li>
+                        <li class="{{ set_active(['quan-ly/kho-hang/size']) }}"><a href="{{route('admin.size.index')}}">Size</a></li>
                     </ul>
                 </li>
             @endif
@@ -95,8 +96,8 @@
                 <li class="{{ set_active(['quan-ly/thong-ke', 'quan-ly/thong-ke/*']) }} nav-item">
                     <a href="#"><i class="fa fa-bar-chart" aria-hidden="true"></i><span class="nav-label">Thống Kê</span><span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level">
-                        <li class="{{ set_active(['quan-ly/ke-toan/doanh-thu']) }}"><a href="{{route('admin.statistics.revenueChart')}}">Doanh Thu</a></li>
-                        <li class="{{ set_active(['quan-ly/ke-toan/don-hang']) }}"><a href="{{route('admin.statistics.cartChart')}}">Đơn Hàng</a></li>
+                        <li class="{{ set_active(['quan-ly/thong-ke/doanh-thu']) }}"><a href="{{route('admin.statistics.revenueChart')}}">Doanh Thu</a></li>
+                        <li class="{{ set_active(['quan-ly/thong-ke/don-hang']) }}"><a href="{{route('admin.statistics.cartChart')}}">Đơn Hàng</a></li>
                     </ul>
                 </li>
             @endif
