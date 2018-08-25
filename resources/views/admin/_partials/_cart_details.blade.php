@@ -130,14 +130,22 @@
                             <span class="thousand-number money m-b" style="font-weight: 700;">{{($result['cart']->paid_amount) ? $result['cart']->paid_amount : 0}}</span>
                         </td>
                     </tr>
+                    @if($result['cart']->payment_status != PAYING_OFF && $result['cart']->payment_status != RECEIVED_PAYMENT)
                     <tr>
                         <td colspan="1" style="font-weight: 700;">Thanh toán thêm</td>
                         <td colspan="3" class="text-right">
-                            <input type="text" name="pay_amount" placeholder="" class="form-control input-thousand-number money m-b"
+                            <input type="text" name="pay_amount" placeholder="" max="{{$result['cart']->needed_paid}}" class="form-control input-thousand-number money text-right m-b"
                             value=""/>
                             <!-- <span class="thousand-number money m-b">{{$result['cart']->total_price}}</span> -->
                         </td>
                     </tr>
+                    <tr>
+                        <td colspan="1" style="font-weight: 700;">Thanh toán đủ</td>
+                        <td colspan="3">
+                            <input type="checkbox" name="pay_off" placeholder="" class="m-b"/>
+                        </td>
+                    </tr>
+                    @endif
                     <tr>
                         <td colspan="1">Còn lại</td>
                         <td colspan="3" class="text-right">
@@ -168,22 +176,39 @@
     <script type="text/javascript">
         var paid_amount = parseInt('{{($result['cart']->paid_amount) ? $result['cart']->paid_amount : 0}}');
         var price = parseInt('{{$result['cart']->price}}');
+        var needed_paid = price - paid_amount;
 
         function formatPrice(){
             // Format prices
-            $('.input-thousand-number money').toArray().forEach(function(field){
-                new Cleave(field, {
+            if ($('.input-thousand-number.money').length) {
+                new Cleave('.input-thousand-number.money', {
                     numeral: true,
                     numeralThousandsGroupStyle: 'thousand'
                 });
-            });
+            }
         }
+
         $(document).ready(function(){
             formatPrice();
+
+            $('input[name="pay_off"]').change(function() {
+                if(this.checked) {
+                    $('input[name="pay_amount"]').val(needed_paid);
+                    formatPrice();
+                    $('#needed_paid').text(0);
+                }else{
+                    $('input[name="pay_amount"]').val(0);
+                    $('#needed_paid').text(needed_paid);
+                    $('#needed_paid').simpleMoneyFormat();
+                    if($('#needed_paid').text() != '' || $('#needed_paid').text() != null){
+                        $('#needed_paid').append(" VNĐ");
+                    }
+                }
+            });
             
             $('input[name="pay_amount"]').on('change', function(){
                 var pay_amount = ($('input[name="pay_amount"]').val()) ? $('input[name="pay_amount"]').val() : 0;
-                console.log(pay_amount);
+
                 if (pay_amount) {
                     if (pay_amount.includes(",")) {
                         pay_amount = parseInt(pay_amount.replace(/\,/g, ""));
@@ -191,7 +216,12 @@
                         pay_amount = parseInt(pay_amount);
                     }
                 }
-                
+
+                if (pay_amount > needed_paid) {
+                    pay_amount = needed_paid;
+                    $('input[name="pay_amount"]').val(pay_amount);
+                    formatPrice();
+                }
                 
                 $('#needed_paid').text(price - paid_amount - pay_amount);
                 $('#needed_paid').simpleMoneyFormat();
@@ -199,7 +229,7 @@
                     $('#needed_paid').append(" VNĐ");
                 }
             });
-            // formatPrice();
+
             $('.thousand-number').simpleMoneyFormat();
             if($('.thousand-number.money').text() != '' || $('.thousand-number.money').text() != null){
                 $('.thousand-number.money').append(" VNĐ");
