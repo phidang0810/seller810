@@ -712,6 +712,10 @@ div#barcode_image div {
   .list-carts{
     margin-bottom: 60px;
   }
+
+  .pl-0{
+    padding-left: 15px;
+  }
 }
 
 @media (max-width: 768px){
