@@ -456,9 +456,8 @@ padding-right: 5px;*/
 
 .cart-menu-wrapper{
   position: absolute;
-  left: 20%;
+  left: 23%;
   bottom: 0;
-  /*display: none;*/
 }
 
 .cart-menu-wrapper .navbar-top-links li a{
@@ -687,5 +686,73 @@ div#barcode_image div {
 @media screen and (max-width: 425px){
   .xs-12-mg-bt-mobile .col-xs-12{
     margin-bottom: 5px;
+  }
+}
+
+.navbar-header{
+  position: absolute;
+  left: 17%;
+  top: 10px;
+}
+
+@media (max-width: 1199px){
+  .navbar-header{
+    left: 20%;
+  }
+
+  .cart-menu-wrapper{
+    left: 27%;
+  }
+
+}
+
+@media (max-width: 768px){
+  .navbar-header{
+    left: 20%;
+  }
+
+  .cart-menu-wrapper{
+    left: 30%;
+  }
+
+  .navbar-right{
+    margin-right: 20px;
+  }
+
+}
+
+@media (max-width: 767px){
+  .navbar-right{
+    float: right;
+
+  }
+
+}
+
+@media (min-width: 599px) and (max-width: 767px){
+  .navbar-header {
+    left: 27%;
+  }
+
+  .cart-menu-wrapper {
+    left: 40%;
+  }
+}
+
+@media (max-width: 598px){
+  .cart-menu-wrapper {
+    display: none;
+  }
+}
+
+@media (min-width: 425px) and (max-width: 598px){
+  .navbar-header {
+    left: 33%;
+  }
+}
+
+@media (max-width: 424px){
+  .navbar-header {
+    left: 40%;
   }
 }

@@ -36,13 +36,13 @@
     <div id="wrapper">
         <div class="row border-bottom">
             <nav class="navbar navbar-static-top bg-white" role="navigation" style="margin-bottom: 0">
-                <div class="navbar-header hidden">
-                    <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i> </a>
-                </div>
                 <div class="c-header-logo-wrapper">
                     <h1>
                         <a href="{{route('admin.dashboard')}}" title=""><img src="{{asset('themes/inspinia/img/logo.png')}}" alt=""></a>
                     </h1>
+                </div>
+                <div class="navbar-header">
+                    <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i> </a>
                 </div>
                 @if(key_exists('shop_manager', Auth::user()->permissions))
                 <div class="cart-menu-wrapper">
