@@ -74,6 +74,7 @@
                 <th>Mã sản phẩm</th>
                 <th>Đơn giá</th>
                 <th>Số lượng</th>
+                <th>Thành tiền</th>
             </tr>
         </thead>
         <tfoot>
@@ -148,6 +149,7 @@
                         <td colspan="1">{{$cart_detail->product_code}}</td>
                         <td class="thousand-number money text-right" colspan="1">{{$cart_detail->price}}</td>
                         <td class="thousand-number text-right" colspan="1">{{$cart_detail->quantity}}</td>
+                        <td class="thousand-number money text-right" colspan="1">{{$cart_detail->total_price}}</td>
                     </tr>
                     @endforeach
                 </tbody>

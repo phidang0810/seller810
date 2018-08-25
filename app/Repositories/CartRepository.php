@@ -80,7 +80,7 @@ Class CartRepository
 			
 		}, true)
 		->addColumn('created_at', function ($cart) {
-			$html = date('d/m/Y', strtotime($cart->created_at));
+			$html = $cart->created_at;//date('d/m/Y', strtotime($cart->created_at));
 			return $html;
 		})
 		->addColumn('status', function ($cart) {
