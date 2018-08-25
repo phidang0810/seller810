@@ -304,7 +304,7 @@ Class CartRepository
 
 		// Excute status, if new then status is new
 		if (!$id) {
-			$model->status = CART_EXCUTING;
+			$model->status = CART_NEW;
 		}else{
 			if (isset($data['status'])) {
 				if ($data['status'] == CART_COMPLETED) {
