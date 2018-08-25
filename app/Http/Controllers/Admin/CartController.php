@@ -63,7 +63,6 @@ class CartController extends AdminController
         }
         $id = $this->_request->get('id');
         $this->_data['title'] = 'Tạo mới đơn hàng';
-        $this->_data['hasSidebar'] = false;
         $this->_data['hasTitle'] = false;
         if ($id) {
             $this->_data['title'] = 'Chỉnh sửa đơn hàng';

@@ -80,9 +80,7 @@
 
             </nav>
         </div>
-        @if(!isset($hasSidebar) || $hasSidebar == true)
         @include('admin._partials._sidebar')
-        @endif
 
         <div id="page-wrapper" class="gray-bg">
 

@@ -9,6 +9,14 @@
     #page-wrapper {
         margin: 0 0 0 0px;
     }
+
+    nav.navbar-default.navbar-static-side {
+        display: none;
+    }
+
+    .pace-done.mini-navbar nav.navbar-default.navbar-static-side {
+        display: block;
+    }
 }
 </style>
 @endsection
