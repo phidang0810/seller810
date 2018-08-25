@@ -141,24 +141,24 @@ Class CartRepository
 		$model->needed_paid = $needed_paid;
 		// excute payment_status
 		if ($model->paid_amount && $model->paid_amount > 0) {
-			$model->payment_status = 2;
+			$model->payment_status = PAYING_NOT_ENOUGH;
 			if ($model->paid_amount >= $model->price) {
 				if ($model->platform_id && $model->platform_id != 0) {
-					$model->payment_status = 3;
+					$model->payment_status = PAYING_OFF;
 				}else{
-					$model->payment_status = 4;
+					$model->payment_status = RECEIVED_PAYMENT;
 				}
 				
 			}
 		}else{
-			$model->payment_status = 1;
+			$model->payment_status = NOT_PAYING;
 		}
 
 		$model->save();
 
 		// Excute status
-		if ($status == 4) {
-			if ($model->payment_status == 3 || $model->payment_status == 4) {
+		if ($status == CART_COMPLETED) {
+			if ($model->payment_status == PAYING_OFF || $model->payment_status == RECEIVED_PAYMENT) {
 				$model->status = $status;
 
 				$model->save();
@@ -166,7 +166,7 @@ Class CartRepository
 				return false;
 			}
 		}else{
-			if ($status == 5) {
+			if ($status == CART_CANCELED) {
 				if ($model->details) {
 					foreach ($model->details as $detail) {
 						$this->deleteDetails($detail->id);
@@ -178,7 +178,7 @@ Class CartRepository
 		}
 
 		// Excute if cart status is COMPLETED then copy cart & cart detail to payment & payment detail
-		if ($model->status == COMPLETED) {
+		if ($model->status == CART_COMPLETED) {
 			$model->details;
 			$payment_repo = new PaymentRepository();
 			$payment = $payment_repo->createOrUpdate($model);
@@ -289,29 +289,29 @@ Class CartRepository
 		$model->platform_id = $data['platform_id'];
 		// excute payment_status
 		if ($data['paid_amount'] && $data['paid_amount'] > 0) {
-			$model->payment_status = 2;
+			$model->payment_status = PAYING_NOT_ENOUGH;
 			if ($data['paid_amount'] >= $model->price) {
 				if ($model->platform_id != 0) {
-					$model->payment_status = 3;
+					$model->payment_status = PAYING_OFF;
 				}else{
-					$model->payment_status = 4;
+					$model->payment_status = RECEIVED_PAYMENT;
 				}
 				
 			}
 		}else{
-			$model->payment_status = 1;
+			$model->payment_status = NOT_PAYING;
 		}
 
 		// Excute status, if new then status is new
 		if (!$id) {
-			$model->status = EXCUTING;
+			$model->status = CART_EXCUTING;
 		}else{
 			if (isset($data['status'])) {
-				if ($data['status'] == 4) {
-					if ($model->payment_status == 3 || $model->payment_status == 4) {
+				if ($data['status'] == CART_COMPLETED) {
+					if ($model->payment_status == PAYING_OFF || $model->payment_status == RECEIVED_PAYMENT) {
 						$model->status = $data['status'];
 					}else{
-						$model->status = 3;
+						$model->status = CART_TRANSPORTED;
 					}
 				}else{
 					$model->status = $data['status'];
@@ -332,7 +332,7 @@ Class CartRepository
 		}
 
 		// Excute if cart status is COMPLETED then copy cart & cart detail to payment & payment detail
-		if ($model->status == COMPLETED) {
+		if ($model->status == CART_COMPLETED) {
 			$model->details;
 			$payment_repo = new PaymentRepository();
 			$payment = $payment_repo->createOrUpdate($model);

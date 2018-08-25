@@ -115,7 +115,7 @@ Class PaymentRepository
                 $result['total'] = $this->_getPaymentThisWeek($result['time'], ['select' => $select]);
                 $result['cancel'] = $this->_getPaymentThisWeek($result['time'], [
                     'select' => $select,
-                    'status' => CANCELED
+                    'status' => CART_CANCELED
                 ]);
             break;
 
@@ -124,7 +124,7 @@ Class PaymentRepository
                 $result['total'] = $this->_getPaymentLastWeek($result['time'], ['select' => $select]);
                 $result['cancel'] = $this->_getPaymentLastWeek($result['time'], [
                     'select' => $select,
-                    'status' => CANCELED
+                    'status' => CART_CANCELED
                 ]);
                 break;
 
@@ -134,7 +134,7 @@ Class PaymentRepository
                 $result['total'] = $this->_getPaymentMonthOfYear($result['time'], ['select' => $select]);
                 $result['cancel'] = $this->_getPaymentMonthOfYear($result['time'], [
                     'select' => $select,
-                    'status' => CANCELED
+                    'status' => CART_CANCELED
                 ]);
             break;
 
@@ -143,7 +143,7 @@ Class PaymentRepository
                 $result['total'] = $this->_getPaymentYears($result['time'],['select' => $select]);
                 $result['cancel'] = $this->_getPaymentYears($result['time'], [
                     'select' => $select,
-                    'status' => CANCELED
+                    'status' => CART_CANCELED
                 ]);
             break;
         }
@@ -164,7 +164,7 @@ Class PaymentRepository
                 $result['value']['amount'] = $this->_getPaymentThisWeek($result['time'], ['select' => 'amount']);
                 $result['value']['cancel_cart'] = $this->_getPaymentThisWeek($result['time'], [
                     'select' => 'number_cart',
-                    'status' => CANCELED
+                    'status' => CART_CANCELED
                 ]);
                 $result['value']['total_cart'] = $this->_getPaymentThisWeek($result['time'], [
                     'select' => 'number_cart'
@@ -176,7 +176,7 @@ Class PaymentRepository
                 $result['value']['amount'] = $this->_getPaymentLastWeek($result['time'], ['select' => 'amount']);
                 $result['value']['cancel_cart'] = $this->_getPaymentLastWeek($result['time'], [
                     'select' => 'number_cart',
-                    'status' => CANCELED
+                    'status' => CART_CANCELED
                 ]);
                 $result['value']['total_cart'] = $this->_getPaymentLastWeek($result['time'], [
                     'select' => 'number_cart'
@@ -189,7 +189,7 @@ Class PaymentRepository
                 $result['value']['amount'] = $this->_getPaymentMonthOfYear($result['time'], ['select' => 'amount']);
                 $result['value']['cancel_cart'] = $this->_getPaymentMonthOfYear($result['time'], [
                     'select' => 'number_cart',
-                    'status' => CANCELED
+                    'status' => CART_CANCELED
                 ]);
                 $result['value']['total_cart'] = $this->_getPaymentMonthOfYear($result['time'], [
                     'select' => 'number_cart',
@@ -201,7 +201,7 @@ Class PaymentRepository
                 $result['value']['amount'] = $this->_getPaymentYears($result['time'], ['select' => 'amount']);
                 $result['value']['cancel_cart'] = $this->_getPaymentYears($result['time'], [
                     'select' => 'number_cart',
-                    'status' => CANCELED
+                    'status' => CART_CANCELED
                 ]);
                 $result['value']['total_cart'] = $this->_getPaymentYears($result['time'], [
                     'select' => 'number_cart'

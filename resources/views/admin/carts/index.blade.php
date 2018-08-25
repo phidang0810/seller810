@@ -15,8 +15,8 @@
     });
 
     //---> Get customer detail, cart detail
-    var cart_complete = "{{COMPLETED}}";
-    var cart_canceled = "{{CANCELED}}";
+    var cart_complete = "{{CART_COMPLETED}}";
+    var cart_canceled = "{{CART_CANCELED}}";
     function getRecordDetail(){
         $('#dataTables tbody > tr').click(function(){
             var cart_code = $(this).find('td:not(:empty):first').text();
@@ -395,20 +395,23 @@ function updateCartStatus(){
                         <label>Tình trạng</label>
                         <select class="form-control" name="status" id="s-status">
                             <option value=""> -- Tất cả --</option>
-                            <option @if(app('request')->has('status') && app('request')->input('status') == EXCUTING) selected
-                                @endif value="{{EXCUTING}}">{{EXCUTING_TEXT}}
+                            <option @if(app('request')->has('status') && app('request')->input('status') == CART_NEW) selected
+                                @endif value="{{CART_NEW}}">{{CART_TEXT[CART_NEW]}}
+                            </option>
+                            <option @if(app('request')->has('status') && app('request')->input('status') == CART_EXCUTING) selected
+                                @endif value="{{CART_EXCUTING}}">{{CART_TEXT[CART_EXCUTING]}}
                             </option>
                             <option @if(app('request')->has('status') && app('request')->input('status') == CART_TRANSPORTING) selected
-                                @endif value="{{CART_TRANSPORTING}}">{{TRANSPORTING_TEXT}}
+                                @endif value="{{CART_TRANSPORTING}}">{{CART_TEXT[CART_TRANSPORTING]}}
                             </option>
-                            <option @if(app('request')->has('status') && app('request')->input('status') == TRANSPORTED) selected
-                                @endif value="{{TRANSPORTED}}">{{TRANSPORTED_TEXT}}
+                            <option @if(app('request')->has('status') && app('request')->input('status') == CART_TRANSPORTED) selected
+                                @endif value="{{CART_TRANSPORTED}}">{{CART_TEXT[CART_TRANSPORTED]}}
                             </option>
-                            <option @if(app('request')->has('status') && app('request')->input('status') == COMPLETED) selected
-                                @endif value="{{COMPLETED}}">{{COMPLETED_TEXT}}
+                            <option @if(app('request')->has('status') && app('request')->input('status') == CART_COMPLETED) selected
+                                @endif value="{{CART_COMPLETED}}">{{CART_TEXT[CART_COMPLETED]}}
                             </option>
-                            <option @if(app('request')->has('status') && app('request')->input('status') == CANCELED) selected
-                                @endif value="{{CANCELED}}">{{CANCELED_TEXT}}
+                            <option @if(app('request')->has('status') && app('request')->input('status') == CART_CANCELED) selected
+                                @endif value="{{CART_CANCELED}}">{{CART_TEXT[CART_CANCELED]}}
                             </option>
                         </select>
                     </div>
