@@ -123,7 +123,7 @@ console.log(number);
         //---> Show menu on horizontal bar
         var url_index = "{{route('admin.carts.index')}}";
         if (location.href == url_index) {
-            $(".cart-menu-wrapper").show();
+            // $(".cart-menu-wrapper").show();
             $(".cart-menu-wrapper .cart-index").addClass("active");
         }
         

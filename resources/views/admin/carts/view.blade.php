@@ -153,7 +153,7 @@
         var url_create = "{{route('admin.carts.create')}}";
         var url_detail = "{{route('admin.carts.view')}}";
         if (location.href == url_detail || location.href == url_create) {
-            $(".cart-menu-wrapper").show();
+            // $(".cart-menu-wrapper").show();
             $(".cart-menu-wrapper .cart-detail").addClass("active");
         }
 
