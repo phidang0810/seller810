@@ -444,22 +444,20 @@ function updateCartStatus(){
                 </div>
                 <div class="hr-line-dashed"></div>
                 <!-- Account list -->
-                <div class="table-responsive">
-                    <table class="table table-striped table-hover" id="dataTables">
-                        <thead>
-                            <tr>
-                                <th>Mã đơn hàng</th>
-                                <th>Tên khách hàng</th>
-                                <th>Điện thoại</th>
-                                <th>Ngày Tạo</th>
-                                <th>Nguồn đơn</th>
-                                <th>Tình trạng</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                </div>
+                <table class="table table-striped table-hover" id="dataTables">
+                    <thead>
+                        <tr>
+                            <th>Mã đơn hàng</th>
+                            <th>Tên khách hàng</th>
+                            <th>Điện thoại</th>
+                            <th>Ngày Tạo</th>
+                            <th>Nguồn đơn</th>
+                            <th>Tình trạng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
 
             </div>
         </div>

@@ -726,6 +726,14 @@ div#barcode_image div {
   .navbar-right{
     margin-right: 20px;
   }
+  
+  .list-carts{
+    margin-bottom: 92px;
+  }
+
+  #pagination{
+    bottom: -85px;
+  }
 
 }
 
@@ -762,5 +770,15 @@ div#barcode_image div {
 @media (max-width: 424px){
   .navbar-header {
     left: 40%;
+  }
+}
+
+@media (max-width: 366px){
+  .list-carts {
+    margin-bottom: 100px;
+  }
+
+  #pagination {
+    bottom: -100px;
   }
 }
