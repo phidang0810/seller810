@@ -436,7 +436,7 @@ function updateCartStatus(){
     <div class="col-md-12 alert-wrapper">
     </div>
     <div class="col-md-8">
-        <div class="ibox float-e-margins mb">
+        <div class="ibox float-e-margins mb list-carts">
             @include('admin._partials._alert')
             <div class="ibox-content">
                 <div class="text-left">
