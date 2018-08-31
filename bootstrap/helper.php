@@ -146,30 +146,57 @@ function parse_status($status){
 	$status_parsed = '';
 	switch ($status) {
 		case CART_NEW:
-			$status_parsed = '<span class="label label-primary">'.CART_TEXT[CART_NEW].'</span>';
+			$status_parsed = '<span class="badge badge-primary">'.CART_TEXT[CART_NEW].'</span>';
 			break;
 
 		case CART_TRANSPORTING:
-			$status_parsed = '<span class="label label-info">'.CART_TEXT[CART_TRANSPORTING].'</span>';
+			$status_parsed = '<span class="badge badge-info">'.CART_TEXT[CART_TRANSPORTING].'</span>';
 			break;
 
 		case CART_TRANSPORTED:
-			$status_parsed = '<span class="label label-warning">'.CART_TEXT[CART_TRANSPORTED].'</span>';
+			$status_parsed = '<span class="badge badge-warning">'.CART_TEXT[CART_TRANSPORTED].'</span>';
 			break;
 
 		case CART_COMPLETED:
-			$status_parsed = '<span class="label label-success">'.CART_TEXT[CART_COMPLETED].'</span>';
+			$status_parsed = '<span class="badge badge-success">'.CART_TEXT[CART_COMPLETED].'</span>';
 			break;
 
 		case CART_CANCELED:
-			$status_parsed = '<span class="label label-danger">'.CART_TEXT[CART_CANCELED].'</span>';
+			$status_parsed = '<span class="badge badge-danger">'.CART_TEXT[CART_CANCELED].'</span>';
 			break;
 
 		default:
-			$status_parsed = '<span class="label label-primary">'.CART_TEXT[CART_EXCUTING].'</span>';
+			$status_parsed = '<span class="badge badge-primary">'.CART_TEXT[CART_EXCUTING].'</span>';
 			break;
 	}
 	return $status_parsed;
+}
+
+function parse_payment_status($payment_status){
+    $status_parsed = '';
+    switch ($payment_status) {
+        case NOT_PAYING:
+            $status_parsed = '<span class="badge badge-warning">'.CART_PAYMENT_TEXT[NOT_PAYING].'</span>';
+            break;
+
+        case PAYING_NOT_ENOUGH:
+            $status_parsed = '<span class="badge badge-danger">'.CART_PAYMENT_TEXT[PAYING_NOT_ENOUGH].'</span>';
+            break;
+
+        case PAYING_OFF:
+            $status_parsed = '<span class="badge badge-info">'.CART_PAYMENT_TEXT[PAYING_OFF].'</span>';
+            break;
+
+        case RECEIVED_PAYMENT:
+            $status_parsed = '<span class="badge badge-success">'.CART_PAYMENT_TEXT[RECEIVED_PAYMENT].'</span>';
+            break;
+
+
+        default:
+            $status_parsed = '<span class="badge badge-primary">'.CART_PAYMENT_TEXT[NOT_PAYING].'</span>';
+            break;
+    }
+    return $status_parsed;
 }
 
 function make_cart_status_options($selected = 0){

@@ -20,6 +20,12 @@ define('NOT_PAYING_TEXT', 'Chưa thanh toán');
 define('PAYING_NOT_ENOUGH_TEXT', 'Chưa thanh toán đủ');
 define('PAYING_OFF_TEXT', 'Đã thanh toán');
 define('RECEIVED_PAYMENT_TEXT', 'Đã nhận tiền');
+define('CART_PAYMENT_TEXT', [
+    1	=>	'Chưa thanh toán',
+    2	=>	'Chưa thanh toán đủ',
+    3	=>	'Đã thanh toán',
+    4	=>	'Đã nhận tiền'
+]);
 
 // cart status: chưa giao, đang giao, đã giao, đã hoàn tất, đã hủy
 define('CART_NEW', 1);
