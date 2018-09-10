@@ -381,6 +381,7 @@ Class CartRepository
                         $modelDetail->quantity = (isset($detail->product_quantity)) ? $detail->product_quantity : 0;
                         $modelDetail->discount_amount = (isset($detail->discount_amount)) ? $detail->discount_amount : 0;
                         $modelDetail->price = (isset($detail->product_price)) ? $detail->product_price : 0;
+                        $modelDetail->fixed_price = (isset($detail->product_fixed_price)) ? $detail->product_fixed_price : null;
                         $modelDetail->total_price = (isset($detail->total_price)) ? $detail->total_price : 0;
                         $modelDetail->save();
                         if (isset($detail->product_detail)) {
@@ -406,6 +407,7 @@ Class CartRepository
                         'quantity' => (isset($detail->product_quantity)) ? $detail->product_quantity : 0,
                         'discount_amount' => (isset($detail->discount_amount)) ? $detail->discount_amount : 0,
                         'price' => (isset($detail->product_price)) ? $detail->product_price : 0,
+                        'fixed_price' => (isset($detail->product_fixed_price)) ? $detail->product_fixed_price : null,
                         'total_price' => (isset($detail->total_price)) ? $detail->total_price : 0,
                     ]);
                     $model->details()->save($modelDetail);
@@ -450,7 +452,7 @@ Class CartRepository
                 'product_price' => ($value->price) ? $value->price : 0,
                 'total_price' => ($value->total_price) ? $value->total_price : 0,
                 'product_quantity' => ($value->quantity) ? $value->quantity : 0,
-                'product_editable_price' => ($value->price) ? $value->price : 0,
+                'product_fixed_price' => ($value->fixed_price) ? $value->fixed_price : null,
                 'product_name' => [
                     'id' => ($value->product->id) ? $value->product->id : 0,
                     'name' => ($value->product->name) ? $value->product->name : ''
