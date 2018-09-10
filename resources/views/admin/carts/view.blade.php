@@ -244,7 +244,7 @@
                     $('input[name="product_quantity"]').removeAttr('max_avaiable');
                     $('input[name="product_quantity"]').val(0);
                     $('input[name="product_detail_id"]').val(0);
-                    // $('#add_cart_details').prop('disabled', true);
+                    
                     $('.col-md-8 .ibox-content .error').each(function(){
                         if (!$(this).hasClass('hidden')) {
                             $(this).addClass('hidden');
@@ -258,7 +258,7 @@
                     $('input[name="product_quantity"]').removeAttr('max_avaiable');
                     $('input[name="product_quantity"]').val(0);
                     $('input[name="product_detail_id"]').val(0);
-                    // $('#add_cart_details').prop('disabled', true);
+                   
                     $('.col-md-8 .ibox-content .error').each(function(){
                         if (!$(this).hasClass('hidden')) {
                             $(this).addClass('hidden');
@@ -290,14 +290,14 @@
                     $('input[name="product_quantity"]').removeAttr('max_avaiable');
                     $('input[name="product_quantity"]').val(0);
                     $('input[name="product_detail_id"]').val(0);
-                    // $('#add_cart_details').prop('disabled', true);
+                
                 }else{
                     html_sizes_options = '<option value="0"> -- Chọn kích thước -- </option>';
                     $('select[name="product_size"]').html(html_sizes_options);
                     $('input[name="product_quantity"]').removeAttr('max_avaiable');
                     $('input[name="product_quantity"]').val(0);
                     $('input[name="product_detail_id"]').val(0);
-                    // $('#add_cart_details').prop('disabled', true);
+                
                 }
             }).fail(function(jqXHR, textStatus){
                 alert('Có lỗi xảy ra, xin hãy làm mới trình duyệt');
@@ -319,14 +319,14 @@
                 dataType:'json'
             }).done(function(data) {
                 if (!$.isEmptyObject(data)) {
-                    // $('#add_cart_details').prop('disabled', false);
+               
                     $('input[name="product_quantity"]').attr('max_avaiable', data.quantity);
                     $('input[name="product_detail_id"]').val(data.detail_id);
                 }else{
                     $('input[name="product_quantity"]').removeAttr('max_avaiable');
                     $('input[name="product_quantity"]').val(0);
                     $('input[name="product_detail_id"]').val(0);
-                    // $('#add_cart_details').prop('disabled', true);
+              
                 }
             }).fail(function(jqXHR, textStatus){
                 alert('Có lỗi xảy ra, xin hãy làm mới trình duyệt');
@@ -352,7 +352,6 @@
                     $("#product-"+objectName+"-error").css("display","none!important");
                 }
 
-                // $('#add_cart_details').removeAttr('disabled');
                 status = true;
             }
             return status;
@@ -444,7 +443,6 @@
         });
 
         //---> Print
-        // $('button[value="save_print"]').printThis();
         $('button[value="save_print"]').click(function(event){
             if (!validateCartDetailEmpty()) {
                 return false;

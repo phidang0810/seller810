@@ -32,77 +32,77 @@ Class CartRepository
     public function dataTable($request)
     {
         $carts = Cart::select(['carts.id', 'carts.city_id', 'carts.partner_id', 'carts.customer_id', 'carts.code', 'carts.quantity', 'carts.status', 'carts.active', 'carts.created_at', 'customers.name as customer_name', 'customers.phone as customer_phone', 'platforms.name as platform_name', 'carts.payment_status'])
-            ->join('customers', 'customers.id', '=', 'carts.customer_id')
-            ->leftJoin('platforms', 'platforms.id', '=', 'carts.platform_id');
+        ->join('customers', 'customers.id', '=', 'carts.customer_id')
+        ->leftJoin('platforms', 'platforms.id', '=', 'carts.platform_id');
 
         $dataTable = DataTables::eloquent($carts)
-            ->filter(function ($query) use ($request) {
-                if (trim($request->get('code')) !== "") {
-                    $query->where(function ($sub) use ($request) {
-                        $sub->where('carts.code', 'like', '%' . $request->get('code') . '%');
-                    });
+        ->filter(function ($query) use ($request) {
+            if (trim($request->get('code')) !== "") {
+                $query->where(function ($sub) use ($request) {
+                    $sub->where('carts.code', 'like', '%' . $request->get('code') . '%');
+                });
+            }
+
+            if (trim($request->get('customer_name')) !== "") {
+                $query->where(function ($sub) use ($request) {
+                    $sub->where('customers.name', 'like', '%' . $request->get('customer_name') . '%');
+                });
+            }
+
+            if (trim($request->get('customer_phone')) !== "") {
+                $query->where(function ($sub) use ($request) {
+                    $sub->where('customers.phone', 'like', '%' . $request->get('customer_phone') . '%');
+                });
+            }
+
+            if (trim($request->get('platform_name')) !== "") {
+                $query->where(function ($sub) use ($request) {
+                    $sub->where('carts.platform_id', $request->get('platform_name'));
+                });
+            }
+
+            if (trim($request->get('start_date')) !== "") {
+                $fromDate = Carbon::createFromFormat('d/m/Y H:i:s', $request->get('start_date') . ' 00:00:00')->toDateTimeString();
+
+                if (trim($request->get('end_date')) !== "") {
+
+                    $toDate = Carbon::createFromFormat('d/m/Y H:i:s', $request->get('end_date') . ' 23:59:59')->toDateTimeString();
+                    $query->whereBetween('carts.created_at', [$fromDate, $toDate]);
+                } else {
+                    $query->whereDate('carts.created_at', '>=', $fromDate);
                 }
+            }
 
-                if (trim($request->get('customer_name')) !== "") {
-                    $query->where(function ($sub) use ($request) {
-                        $sub->where('customers.name', 'like', '%' . $request->get('customer_name') . '%');
-                    });
-                }
+            if (trim($request->get('status')) !== "") {
+                $query->where(function ($sub) use ($request) {
+                    $sub->where('carts.status', 'like', '%' . $request->get('status') . '%');
+                });
+            }
 
-                if (trim($request->get('customer_phone')) !== "") {
-                    $query->where(function ($sub) use ($request) {
-                        $sub->where('customers.phone', 'like', '%' . $request->get('customer_phone') . '%');
-                    });
-                }
+            if (trim($request->get('payment_status')) !== "") {
+                $query->where(function ($sub) use ($request) {
+                    $sub->where('carts.payment_status', 'like', '%' . $request->get('payment_status') . '%');
+                });
+            }
 
-                if (trim($request->get('platform_name')) !== "") {
-                    $query->where(function ($sub) use ($request) {
-                        $sub->where('carts.platform_id', $request->get('platform_name'));
-                    });
-                }
-
-                if (trim($request->get('start_date')) !== "") {
-                    $fromDate = Carbon::createFromFormat('d/m/Y H:i:s', $request->get('start_date') . ' 00:00:00')->toDateTimeString();
-
-                    if (trim($request->get('end_date')) !== "") {
-
-                        $toDate = Carbon::createFromFormat('d/m/Y H:i:s', $request->get('end_date') . ' 23:59:59')->toDateTimeString();
-                        $query->whereBetween('carts.created_at', [$fromDate, $toDate]);
-                    } else {
-                        $query->whereDate('carts.created_at', '>=', $fromDate);
-                    }
-                }
-
-                if (trim($request->get('status')) !== "") {
-                    $query->where(function ($sub) use ($request) {
-                        $sub->where('carts.status', 'like', '%' . $request->get('status') . '%');
-                    });
-                }
-
-                if (trim($request->get('payment_status')) !== "") {
-                    $query->where(function ($sub) use ($request) {
-                        $sub->where('carts.payment_status', 'like', '%' . $request->get('payment_status') . '%');
-                    });
-                }
-
-            }, true)
-            ->addColumn('created_at', function ($cart) {
+        }, true)
+        ->addColumn('created_at', function ($cart) {
                 $html = $cart->created_at;//date('d/m/Y', strtotime($cart->created_at));
                 return $html;
             })
-            ->addColumn('status', function ($cart) {
-                $html = parse_status($cart->status);
-                return $html;
-            })
-            ->addColumn('payment_status', function ($cart) {
-                $html = parse_payment_status($cart->payment_status);
-                return $html;
-            })
-            ->rawColumns(['created_at', 'status', 'payment_status'])
-            ->order(function ($query) {
-                $query->orderBy('created_at', 'desc');
-            })
-            ->toJson();
+        ->addColumn('status', function ($cart) {
+            $html = parse_status($cart->status);
+            return $html;
+        })
+        ->addColumn('payment_status', function ($cart) {
+            $html = parse_payment_status($cart->payment_status);
+            return $html;
+        })
+        ->rawColumns(['created_at', 'status', 'payment_status'])
+        ->order(function ($query) {
+            $query->orderBy('created_at', 'desc');
+        })
+        ->toJson();
         return $dataTable;
     }
 
@@ -121,19 +121,19 @@ Class CartRepository
             'customers.name as customer_name', 'customers.phone as customer_phone', 'customers.email as customer_email',
             'customers.address as customer_address', 'cart_detail.product_id', 'carts.platform_id', 'platforms.name as platform_name',
             'transports.name as transport_name', 'carts.payment_status'])
-            ->leftjoin('customers', 'customers.id', '=', 'carts.customer_id')
-            ->leftjoin('cart_detail', 'cart_detail.cart_id', '=', 'carts.id')
-            ->leftjoin('products', 'products.id', '=', 'cart_detail.product_id')
-            ->leftjoin('platforms', 'platforms.id', '=', 'carts.platform_id')
-            ->leftjoin('transports', 'transports.id', '=', 'carts.transport_id')
-            ->where('carts.code', '=', $cartCode)
-            ->first();
+        ->leftjoin('customers', 'customers.id', '=', 'carts.customer_id')
+        ->leftjoin('cart_detail', 'cart_detail.cart_id', '=', 'carts.id')
+        ->leftjoin('products', 'products.id', '=', 'cart_detail.product_id')
+        ->leftjoin('platforms', 'platforms.id', '=', 'carts.platform_id')
+        ->leftjoin('transports', 'transports.id', '=', 'carts.transport_id')
+        ->where('carts.code', '=', $cartCode)
+        ->first();
 
         $cartDetails = Cart::select(['carts.id', 'cart_detail.quantity as quantity', 'cart_detail.price as price', 'carts.total_price as total_price', 'carts.shipping_fee as shipping_fee', 'carts.code', 'products.barcode_text as product_code', 'products.name as product_name', 'products.photo as product_photo'])
-            ->leftjoin('cart_detail', 'cart_detail.cart_id', '=', 'carts.id')
-            ->leftjoin('products', 'products.id', '=', 'cart_detail.product_id')
-            ->where('carts.code', '=', $cartCode)
-            ->get();
+        ->leftjoin('cart_detail', 'cart_detail.cart_id', '=', 'carts.id')
+        ->leftjoin('products', 'products.id', '=', 'cart_detail.product_id')
+        ->where('carts.code', '=', $cartCode)
+        ->get();
 
         $cartResult = array(
             "cart" => $cart,
@@ -147,15 +147,16 @@ Class CartRepository
     {
         $cartCode = $request->get('cart_code');
         $status = $request->get('status');
-        // $platform_id = $request->get('platform_id');
+        $transport_id = $request->get('transport_id');
         $pay_amount = ($request->get('pay_amount') !== null) ? $request->get('pay_amount') : 0;
         $needed_paid = $request->get('needed_paid');
         $model = Cart::where('code', '=', $cartCode)->first();
         $model->paid_amount = ($model->paid_amount) ? $model->paid_amount : 0;
         $model->paid_amount += $pay_amount;
-        // $model->platform_id = $platform_id;
         $model->needed_paid = $needed_paid;
-        // excute payment_status
+        $model->transport_id = $transport_id;
+
+        //---> excute payment_status
         if ($model->paid_amount && $model->paid_amount > 0) {
             $model->payment_status = PAYING_NOT_ENOUGH;
             if ($model->paid_amount >= $model->price) {
@@ -483,9 +484,9 @@ Class CartRepository
     public function getStaticsCartDataTable($request)
     {
         $products = CartDetail::selectRaw('products.name, products.main_cate, products.barcode_text, carts.code as cart_code, products.photo, products.category_ids,carts.city_id, carts.platform_id, SUM(cart_detail.quantity) as quantity, SUM(cart_detail.total_price) as total_price, (cart_detail.total_price - (products.price*cart_detail.quantity)) as profit, DATE(cart_detail.created_at) as created_at, COUNT(carts.id) total_cart')
-            ->join('products', 'products.id', '=', 'cart_detail.product_id')
-            ->join('carts', 'carts.id', '=', 'cart_detail.cart_id')
-            ->groupBy('cart_detail.product_id');
+        ->join('products', 'products.id', '=', 'cart_detail.product_id')
+        ->join('carts', 'carts.id', '=', 'cart_detail.cart_id')
+        ->groupBy('cart_detail.product_id');
         if ($request->has('date')) {
             $products->groupBy(DB::raw('DATE(cart_detail.created_at)'));
         }
@@ -493,66 +494,66 @@ Class CartRepository
         $platforms = Platform::get()->pluck('name', 'id')->toArray();
         $cities = City::get()->pluck('name', 'id')->toArray();
         $dataTable = DataTables::eloquent($products)
-            ->filter(function ($query) use ($request) {
-                if (trim($request->get('category')) !== "") {
-                    $query->join('product_category', 'products.id', '=', 'product_category.product_id')
-                        ->where('product_category.category_id', $request->get('category'));
-                }
+        ->filter(function ($query) use ($request) {
+            if (trim($request->get('category')) !== "") {
+                $query->join('product_category', 'products.id', '=', 'product_category.product_id')
+                ->where('product_category.category_id', $request->get('category'));
+            }
 
-                if (trim($request->get('platform_id')) !== "") {
-                    $query->where('carts.platform_id', $request->get('platform_id'));
-                }
+            if (trim($request->get('platform_id')) !== "") {
+                $query->where('carts.platform_id', $request->get('platform_id'));
+            }
 
-                if (trim($request->get('date_from')) !== "") {
-                    $dateFrom = \DateTime::createFromFormat('d/m/Y', $request->get('date_from'));
-                    $dateFrom = $dateFrom->format('Y-m-d 00:00:00');
-                    $query->where('cart_detail.created_at', '>=', $dateFrom);
-                }
+            if (trim($request->get('date_from')) !== "") {
+                $dateFrom = \DateTime::createFromFormat('d/m/Y', $request->get('date_from'));
+                $dateFrom = $dateFrom->format('Y-m-d 00:00:00');
+                $query->where('cart_detail.created_at', '>=', $dateFrom);
+            }
 
-                if (trim($request->get('date_to')) !== "") {
-                    $dateTo = \DateTime::createFromFormat('d/m/Y', $request->get('date_to'));
-                    $dateTo = $dateTo->format('Y-m-d 23:59:50');
-                    $query->where('cart_detail.created_at', '<=', $dateTo);
-                }
+            if (trim($request->get('date_to')) !== "") {
+                $dateTo = \DateTime::createFromFormat('d/m/Y', $request->get('date_to'));
+                $dateTo = $dateTo->format('Y-m-d 23:59:50');
+                $query->where('cart_detail.created_at', '<=', $dateTo);
+            }
 
-                if (trim($request->get('keyword')) !== "") {
-                    $query->where(function ($sub) use ($request) {
-                        $sub->where('products.name', 'like', '%' . $request->get('keyword') . '%');
-                        $sub->where('products.barcode_text', 'like', '%' . $request->get('keyword') . '%');
-                    });
-                }
-            }, true)
-            ->addColumn('category', function ($product) use ($categories) {
-                $html = '';
-                $categoryName = $categories[$product->main_cate] ?? '';
-                $html .= '<label class="label label-default">' . $categoryName . '</label><br/>';
-                return $html;
-            })
-            ->addColumn('total_price', function ($product) use ($platforms) {
-                return format_price($product->total_price);
-            })
-            ->addColumn('total_cart', function ($product) use ($platforms) {
-                return format_number($product->total_cart);
-            })
-            ->addColumn('profit', function ($product) {
-                return format_price($product->profit);
-            })
-            ->addColumn('platform', function ($product) use ($platforms) {
-                return $platforms[$product->platform_id] ?? '';
-            })
-            ->addColumn('city', function ($product) use ($cities) {
-                return $cities[$product->city_id] ?? '';
-            })
-            ->addColumn('photo', function ($product) {
-                if ($product->photo) {
-                    $html = '<img style="width: 80px; height: 60px;" class="img-thumbnail" src="' . asset('storage/' . $product->photo) . '" />';
-                } else {
-                    $html = ' <img alt="No Photo" style="width: 80px; height: 60px;" class="img-thumbnail" src="' . asset(NO_PHOTO) . '" >';
-                }
-                return $html;
-            })
-            ->rawColumns(['category', 'platform', 'photo'])
-            ->toJson();
+            if (trim($request->get('keyword')) !== "") {
+                $query->where(function ($sub) use ($request) {
+                    $sub->where('products.name', 'like', '%' . $request->get('keyword') . '%');
+                    $sub->where('products.barcode_text', 'like', '%' . $request->get('keyword') . '%');
+                });
+            }
+        }, true)
+        ->addColumn('category', function ($product) use ($categories) {
+            $html = '';
+            $categoryName = $categories[$product->main_cate] ?? '';
+            $html .= '<label class="label label-default">' . $categoryName . '</label><br/>';
+            return $html;
+        })
+        ->addColumn('total_price', function ($product) use ($platforms) {
+            return format_price($product->total_price);
+        })
+        ->addColumn('total_cart', function ($product) use ($platforms) {
+            return format_number($product->total_cart);
+        })
+        ->addColumn('profit', function ($product) {
+            return format_price($product->profit);
+        })
+        ->addColumn('platform', function ($product) use ($platforms) {
+            return $platforms[$product->platform_id] ?? '';
+        })
+        ->addColumn('city', function ($product) use ($cities) {
+            return $cities[$product->city_id] ?? '';
+        })
+        ->addColumn('photo', function ($product) {
+            if ($product->photo) {
+                $html = '<img style="width: 80px; height: 60px;" class="img-thumbnail" src="' . asset('storage/' . $product->photo) . '" />';
+            } else {
+                $html = ' <img alt="No Photo" style="width: 80px; height: 60px;" class="img-thumbnail" src="' . asset(NO_PHOTO) . '" >';
+            }
+            return $html;
+        })
+        ->rawColumns(['category', 'platform', 'photo'])
+        ->toJson();
 
         return $dataTable;
     }

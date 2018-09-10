@@ -17,6 +17,7 @@
         //---> Get customer detail, cart detail
         var cart_complete = "{{CART_COMPLETED}}";
         var cart_canceled = "{{CART_CANCELED}}";
+        var data_to_print;
 
         function getRecordDetail() {
             $('#dataTables tbody > tr').click(function () {
@@ -29,6 +30,7 @@
                     dataType: 'json'
                 }).done(function (data) {
                     // console.log(data);
+                    data_to_print = data;
                     if (!$.isEmptyObject(data.result["cart"])) {
                         var elCustomerInfo = $(".customer-info-wrapper");
                         if (!$.isEmptyObject(data.result["cart"])) {
@@ -37,6 +39,7 @@
                                 $("#i-status-list").attr('readonly', true);
                                 $("#save-cart-info").attr('disabled', true);
                             }
+
                         }
 
                     } else {
@@ -46,6 +49,56 @@
                     console.log(data);
                     console.log(textStatus);
                 })
+
+            });
+        }
+
+        function parseSummaryProduct(cart){
+            var html = '<tr><td colspan="4" style="text-align:right" >Tổng cộng:</td><td class="thousand-number" style="text-align:right">'+cart['total_price']+'</td></tr>';
+            html += '<tr><td colspan="4" style="text-align:right">Thuế:</td><td class="thousand-number" style="text-align:right">'+cart['vat_amount']+'</td></tr>';
+            html += '<tr><td colspan="4" style="text-align:right">Phí vận chuyển:</td><td class="thousand-number" style="text-align:right">'+cart['shipping_fee']+'</td></tr>';
+            html += '<tr><td colspan="4" style="text-align:right">Tổng chiết khấu:</td><td class="thousand-number" style="text-align:right">-'+cart['total_discount_amount']+'</td></tr>';
+            html += '<tr><td colspan="4" style="text-align:right">Thành tiền:</td><td class="thousand-number" style="text-align:right">'+cart['price']+'</td></tr>';
+            $('.tbl-list-product > tfoot').html(html);
+        }
+
+        function parseProductTable(arrProducts){
+            var html = '';
+            if (arrProducts.length > 0) {
+                $.each(arrProducts, function( index, value ) {
+                  html += '<tr>';
+                  html += '<td>'+value['product_name']+'</td>';
+                  html += '<td>'+value['product_code']+'</td>';
+                  html += '<td class="thousand-number" style="text-align:right;">'+value['price']+'</td>';
+                  html += '<td style="text-align:right;">'+value['quantity']+'</td>';
+                  html += '<td class="thousand-number" style="text-align:right;">'+value['total_price']+'</td>';
+              html += '</tr>';
+          });
+            }
+            return html;
+        }
+
+        function getDataToPrint(data){
+            //---> Apply for print
+            $('.lbl-customer-name').text(data.result['cart']['customer_name']);
+            $('.lbl-customer-phone').text(data.result['cart']['customer_phone']);
+            $('.lbl-customer-address').text(data.result['cart']['customer_address']);
+            $('.lbl-customer-created').text(data.result['cart']['created_at']);
+            $('.lbl-customer-code').text(data.result['cart']['code']);
+            $('.tbl-list-product > tbody').html(parseProductTable(data.result['cart_details']));
+            parseSummaryProduct(data.result['cart']);
+            setTimeout(function(){
+                $('.thousand-number').simpleMoneyFormat();
+                $('.thousand-number').append(" VNĐ");
+            },300);
+        }
+
+        var print_el = $("#print-section");
+        function printCart(){
+            getDataToPrint(data_to_print);
+            print_el.removeClass("hidden");
+            print_el.printThis({
+                header: null,
 
             });
         }
@@ -74,21 +127,18 @@
 
             var cart_code = $("#code").text();
             var status_val = $("#i-status-list").val();
-            // var payment_status_val = $("#i-payment-status-list").val();
-            // var platform_val = $("#i-platforms-list").val();
             var pay_amount_val = ($('input[name="pay_amount"]').val()) ? formatMoney($('input[name="pay_amount"]').val()) : 0;
             var needed_paid_val = formatMoney($('#needed_paid').text());
-            // console.log(pay_amount_val);return;
+            var transport_id = $('input[name="transport_id"]').val();
             $.ajax({
                 url: "{{route('admin.carts.updateStatus')}}",
                 type: 'PUT',
                 data: {
                     cart_code: cart_code,
                     status: status_val,
-                    // payment_status: payment_status_val,
-                    // platform: platform_val,
                     pay_amount: pay_amount_val,
                     needed_paid: needed_paid_val,
+                    transport_id: transport_id
                 },
                 dataType: 'json'
             }).done(function (data) {
@@ -124,7 +174,6 @@
             //---> Show menu on horizontal bar
             var url_index = "{{route('admin.carts.index')}}";
             if (location.href == url_index) {
-                // $(".cart-menu-wrapper").show();
                 $(".cart-menu-wrapper .cart-index").addClass("active");
             }
 
@@ -337,6 +386,8 @@
             updateStatus();
             table.fnDraw();
         }
+
+        
     </script>
 @endsection
 @section('content')
@@ -385,8 +436,6 @@
                 <div class="col-sm-3">
                     <div class="form-group">
                         <label>Nguồn đơn</label>
-                    <!-- <input type="text" placeholder="Nguồn đơn" name="platform_name" id="s-supplier-name" class="form-control"
-                        value="{{app('request')->input('platform_name')}}"> -->
                         <select id="s-platform-name" name="platform_name" class="form-control"
                                 placeholder="Chọn nguồn đơn">
                             <option value="">-- Chọn nguồn đơn --</option>
@@ -505,4 +554,5 @@
             </div>
         </div>
     </div>
+    @include('admin._partials._cart_view_print')
 @endsection
