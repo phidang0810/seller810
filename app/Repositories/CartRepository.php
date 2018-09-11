@@ -98,7 +98,11 @@ Class CartRepository
             $html = parse_payment_status($cart->payment_status);
             return $html;
         })
-        ->rawColumns(['created_at', 'status', 'payment_status'])
+        ->addColumn('code', function ($cart) {
+            $html = '<a href="'.route('admin.carts.view',["id" => $cart->id]).'">'.$cart->code.'</a>';
+            return $html;
+        })
+        ->rawColumns(['created_at', 'status', 'payment_status', 'code'])
         ->order(function ($query) {
             $query->orderBy('created_at', 'desc');
         })
