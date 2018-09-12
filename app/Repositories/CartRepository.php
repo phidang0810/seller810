@@ -310,7 +310,7 @@ Class CartRepository
         $model->total_price = preg_replace('/[^0-9]/', '', $data['total_price']);
         $model->price = preg_replace('/[^0-9]/', '', $data['price']);
         $model->shipping_fee = preg_replace('/[^0-9]/', '', $data['shipping_fee']);
-        $model->vat_percent = 10;
+        $model->vat_percent = preg_replace('/[^0-9]/', '', $data['vat_percent']);
         $model->vat_amount = preg_replace('/[^0-9]/', '', $data['vat_amount']);
         $model->paid_amount = preg_replace('/[^0-9]/', '', $data['paid_amount']);
         $model->needed_paid = preg_replace('/[^0-9]/', '', $data['needed_paid']);

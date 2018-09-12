@@ -119,9 +119,10 @@
                 total_quantity += value.product_quantity;
             }
         });
+        vat_percent = $('input[name="vat_percent"]').val();
         $('.cart-total-info input[name="total_price"]').val(total_price);
         $('.cart-total-info input[name="quantity"]').val(total_quantity);
-        vat_amount = parseInt(removeNonDigit($('.cart-total-info input[name="total_price"]').val())) * 10 / 100;
+        vat_amount = parseInt(removeNonDigit($('.cart-total-info input[name="total_price"]').val())) * vat_percent / 100;
         $('.cart-total-info input[name="vat_amount"]').val(vat_amount);
         updateTotalDiscountAmount(total_quantity);
 
@@ -268,6 +269,10 @@
             }).fail(function(jqXHR, textStatus){
                 alert('Có lỗi xảy ra, xin hãy làm mới trình duyệt');
             })
+        });
+
+        $('input[name="vat_percent"]').on('change', function(){
+            updateCartTotalInfo();
         });
 
         // Load data for size options when color select is changed
@@ -882,6 +887,19 @@ function getDataToPrint(data){
 
                             <div class="row">
                                 <div class="form-group clearfix">
+                                    <label class="col-md-4 control-label">Thuế</label>
+                                    <div class="col-md-8">
+                                        <div class="input-group">
+                                            <input type="text" name="vat_percent" placeholder="" class="thousand-number text-right form-control m-b"
+                                            value="@if(isset($data->vat_percent)){{$data->vat_percent}}@else{{0}}@endif" />
+                                            <span class="input-group-addon input-readonly">%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group clearfix">
                                     <label class="col-md-4 control-label">Ghi chú</label>
                                     <div class="col-md-8">
                                         <textarea class="form-control" name="descritption">@if(isset($data->descritption)){{$data->descritption}}@endif</textarea>
@@ -915,11 +933,11 @@ function getDataToPrint(data){
 
                                 <div class="row">
                                     <div class="form-group clearfix">
-                                        <label class="col-md-4 control-label">Thuế (10%)</label>
+                                        <label class="col-md-4 control-label">Thuế</label>
                                         <div class="col-md-8">
                                             <div class="input-group">
                                                 <input type="text" name="vat_amount" placeholder="" class="thousand-number text-right form-control m-b"
-                                                value="@if(isset($data->vat_amount)){{$data->vat_amount}}@else{{0}}@endif" />
+                                                value="@if(isset($data->vat_amount)){{$data->vat_amount}}@else{{0}}@endif" readonly="readonly" />
                                                 <span class="input-group-addon input-readonly">VND</span>
                                             </div>
                                         </div>
