@@ -99,6 +99,7 @@ Route::prefix('san-pham')
         Route::get ('/chi-tiet', 'ProductAvailableController@view')->name('admin.product_available.view');
         Route::post ('/them', 'ProductAvailableController@store')->name('admin.product_available.store');
         Route::delete ('/', 'ProductAvailableController@delete')->name('admin.product_available.delete');
+        Route::put ('/change-status', 'ProductAvailableController@changeStatus')->name('admin.product_available.changeStatus');
 });
 
 Route::prefix('don-hang')

@@ -45,7 +45,7 @@
         // Price
         var html_detail_label_price = '<input type="text" value="' + data.product_price + '" class="thousand-number form-control" readonly="readonly">';
         // Editable price
-        var html_detail_input_price = '<input type="number" min="0" value="'+data['product_editable_price']+'" id="detail_editable_quantity_'+key+'" class="detail_editable_quantity form-control" >';
+        var html_detail_fixed_price = '<input type="text" value="'+data['product_fixed_price']+'" id="detail_fixed_price_'+key+'" class="thousand-number detail_quantity detail_fixed_price form-control" >';
         // Count price
         var html_detail_input_count_price = '<input type="text" value="' + data.total_price + '" id="detail_count_price_'+key+'" class="thousand-number detail_count_price form-control" readonly="readonly">';
 
@@ -57,6 +57,7 @@
         <td>'+html_detail_label_size+'</td>\
         <td>'+html_detail_label_color+'</td>\
         <td>'+html_detail_label_price+'</td>\
+        <td>'+html_detail_fixed_price+'</td>\
         <td>'+html_detail_input_count_price+'</td>\
         <td><a href="javascript:;" onclick="deleteCartDetailItem('+key+');" class="bt-delete btn btn-xs btn-danger"><i class="fa fa-trash-o" aria-hidden="true"></i></a></td>';
         return html;
@@ -95,7 +96,8 @@
         $.each(cart_details, function(key, value){
             if (value.delete != true) {
                 cart_details[key].product_quantity = parseInt($('#detail_quantity_'+key).val());
-                cart_details[key].total_price = cart_details[key].product_quantity * cart_details[key].product_price;
+                cart_details[key].product_fixed_price = (parseInt($('#detail_fixed_price_'+key).val().replace(/,/g , '')) >= 0) ? parseInt(removeNonDigit($('#detail_fixed_price_'+key).val())) : null;
+                cart_details[key].total_price = (cart_details[key].product_fixed_price == null) ? cart_details[key].product_quantity * cart_details[key].product_price : cart_details[key].product_quantity * cart_details[key].product_fixed_price;
                 $('#detail_count_price_'+key).val(cart_details[key].total_price);
             }
         });
@@ -121,6 +123,7 @@
         $('.cart-total-info input[name="quantity"]').val(total_quantity);
         vat_amount = parseInt(removeNonDigit($('.cart-total-info input[name="total_price"]').val())) * 10 / 100;
         $('.cart-total-info input[name="vat_amount"]').val(vat_amount);
+        updateTotalDiscountAmount(total_quantity);
 
         // Count price
         shipping_fee = ($('.cart-total-info input[name="shipping_fee"]').val()) ? parseInt(removeNonDigit($('.cart-total-info input[name="shipping_fee"]').val())) : 0;
@@ -140,11 +143,11 @@
     });
 
     // Function update total amount
-    function updateTotalDiscountAmount(){
+    function updateTotalDiscountAmount(total_quantity){
         customer_discount = (parseInt($('input[name="customer_discount_amount"]').val())) ? parseInt(removeNonDigit($('input[name="customer_discount_amount"]').val())) : 0;
-        partner_discount = (parseInt($('input[name="partner_discount_amount"]').val())) ? parseInt(removeNonDigit($('input[name="partner_discount_amount"]').val())) : 0;
+        partner_discount = (parseInt($('input[name="partner_discount_amount"]').val())) ? parseInt(removeNonDigit($('input[name="partner_discount_amount"]').val())) * parseInt(total_quantity) : 0;
         $('.cart-total-info input[name="total_discount_amount"]').val(-(customer_discount + partner_discount));
-        updateCartTotalInfo();
+        // updateCartTotalInfo();
     }
 
     // First time show details to table
@@ -241,7 +244,7 @@
                     $('input[name="product_quantity"]').removeAttr('max_avaiable');
                     $('input[name="product_quantity"]').val(0);
                     $('input[name="product_detail_id"]').val(0);
-                    // $('#add_cart_details').prop('disabled', true);
+                    
                     $('.col-md-8 .ibox-content .error').each(function(){
                         if (!$(this).hasClass('hidden')) {
                             $(this).addClass('hidden');
@@ -255,7 +258,7 @@
                     $('input[name="product_quantity"]').removeAttr('max_avaiable');
                     $('input[name="product_quantity"]').val(0);
                     $('input[name="product_detail_id"]').val(0);
-                    // $('#add_cart_details').prop('disabled', true);
+                   
                     $('.col-md-8 .ibox-content .error').each(function(){
                         if (!$(this).hasClass('hidden')) {
                             $(this).addClass('hidden');
@@ -287,14 +290,14 @@
                     $('input[name="product_quantity"]').removeAttr('max_avaiable');
                     $('input[name="product_quantity"]').val(0);
                     $('input[name="product_detail_id"]').val(0);
-                    // $('#add_cart_details').prop('disabled', true);
+                
                 }else{
                     html_sizes_options = '<option value="0"> -- Chọn kích thước -- </option>';
                     $('select[name="product_size"]').html(html_sizes_options);
                     $('input[name="product_quantity"]').removeAttr('max_avaiable');
                     $('input[name="product_quantity"]').val(0);
                     $('input[name="product_detail_id"]').val(0);
-                    // $('#add_cart_details').prop('disabled', true);
+                
                 }
             }).fail(function(jqXHR, textStatus){
                 alert('Có lỗi xảy ra, xin hãy làm mới trình duyệt');
@@ -316,14 +319,14 @@
                 dataType:'json'
             }).done(function(data) {
                 if (!$.isEmptyObject(data)) {
-                    // $('#add_cart_details').prop('disabled', false);
+               
                     $('input[name="product_quantity"]').attr('max_avaiable', data.quantity);
                     $('input[name="product_detail_id"]').val(data.detail_id);
                 }else{
                     $('input[name="product_quantity"]').removeAttr('max_avaiable');
                     $('input[name="product_quantity"]').val(0);
                     $('input[name="product_detail_id"]').val(0);
-                    // $('#add_cart_details').prop('disabled', true);
+              
                 }
             }).fail(function(jqXHR, textStatus){
                 alert('Có lỗi xảy ra, xin hãy làm mới trình duyệt');
@@ -349,7 +352,6 @@
                     $("#product-"+objectName+"-error").css("display","none!important");
                 }
 
-                // $('#add_cart_details').removeAttr('disabled');
                 status = true;
             }
             return status;
@@ -441,7 +443,6 @@
         });
 
         //---> Print
-        // $('button[value="save_print"]').printThis();
         $('button[value="save_print"]').click(function(event){
             if (!validateCartDetailEmpty()) {
                 return false;
@@ -455,6 +456,7 @@
                 dataType:'json'
             }).done(function(data) {
                 if (!$.isEmptyObject(data)) {
+                    $('input[name="id"]').val(data.id);
                     getDataToPrint(data);
                     print_el.removeClass("hidden");
                     print_el.printThis({
@@ -493,7 +495,7 @@
                             'product_image':(data.product.photo) ? path_img_folder + data.product.photo : default_image,
                             'product_code':data.product.barcode_text,
                             'product_price':parseInt(data.product.sell_price),
-                            'product_editable_price':data.product.sell_price,
+                            'product_fixed_price':null,
                             'product_name':{id:$('select[name="product_name"]').val(), name:$('select[name="product_name"] option[value="'+$('select[name="product_name"]').val()+'"]').text()},
                             'product_quantity':parseInt($('input[name="product_quantity"]').val()),
                             'product_size':{id:$('select[name="product_size"]').val(), name:$('select[name="product_size"] option[value="'+$('select[name="product_size"]').val()+'"]').text()},
@@ -547,7 +549,7 @@
                         }else{
                             $('input[name="customer_discount_amount"]').val(0);
                         }
-                        updateTotalDiscountAmount();
+                        updateCartTotalInfo();
                     }else{
                         $('input[name="customer_name"]').val("");
                         $('input[name="customer_email"]').val("");
@@ -574,7 +576,7 @@
             }).done(function(data) {
                 if (!$.isEmptyObject(data)) {
                     $('input[name="partner_discount_amount"]').val(-data.partner.discount_amount);
-                    updateTotalDiscountAmount();
+                    updateCartTotalInfo();
                 }else{
                 }
             }).fail(function(jqXHR, textStatus){
@@ -654,9 +656,9 @@ function getDataToPrint(data){
             @include('admin._partials._alert')
             <form role="form" method="POST" id="mainForm" action="{{route('admin.carts.store')}}">
                 {{ csrf_field() }}
-                @if (isset($data->id))
-                <input type="hidden" name="id" value="{{$data->id}}" />
-                @endif
+                
+                <input type="hidden" name="id" value="@if(isset($data->id)){{$data->id}}@else{{null}}@endif" />
+                
                 <input type="hidden" name="cart_details" value="@if(isset($cart_details)){{$cart_details}}@endif"/>
                 <div class="row">
                     <div class="col-md-8">
@@ -717,6 +719,7 @@ function getDataToPrint(data){
                                                         <th>Size</th>
                                                         <th>Màu</th>
                                                         <th>Đơn Giá</th>
+                                                        <th>Giá tùy chỉnh</th>
                                                         <th>Thành tiền</th>
                                                         <th></th>
                                                     </tr>
@@ -797,18 +800,6 @@ function getDataToPrint(data){
                             </div>
 
                             <div class="row">
-                                <div class="form-group">
-                                    <label class="col-md-4 control-label">Nguồn đơn</label>
-                                    <div class="col-md-8">
-                                        <select name="platform_id" class="form-control m-b">
-                                            <option value="" selected>-- Chọn nguồn đơn --</option>
-                                            {!! $platform_options !!}
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row">
                                 <div class="form-group clearfix">
                                     <label class="col-md-4 control-label">Chiết khấu khách hàng</label>
                                     <div class="col-md-8">
@@ -824,6 +815,18 @@ function getDataToPrint(data){
                             <div class="row">
                                 <div class="col-md-12">
                                     <h2>Thông tin khác</h2>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group">
+                                    <label class="col-md-4 control-label">Nguồn đơn</label>
+                                    <div class="col-md-8">
+                                        <select name="platform_id" class="form-control m-b">
+                                            <option value="" selected>-- Chọn nguồn đơn --</option>
+                                            {!! $platform_options !!}
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
 
@@ -916,7 +919,7 @@ function getDataToPrint(data){
                                         <div class="col-md-8">
                                             <div class="input-group">
                                                 <input type="text" name="vat_amount" placeholder="" class="thousand-number text-right form-control m-b"
-                                                value="@if(isset($data->vat_amount)){{$data->vat_amount}}@else{{0}}@endif" readonly="readonly" />
+                                                value="@if(isset($data->vat_amount)){{$data->vat_amount}}@else{{0}}@endif" />
                                                 <span class="input-group-addon input-readonly">VND</span>
                                             </div>
                                         </div>

@@ -36,7 +36,8 @@
 
     <div class="form-group">
         <label class="col-lg-5 control-label" style="text-align: left; padding-right: 0; width: 33.666667%;">Mã vận đơn:</label>
-        <label id='transport_id' class="col-lg-7 text-left control-label" style="padding-left: 0; text-align: left;">{{$result['cart']->transport_id}}</label>
+        <!-- <label id='transport_id' class="col-lg-7 text-left control-label" style="padding-left: 0; text-align: left;">{{$result['cart']->transport_id}}</label> -->
+        <input type="text" value="@if(isset($result['cart']->transport_id) && isset($result['cart']->transport_id)){{$result['cart']->transport_id}}@else{{old('transport_id')}}@endif"" name="transport_id">
     </div>
 
     <div class="form-group">
@@ -170,6 +171,7 @@
         <div class="form-group">
             <div class="col-lg-offset-2 col-lg-10 text-right">
                 <button id="save-cart-info" class="btn btn-sm btn-primary" type="button" onclick="updateCartStatus();">Lưu</button>
+                <button id="save-cart-info" class="btn btn-sm btn-success" type="button" onclick="printCart();">In</button>
             </div>
         </div>
     </form>

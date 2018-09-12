@@ -7,6 +7,7 @@
 <script>
     var url_delete = "{{route('admin.product_available.delete')}}";
     var url_edit = "{{route('admin.product_available.view')}}";
+    var url_change_status = "{{route('admin.product_available.changeStatus')}}";
     var table;
     $.ajaxSetup({
         headers: {
@@ -35,7 +36,78 @@
                     d.category = $('#s-category').val();
                     d.private_search = $('#private_search').val();
                 },
-                complete: function(){}
+                complete: function(){
+                    
+                    var inputStatus = document.querySelectorAll('.js-switch');
+                    var elems = Array.prototype.slice.call(inputStatus);
+
+                    elems.forEach(function(elem) {
+                        var switchery = new Switchery(elem, { size: 'small' });
+
+                        elem.onchange = function() {
+                            var id = $(elem).attr('data-id');
+                            var name = $(elem).attr('data-name');
+                            if (elem.checked) {
+                                var status = 'kích hoạt';
+                            } else {
+                                var status = 'bỏ kích hoạt';
+                            }
+
+                            swal({
+                                title: "Cảnh Báo!",
+                                text: "Bạn có chắc muốn "+status+" <b>"+name+"</b> ?",
+                                html:true,
+                                type: "warning",
+                                showCancelButton: true,
+                                confirmButtonClass: "btn-danger",
+                                confirmButtonText: "Chắc chắn!",
+                                cancelButtonText: "Không",
+                                closeOnConfirm: false
+                            },
+                            function(isConfirm){
+                                if (isConfirm) {
+                                    $.ajax({
+                                        url: url_change_status,
+                                        type: 'PUT',
+                                        data: {
+                                            id: id,
+                                            status: elem.checked
+                                        },
+                                        dataType: 'json',
+                                        success: function (response) {
+                                            if (response.success) {
+                                                swal({
+                                                    title: "Thành công!",
+                                                    text: "Bạn đã " + status + " danh mục " + name + " thành công.",
+                                                    html: true,
+                                                    type: "success",
+                                                    confirmButtonClass: "btn-primary",
+                                                    confirmButtonText: "Đóng lại."
+                                                });
+                                            } else {
+                                                errorHtml = '<ul class="text-left">';
+                                                $.each(response.errors, function (key, error) {
+                                                    errorHtml += '<li>' + error + '</li>';
+                                                });
+                                                errorHtml += '</ul>';
+                                                swal({
+                                                    title: "Error! Refresh page and try again.",
+                                                    text: errorHtml,
+                                                    html: true,
+                                                    type: "error",
+                                                    confirmButtonClass: "btn-danger"
+                                                });
+                                            }
+                                        }
+                                    });
+                                } else {
+                                    $(elem).prop('checked', !elem.checked);
+                                    $(elem).parent().find(".switchery").trigger("click");
+                                }
+                            });
+                        };
+                    });
+                }
             },
             columns: [
             {data: 'id'},
@@ -45,6 +117,7 @@
             {data: 'category'},
             {data: 'quantity_available'},
             {data: 'sell_price'},
+            {data: 'status'},
             {
                 data: 'id',
                 render: function (data, type, full, meta) {
@@ -214,6 +287,7 @@ $("#dataTables").on("click", '.bt-delete', function(){
                         <th>Danh mục</th>
                         <th>Số lượng</th>
                         <th>Giá bán</th>
+                        <th>Trạng thái</th>
                         <th></th>
                     </tr>
                 </thead>
