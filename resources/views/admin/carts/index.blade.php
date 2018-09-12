@@ -21,6 +21,8 @@
 
         function getRecordDetail() {
             $('#dataTables tbody > tr').click(function () {
+                $('#dataTables tbody tr').removeClass("cart-active");
+                $(this).addClass("cart-active");
                 var cart_code = $(this).find('td:not(:empty):first').text();
                 $.ajax({
                     url: "{{route('admin.carts.getCartDetail')}}",
@@ -170,7 +172,26 @@
             })
         }
 
+        $.urlParam = function(name){
+            var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+            if (results==null){
+               return null;
+           }
+           else{
+               return decodeURI(results[1]) || 0;
+           }
+       }
+
+       function activeRecoreByCartCode(){
+            var cart_code = $.urlParam("cart_code");
+            if (cart_code !== null) {
+                var elCartCode = $('#'+cart_code);
+                elCartCode.closest("tr").click()
+            }
+        }
+
         $(document).ready(function () {
+
             //---> Show menu on horizontal bar
             var url_index = "{{route('admin.carts.index')}}";
             if (location.href == url_index) {
@@ -274,6 +295,7 @@
 
                         //---> Get customer detail
                         getRecordDetail();
+                        activeRecoreByCartCode();
                     },
                 },
                 columns: [

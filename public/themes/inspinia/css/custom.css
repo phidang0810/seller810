@@ -786,3 +786,7 @@ div#barcode_image div {
     bottom: -100px;
   }
 }
+
+.cart-active{
+  background-color: #d9d9d9!important;
+}
