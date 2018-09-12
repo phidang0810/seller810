@@ -99,11 +99,7 @@ Class CartRepository
             return $html;
         })
         ->addColumn('code', function ($cart) {
-            $html = '<span id="'.$cart->code.'">'.$cart->code.'</span>';
-            return $html;
-        })
-        ->addColumn('code', function ($cart) {
-            $html = '<a href="'.route('admin.carts.index', ['cart_code' => $cart->code]) . '">' . $cart->code .'</a>';
+            $html = '<a href="'.route('admin.carts.index', ['cart_code' => $cart->code]) . '">' . '<span id="'.$cart->code.'">'.$cart->code.'</span>' .'</a>';
             return $html;
         })
         ->rawColumns(['created_at', 'status', 'payment_status', 'code'])
