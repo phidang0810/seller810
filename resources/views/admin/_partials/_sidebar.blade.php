@@ -42,7 +42,7 @@
                     <a href="#"><i class="fa fa-paint-brush"></i> <span class="nav-label">Quản Lý Kho Hàng</span><span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level">
                         <li class="{{ set_active(['quan-ly/kho-hang']) }}"><a href="{{route('admin.products.index')}}">Kho Hàng</a></li>
-                        <li class="{{ set_active(['quan-ly/kho-hang/danh-muc-san-pham']) }}"><a href="{{route('admin.categories.index')}}">Sản phẩm</a></li>
+                        <li class="{{ set_active(['quan-ly/kho-hang/danh-muc-san-pham']) }}"><a href="{{route('admin.categories.index')}}">Danh Mục Sản phẩm</a></li>
                         <li class="{{ set_active(['quan-ly/kho-hang/mau-sac']) }}"><a href="{{route('admin.colors.index')}}">Màu sắc</a></li>
                         <li class="{{ set_active(['quan-ly/kho-hang/size']) }}"><a href="{{route('admin.size.index')}}">Size</a></li>
                     </ul>

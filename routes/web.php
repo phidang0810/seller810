@@ -13,8 +13,14 @@
 
 
 Route::get ('/', function(){
-    redirect('admin/');
+    return redirect()->route('admin.dashboard');
 })->name('home');
 
 Route::get ('/error/{code}', 'Controller@error')->name('error');
+Route::get ('/test', function(\Illuminate\Http\Request $request){
+    $request->session()->put('auth', 'abcd');
+    $request->session()->get('auth');
+
+    return view('auth.test');
+})->name('test');
 Auth::routes();
