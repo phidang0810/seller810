@@ -6,7 +6,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>DHD Film | Login</title>
+    <title>HỆ THỐNG QUẢN LÝ</title>
 
     <link href="{{asset('themes/inspinia/css/bootstrap.min.css')}}" rel="stylesheet">
     <link href="{{asset('themes/inspinia/font-awesome/css/font-awesome.css')}}" rel="stylesheet">
@@ -67,7 +67,7 @@
     <hr/>
     <div class="row">
         <div class="col-md-6">
-            <small>JAVAC Technology</small>
+            <small>Phidangmtv@gmail.com</small>
         </div>
         <div class="col-md-6 text-right">
             <small>Copyright © 2018</small>

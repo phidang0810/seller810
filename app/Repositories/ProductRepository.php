@@ -47,6 +47,7 @@ Class ProductRepository
 
             if (trim($request->get('private_search')) == "need_import") {
                 $query->where('products.quantity_available', '<=', 10);
+                $query->where('products.quantity_available', '>', 0);
             }
 
 			if (trim($request->get('keyword')) !== "") {

@@ -9,49 +9,54 @@ use Response;
 
 class CustomerRepository
 {
+    public function getObjDataTable($request)
+    {
+        $data = Customer::selectRaw('customers.id, customers.name, code, group_customers.name as group_name, email, phone, address, customers.active, customers.group_customer_id, customers.created_at')
+            ->leftJoin('group_customers', 'group_customers.id', '=', 'customers.group_customer_id');
+        $dataTable = DataTables::eloquent($data)
+            ->filter(function ($query) use ($request) {
+                if (trim($request->get('status')) !== "") {
+                    $query->where('customers.active', $request->get('status'));
+                }
+                if (trim($request->get('group_customer_id')) !== "") {
+                    $query->where('customers.group_customer_id', $request->get('group_customer_id'));
+                }
+                if (trim($request->get('keyword')) !== "") {
+                    $query->where(function ($sub) use ($request) {
+                        $sub->where('customers.name', 'like', '%' . $request->get('keyword') . '%')
+                            ->orWhere('customers.email', 'like', '%' . $request->get('keyword') . '%')
+                            ->orWhere('customers.phone', 'like', '%' . $request->get('keyword') . '%')
+                            ->orWhere('customers.code', 'like', '%' . $request->get('keyword') . '%');
+                    });
+
+                }
+            }, true)
+            ->addColumn('action', function ($data) {
+                $html = '<a href="' . route('admin.customers.history', [$data->id]) . '" class="btn btn-xs btn-warning" style="margin-right: 5px"><i class="fa fa-history" aria-hidden="true"></i> Lịch sử</a>';
+                $html .= '<a href="' . route('admin.customers.view', ['id' => $data->id]) . '" class="btn btn-xs btn-primary" style="margin-right: 5px"><i class="glyphicon glyphicon-edit"></i> Sửa</a>';
+                $html .= '<a href="#" class="bt-delete btn btn-xs btn-danger" data-id="' . $data->id . '" data-name="' . $data->name . '">';
+                $html .= '<i class="fa fa-trash-o" aria-hidden="true"></i> Xóa</a>';
+
+                return $html;
+            })
+            ->addColumn('status', function ($data) {
+                $active = '';
+                if ($data->active === ACTIVE) {
+                    $active  = 'checked';
+                }
+                $html = '<input type="checkbox" data-name="'.$data->name.'" data-id="'.$data->id.'" name="social' . $data->active . '" class="js-switch" value="' . $data->active . '" ' . $active . ' ./>';
+                return $html;
+            });
+        return $dataTable;
+    }
 
     public function dataTable($request)
     {
-        $data = Customer::selectRaw('customers.id, group_customers.name as group_name, customers.active, customers.name,code, phone, address, email, customers.group_customer_id, customers.created_at')
-        ->leftJoin('group_customers', 'group_customers.id', '=', 'customers.group_customer_id');
-        $dataTable = DataTables::eloquent($data)
-        ->filter(function ($query) use ($request) {
-            if (trim($request->get('status')) !== "") {
-                $query->where('customers.active', $request->get('status'));
-            }
-            if (trim($request->get('group_customer_id')) !== "") {
-                $query->where('customers.group_customer_id', $request->get('group_customer_id'));
-            }
-            if (trim($request->get('keyword')) !== "") {
-                $query->where(function ($sub) use ($request) {
-                    $sub->where('customers.name', 'like', '%' . $request->get('keyword') . '%')
-                    ->orWhere('customers.email', 'like', '%' . $request->get('keyword') . '%')
-                    ->orWhere('customers.phone', 'like', '%' . $request->get('keyword') . '%')
-                    ->orWhere('customers.code', 'like', '%' . $request->get('keyword') . '%');
-                });
-
-            }
-        }, true)
-        ->addColumn('action', function ($data) {
-            $html = '<a href="' . route('admin.customers.history', [$data->id]) . '" class="btn btn-xs btn-warning" style="margin-right: 5px"><i class="fa fa-history" aria-hidden="true"></i> Lịch sử</a>';
-            $html .= '<a href="' . route('admin.customers.view', ['id' => $data->id]) . '" class="btn btn-xs btn-primary" style="margin-right: 5px"><i class="glyphicon glyphicon-edit"></i> Sửa</a>';
-            $html .= '<a href="#" class="bt-delete btn btn-xs btn-danger" data-id="' . $data->id . '" data-name="' . $data->name . '">';
-            $html .= '<i class="fa fa-trash-o" aria-hidden="true"></i> Xóa</a>';
-
-            return $html;
-        })
-        ->addColumn('status', function ($data) {
-            $active = '';
-            if ($data->active === ACTIVE) {
-                $active  = 'checked';
-            }
-            $html = '<input type="checkbox" data-name="'.$data->name.'" data-id="'.$data->id.'" name="social' . $data->active . '" class="js-switch" value="' . $data->active . '" ' . $active . ' ./>';
-            return $html;
-        })
+        $data = $this->getObjDataTable($request)
         ->rawColumns(['status', 'action'])
         ->toJson();
 
-        return $dataTable;
+        return $data;
     }
     public function getData($id)
     {
@@ -80,6 +85,10 @@ class CustomerRepository
 
             return $html;
         })
+            ->addColumn('code', function ($cart) {
+                $html = '<a href="'.route('admin.carts.index', ['cart_code' => $cart->code]) . '">' . $cart->code .'</a>';
+                return $html;
+            })
         ->rawColumns(['status'])
         ->toJson();
 

@@ -59,6 +59,8 @@ Route::prefix('khach-hang')
     Route::post ('/nhom/them', 'GroupCustomerController@store')->name('admin.groupCustomer.store');
     Route::delete ('/nhom/', 'GroupCustomerController@delete')->name('admin.groupCustomer.delete');
     Route::put ('/nhom/change-status', 'GroupCustomerController@changeStatus')->name('admin.groupCustomer.changeStatus');
+
+    Route::get ('/export', 'CustomerController@export')->name('admin.customers.export');
 });
 
 
@@ -138,4 +140,5 @@ Route::prefix('ke-toan')
         Route::post ('/phieu-chi/them', 'PayslipController@store')->name('admin.payslips.store');
         Route::delete ('/phieu-chi/', 'PayslipController@delete')->name('admin.payslips.delete');
         Route::get ('/doanh-thu', 'StatisticsController@revenue')->name('admin.statistics.revenue');
+        Route::get ('/doanh-thu/export', 'StatisticsController@exportRevenue')->name('admin.statistics.exportRevenue');
     });

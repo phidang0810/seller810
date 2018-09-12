@@ -82,7 +82,20 @@ class PayslipRepository
         } else {
             $model = new Payslip;
         }
-        $model->group_id = $data['group_id'];
+
+        //check group
+        $groupName = trim($data['group']);
+        $groupExist = PayslipGroup::where('name', $groupName)->first();
+        if($groupExist) {
+            $groupId = $groupExist->id;
+        } else {
+            $group = new PayslipGroup;
+            $group->name = $groupName;
+            $group->save();
+
+            $groupId = $group->id;
+        }
+        $model->group_id = $groupId;
         $model->description = $data['description'];
         $model->price = preg_replace('/[^0-9]/', '', $data['price']);
         $model->status = $data['status'];

@@ -28,18 +28,16 @@
                 return arg !== value;
             }, "Value must not equal arg.");
 
-            $("#mainForm").validate({
-                rules: {
-                    group_id: { valueNotEquals: "0" }
-                },
-                messages: {
-                    group_id: { valueNotEquals: "Vui lòng chọn!" }
-                }
-            });
+            $("#mainForm").validate();
 
             new Cleave('.input-price', {
                 numeral: true,
                 numeralThousandsGroupStyle: 'thousand'
+            });
+
+            $('select[name="group"]').select2({
+                tags:true,
+                placeholder: '-- Chọn số điện thoại --'
             });
         });
     </script>
@@ -59,10 +57,10 @@
                         <div class="form-group">
                             <label class="col-md-2 control-label">Loại Phiếu Chi (<span class="text-danger">*</span>)</label>
                             <div class="col-md-5">
-                                <select name="group_id" class="form-control">
+                                <select name="group" class="form-control">
                                     <option value="0">-- Chọn loại phiếu chi --</option>
                                     @foreach($groups as $group)
-                                        <option value="{{$group->id}}" @if(isset($data->group_id) && $data->group_id === $group->id) selected @endif>{{$group->name}}</option>
+                                        <option value="{{$group->name}}" @if(isset($data->group_id) && $data->group_id === $group->id) selected @endif>{{$group->name}}</option>
                                     @endforeach
                                 </select>
                             </div>

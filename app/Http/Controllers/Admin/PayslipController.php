@@ -52,7 +52,8 @@ class PayslipController extends AdminController
         $input = $this->_request->all();
         $id = $input['id'] ?? null;
         $rules = [
-            'status' => 'required'
+            'status' => 'required',
+            'group' => 'required'
         ];
         $message = 'Phiếu chi đã được tạo.';
 

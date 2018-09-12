@@ -7,6 +7,7 @@ use App\Repositories\RoleRepository;
 use App\Repositories\CustomerRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Maatwebsite\Excel\Excel;
 
 class CustomerController extends AdminController
 {
@@ -121,5 +122,33 @@ class CustomerController extends AdminController
         $this->_pushBreadCrumbs($customer->name, route('admin.customers.view', ['id' => $customer->id]));
         $this->_pushBreadCrumbs($this->_data['title']);
         return view('admin.customers.history', $this->_data);
+    }
+
+    public function export(CustomerRepository $model)
+    {
+        $data = $model->getObjDataTable($this->_request)->toArray();
+        $fileName = 'Danh sách khách hàng - ' . date('m-m-Y');
+        \Maatwebsite\Excel\Facades\Excel::create($fileName, function($excel) use($data) {
+
+            $excel->sheet('Sheetname', function($sheet) use($data) {
+                $excelData  = [];
+                foreach($data['data'] as $k => $row) {
+                    $index = $k+1;
+                    $excelData[] = [
+                        '#' => $index,
+                        'ID' => $row['id'],
+                        'TÊN' => $row['name'],
+                        'MÃ' => $row['code'],
+                        'NHÓM' => $row['group_name'],
+                        'EMAIL' => $row['email'],
+                        'ĐIỆN THOẠI' => $row['phone'],
+                        'ĐỊA CHỈ' => $row['address']
+                    ];
+                }
+                $sheet->fromArray($excelData);
+
+            });
+
+        })->export('xls');
     }
 }

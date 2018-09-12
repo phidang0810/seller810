@@ -102,6 +102,10 @@ Class CartRepository
             $html = '<span id="'.$cart->code.'">'.$cart->code.'</span>';
             return $html;
         })
+        ->addColumn('code', function ($cart) {
+            $html = '<a href="'.route('admin.carts.index', ['cart_code' => $cart->code]) . '">' . $cart->code .'</a>';
+            return $html;
+        })
         ->rawColumns(['created_at', 'status', 'payment_status', 'code'])
         ->order(function ($query) {
             $query->orderBy('created_at', 'desc');

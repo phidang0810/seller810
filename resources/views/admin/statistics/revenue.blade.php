@@ -121,7 +121,7 @@
 
             <div class="col-sm-3">
                 <div class="form-group">
-                    <label>Ngày nhập</label>
+                    <label>Ngày</label>
                     <div class="input-daterange input-group" id="date_range_picker">
                         <input type="text" class="input-sm form-control" id="date_from" name="start" value="">
                         <span class="input-group-addon lbl-to">to</span>
@@ -159,6 +159,10 @@
         <div class="ibox float-e-margins pl-15 pr-15">
             @include('admin._partials._alert')
             <div class="ibox-content">
+                <div class="text-right" style="padding: 10px 10px 0px 10px;">
+                    <a href="{{route('admin.statistics.exportRevenue')}}" class="btn btn-sm btn-primary"><i class="fa fa-file-excel-o" aria-hidden="true"></i> Export Excel</a>
+                </div>
+
                 <div class="hr-line-dashed"></div>
                 <!-- Account list -->
                 <table class="table table-striped responsive table-hover" id="dataTables">

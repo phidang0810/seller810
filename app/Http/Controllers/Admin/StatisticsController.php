@@ -51,6 +51,33 @@ class StatisticsController extends AdminController
         return view('admin.statistics.revenue', $this->_data);
     }
 
+    public function exportRevenue(PaymentRepository $model)
+    {
+        $data = $model->getRevenueObjDataTable($this->_request)->toArray();
+        $fileName = 'Doanh Thu - ' . date('m-m-Y');
+        \Maatwebsite\Excel\Facades\Excel::create($fileName, function($excel) use($data) {
+
+            $excel->sheet('Sheetname', function($sheet) use($data) {
+                $excelData  = [];
+                foreach($data['data'] as $k => $row) {
+                    $index = $k+1;
+                    $excelData[] = [
+                        '#' => $index,
+                        'TÊN' => $row['name'],
+                        'MÃ SẢN PHẨM' => $row['barcode_text'],
+                        'DANH MỤC' => $row['category'],
+                        'TỔNG BÁN' => $row['quantity'],
+                        'NGÀY BÁN' => $row['created_at'],
+                        'DOANH THU' => $row['profit']
+                    ];
+                }
+                $sheet->fromArray($excelData);
+
+            });
+
+        })->export('xls');
+    }
+
     public function revenueChart(CategoryRepository $category)
     {
         $this->_data['title'] = 'Doanh Thu Bán Hàng';

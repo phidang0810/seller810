@@ -509,12 +509,12 @@ Class PaymentRepository
         }
     }
 
-    public function getRevenueDataTable($request)
+    public function getRevenueObjDataTable($request)
     {
         $products = PaymentDetail::selectRaw('products.name, products.main_cate, products.barcode_text, products.photo, products.category_ids, payments.platform_id, SUM(payment_detail.quantity) as quantity, SUM(payment_detail.total_price) as total_price, (payment_detail.total_price - (products.price*payment_detail.quantity)) as profit, DATE(payment_detail.created_at) as created_at, COUNT(payments.cart_id) total_cart')
-                    ->join('products' ,'products.id', '=', 'payment_detail.product_id')
-                    ->join('payments', 'payments.id', '=', 'payment_detail.payment_id')
-                    ->groupBy('payment_detail.product_id');
+            ->join('products' ,'products.id', '=', 'payment_detail.product_id')
+            ->join('payments', 'payments.id', '=', 'payment_detail.payment_id')
+            ->groupBy('payment_detail.product_id');
         if ($request->has('date')) {
             $products->groupBy(DB::raw('DATE(payment_detail.created_at)'));
         }
@@ -551,7 +551,7 @@ Class PaymentRepository
                 }
             }, true)
             ->addColumn('category', function($product) use ($categories) {
-                $html = '';
+                $html = $categories[$product->main_cate] ?? '';
             })
             ->addColumn('total_price', function($product) use ($platforms) {
                 return format_price($product->total_price);
@@ -573,11 +573,18 @@ Class PaymentRepository
                     $html = ' <img alt="No Photo" style="width: 80px; height: 60px;" class="img-thumbnail" src="'.asset(NO_PHOTO).'" >';
                 }
                 return $html;
-            })
+            });
+
+            return $dataTable;
+    }
+
+    public function getRevenueDataTable($request)
+    {
+        $data = $this->getRevenueObjDataTable($request)
             ->rawColumns(['category', 'platform', 'photo'])
             ->toJson();
 
-        return $dataTable;
+        return $data;
     }
 
 
