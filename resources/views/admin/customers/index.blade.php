@@ -262,7 +262,7 @@
             <div class="ibox-content">
                 <div class="text-right" style="padding: 10px 10px 0px 10px;">
                     <a href="{{route('admin.customers.create')}}" class="btn btn-sm btn-primary"><i class="fa fa-plus"></i> Thêm Khách Hàng</a>
-                    <a href="{{route('admin.customers.export')}}" class="btn btn-sm btn-primary"><i class="fa fa-plus"></i> Export Excel</a>
+                    <a href="{{route('admin.customers.export')}}" class="btn btn-sm btn-primary"><i class="fa fa-file-excel-o"></i> Export Excel</a>
                 </div>
                 <div class="hr-line-dashed"></div>
                 <!-- Account list -->
