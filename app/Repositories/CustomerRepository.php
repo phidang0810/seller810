@@ -89,7 +89,7 @@ class CustomerRepository
                 $html = '<a href="'.route('admin.carts.index', ['cart_code' => $cart->code]) . '">' . $cart->code .'</a>';
                 return $html;
             })
-        ->rawColumns(['status'])
+        ->rawColumns(['code', 'status'])
         ->toJson();
 
         return $dataTable;

@@ -104,7 +104,7 @@ Class CartRepository
         })
         ->rawColumns(['created_at', 'status', 'payment_status', 'code'])
         ->order(function ($query) {
-            $query->orderBy('created_at', 'desc');
+            $query->orderBy('code', 'created_at', 'desc');
         })
         ->toJson();
         return $dataTable;
