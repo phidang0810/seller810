@@ -192,7 +192,7 @@
                 <div class="row m-b">
                     <div class="form-group">
                         <label class="col-md-4 control-label">Nợ:</label>
-                        <div class="col-md-8"><b>{{$customer->group->name}}</b></div>
+                        <div class="col-md-8"><b>{{$needed_paid}}</b></div>
                     </div>
                 </div>
                 <div class="row m-b">

@@ -626,6 +626,7 @@ Class ProductRepository
     {
 	    $data = Product::where('active', ACTIVE)
             ->where('quantity_available', '<=', 10)
+            ->where('quantity_available', '>', 0)
         ->count();
 	    return $data;
     }

@@ -118,6 +118,7 @@ class CustomerController extends AdminController
 
         }
         $this->_data['customer'] = $customer;
+        $this->_data['needed_paid'] = $model->getTotalNeededPaid($id);
 
         $this->_pushBreadCrumbs($customer->name, route('admin.customers.view', ['id' => $customer->id]));
         $this->_pushBreadCrumbs($this->_data['title']);
