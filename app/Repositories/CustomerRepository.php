@@ -223,7 +223,10 @@ class CustomerRepository
             ->selectRaw('SUM(needed_paid) as total')
             ->groupBy('customer_id')
             ->first();
+        if ($data) {
+            return $data->total;
+        }
 
-        return $data->total;
+        return 0;
     }
 }
