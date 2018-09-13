@@ -219,6 +219,7 @@ class CustomerRepository
     public function getTotalNeededPaid($customerID)
     {
         $data = Cart::where('customer_id', $customerID)
+            ->where('payment_status', PAYING_NOT_ENOUGH)
             ->selectRaw('SUM(needed_paid) as total')
             ->groupBy('customer_id')
             ->first();
