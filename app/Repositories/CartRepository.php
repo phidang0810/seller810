@@ -29,7 +29,7 @@ Class CartRepository
 
     const CACHE_NAME_CART = 'carts';
 
-    public function dataTable($request)
+    public function dataTable($request, $link = true)
     {
         $carts = Cart::select(['carts.id', 'carts.city_id', 'carts.partner_id', 'carts.customer_id', 'carts.code', 'carts.quantity', 'carts.status', 'carts.active', 'carts.created_at', 'customers.name as customer_name', 'customers.phone as customer_phone', 'platforms.name as platform_name', 'carts.payment_status'])
         ->join('customers', 'customers.id', '=', 'carts.customer_id')
@@ -98,8 +98,13 @@ Class CartRepository
             $html = parse_payment_status($cart->payment_status);
             return $html;
         })
-        ->addColumn('code', function ($cart) {
-            $html = '<a href="'.route('admin.carts.index', ['cart_code' => $cart->code]) . '">' . '<span id="'.$cart->code.'">'.$cart->code.'</span>' .'</a>';
+        ->addColumn('code', function ($cart) use ($link) {
+            if ($link == false) {
+                $html = '<span id="'.$cart->code.'">'.$cart->code.'</span>';
+            }else{
+                $html = '<a href="'.route('admin.carts.index', ['cart_code' => $cart->code]) . '">' . '<span id="'.$cart->code.'">'.$cart->code.'</span>' .'</a>';
+            }
+            
             return $html;
         })
         ->rawColumns(['created_at', 'status', 'payment_status', 'code'])
