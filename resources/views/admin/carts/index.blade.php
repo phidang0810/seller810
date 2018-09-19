@@ -185,9 +185,6 @@
         if (cart_code !== null) {
             var elCartCode = $('#'+cart_code);
             elCartCode.closest("tr").click();
-            $('html, body').animate({
-                scrollTop: $(elCartCode.closest("tr")).offset().top
-            }, 2000);
         }
     }
 
@@ -206,16 +203,11 @@
                 autoclose: true,
                 format: 'dd/mm/yyyy'
             });
-            var paging = true;
-            if (cart_code !== null) {
-                paging = false;
-            }
 
             table = $('#dataTables').dataTable({
                 responsive: true, searching: false,
                 processing: true,
                 serverSide: true,
-                paging: paging,
                 "dom": 'rt<"#pagination"flp>',
                 ajax: {
                     "url": "{{route('admin.carts.index')}}",
@@ -228,6 +220,8 @@
                         d.payment_status = $('#s-payment-status').val();
                         d.start_date = $('input[name=start]').val();
                         d.end_date = $('input[name=end]').val();
+                        d.cart_code = cart_code;
+                        d.no_link = true;
                     },
                     complete: function (response) {
                         var inputStatus = document.querySelectorAll('.js-switch');
