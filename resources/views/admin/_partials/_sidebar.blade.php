@@ -32,7 +32,10 @@
                 <li class="{{ set_active(['quan-ly/san-pham', 'quan-ly/san-pham/*']) }} nav-item">
                     <a href="#"><i class="fa fa-tasks "></i> <span class="nav-label">Quản Lý Sản Phẩm</span><span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level">
-                        <li class="{{ set_active(['quan-ly/san-pham']) }}"><a href="{{route('admin.product_available.index')}}">Danh sách Sản Phẩm</a></li>
+                        <li class="{{ set_active(['quan-ly/san-pham']) }}"><a href="{{route('admin.products.index')}}">Danh sách Sản Phẩm</a></li>
+                        <li class="{{ set_active(['quan-ly/san-pham/danh-muc-san-pham']) }}"><a href="{{route('admin.categories.index')}}">Danh Mục Sản phẩm</a></li>
+                        <li class="{{ set_active(['quan-ly/san-pham/mau-sac']) }}"><a href="{{route('admin.colors.index')}}">Màu sắc</a></li>
+                        <li class="{{ set_active(['quan-ly/san-pham/size']) }}"><a href="{{route('admin.size.index')}}">Size</a></li>
                     </ul>
                 </li>
             @endif
@@ -41,10 +44,7 @@
                 <li class="{{ set_active(['quan-ly/kho-hang', 'quan-ly/kho-hang/*']) }} nav-item">
                     <a href="#"><i class="fa fa-paint-brush"></i> <span class="nav-label">Quản Lý Kho Hàng</span><span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level">
-                        <li class="{{ set_active(['quan-ly/kho-hang']) }}"><a href="{{route('admin.products.index')}}">Kho Hàng</a></li>
-                        <li class="{{ set_active(['quan-ly/kho-hang/danh-muc-san-pham']) }}"><a href="{{route('admin.categories.index')}}">Danh Mục Sản phẩm</a></li>
-                        <li class="{{ set_active(['quan-ly/kho-hang/mau-sac']) }}"><a href="{{route('admin.colors.index')}}">Màu sắc</a></li>
-                        <li class="{{ set_active(['quan-ly/kho-hang/size']) }}"><a href="{{route('admin.size.index')}}">Size</a></li>
+                        <li class="{{ set_active(['quan-ly/kho-hang']) }}"><a href="{{route('admin.warehouses.index')}}">Kho Hàng</a></li>
                     </ul>
                 </li>
             @endif

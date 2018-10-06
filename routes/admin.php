@@ -4,14 +4,14 @@ Route::get ('roles', 'RoleController@index')->name('admin.roles.index');
 Route::get ('roles/create', 'RoleController@create')->name('admin.roles.create');
 
 Route::prefix('cai-dat')
-    ->middleware('permission:setting_manager')->group(function () {
-        Route::get ('/phong-ban/', 'RoleController@index')->name('admin.roles.index');
-        Route::get ('/phong-ban/chi-tiet', 'RoleController@view')->name('admin.roles.view');
-        Route::get ('/phong-ban/them', 'RoleController@view')->name('admin.roles.create');
-        Route::post ('/phong-ban/them', 'RoleController@store')->name('admin.roles.store');
-        Route::delete ('/phong-ban/', 'RoleController@delete')->name('admin.roles.delete');
-        Route::put ('/phong-ban/change-status', 'RoleController@changeStatus')->name('admin.roles.changeStatus');
-    });
+->middleware('permission:setting_manager')->group(function () {
+    Route::get ('/phong-ban/', 'RoleController@index')->name('admin.roles.index');
+    Route::get ('/phong-ban/chi-tiet', 'RoleController@view')->name('admin.roles.view');
+    Route::get ('/phong-ban/them', 'RoleController@view')->name('admin.roles.create');
+    Route::post ('/phong-ban/them', 'RoleController@store')->name('admin.roles.store');
+    Route::delete ('/phong-ban/', 'RoleController@delete')->name('admin.roles.delete');
+    Route::put ('/phong-ban/change-status', 'RoleController@changeStatus')->name('admin.roles.changeStatus');
+});
 
 Route::prefix('thanh-vien')
 ->middleware('permission:user_manager')->group(function () {
@@ -24,24 +24,24 @@ Route::prefix('thanh-vien')
 });
 
 Route::prefix('cong-tac-vien')
-    ->middleware('permission:partner_manager')->group(function () {
-        Route::get ('/', 'PartnerController@index')->name('admin.partners.index');
-        Route::get ('/chi-tiet', 'PartnerController@view')->name('admin.partners.view');
-        Route::get ('/them', 'PartnerController@view')->name('admin.partners.create');
-        Route::post ('/them', 'PartnerController@store')->name('admin.partners.store');
-        Route::delete ('/', 'PartnerController@delete')->name('admin.partners.delete');
-        Route::put ('/change-status', 'PartnerController@changeStatus')->name('admin.partners.changeStatus');
-    });
+->middleware('permission:partner_manager')->group(function () {
+    Route::get ('/', 'PartnerController@index')->name('admin.partners.index');
+    Route::get ('/chi-tiet', 'PartnerController@view')->name('admin.partners.view');
+    Route::get ('/them', 'PartnerController@view')->name('admin.partners.create');
+    Route::post ('/them', 'PartnerController@store')->name('admin.partners.store');
+    Route::delete ('/', 'PartnerController@delete')->name('admin.partners.delete');
+    Route::put ('/change-status', 'PartnerController@changeStatus')->name('admin.partners.changeStatus');
+});
 
 Route::prefix('nha-cung-cap')
-    ->middleware('permission:supplier_manager')->group(function () {
-        Route::get ('/', 'SupplierController@index')->name('admin.suppliers.index');
-        Route::get ('/chi-tiet', 'SupplierController@view')->name('admin.suppliers.view');
-        Route::get ('/them', 'SupplierController@view')->name('admin.suppliers.create');
-        Route::post ('/them', 'SupplierController@store')->name('admin.suppliers.store');
-        Route::delete ('/', 'SupplierController@delete')->name('admin.suppliers.delete');
-        Route::put ('/change-status', 'SupplierController@changeStatus')->name('admin.suppliers.changeStatus');
-    });
+->middleware('permission:supplier_manager')->group(function () {
+    Route::get ('/', 'SupplierController@index')->name('admin.suppliers.index');
+    Route::get ('/chi-tiet', 'SupplierController@view')->name('admin.suppliers.view');
+    Route::get ('/them', 'SupplierController@view')->name('admin.suppliers.create');
+    Route::post ('/them', 'SupplierController@store')->name('admin.suppliers.store');
+    Route::delete ('/', 'SupplierController@delete')->name('admin.suppliers.delete');
+    Route::put ('/change-status', 'SupplierController@changeStatus')->name('admin.suppliers.changeStatus');
+});
 
 Route::prefix('khach-hang')
 ->middleware('permission:customer_manager')->group(function () {
@@ -66,12 +66,42 @@ Route::prefix('khach-hang')
 
 Route::prefix('kho-hang')
 ->middleware('permission:product_manager')->group(function () {
+    // Route::get ('/', 'ProductController@index')->name('admin.products.index');
+    // Route::get ('/chi-tiet', 'ProductController@view')->name('admin.products.view');
+    // Route::get ('/them', 'ProductController@view')->name('admin.products.create');
+    // Route::post ('/them', 'ProductController@store')->name('admin.products.store');
+    // Route::delete ('/', 'ProductController@delete')->name('admin.products.delete');
+    // Route::put ('/change-status', 'ProductController@changeStatus')->name('admin.products.changeStatus');
+
+    Route::get ('/', 'WarehouseController@index')->name('admin.warehouses.index');
+    Route::get ('/chi-tiet', 'WarehouseController@view')->name('admin.warehouses.view');
+    Route::get ('/them', 'WarehouseController@view')->name('admin.warehouses.create');
+    Route::post ('/them', 'WarehouseController@store')->name('admin.warehouses.store');
+    Route::delete ('/', 'WarehouseController@delete')->name('admin.warehouses.delete');
+    Route::put ('/change-status', 'WarehouseController@changeStatus')->name('admin.warehouses.changeStatus');
+});
+
+Route::prefix('san-pham')
+->middleware('permission:product_manager')->group(function () {
     Route::get ('/danh-muc-san-pham/', 'CategoryController@index')->name('admin.categories.index');
     Route::get ('/danh-muc-san-pham/chi-tiet', 'CategoryController@view')->name('admin.categories.view');
     Route::get ('/danh-muc-san-pham/them', 'CategoryController@view')->name('admin.categories.create');
     Route::post ('/danh-muc-san-pham/them', 'CategoryController@store')->name('admin.categories.store');
     Route::delete ('/danh-muc-san-pham/', 'CategoryController@delete')->name('admin.categories.delete');
     Route::put ('/danh-muc-san-pham/change-status', 'CategoryController@changeStatus')->name('admin.categories.changeStatus');
+
+    // Route::get ('/', 'ProductAvailableController@index')->name('admin.product_available.index');
+    // Route::get ('/chi-tiet', 'ProductAvailableController@view')->name('admin.product_available.view');
+    // Route::post ('/them', 'ProductAvailableController@store')->name('admin.product_available.store');
+    // Route::delete ('/', 'ProductAvailableController@delete')->name('admin.product_available.delete');
+    // Route::put ('/change-status', 'ProductAvailableController@changeStatus')->name('admin.product_available.changeStatus');
+    
+    Route::get ('/', 'ProductController@index')->name('admin.products.index');
+    Route::get ('/chi-tiet', 'ProductController@view')->name('admin.products.view');
+    Route::get ('/them', 'ProductController@view')->name('admin.products.create');
+    Route::post ('/them', 'ProductController@store')->name('admin.products.store');
+    Route::delete ('/', 'ProductController@delete')->name('admin.products.delete');
+    Route::put ('/change-status', 'ProductController@changeStatus')->name('admin.products.changeStatus');
 
     Route::get ('/mau-sac/', 'ColorController@index')->name('admin.colors.index');
     Route::get ('/mau-sac/chi-tiet', 'ColorController@view')->name('admin.colors.view');
@@ -80,28 +110,12 @@ Route::prefix('kho-hang')
     Route::delete ('/mau-sac/', 'ColorController@delete')->name('admin.colors.delete');
     Route::put ('/mau-sac/change-status', 'ColorController@changeStatus')->name('admin.colors.changeStatus');
 
-        Route::get ('/size/', 'SizeController@index')->name('admin.size.index');
-        Route::get ('/size/chi-tiet', 'SizeController@view')->name('admin.size.view');
-        Route::get ('/size/them', 'SizeController@view')->name('admin.size.create');
-        Route::post ('/size/them', 'SizeController@store')->name('admin.size.store');
-        Route::delete ('/size/', 'SizeController@delete')->name('admin.size.delete');
-        Route::put ('/size/change-status', 'SizeController@changeStatus')->name('admin.size.changeStatus');
-
-        Route::get ('/', 'ProductController@index')->name('admin.products.index');
-        Route::get ('/chi-tiet', 'ProductController@view')->name('admin.products.view');
-        Route::get ('/them', 'ProductController@view')->name('admin.products.create');
-        Route::post ('/them', 'ProductController@store')->name('admin.products.store');
-        Route::delete ('/', 'ProductController@delete')->name('admin.products.delete');
-        Route::put ('/change-status', 'ProductController@changeStatus')->name('admin.products.changeStatus');
-});
-
-Route::prefix('san-pham')
-->middleware('permission:product_manager')->group(function () {
-        Route::get ('/', 'ProductAvailableController@index')->name('admin.product_available.index');
-        Route::get ('/chi-tiet', 'ProductAvailableController@view')->name('admin.product_available.view');
-        Route::post ('/them', 'ProductAvailableController@store')->name('admin.product_available.store');
-        Route::delete ('/', 'ProductAvailableController@delete')->name('admin.product_available.delete');
-        Route::put ('/change-status', 'ProductAvailableController@changeStatus')->name('admin.product_available.changeStatus');
+    Route::get ('/size/', 'SizeController@index')->name('admin.size.index');
+    Route::get ('/size/chi-tiet', 'SizeController@view')->name('admin.size.view');
+    Route::get ('/size/them', 'SizeController@view')->name('admin.size.create');
+    Route::post ('/size/them', 'SizeController@store')->name('admin.size.store');
+    Route::delete ('/size/', 'SizeController@delete')->name('admin.size.delete');
+    Route::put ('/size/change-status', 'SizeController@changeStatus')->name('admin.size.changeStatus');
 });
 
 Route::prefix('don-hang')
@@ -119,26 +133,26 @@ Route::prefix('don-hang')
 });
 
 Route::prefix('thong-ke')
-    ->middleware('permission:report_manager')->group(function () {
+->middleware('permission:report_manager')->group(function () {
        // Route::get ('/', 'StatisticsController@importProduct')->name('admin.statistics.importProduct');
-        Route::get ('/doanh-thu', 'StatisticsController@revenueChart')->name('admin.statistics.revenueChart');
-        Route::get ('/don-hang', 'StatisticsController@cartChart')->name('admin.statistics.cartChart');
+    Route::get ('/doanh-thu', 'StatisticsController@revenueChart')->name('admin.statistics.revenueChart');
+    Route::get ('/don-hang', 'StatisticsController@cartChart')->name('admin.statistics.cartChart');
 
-        Route::get ('/data-payment', 'StatisticsController@getPaymentChart')->name('admin.statistics.getPaymentChart');
-        Route::get ('/cart-barchart', 'StatisticsController@getCartBarChart')->name('admin.statistics.getCartBarChart');
-        Route::get ('/top-product', 'StatisticsController@getTopProductSell')->name('admin.statistics.getTopProductSell');
-        Route::get ('/top-platform', 'StatisticsController@getTopPlatformSell')->name('admin.statistics.getTopPlatformSell');
-        Route::get ('/top-category', 'StatisticsController@getTopCategorySell')->name('admin.statistics.getTopCategorySell');
+    Route::get ('/data-payment', 'StatisticsController@getPaymentChart')->name('admin.statistics.getPaymentChart');
+    Route::get ('/cart-barchart', 'StatisticsController@getCartBarChart')->name('admin.statistics.getCartBarChart');
+    Route::get ('/top-product', 'StatisticsController@getTopProductSell')->name('admin.statistics.getTopProductSell');
+    Route::get ('/top-platform', 'StatisticsController@getTopPlatformSell')->name('admin.statistics.getTopPlatformSell');
+    Route::get ('/top-category', 'StatisticsController@getTopCategorySell')->name('admin.statistics.getTopCategorySell');
        // Route::get ('/doanh-thu/mix', 'StatisticsController@getPaymentMixChart')->name('admin.statistics.getPaymentMixChart');
-    });
+});
 
 Route::prefix('ke-toan')
-    ->middleware('permission:accountant_manager')->group(function () {
-        Route::get ('/phieu-chi/', 'PayslipController@index')->name('admin.payslips.index');
-        Route::get ('/phieu-chi/chi-tiet', 'PayslipController@view')->name('admin.payslips.view');
-        Route::get ('/phieu-chi/them', 'PayslipController@view')->name('admin.payslips.create');
-        Route::post ('/phieu-chi/them', 'PayslipController@store')->name('admin.payslips.store');
-        Route::delete ('/phieu-chi/', 'PayslipController@delete')->name('admin.payslips.delete');
-        Route::get ('/doanh-thu', 'StatisticsController@revenue')->name('admin.statistics.revenue');
-        Route::get ('/doanh-thu/export', 'StatisticsController@exportRevenue')->name('admin.statistics.exportRevenue');
-    });
+->middleware('permission:accountant_manager')->group(function () {
+    Route::get ('/phieu-chi/', 'PayslipController@index')->name('admin.payslips.index');
+    Route::get ('/phieu-chi/chi-tiet', 'PayslipController@view')->name('admin.payslips.view');
+    Route::get ('/phieu-chi/them', 'PayslipController@view')->name('admin.payslips.create');
+    Route::post ('/phieu-chi/them', 'PayslipController@store')->name('admin.payslips.store');
+    Route::delete ('/phieu-chi/', 'PayslipController@delete')->name('admin.payslips.delete');
+    Route::get ('/doanh-thu', 'StatisticsController@revenue')->name('admin.statistics.revenue');
+    Route::get ('/doanh-thu/export', 'StatisticsController@exportRevenue')->name('admin.statistics.exportRevenue');
+});
