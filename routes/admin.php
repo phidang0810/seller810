@@ -79,6 +79,14 @@ Route::prefix('kho-hang')
     Route::post ('/them', 'WarehouseController@store')->name('admin.warehouses.store');
     Route::delete ('/', 'WarehouseController@delete')->name('admin.warehouses.delete');
     Route::put ('/change-status', 'WarehouseController@changeStatus')->name('admin.warehouses.changeStatus');
+
+    Route::prefix('san-pham')->group(function () {
+        Route::get ('/', 'ProductAvailableController@index')->name('admin.product_available.index');
+        Route::get ('/chi-tiet', 'ProductAvailableController@view')->name('admin.product_available.view');
+        Route::post ('/them', 'ProductAvailableController@store')->name('admin.product_available.store');
+        Route::delete ('/', 'ProductAvailableController@delete')->name('admin.product_available.delete');
+        Route::put ('/change-status', 'ProductAvailableController@changeStatus')->name('admin.product_available.changeStatus');
+    });
 });
 
 Route::prefix('san-pham')
@@ -89,12 +97,6 @@ Route::prefix('san-pham')
     Route::post ('/danh-muc-san-pham/them', 'CategoryController@store')->name('admin.categories.store');
     Route::delete ('/danh-muc-san-pham/', 'CategoryController@delete')->name('admin.categories.delete');
     Route::put ('/danh-muc-san-pham/change-status', 'CategoryController@changeStatus')->name('admin.categories.changeStatus');
-
-    // Route::get ('/', 'ProductAvailableController@index')->name('admin.product_available.index');
-    // Route::get ('/chi-tiet', 'ProductAvailableController@view')->name('admin.product_available.view');
-    // Route::post ('/them', 'ProductAvailableController@store')->name('admin.product_available.store');
-    // Route::delete ('/', 'ProductAvailableController@delete')->name('admin.product_available.delete');
-    // Route::put ('/change-status', 'ProductAvailableController@changeStatus')->name('admin.product_available.changeStatus');
     
     Route::get ('/', 'ProductController@index')->name('admin.products.index');
     Route::get ('/chi-tiet', 'ProductController@view')->name('admin.products.view');
