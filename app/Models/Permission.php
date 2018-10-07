@@ -14,4 +14,9 @@ class Permission extends BaseModel
     protected $fillable = [
         'name', 'alias', 'active'
     ];
+
+    public function roles()
+    {
+        return $this->belongsToMany('App\Models\Role', 'role_permission', 'permission_id', 'role_id');
+    }
 }

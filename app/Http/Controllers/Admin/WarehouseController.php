@@ -33,9 +33,9 @@ class WarehouseController extends AdminController
     public function view(WarehouseRepository $warehouse)
     {        
         $id = $this->_request->get('id');
-        $this->_data['title'] = 'Tạo mới Màu sắc sản phẩm';
+        $this->_data['title'] = 'Tạo mới kho hàng';
         if ($id) {
-            $this->_data['title'] = 'Chỉnh sửa Màu sắc sản phẩm';
+            $this->_data['title'] = 'Chỉnh sửa kho hàng';
             $this->_data['data'] = $warehouse->getWarehouse($id);
         }
 

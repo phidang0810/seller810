@@ -59,4 +59,12 @@ class Product extends BaseModel
     {
         return $this->belongsTo('App\Models\Brand');
     }
+
+    /**
+     * Get the brand that owns the product.
+     */
+    public function supplier()
+    {
+        return $this->belongsTo('App\Models\Supplier');
+    }
 }

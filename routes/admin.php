@@ -87,6 +87,14 @@ Route::prefix('kho-hang')
         Route::delete ('/', 'ProductAvailableController@delete')->name('admin.product_available.delete');
         Route::put ('/change-status', 'ProductAvailableController@changeStatus')->name('admin.product_available.changeStatus');
     });
+
+    Route::prefix('nhap-hang')->group(function () {
+        Route::get ('/', 'ImportProductController@index')->name('admin.import_products.index');
+        Route::get ('/chi-tiet', 'ImportProductController@view')->name('admin.import_products.view');
+        Route::get ('/them', 'ImportProductController@view')->name('admin.import_products.create');
+        Route::post ('/them', 'ImportProductController@store')->name('admin.import_products.store');
+        Route::delete ('/', 'ImportProductController@delete')->name('admin.import_products.delete');
+    });
 });
 
 Route::prefix('san-pham')

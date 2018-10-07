@@ -137,8 +137,10 @@ Class ProductRepository
 		$model->active = $data['active']; 
 		$model->order = $data['order'];
 		$model->description = $data['description'];
-		$model->quantity = $data['quantity'];
-		$model->quantity_available = $data['quantity'];
+		if (isset($data['quantity'])) {
+			$model->quantity = $data['quantity'];
+			$model->quantity_available = $data['quantity'];
+		}
 		$model->brand_id = $data['brand_id'];
 		$model->content = $data['content'];
 		// $model->code = $data['code'];
@@ -638,5 +640,22 @@ Class ProductRepository
         ->count();
 
         return $data;
+    }
+
+    public function retrieveProduct($request){
+		$product_id = $request->get('product_id');
+
+		$return = [
+			'product_id' => $product_id,
+			'message'	=>	'Lấy datas cho product thành công',
+		];
+
+		if ($product_id) {
+			$product = Product::find($product_id);
+			$return['product'] = $product;
+			$return['product']['photos'] = $this->getPhotos($product_id);
+		}
+
+		return Response::json($return);
     }
 }

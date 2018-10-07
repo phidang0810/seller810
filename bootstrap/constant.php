@@ -51,3 +51,19 @@ define('PAYSLIP_TEXT', [
     2 => 'Đã chi',
     3 => 'Từ chối'
 ]);
+
+define('IMPORT_IMPORTING', 1);
+define('IMPORT_CHECKED', 2);
+define('IMPORT_IMPORTED', 3);
+define('IMPORT_TEXT', [
+    1   =>  'Đang nhập',
+    2   =>  'Đã kiểm',
+    3   =>  'Đã nhập'
+]);
+
+define('IMPORT_DETAIL_UNCONFIMRED', 1);
+define('IMPORT_DETAIL_CONFIMRED', 2);
+define('IMPORT_DETAIL_TEXT', [
+    1   =>  'xác nhận',
+    2   =>  'Đã xác nhận'
+]);

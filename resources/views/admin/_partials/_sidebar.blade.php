@@ -45,6 +45,7 @@
                     <a href="#"><i class="fa fa-paint-brush"></i> <span class="nav-label">Quản Lý Kho Hàng</span><span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level">
                         <li class="{{ set_active(['quan-ly/kho-hang']) }}"><a href="{{route('admin.warehouses.index')}}">Kho Hàng</a></li>
+                        <li class="{{ set_active(['quan-ly/kho-hang/nhap-hang']) }}"><a href="{{route('admin.import_products.index')}}">Nhập Hàng</a></li>
                     </ul>
                 </li>
             @endif
