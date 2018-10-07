@@ -552,7 +552,7 @@ Class ProductRepository
 
 			$warehouse_ids = [];
 			foreach ($product_details as $key => $value) {
-				$warehouse_ids[] = $value['warehourse_id'];
+				$warehouse_ids[] = $value['warehouse_id'];
 			}
 
 			// $return['warehouses_id'] = $product_details;
@@ -638,7 +638,7 @@ Class ProductRepository
 
 		if ($product_id && $color_id && $size_id && $warehouse_id) {
 			$warehouse_products = WarehouseProduct::having('product_id', '=', $product_id)
-				->having('warehourse_id', '=', $warehouse_id)
+				->having('warehouse_id', '=', $warehouse_id)
                 ->having('quantity', '>', 0)
                 ->first();
 
