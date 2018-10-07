@@ -49,6 +49,9 @@
         // Count price
         var html_detail_input_count_price = '<input type="text" value="' + data.total_price + '" id="detail_count_price_'+key+'" class="thousand-number detail_count_price form-control" readonly="readonly">';
 
+        //---> Warehouse
+        var html_detail_warehouse = '<label>' + data.product_warehouse + '</label>';
+
         // Row html
         var html = '<td>'+html_detail_photo+'</td>\
         <td>'+html_detail_label_name+'</td>\
@@ -56,6 +59,7 @@
         <td>'+html_detail_label_code+'</td>\
         <td>'+html_detail_label_size+'</td>\
         <td>'+html_detail_label_color+'</td>\
+        <td>'+html_detail_warehouse+'</td>\
         <td>'+html_detail_label_price+'</td>\
         <td>'+html_detail_fixed_price+'</td>\
         <td>'+html_detail_input_count_price+'</td>\
@@ -259,7 +263,7 @@
                     $('input[name="product_quantity"]').removeAttr('max_avaiable');
                     $('input[name="product_quantity"]').val(0);
                     $('input[name="product_detail_id"]').val(0);
-                   
+
                     $('.col-md-8 .ibox-content .error').each(function(){
                         if (!$(this).hasClass('hidden')) {
                             $(this).addClass('hidden');
@@ -295,14 +299,14 @@
                     $('input[name="product_quantity"]').removeAttr('max_avaiable');
                     $('input[name="product_quantity"]').val(0);
                     $('input[name="product_detail_id"]').val(0);
-                
+
                 }else{
                     html_sizes_options = '<option value="0"> -- Chọn kích thước -- </option>';
                     $('select[name="product_size"]').html(html_sizes_options);
                     $('input[name="product_quantity"]').removeAttr('max_avaiable');
                     $('input[name="product_quantity"]').val(0);
                     $('input[name="product_detail_id"]').val(0);
-                
+
                 }
             }).fail(function(jqXHR, textStatus){
                 alert('Có lỗi xảy ra, xin hãy làm mới trình duyệt');
@@ -313,7 +317,6 @@
         $('select[name="product_size"]').on('change', function(){
             //---> validatae color
             validateProductInfo($(this).val(), "size");
-
             $.ajax({
                 url: "{{route('admin.carts.view')}}",
                 data:{
@@ -324,18 +327,49 @@
                 dataType:'json'
             }).done(function(data) {
                 if (!$.isEmptyObject(data)) {
-               
+                    html_warehouses_options = '<option value="0"> -- Chọn nhà kho -- </option>' + generate_options(data.warehourses);
+                    $('select[name="product_warehouse"]').html(html_warehouses_options);
+                    // $('input[name="product_quantity"]').attr('max_avaiable', data.quantity);
+                    $('input[name="product_detail_id"]').val(data.detail_id);
+                }else{
+                    $('input[name="product_quantity"]').removeAttr('max_avaiable');
+                    $('input[name="product_quantity"]').val(0);
+                    $('input[name="product_detail_id"]').val(0);
+
+                }
+            }).fail(function(jqXHR, textStatus){
+                alert('Có lỗi xảy ra, xin hãy làm mới trình duyệt');
+            })
+        });
+
+        //---> Warehouse select change
+        $('select[name="product_warehouse"]').on('change', function(){
+            //---> validatae color
+            validateProductInfo($(this).val(), "warehouse");
+
+            $.ajax({
+                url: "{{route('admin.carts.view')}}",
+                data:{
+                    product_id: $('select[name="product_name"]').val(),
+                    color_id: $('select[name="product_color"]').val(),
+                    size_id: $('select[name="product_size"]').val(),
+                    warehouse_id: $(this).val()
+                },
+                dataType:'json'
+            }).done(function(data) {
+                if (!$.isEmptyObject(data)) {
                     $('input[name="product_quantity"]').attr('max_avaiable', data.quantity);
                     $('input[name="product_detail_id"]').val(data.detail_id);
                 }else{
                     $('input[name="product_quantity"]').removeAttr('max_avaiable');
                     $('input[name="product_quantity"]').val(0);
                     $('input[name="product_detail_id"]').val(0);
-              
+
                 }
             }).fail(function(jqXHR, textStatus){
                 alert('Có lỗi xảy ra, xin hãy làm mới trình duyệt');
             })
+
         });
 
         // Number product changed
@@ -490,32 +524,35 @@
                             product_id:$('select[name="product_name"]').val(),
                             color_id:$('select[name="product_color"]').val(),
                             size_id:$('select[name="product_size"]').val(),
+                            warehouse_id:$('select[name="product_warehouse"]').val(),
                             get_data:true
                         },
                         dataType:'json'
                     }).done(function(data) {
                         if (!$.isEmptyObject(data)) {
-                        // $('#add_cart_details').prop('disabled', true);
-                        cart_details.push({
-                            'product_image':(data.product.photo) ? path_img_folder + data.product.photo : default_image,
-                            'product_code':data.product.barcode_text,
-                            'product_price':parseInt(data.product.sell_price),
-                            'product_fixed_price':null,
-                            'product_name':{id:$('select[name="product_name"]').val(), name:$('select[name="product_name"] option[value="'+$('select[name="product_name"]').val()+'"]').text()},
-                            'product_quantity':parseInt($('input[name="product_quantity"]').val()),
-                            'product_size':{id:$('select[name="product_size"]').val(), name:$('select[name="product_size"] option[value="'+$('select[name="product_size"]').val()+'"]').text()},
-                            'product_color':{id:$('select[name="product_color"]').val(), name:$('select[name="product_color"] option[value="'+$('select[name="product_color"]').val()+'"]').text()},
-                            'total_price':parseInt(data.product.sell_price)*parseInt($('input[name="product_quantity"]').val()),
-                            'product_detail':data.product_detail
-                        });
+                            // $('#add_cart_details').prop('disabled', true);
+                            cart_details.push({
+                                'product_image':(data.product.photo) ? path_img_folder + data.product.photo : default_image,
+                                'product_code':data.product.barcode_text,
+                                'product_price':parseInt(data.product.sell_price),
+                                'product_fixed_price':null,
+                                'product_name':{id:$('select[name="product_name"]').val(), name:$('select[name="product_name"] option[value="'+$('select[name="product_name"]').val()+'"]').text()},
+                                'product_quantity':parseInt($('input[name="product_quantity"]').val()),
+                                'product_size':{id:$('select[name="product_size"]').val(), name:$('select[name="product_size"] option[value="'+$('select[name="product_size"]').val()+'"]').text()},
+                                'product_color':{id:$('select[name="product_color"]').val(), name:$('select[name="product_color"] option[value="'+$('select[name="product_color"]').val()+'"]').text()},
+                                'total_price':parseInt(data.product.sell_price)*parseInt($('input[name="product_quantity"]').val()),
+                                'product_detail':data.product_detail,
+                                'product_warehouse': data.warehouse.name
+                            });
 
-                        var key = cart_details.length-1;
-                        var html = htmlEditCreateRowProductDetail(cart_details[key], key);
+                            var key = cart_details.length-1;
+                            var html = htmlEditCreateRowProductDetail(cart_details[key], key);
 
-                        $('#i-cart-info tbody').append('<tr class="child" id="cart_detail_'+key+'">'+html+'</tr>');
-                        updateCartTotalInfo();
-                    }else{
-                    }
+                            $('#i-cart-info tbody').append('<tr class="child" id="cart_detail_'+key+'">'+html+'</tr>');
+                            updateCartTotalInfo();
+                        }else{
+
+                        }
                 }).fail(function(jqXHR, textStatus){
                     alert('Có lỗi xảy ra, xin hãy làm mới trình duyệt');
                 });
@@ -675,38 +712,49 @@ function getDataToPrint(data){
                                 </div>
                             </div>
 
-                            <div class="row xs-12-mg-bt-mobile">
-                                <div class="col-md-3 col-sm-3 col-xs-12">
+                            <div class="row xs-12-mg-bt-mobile m-b">
+                                <div class="col-md-4 col-sm-4 col-xs-12">
                                     <select name="product_name" class="form-control">
                                         <option value="0"> -- Chọn sản phẩm -- </option>
                                         {!! $product_options !!}
                                     </select>
                                     <label id="product-name-error" class="error hidden" for="product_name1">Vui lòng chọn.</label>
                                 </div>
-                                <div class="col-md-3 col-sm-3 col-xs-12">
+                                <div class="col-md-4 col-sm-4 col-xs-12">
                                     <select name="product_color" class="form-control">
                                         <option value="0"> -- Chọn màu sắc -- </option>
                                     </select>
                                     <label id="product-color-error" class="error hidden" for="product_color1">Vui lòng chọn.</label>
                                 </div>
-                                <div class="col-md-2 col-sm-2 col-xs-12">
+                                <div class="col-md-4 col-sm-4 col-xs-12">
                                     <select name="product_size" class="form-control">
                                         <option value="0"> -- Chọn kích thước -- </option>
                                     </select>
                                     <label id="product-size-error" class="error hidden" for="product_size1">Vui lòng chọn.</label>
                                 </div>
-                                <div class="col-md-2 col-sm-2 col-xs-12">
+                                
+                                <div class="col-md-12">
+                                    <input type="hidden" name="product_detail_id">
+                                    <label id="product-detail-id-error" class="error hidden" for="product_detail_id">Sản phẩm giống nhau không thể thêm nhiều lần</label>
+                                    <label id="cart-details-empty-error" class="error hidden" for="product_detail_id">Phải có ít nhất 1 sản phẩm</label>
+                                </div>
+                            </div>
+                            <div class="row xs-12-mg-bt-mobile">
+                                <!-- BEGIN: Select Warehouse -->
+                                <div class="col-md-4 col-sm-4 col-xs-12">
+                                    <select name="product_warehouse" class="form-control">
+                                        <option value="0"> -- Chọn kho hàng -- </option>
+                                    </select>
+                                    <label id="product-warehouse-error" class="error hidden" for="product_warehouse1">Vui lòng chọn.</label>
+                                </div>
+                                <!-- END: Select Warehouse -->
+                                <div class="col-md-4 col-sm-4 col-xs-12">
                                     <input name="product_quantity" type="text" placeholder="Nhập số lượng" class="form-control m-b"
                                     value="0"/>
                                     <label id="product-quantity-error" class="error hidden" for="product_quantity1">Vui lòng nhập vào số lượng.</label>
                                 </div>
                                 <div class="col-md-2 col-sm-2 col-xs-12">
                                     <button type="button" class="btn btn-success pull-left c-add-info" id="add_cart_details" disabled="true">Thêm</button>
-                                </div>
-                                <div class="col-md-12">
-                                    <input type="hidden" name="product_detail_id">
-                                    <label id="product-detail-id-error" class="error hidden" for="product_detail_id">Sản phẩm giống nhau không thể thêm nhiều lần</label>
-                                    <label id="cart-details-empty-error" class="error hidden" for="product_detail_id">Phải có ít nhất 1 sản phẩm</label>
                                 </div>
                             </div>
 
@@ -723,6 +771,7 @@ function getDataToPrint(data){
                                                         <th>Mã sản phẩm</th>
                                                         <th>Size</th>
                                                         <th>Màu</th>
+                                                        <th>Nhà kho</th>
                                                         <th>Đơn Giá</th>
                                                         <th>Giá tùy chỉnh</th>
                                                         <th>Thành tiền</th>

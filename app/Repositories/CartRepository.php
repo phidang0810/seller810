@@ -19,6 +19,7 @@ use App\Models\Transport;
 use App\Models\City;
 use App\Models\Platform;
 use App\Models\Payment;
+use App\Models\WarehouseProduct;
 use App\Repositories\PaymentRepository;
 use Illuminate\Support\Facades\Cache;
 use Yajra\DataTables\Facades\DataTables;
@@ -280,6 +281,8 @@ Class CartRepository
             $model = new Cart;
         }
 
+        // dd($data);
+
         $model->city_id = $data['customer_city'];
         $model->partner_id = $data['partner'];
 
@@ -325,6 +328,14 @@ Class CartRepository
         $model->needed_paid = preg_replace('/[^0-9]/', '', $data['needed_paid']);
         $model->descritption = $data['descritption'];
         $model->platform_id = $data['platform_id'];
+
+        //---> Update quatity on warehouse product
+        $warehouseProductModel = WarehouseProduct::find($data['product_warehouse']);
+        $currentProductQuantityOnWarehouse = $warehouseProductModel->quantity;
+        $newProductQuantityOnWarehouse = $currentProductQuantityOnWarehouse - $data['quantity'];
+        $warehouseProductModel->quantity = $newProductQuantityOnWarehouse;
+        $warehouseProductModel->save();
+
         // excute payment_status
         if ($data['paid_amount'] && $data['paid_amount'] > 0) {
             $model->payment_status = PAYING_NOT_ENOUGH;

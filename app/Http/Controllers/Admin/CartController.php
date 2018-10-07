@@ -43,10 +43,13 @@ class CartController extends AdminController
             if (isset($this->_request['product_id'])) {
                 if (isset($this->_request['color_id'])) {
                     if (isset($this->_request['size_id'])) {
-                        if ($this->_request['get_data'] == true) {
-                            return $product->getProductDatas($this->_request);
+                        if (isset($this->_request['warehouse_id'])) {
+                            if ($this->_request['get_data'] == true) {
+                                return $product->getProductDatas($this->_request);
+                            }
+                            return $product->getProductDetailquantity($this->_request);
                         }
-                        return $product->getProductDetailquantity($this->_request);
+                        return $product->getProductDetailWarehouseOptions($this->_request);
                     }
                     return $product->getProductDetailSizeOptions($this->_request);
                 }

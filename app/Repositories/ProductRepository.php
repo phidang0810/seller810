@@ -15,6 +15,8 @@ use App\Models\Category;
 use App\Models\Size;
 use App\Models\Color;
 use App\Models\Brand;
+use App\Models\Warehouse;
+use App\Models\WarehouseProduct;
 use Illuminate\Support\Facades\Cache;
 use Yajra\DataTables\Facades\DataTables;
 use App\Libraries\Photo;
@@ -461,6 +463,14 @@ Class ProductRepository
 		return $result;
 	}
 
+	//---> Get Warehouses Options
+	public function getWarehouseOptions(){
+		$warehouses = Warehouse::select(['warehouses.id', 'warehouses.name'])->get();
+		$result = make_option($warehouses);
+
+		return $result;
+	}
+
 	public function getProductOptions(){
 		return make_option($this->getProducts());
 	}
@@ -469,6 +479,7 @@ Class ProductRepository
 		$product_id = $request->get('product_id');
 		$color_id = $request->get('color_id');
 		$size_id = $request->get('size_id');
+		$warehouse_id = $request->get('warehouse_id');
 
 		$return = [
 			'product_id' => $product_id,
@@ -480,7 +491,12 @@ Class ProductRepository
 			$return['product'] = $product;
 		}
 
-		if ($product_id && $color_id && $size_id) {
+		if ($warehouse_id) {
+			$warehouse = Warehouse::find($warehouse_id);
+			$return['warehouse'] = $warehouse;
+		}
+
+		if ($product_id && $color_id && $size_id && $warehouse_id) {
 			$product_detail = ProductDetail::having('product_id', '=', $product_id)
                 ->having('color_id', '=', $color_id)
                 ->having('size_id', '=', $size_id)
@@ -519,6 +535,37 @@ Class ProductRepository
 		return Response::json($return);
 	}
 
+	public function getProductDetailWarehouseOptions($request){
+		$product_id = $request->get('product_id');
+		$color_id = $request->get('color_id');
+		$size_id = $request->get('size_id');
+
+		$return = [
+			'product_id' => $product_id,
+			'color_id' => $color_id,
+			'size_id' => $size_id,
+			'message'	=>	'Lấy warehouses options cho product detail thành công',
+		];
+
+		if ($product_id) {
+			$product_details = WarehouseProduct::having('product_id', '=', $product_id)->having('quantity', '>', 0)->get();
+
+			$warehouse_ids = [];
+			foreach ($product_details as $key => $value) {
+				$warehouse_ids[] = $value['warehourse_id'];
+			}
+
+			// $return['warehouses_id'] = $product_details;
+
+			$warehouses = Warehouse::whereIn('id', $warehouse_ids)->get();
+
+			$return['warehourses'] = $warehouses;
+		}
+
+		return Response::json($return);
+
+	}
+
 	public function getProductDetailSizeOptions($request){
 		$product_id = $request->get('product_id');
 		$color_id = $request->get('color_id');
@@ -549,7 +596,7 @@ Class ProductRepository
 		return Response::json($return);
 	}
 
-	function getProductDetailquantity($request){
+	function getProductDetailquantity_bk($request){
 		$product_id = $request->get('product_id');
 		$color_id = $request->get('color_id');
 		$size_id = $request->get('size_id');
@@ -570,6 +617,33 @@ Class ProductRepository
 
 			$return['quantity'] = $product_detail->quantity;
 			$return['detail_id'] = $product_detail->id;
+		}
+
+		return Response::json($return);
+	}
+
+	function getProductDetailquantity($request){
+		$product_id = $request->get('product_id');
+		$color_id = $request->get('color_id');
+		$size_id = $request->get('size_id');
+		$warehouse_id = $request->get('warehouse_id');
+
+		$return = [
+			'product_id' => $product_id,
+			'color_id' => $color_id,
+			'size_id' => $size_id,
+			'warehouse_id' => $warehouse_id,
+			'message'	=>	'Lấy quantity cho product detail thành công',
+		];
+
+		if ($product_id && $color_id && $size_id && $warehouse_id) {
+			$warehouse_products = WarehouseProduct::having('product_id', '=', $product_id)
+				->having('warehourse_id', '=', $warehouse_id)
+                ->having('quantity', '>', 0)
+                ->first();
+
+			$return['quantity'] = $warehouse_products->quantity;
+			$return['warehouse_product_id'] = $warehouse_products->id;
 		}
 
 		return Response::json($return);
