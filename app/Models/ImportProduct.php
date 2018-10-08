@@ -14,7 +14,7 @@ class ImportProduct extends BaseModel
      * @var array
      */
     protected $fillable = [
-        'code', 'quantity', 'import_staff_id', 'product_id', 'warehouse_id', 'price', 'total_price', 'note', 'status'
+        'code', 'quantity', 'import_staff_id', 'product_id', 'warehouse_id', 'price', 'total_price', 'note', 'status', 'supplier_id', 'brand_id', 'barcode_text', 'barcode', 'name', 'colors', 'sizes', 'sell_price', 'photo', 'description', 'content', 'active', 'order'
     ];
 
     /**
@@ -32,7 +32,15 @@ class ImportProduct extends BaseModel
      */
     public function staff()
     {
-        return $this->hasOne('App\Models\User', 'import_staff_id');
+        return $this->hasOne('App\Models\User', 'id', 'import_staff_id');
+    }
+
+    /**
+     * Get the import supplier of import product detail.
+     */
+    public function supplier()
+    {
+        return $this->hasOne('App\Models\Supplier', 'id', 'supplier_id');
     }
 
     /**

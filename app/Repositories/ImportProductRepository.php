@@ -37,7 +37,18 @@ Class ImportProductRepository
 		}, true)
 		->addColumn('action', function ($importProduct) {
 			$html = '';
-			$html .= '<a href="' . route('admin.import_products.view', ['id' => $importProduct->id]) . '" class="btn btn-xs btn-primary" style="margin-right: 5px"><i class="glyphicon glyphicon-edit"></i> Sửa</a>';
+			switch ($importProduct->status) {
+				case '1':
+				$html .= '<a href="' . route('admin.import_products.check', ['id' => $importProduct->id]) . '" class="btn btn-xs btn-primary" style="margin-right: 5px"> Kiểm hàng</a>';
+				break;
+
+				case '2':
+				$html .= '<a href="' . route('admin.import_products.importWarehouse', ['id' => $importProduct->id]) . '" class="btn btn-xs btn-success" style="margin-right: 5px"> Nhập kho</a>';
+				break;
+				
+				default:
+				break;
+			}
 			return $html;
 		})
 		->addColumn('product_name', function ($importProduct) {
@@ -81,8 +92,12 @@ Class ImportProductRepository
 		}
 
 		$productRepository = new ProductRepository;
-		$product_model = $productRepository->createOrUpdate($data, $data['product_id']);
-
+		if ($data['product_option'] == 'new') {
+			$product_model = $productRepository->createOrUpdate($data);
+		}else{
+			$product_model = $productRepository->getProduct($data['product_id']);
+		}
+		
 		$model->product_id = $product_model->id;
 		$model->code = general_code('N H', $id, 6);
 		$model->quantity = $data['import_quantity'];
@@ -94,6 +109,21 @@ Class ImportProductRepository
 		}
 		$model->note = $data['note'];
 		$model->status = IMPORT_IMPORTING;
+		// $model->supplier_id = $data['supplier_id'];
+		$model->brand_id = $data['brand_id'];
+		$model->sell_price = preg_replace('/[^0-9]/', '', $data['sell_price']);
+		$model->description = $data['description'];
+		$model->content = $data['content'];
+		$model->active = $data['active'];
+		$model->order = $data['order'];
+
+		if($data['product_option'] == 'old' && isset($data['photo'])) {
+			if ($model->photo) {
+				Storage::delete($model->photo);
+			}
+			$upload = new Photo($data['photo']);
+			$model->photo = $upload->uploadTo('products');
+		}
 
 		$model->save();
 
@@ -114,6 +144,8 @@ Class ImportProductRepository
 
 			// Add/update import detail
 			foreach ($importDetails as $key => $importDetail) {
+				$sizes = [];
+				$colors = [];
 				if (!isset($importDetail->delete) || $importDetail->delete != true) {
 					$productDetail = ProductDetail::where("product_id", $model->product_id)
 					->where("color_id", $importDetail->color_code->id)
@@ -148,13 +180,24 @@ Class ImportProductRepository
 						}
 					}
 				}
+
+				if ($importDetail->size && !in_array($importDetail->size->name, $sizes)) {
+					$sizes[] = $importDetail->size->name;
+				}
+
+				if ($importDetail->color_code && !in_array($importDetail->color_code->name, $colors)) {
+					$colors[] = $importDetail->color_code->name;
+				}
 			}
+
+			$model->colors = implode($colors, ',');
+			$model->sizes = implode($sizes, ',');
+			$model->save();
 		}
 
 
 		return $model;
 	}
-
 
 	public function delete($ids)
 	{
@@ -230,5 +273,48 @@ Class ImportProductRepository
 			];
 		}
 		return $return;
+	}
+
+	public function getCheckImport($id){
+		$data = ImportProduct::find($id);
+		return $data;
+	}
+
+	public function confirmDetail($id)
+	{
+		$result = [
+			'success' => true,
+			'errors' => []
+		];
+		$model = ImportProductDetail::find($id);
+		if ($model === null) {
+			$result['errors'][] = 'ID nhập hàng chi tiết: ' . $id . ' không tồn tại';
+			$result['success'] = false;
+		}
+		$model->status = IMPORT_DETAIL_CONFIMRED;
+		$model->save();
+
+		if ($this->areAllDetailsConfirmed($model->importProduct->id)) {
+			$modelImportProduct = ImportProduct::find($model->importProduct->id);
+			$modelImportProduct->status = IMPORT_CHECKED;
+			$modelImportProduct->save();
+		}
+
+		return $result;
+	}
+
+	public function areAllDetailsConfirmed($id){
+		$model = ImportProduct::find($id);
+		if ($model) {
+			if($model->details){
+				foreach ($model->details as $detail) {
+					if($detail->status == IMPORT_DETAIL_UNCONFIMRED){
+						return false;
+					}
+				}
+				return true;
+			}
+		}
+		return false;
 	}
 }
