@@ -63,6 +63,16 @@ Route::prefix('khach-hang')
     Route::get ('/export', 'CustomerController@export')->name('admin.customers.export');
 });
 
+Route::prefix('thuong-hieu')
+    ->middleware('permission:product_manager')->group(function () {
+    Route::get ('/', 'BrandController@index')->name('admin.brands.index');
+    Route::get ('/chi-tiet', 'BrandController@view')->name('admin.brands.view');
+    Route::get ('/them', 'BrandController@view')->name('admin.brands.create');
+    Route::post ('/them', 'BrandController@store')->name('admin.brands.store');
+    Route::delete ('/', 'BrandController@delete')->name('admin.brands.delete');
+    Route::put ('/change-status', 'BrandController@changeStatus')->name('admin.brands.changeStatus');
+});
+
 
 Route::prefix('kho-hang')
 ->middleware('permission:product_manager')->group(function () {

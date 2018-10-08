@@ -84,6 +84,12 @@
                 </li>
             @endif
 
+            @if(key_exists('product_manager', Auth::user()->permissions))
+                <li class="{{ set_active(['quan-ly/thuong-hieu*']) }} nav-item">
+                    <a href="{{route('admin.brands.index')}}"><i class="fa fa-university" aria-hidden="true"></i> <span class="nav-label">Thương Hiệu</span></a>
+                </li>
+            @endif
+
             @if(key_exists('user_manager', Auth::user()->permissions))
             <li class="{{ set_active(['quan-ly/thanh-vien*']) }} nav-item">
                 <a href="#"><i class="fa fa-user"></i> <span class="nav-label">Quản Lý Tài Khoản</span><span class="fa arrow"></span></a>

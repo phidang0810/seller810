@@ -5,8 +5,8 @@
 @section('js')
 <!-- Page-Level Scripts -->
 <script>
-    var url_delete = "{{route('admin.warehouses.delete')}}";
-    var url_change_status = "{{route('admin.warehouses.changeStatus')}}";
+    var url_delete = "{{route('admin.brands.delete')}}";
+    var url_change_status = "{{route('admin.brands.changeStatus')}}";
     var table;
     $.ajaxSetup({
         headers: {
@@ -20,7 +20,7 @@
             serverSide: true,
             "dom": 'rt<"#pagination"flp>',
             ajax: {
-                "url": "{{route('admin.warehouses.index')}}",
+                "url": "{{route('admin.brands.index')}}",
                 "data": function ( d ) {
                     d.keyword = $('#s-keyword').val();
                     d.status = $('#s-status').val();
@@ -66,7 +66,7 @@
                                             if (response.success) {
                                                 swal({
                                                     title: "Thành công!",
-                                                    text: "Bạn đã " + status + " kho hàng " + name + " thành công.",
+                                                    text: "Bạn đã " + status + " thương hiệu " + name + " thành công.",
                                                     html: true,
                                                     type: "success",
                                                     confirmButtonClass: "btn-primary",
@@ -101,17 +101,14 @@
             columns: [
             {data: 'id'},
             {data: 'name'},
-            {data: 'code'},
-            {data: 'address'},
-            {data: 'phone'},
-            {data: 'email'},
+            {data: 'created_at'},
             {data: 'status'},
             {data: 'action'}
             ],
             "aoColumnDefs": [
                     // Column index begins at 0
-                    { "sClass": "text-center", "aTargets": [ 6 ] },
-                    { "sClass": "text-right", "aTargets": [ 7 ] }
+                    { "sClass": "text-center", "aTargets": [ 3 ] },
+                    { "sClass": "text-right", "aTargets": [ 4 ] }
                     ],
                     "language": {
                         "decimal": "",
@@ -154,7 +151,7 @@ $('#bt-reset').click(function(){
 $("#dataTables").on("click", '.bt-delete', function(){
     var name = $(this).attr('data-name');
     var data = {
-        ids: [$(this).attr('data-id')]
+        id: $(this).attr('data-id')
     };
     swal({
         title: "Cảnh Báo!",
@@ -176,7 +173,7 @@ $("#dataTables").on("click", '.bt-delete', function(){
                 if (response.success) {
                     swal({
                         title: "Thành công!",
-                        text: "Kho Hàng " + name + " đã bị xóa.",
+                        text: "Thương hiệu " + name + " đã bị xóa.",
                         html: true,
                         type: "success",
                         confirmButtonClass: "btn-primary",
@@ -247,7 +244,7 @@ $("#dataTables").on("click", '.bt-delete', function(){
         @include('admin._partials._alert')
         <div class="ibox-content">
             <div class="text-right" style="padding: 10px 10px 0px 10px;">
-                <a href="{{route('admin.warehouses.create')}}" class="btn btn-sm btn-primary"><i class="fa fa-plus"></i> Tạo Kho hàng</a>
+                <a href="{{route('admin.brands.create')}}" class="btn btn-sm btn-primary"><i class="fa fa-plus"></i> Tạo Thương Hiệu</a>
             </div>
             <div class="hr-line-dashed"></div>
             <!-- Account list -->
@@ -255,13 +252,10 @@ $("#dataTables").on("click", '.bt-delete', function(){
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Tên kho hàng</th>
-                        <th>Mã kho hàng</th>
-                        <th>Địa chỉ</th>
-                        <th>Số điện thoại</th>
-                        <th>Email</th>
+                        <th>Tên</th>
+                        <th>Ngày Tạo</th>
                         <th>Trạng Thái</th>
-                        <th></th>
+                        <th class="no-sort"></th>
                     </tr>
                 </thead>
                 <tbody>
