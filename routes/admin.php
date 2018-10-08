@@ -95,7 +95,7 @@ Route::prefix('kho-hang')
         Route::get ('/chi-tiet', 'ProductAvailableController@view')->name('admin.product_available.view');
         Route::get ('/kiem-hang', 'ImportProductController@check')->name('admin.import_products.check');
         Route::get ('/kiem-hang/xac-nhan', 'ImportProductController@confirm')->name('admin.import_products.confirm');
-        Route::post ('/nhap-kho', 'ImportProductController@importWarehouse')->name('admin.import_products.importWarehouse');
+        Route::get ('/nhap-kho', 'ImportProductController@importWarehouse')->name('admin.import_products.importWarehouse');
         Route::post ('/them', 'ProductAvailableController@store')->name('admin.product_available.store');
         Route::delete ('/', 'ProductAvailableController@delete')->name('admin.product_available.delete');
         Route::put ('/change-status', 'ProductAvailableController@changeStatus')->name('admin.product_available.changeStatus');

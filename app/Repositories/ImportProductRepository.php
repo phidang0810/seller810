@@ -12,6 +12,7 @@ use App\Models\ImportProduct;
 use App\Models\ImportProductDetail;
 use App\Models\Permission;
 use App\Models\Warehouse;
+use App\Models\WarehouseProduct;
 use App\Models\Product;
 use App\Models\ProductDetail;
 use App\Repositories\ProductRepository;
@@ -43,7 +44,8 @@ Class ImportProductRepository
 				break;
 
 				case '2':
-				$html .= '<a href="' . route('admin.import_products.importWarehouse', ['id' => $importProduct->id]) . '" class="btn btn-xs btn-success" style="margin-right: 5px"> Nhập kho</a>';
+				// $html .= '<a href="' . route('admin.import_products.importWarehouse', ['id' => $importProduct->id]) . '" class="btn btn-xs btn-success" style="margin-right: 5px"> Nhập kho</a>';
+				$html .= '<a href="#" class="btn btn-xs btn-success bt-importwarehouse" style="margin-right: 5px" data-id="' . $importProduct->id . '" data-name="' . $importProduct->code . '"> Nhập kho</a>';
 				break;
 				
 				default:
@@ -316,5 +318,63 @@ Class ImportProductRepository
 			}
 		}
 		return false;
+	}
+
+	public function importWarehouse($id)
+	{
+		$result = [
+			'success' => true,
+			'errors' => [],
+			'id' => $id
+		];
+
+		$importProduct = ImportProduct::find($id);
+		$product = Product::find($importProduct->product_id);
+
+		// Push data from import product to product
+		$product->price = $importProduct->price;
+		$product->supplier_id = $importProduct->supplier_id;
+		$product->brand_id = $importProduct->brand_id;
+		$product->sell_price = $importProduct->sell_price;
+		$product->photo = $importProduct->photo;
+		$product->description = $importProduct->description;
+		$product->content = $importProduct->content;
+		$product->sizes = implode(',', array_unique(array_merge(explode(',', $importProduct->sizes), explode(',', $product->sizes))));
+		$product->colors = implode(',', array_unique(array_merge(explode(',', $importProduct->colors), explode(',', $product->colors))));
+		$product->save();
+
+		// Push details quantity to warehouse product detail & product detail, update product quantity
+		if ($importProduct->details) {
+			foreach ($importProduct->details as $importProductDetail) {
+				$warehouseProduct = WarehouseProduct::where('warehouse_id', $importProduct->warehouse_id)
+				->where('product_id', $importProduct->product_id)
+				->where('product_detail_id', $importProductDetail->product_detail_id)
+				->first();
+
+				if ($warehouseProduct) {
+					$warehouseProduct->quantity += $importProductDetail->quantity;
+				}else{
+					$warehouseProduct = new WarehouseProduct;
+					$warehouseProduct->warehouse_id = $importProduct->warehouse_id;
+					$warehouseProduct->product_id = $importProduct->product_id;
+					$warehouseProduct->product_detail_id = $importProductDetail->product_detail_id;
+					$warehouseProduct->quantity = $importProductDetail->quantity;
+				}
+				$warehouseProduct->save();
+
+				if ($productDetail = ProductDetail::find($importProductDetail->product_detail_id)) {
+					$productDetail->quantity += $importProductDetail->quantity;
+					$productDetail->save();
+					$product->quantity += $importProductDetail->quantity;
+					$product->quantity_available += $importProductDetail->quantity;
+					$product->save();
+				}
+			}
+		}
+
+		$importProduct->status = IMPORT_IMPORTED;
+		$importProduct->save();
+
+		return $result;
 	}
 }
