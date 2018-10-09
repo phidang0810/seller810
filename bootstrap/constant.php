@@ -67,3 +67,20 @@ define('IMPORT_DETAIL_TEXT', [
     1   =>  'xác nhận',
     2   =>  'Đã xác nhận'
 ]);
+
+define('TRANSPORT_TRANSPORTING', 1);
+define('TRANSPORT_TRANSPORTED', 2);
+define('TRANSPORT_TEXT', [
+    1   =>  'Đang chuyển',
+    2   =>  'Đã chuyển',
+]);
+
+define('TRANSPORT_DETAIL_UNRECEIVE', 1);
+define('TRANSPORT_DETAIL_RECEIVED', 2);
+define('TRANSPORT_DETAIL_TEXT', [
+    1   =>  'Chưa nhận',
+    2   =>  'Đã nhận'
+]);
+define('TRANSPORT_DETAIL_ACTION_TEXT', [
+    1   =>  'Nhận hàng'
+]);

@@ -44,7 +44,6 @@ Class ImportProductRepository
 				break;
 
 				case '2':
-				// $html .= '<a href="' . route('admin.import_products.importWarehouse', ['id' => $importProduct->id]) . '" class="btn btn-xs btn-success" style="margin-right: 5px"> Nhập kho</a>';
 				$html .= '<a href="#" class="btn btn-xs btn-success bt-importwarehouse" style="margin-right: 5px" data-id="' . $importProduct->id . '" data-name="' . $importProduct->code . '"> Nhập kho</a>';
 				break;
 				
@@ -128,6 +127,11 @@ Class ImportProductRepository
 		}
 
 		$model->save();
+		if (!$id) {
+			$model->code = general_code('N H', $model->id, 6);
+			$model->save();
+		}
+
 
 		if (isset($data['importDetails'])) {
 			$importDetails = json_decode($data['importDetails']);
