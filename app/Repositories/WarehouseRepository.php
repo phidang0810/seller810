@@ -8,7 +8,9 @@
 
 namespace App\Repositories;
 
+use App\Models\Category;
 use App\Models\Warehouse;
+use App\Models\WarehouseProduct;
 use Illuminate\Support\Facades\Cache;
 use Yajra\DataTables\Facades\DataTables;
 use App\Libraries\Photo;
@@ -20,7 +22,8 @@ Class WarehouseRepository
 {
 	const CACHE_NAME_PRODUCTS = 'warehouses';
 
-	public function dataTable($request){
+	public function dataTable($request)
+    {
 		$warehouses = Warehouse::select(['id', 'name', 'code', 'address', 'phone', 'email', 'active', 'order', 'created_at']);
 
 		$dataTable = DataTables::eloquent($warehouses)
@@ -121,4 +124,64 @@ Class WarehouseRepository
 		$data = Warehouse::get();
 		return $data;
 	}
+
+	public function getProductQuantityObj($request)
+    {
+        $warehouses = WarehouseProduct::selectRaw('products.main_cate, warehouses.name as warehouse_name, products.name as product_name, products.barcode_text as product_code, SUM(warehouse_product.quantity) as quantity, SUM(warehouse_product.quantity_available) as quantity_available')
+        ->join('warehouses', 'warehouses.id', '=', 'warehouse_product.warehouse_id')
+        ->join('products', 'products.id', '=', 'warehouse_product.product_id')
+        ->groupBy('warehouse_product.product_id');
+
+        $categories = Category::get()->pluck('name', 'id')->toArray();
+        $dataTable = DataTables::eloquent($warehouses)
+            ->filter(function ($query) use ($request) {
+                if (trim($request->get('status')) !== "") {
+                    $query->where('active', $request->get('status'));
+                }
+
+                if (trim($request->get('category_id')) !== "") {
+                    $query->where('products.main_cate', $request->get('category_id'));
+                }
+
+                if (trim($request->get('warehouse_id')) !== "") {
+                    $query->where('warehouse_product.warehouse_id', $request->get('warehouse_id'));
+                }
+
+                if (trim($request->get('name')) !== "") {
+                    $query->where(function ($sub) use ($request) {
+                        $sub->where('products.name', 'like', '%' . $request->get('name') . '%');
+                    });
+
+                }
+            }, true)
+            ->addColumn('category', function($product) use ($categories) {
+                return $categories[$product->main_cate] ?? '';
+            })
+            ->addColumn('quantity', function($product) {
+                return format_number($product->quantity);
+            })
+            ->addColumn('quantity_available', function($product) {
+                return format_number($product->quantity_available);
+            })
+            ->addColumn('quantity_sell', function($product) {
+                return format_number($product->quantity - $product->quantity_available);
+            });
+
+        return $dataTable;
+    }
+
+    public function getProductQuantityTable($request)
+    {
+        $data = $this->getProductQuantityObj($request)
+            ->rawColumns(['category', 'platform', 'photo'])
+            ->toJson();
+
+        return $data;
+    }
+
+    public function getDataList()
+    {
+        $data = Warehouse::where('active', TRUE)->get();
+        return $data;
+    }
 }
