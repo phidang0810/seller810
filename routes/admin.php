@@ -104,6 +104,19 @@ Route::prefix('kho-hang')
         Route::get ('/them', 'ImportProductController@view')->name('admin.import_products.create');
         Route::post ('/them', 'ImportProductController@store')->name('admin.import_products.store');
         Route::delete ('/', 'ImportProductController@delete')->name('admin.import_products.delete');
+        Route::get ('/kiem-hang', 'ImportProductController@check')->name('admin.import_products.check');
+        Route::get ('/kiem-hang/xac-nhan', 'ImportProductController@confirm')->name('admin.import_products.confirm');
+        Route::get ('/nhap-kho', 'ImportProductController@importWarehouse')->name('admin.import_products.importWarehouse');
+    });
+
+    Route::prefix('chuyen-kho')->group(function () {
+        Route::get ('/', 'TransportWarehouseController@index')->name('admin.transport_warehouse.index');
+        Route::get ('/chi-tiet', 'TransportWarehouseController@view')->name('admin.transport_warehouse.view');
+        Route::get ('/them', 'TransportWarehouseController@view')->name('admin.transport_warehouse.create');
+        Route::post ('/them', 'TransportWarehouseController@store')->name('admin.transport_warehouse.store');
+        Route::delete ('/', 'TransportWarehouseController@delete')->name('admin.transport_warehouse.delete');
+        Route::get ('/nhan-hang', 'TransportWarehouseController@receive')->name('admin.transport_warehouse.receive');
+        Route::get ('/nhan-hang/san-pham', 'TransportWarehouseController@receiveProduct')->name('admin.transport_warehouse.receiveProduct');
     });
 });
 

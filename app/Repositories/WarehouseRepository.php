@@ -111,4 +111,14 @@ Class WarehouseRepository
 		$model->active = $status;
 		return $model->save();
 	}
+
+	public function getWarehouseOptions(){
+		return make_option($this->getWarehouses());
+	}
+
+	public function getWarehouses()
+	{
+		$data = Warehouse::get();
+		return $data;
+	}
 }

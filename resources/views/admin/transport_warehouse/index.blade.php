@@ -5,8 +5,7 @@
 @section('js')
 <!-- Page-Level Scripts -->
 <script>
-    var url_delete = "{{route('admin.import_products.delete')}}";
-    var url_importWarehouse = "{{route('admin.import_products.importWarehouse')}}";
+    var url_delete = "{{route('admin.transport_warehouse.delete')}}";
     var table;
     $.ajaxSetup({
         headers: {
@@ -28,7 +27,7 @@
             serverSide: true,
             "dom": 'rt<"#pagination"flp>',
             ajax: {
-                "url": "{{route('admin.import_products.index')}}",
+                "url": "{{route('admin.transport_warehouse.index')}}",
                 "data": function ( d ) {
                     d.status = $('#s-status').val();
                 },
@@ -39,18 +38,16 @@
             columns: [
             {data: 'id'},
             {data: 'code'},
-            {data: 'product_name'},
-            {data: 'supplier_name'},
-            {data: 'product_category'},
-            {data: 'quantity'},
-            {data: 'total_price'},
+            {data: 'staff_name'},
+            {data: 'transport_date'},
+            {data: 'status'},
             {data: 'action'}
             ],
             "aoColumnDefs": [
                     // Column index begins at 0
-                    { "sClass": "thousand-number money text-align", "aTargets": [ 6 ] },
-                    { "sClass": "text-center", "aTargets": [ 6 ] },
-                    { "sClass": "text-right", "aTargets": [ 7 ] }
+                    // { "sClass": "thousand-number money text-align", "aTargets": [ 4 ] },
+                    { "sClass": "text-center", "aTargets": [ 4 ] },
+                    { "sClass": "text-right", "aTargets": [ 5 ] }
                     ],
                     "language": {
                         "decimal": "",
@@ -141,58 +138,6 @@ $("#dataTables").on("click", '.bt-delete', function(){
 
     });
 });
-
-$("#dataTables").on("click", '.bt-importwarehouse', function(){
-    var name = $(this).attr('data-name');
-    var data = {
-        id: $(this).attr('data-id')
-    };
-    swal({
-        title: "Cảnh Báo!",
-        text: "Bạn có chắc muốn nhập mã nhập hàng <b>"+name+"</b> vào kho ?",
-        html:true,
-        type: "warning",
-        showCancelButton: true,
-        confirmButtonClass: "btn-primary",
-        confirmButtonText: "Vâng, nhập!",
-        closeOnConfirm: false
-    },
-    function(){
-        $.ajax({
-            url: url_importWarehouse,
-            type: 'get',
-            data: data,
-            dataType:'json',
-            success: function(response) {
-                if (response.success) {
-                    swal({
-                        title: "Thành công!",
-                        text: "Mã nhập hàng " + name + " đã nhập hàng thành công.",
-                        html: true,
-                        type: "success",
-                        confirmButtonClass: "btn-primary",
-                        confirmButtonText: "Đóng lại."
-                    });
-                } else {
-                    errorHtml = '<ul class="text-left">';
-                    $.each( response.errors, function( key, error ) {
-                        errorHtml += '<li>' + error + '</li>';
-                    });
-                    errorHtml += '</ul>';
-                    swal({
-                        title: "Error! Refresh page and try again.",
-                        text: errorHtml,
-                        html: true,
-                        type: "error",
-                        confirmButtonClass: "btn-danger"
-                    });
-                }
-                table.fnDraw();
-            }
-        });
-
-    });
-});
 </script>
 @endsection
 @section('content')
@@ -229,7 +174,7 @@ $("#dataTables").on("click", '.bt-importwarehouse', function(){
         @include('admin._partials._alert')
         <div class="ibox-content">
             <div class="text-right" style="padding: 10px 10px 0px 10px;">
-                <a href="{{route('admin.import_products.create')}}" class="btn btn-sm btn-primary"><i class="fa fa-plus"></i> Tạo nhập hàng</a>
+                <a href="{{route('admin.transport_warehouse.create')}}" class="btn btn-sm btn-primary"><i class="fa fa-plus"></i> Tạo chuyển kho</a>
             </div>
             <div class="hr-line-dashed"></div>
             <!-- Account list -->
@@ -237,12 +182,10 @@ $("#dataTables").on("click", '.bt-importwarehouse', function(){
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Mã nhập hàng</th>
-                        <th>Tên sản phẩm</th>
-                        <th>Nhà cung cấp</th>
-                        <th>Danh mục</th>
-                        <th>Số lượng</th>
-                        <th>Tổng giá sản phẩm</th>
+                        <th>Mã chuyển kho</th>
+                        <th>Người phụ trách</th>
+                        <th>Ngày chuyển</th>
+                        <th>Trạng thái</th>
                         <th></th>
                     </tr>
                 </thead>

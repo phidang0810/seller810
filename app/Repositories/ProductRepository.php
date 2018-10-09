@@ -548,7 +548,17 @@ Class ProductRepository
 		];
 
 		if ($product_id) {
-			$product_details = WarehouseProduct::having('product_id', '=', $product_id)->having('quantity', '>', 0)->get();
+			$product_detail = ProductDetail::having('product_id', '=', $product_id)
+                ->having('color_id', '=', $color_id)
+                ->having('size_id', '=', $size_id)
+                ->having('quantity', '>', 0)
+                ->first();
+
+			$product_details = WarehouseProduct::where('product_id', '=', $product_id)
+			->where('product_detail_id', $product_detail->id)
+			->where('quantity', '>', 0)->get();
+
+			$return['product_details'] = $product_details;
 
 			$warehouse_ids = [];
 			foreach ($product_details as $key => $value) {
@@ -637,7 +647,13 @@ Class ProductRepository
 		];
 
 		if ($product_id && $color_id && $size_id && $warehouse_id) {
-			$warehouse_products = WarehouseProduct::having('product_id', '=', $product_id)
+			$product_detail = ProductDetail::having('product_id', '=', $product_id)
+                ->having('color_id', '=', $color_id)
+                ->having('size_id', '=', $size_id)
+                ->having('quantity', '>', 0)
+                ->first();
+
+			$warehouse_products = WarehouseProduct::having('product_detail_id', '=', $product_detail->id)
 				->having('warehouse_id', '=', $warehouse_id)
                 ->having('quantity', '>', 0)
                 ->first();

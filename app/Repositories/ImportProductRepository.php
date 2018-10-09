@@ -12,6 +12,7 @@ use App\Models\ImportProduct;
 use App\Models\ImportProductDetail;
 use App\Models\Permission;
 use App\Models\Warehouse;
+use App\Models\WarehouseProduct;
 use App\Models\Product;
 use App\Models\ProductDetail;
 use App\Repositories\ProductRepository;
@@ -37,7 +38,18 @@ Class ImportProductRepository
 		}, true)
 		->addColumn('action', function ($importProduct) {
 			$html = '';
-			$html .= '<a href="' . route('admin.import_products.view', ['id' => $importProduct->id]) . '" class="btn btn-xs btn-primary" style="margin-right: 5px"><i class="glyphicon glyphicon-edit"></i> Sửa</a>';
+			switch ($importProduct->status) {
+				case '1':
+				$html .= '<a href="' . route('admin.import_products.check', ['id' => $importProduct->id]) . '" class="btn btn-xs btn-primary" style="margin-right: 5px"> Kiểm hàng</a>';
+				break;
+
+				case '2':
+				$html .= '<a href="#" class="btn btn-xs btn-success bt-importwarehouse" style="margin-right: 5px" data-id="' . $importProduct->id . '" data-name="' . $importProduct->code . '"> Nhập kho</a>';
+				break;
+				
+				default:
+				break;
+			}
 			return $html;
 		})
 		->addColumn('product_name', function ($importProduct) {
@@ -81,8 +93,12 @@ Class ImportProductRepository
 		}
 
 		$productRepository = new ProductRepository;
-		$product_model = $productRepository->createOrUpdate($data, $data['product_id']);
-
+		if ($data['product_option'] == 'new') {
+			$product_model = $productRepository->createOrUpdate($data);
+		}else{
+			$product_model = $productRepository->getProduct($data['product_id']);
+		}
+		
 		$model->product_id = $product_model->id;
 		$model->code = general_code('N H', $id, 6);
 		$model->quantity = $data['import_quantity'];
@@ -94,8 +110,28 @@ Class ImportProductRepository
 		}
 		$model->note = $data['note'];
 		$model->status = IMPORT_IMPORTING;
+		// $model->supplier_id = $data['supplier_id'];
+		$model->brand_id = $data['brand_id'];
+		$model->sell_price = preg_replace('/[^0-9]/', '', $data['sell_price']);
+		$model->description = $data['description'];
+		$model->content = $data['content'];
+		$model->active = $data['active'];
+		$model->order = $data['order'];
+
+		if($data['product_option'] == 'old' && isset($data['photo'])) {
+			if ($model->photo) {
+				Storage::delete($model->photo);
+			}
+			$upload = new Photo($data['photo']);
+			$model->photo = $upload->uploadTo('products');
+		}
 
 		$model->save();
+		if (!$id) {
+			$model->code = general_code('N H', $model->id, 6);
+			$model->save();
+		}
+
 
 		if (isset($data['importDetails'])) {
 			$importDetails = json_decode($data['importDetails']);
@@ -114,6 +150,8 @@ Class ImportProductRepository
 
 			// Add/update import detail
 			foreach ($importDetails as $key => $importDetail) {
+				$sizes = [];
+				$colors = [];
 				if (!isset($importDetail->delete) || $importDetail->delete != true) {
 					$productDetail = ProductDetail::where("product_id", $model->product_id)
 					->where("color_id", $importDetail->color_code->id)
@@ -148,13 +186,24 @@ Class ImportProductRepository
 						}
 					}
 				}
+
+				if ($importDetail->size && !in_array($importDetail->size->name, $sizes)) {
+					$sizes[] = $importDetail->size->name;
+				}
+
+				if ($importDetail->color_code && !in_array($importDetail->color_code->name, $colors)) {
+					$colors[] = $importDetail->color_code->name;
+				}
 			}
+
+			$model->colors = implode($colors, ',');
+			$model->sizes = implode($sizes, ',');
+			$model->save();
 		}
 
 
 		return $model;
 	}
-
 
 	public function delete($ids)
 	{
@@ -230,5 +279,106 @@ Class ImportProductRepository
 			];
 		}
 		return $return;
+	}
+
+	public function getCheckImport($id){
+		$data = ImportProduct::find($id);
+		return $data;
+	}
+
+	public function confirmDetail($id)
+	{
+		$result = [
+			'success' => true,
+			'errors' => []
+		];
+		$model = ImportProductDetail::find($id);
+		if ($model === null) {
+			$result['errors'][] = 'ID nhập hàng chi tiết: ' . $id . ' không tồn tại';
+			$result['success'] = false;
+		}
+		$model->status = IMPORT_DETAIL_CONFIMRED;
+		$model->save();
+
+		if ($this->areAllDetailsConfirmed($model->importProduct->id)) {
+			$modelImportProduct = ImportProduct::find($model->importProduct->id);
+			$modelImportProduct->status = IMPORT_CHECKED;
+			$modelImportProduct->save();
+		}
+
+		return $result;
+	}
+
+	public function areAllDetailsConfirmed($id){
+		$model = ImportProduct::find($id);
+		if ($model) {
+			if($model->details){
+				foreach ($model->details as $detail) {
+					if($detail->status == IMPORT_DETAIL_UNCONFIMRED){
+						return false;
+					}
+				}
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public function importWarehouse($id)
+	{
+		$result = [
+			'success' => true,
+			'errors' => [],
+			'id' => $id
+		];
+
+		$importProduct = ImportProduct::find($id);
+		$product = Product::find($importProduct->product_id);
+
+		// Push data from import product to product
+		$product->price = $importProduct->price;
+		$product->supplier_id = $importProduct->supplier_id;
+		$product->brand_id = $importProduct->brand_id;
+		$product->sell_price = $importProduct->sell_price;
+		$product->photo = $importProduct->photo;
+		$product->description = $importProduct->description;
+		$product->content = $importProduct->content;
+		$product->sizes = implode(',', array_unique(array_merge(explode(',', $importProduct->sizes), explode(',', $product->sizes))));
+		$product->colors = implode(',', array_unique(array_merge(explode(',', $importProduct->colors), explode(',', $product->colors))));
+		$product->save();
+
+		// Push details quantity to warehouse product detail & product detail, update product quantity
+		if ($importProduct->details) {
+			foreach ($importProduct->details as $importProductDetail) {
+				$warehouseProduct = WarehouseProduct::where('warehouse_id', $importProduct->warehouse_id)
+				->where('product_id', $importProduct->product_id)
+				->where('product_detail_id', $importProductDetail->product_detail_id)
+				->first();
+
+				if ($warehouseProduct) {
+					$warehouseProduct->quantity += $importProductDetail->quantity;
+				}else{
+					$warehouseProduct = new WarehouseProduct;
+					$warehouseProduct->warehouse_id = $importProduct->warehouse_id;
+					$warehouseProduct->product_id = $importProduct->product_id;
+					$warehouseProduct->product_detail_id = $importProductDetail->product_detail_id;
+					$warehouseProduct->quantity = $importProductDetail->quantity;
+				}
+				$warehouseProduct->save();
+
+				if ($productDetail = ProductDetail::find($importProductDetail->product_detail_id)) {
+					$productDetail->quantity += $importProductDetail->quantity;
+					$productDetail->save();
+					$product->quantity += $importProductDetail->quantity;
+					$product->quantity_available += $importProductDetail->quantity;
+					$product->save();
+				}
+			}
+		}
+
+		$importProduct->status = IMPORT_IMPORTED;
+		$importProduct->save();
+
+		return $result;
 	}
 }

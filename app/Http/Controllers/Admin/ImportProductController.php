@@ -122,4 +122,26 @@ class ImportProductController extends AdminController
 
         return response()->json($result);
     }
+
+    public function check(ImportProductRepository $importProduct){
+        $id = $this->_request->get('id');
+        $this->_data['title'] = 'Kiểm hàng nhập';
+        $this->_data['data'] = $importProduct->getCheckImport($id);
+        $this->_pushBreadCrumbs($this->_data['title']);
+        return view('admin.import_products.check', $this->_data);
+    }
+
+    public function confirm(ImportProductRepository $importProduct){
+        $id = $this->_request->get('id');
+        $result = $importProduct->confirmDetail($id);
+
+        return response()->json($result);
+    }
+
+    public function importWarehouse(ImportProductRepository $importProduct){
+        $id = $this->_request->get('id');
+        $result = $importProduct->importWarehouse($id);
+
+        return response()->json($result);
+    }
 }
