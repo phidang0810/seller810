@@ -551,7 +551,7 @@ Class PaymentRepository
                 }
             }, true)
             ->addColumn('category', function($product) use ($categories) {
-                $html = $categories[$product->main_cate] ?? '';
+                return $categories[$product->main_cate] ?? '';
             })
             ->addColumn('total_price', function($product) use ($platforms) {
                 return format_price($product->total_price);

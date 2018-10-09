@@ -73,6 +73,7 @@
                 <li class="{{ set_active(['quan-ly/ke-toan', 'quan-ly/ke-toan/*']) }} nav-item">
                     <a href="#"><i class="fa fa-calculator" aria-hidden="true"></i> <span class="nav-label">Kế Toán</span><span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level">
+                        <li class="{{ set_active(['quan-ly/ke-toan/thong-ke-kho']) }}"><a href="{{route('admin.statistics.productQuantity')}}">Kho Hàng</a></li>
                         <li class="{{ set_active(['quan-ly/ke-toan/doanh-thu']) }}"><a href="{{route('admin.statistics.revenue')}}">Doanh Thu Bán Hàng</a></li>
                         <li class="{{ set_active(['quan-ly/ke-toan/phieu-chi']) }}"><a href="{{route('admin.payslips.index')}}">Phiếu Chi</a></li>
                     </ul>

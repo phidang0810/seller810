@@ -9,6 +9,7 @@ use App\Repositories\PlatformRepository;
 use App\Repositories\ProductRepository;
 use App\Repositories\RoleRepository;
 use App\Repositories\UserRepository;
+use App\Repositories\WarehouseRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -160,13 +161,44 @@ class StatisticsController extends AdminController
         ]);
     }
 
-    public function productQuantity()
+    public function productQuantity(WarehouseRepository $warehouse, CategoryRepository $category)
     {
+        if ($this->_request->ajax()) {
+            return $warehouse->getProductQuantityTable($this->_request);
+        }
 
+        $this->_data['title'] = 'Thống Kê Sản Phẩm Theo Kho';
+        $this->_data['categoriesTree'] = option_menu($category->getCategoriesTree(), "");
+        $this->_data['warehouses'] = $warehouse->getDataList();
+
+        return view('admin.statistics.product_quantity', $this->_data);
     }
 
-    public function exportProductQuantity()
+    public function exportProductQuantity(WarehouseRepository $warehouse)
     {
+        $data = $warehouse->getProductQuantityObj($this->_request)->toArray();
+        $fileName = 'Thong Ke Kho Hang - ' . date('m-m-Y');
+        \Maatwebsite\Excel\Facades\Excel::create($fileName, function($excel) use($data) {
 
+            $excel->sheet('Sheetname', function($sheet) use($data) {
+                $excelData  = [];
+                foreach($data['data'] as $k => $row) {
+                    $index = $k+1;
+                    $excelData[] = [
+                        '#' => $index,
+                        'KHO HÀNG' => $row['warehouse_name'],
+                        'MÃ SẢN PHẨM' => $row['product_code'],
+                        'TÊN SẢN PHẨM' => $row['product_name'],
+                        'DANH MỤC' => $row['category'],
+                        'TỔNG SL' => $row['quantity'],
+                        'SL CÒN' => $row['quantity_available'],
+                        'SL ĐÃ BÁN' => $row['quantity_sell']
+                    ];
+                }
+                $sheet->fromArray($excelData);
+
+            });
+
+        })->export('xls');
     }
 }
