@@ -503,6 +503,12 @@ Class ProductRepository
                 ->first();
 
 			$return['product_detail'] = $product_detail;
+
+			$warehouse_product = WarehouseProduct::where('warehouse_id', $warehouse->id)
+			->where('product_detail_id', $product_detail->id)
+			->first();
+
+			$return['warehouse_product_id'] = $warehouse_product->id;
 		}
 
 		return Response::json($return);
@@ -559,6 +565,7 @@ Class ProductRepository
 			->where('quantity', '>', 0)->get();
 
 			$return['product_details'] = $product_details;
+			$return['product_detail'] = $product_detail;
 
 			$warehouse_ids = [];
 			foreach ($product_details as $key => $value) {

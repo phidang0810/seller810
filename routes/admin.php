@@ -118,6 +118,15 @@ Route::prefix('kho-hang')
         Route::get ('/nhan-hang', 'TransportWarehouseController@receive')->name('admin.transport_warehouse.receive');
         Route::get ('/nhan-hang/san-pham', 'TransportWarehouseController@receiveProduct')->name('admin.transport_warehouse.receiveProduct');
     });
+
+    Route::prefix('tra-hang')->group(function () {
+        Route::get ('/', 'ReturnProductController@index')->name('admin.return_products.index');
+        Route::get ('/chi-tiet', 'ReturnProductController@view')->name('admin.return_products.view');
+        Route::get ('/them', 'ReturnProductController@view')->name('admin.return_products.create');
+        Route::post ('/them', 'ReturnProductController@store')->name('admin.return_products.store');
+        Route::delete ('/', 'ReturnProductController@delete')->name('admin.return_products.delete');
+        Route::get ('/da-tra', 'ReturnProductController@returned')->name('admin.return_products.returned');
+    });
 });
 
 Route::prefix('san-pham')

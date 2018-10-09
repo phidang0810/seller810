@@ -234,6 +234,11 @@ Class CartRepository
                 $modelProduct->save();
             }
 
+            if ($modelWarehouseProduct = WarehouseProduct::find($modelDetail->warehouse_product_id)) {
+                $modelWarehouseProduct->quantity += $modelDetail->quantity;
+                $modelWarehouseProduct->save();
+            }
+
             // Delete detail
             $modelDetail->delete();
         }
@@ -329,13 +334,6 @@ Class CartRepository
         $model->descritption = $data['descritption'];
         $model->platform_id = $data['platform_id'];
 
-        //---> Update quatity on warehouse product
-        $warehouseProductModel = WarehouseProduct::find($data['product_warehouse']);
-        $currentProductQuantityOnWarehouse = $warehouseProductModel->quantity;
-        $newProductQuantityOnWarehouse = $currentProductQuantityOnWarehouse - $data['quantity'];
-        $warehouseProductModel->quantity = $newProductQuantityOnWarehouse;
-        $warehouseProductModel->save();
-
         // excute payment_status
         if ($data['paid_amount'] && $data['paid_amount'] > 0) {
             $model->payment_status = PAYING_NOT_ENOUGH;
@@ -403,6 +401,7 @@ Class CartRepository
                         $old_quantity = $modelDetail->quantity;
                         $modelDetail->product_id = (isset($detail->product_name)) ? $detail->product_name->id : 0;
                         $modelDetail->product_detail_id = (isset($detail->product_detail)) ? $detail->product_detail->id : 0;
+                        $modelDetail->warehouse_product_id = (isset($detail->warehouse_product_id)) ? $detail->warehouse_product_id : 0;
                         $modelDetail->quantity = (isset($detail->product_quantity)) ? $detail->product_quantity : 0;
                         $modelDetail->discount_amount = (isset($detail->discount_amount)) ? $detail->discount_amount : 0;
                         $modelDetail->price = (isset($detail->product_price)) ? $detail->product_price : 0;
@@ -419,6 +418,11 @@ Class CartRepository
                                 $modelProduct->quantity_available -= $detail->product_quantity - $old_quantity;
                                 $modelProduct->save();
                             }
+
+                            if ($modelWarehouseProduct = WarehouseProduct::find($detail->warehouse_product_id)) {
+                                $modelWarehouseProduct->quantity -= $detail->product_quantity - $old_quantity;
+                                $modelWarehouseProduct->save();
+                            }
                         }
                     } else {
                         $this->deleteDetails($modelDetail->id);
@@ -429,6 +433,7 @@ Class CartRepository
                     $modelDetail = new CartDetail([
                         'product_id' => (isset($detail->product_name)) ? $detail->product_name->id : 0,
                         'product_detail_id' => (isset($detail->product_detail)) ? $detail->product_detail->id : 0,
+                        'warehouse_product_id' => (isset($detail->warehouse_product_id)) ? $detail->warehouse_product_id : 0,
                         'quantity' => (isset($detail->product_quantity)) ? $detail->product_quantity : 0,
                         'discount_amount' => (isset($detail->discount_amount)) ? $detail->discount_amount : 0,
                         'price' => (isset($detail->product_price)) ? $detail->product_price : 0,
@@ -445,6 +450,11 @@ Class CartRepository
                         if ($modelProduct = Product::find($detail->product_detail->product_id)) {
                             $modelProduct->quantity_available -= $detail->product_quantity;
                             $modelProduct->save();
+                        }
+
+                        if ($modelWarehouseProduct = WarehouseProduct::find($detail->warehouse_product_id)) {
+                            $modelWarehouseProduct->quantity -= $detail->product_quantity;
+                            $modelWarehouseProduct->save();
                         }
                     }
                 }
@@ -499,7 +509,8 @@ Class CartRepository
                     'id' => ($value->size) ? $value->size->id : 0,
                     'name' => ($value->size) ? $value->size->name : ""
                 ],
-                'quantity' => ($value->quantity) ? $value->quantity : 0
+                'quantity' => ($value->quantity) ? $value->quantity : 0,
+                'warehouse_product_id' => ($value->warehouse_product_id) ? $value->warehouse_product_id : 0
             ];
         }
         return $return;

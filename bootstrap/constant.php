@@ -84,3 +84,13 @@ define('TRANSPORT_DETAIL_TEXT', [
 define('TRANSPORT_DETAIL_ACTION_TEXT', [
     1   =>  'Nhận hàng'
 ]);
+
+define('RETURN_RETURNING', 1);
+define('RETURN_RETURNED', 2);
+define('RETURN_TEXT', [
+    1   =>  'Đang trả',
+    2   =>  'Đã trả',
+]);
+define('RETURN_ACTION_TEXT', [
+    1   =>  'Đã trả',
+]);

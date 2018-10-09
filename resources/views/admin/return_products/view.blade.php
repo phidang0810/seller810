@@ -12,9 +12,9 @@
 <script src="{{asset('themes/inspinia/js/plugins/select2/select2.full.min.js')}}"></script>
 <!-- Page-Level Scripts -->
 <script>
-    $('input[name=transport_date]').datepicker();
+    $('input[name=return_date]').datepicker();
 
-    var transport_details = ($('input[name="transport_details"]').val()) ? jQuery.parseJSON($('input[name="transport_details"]').val()) : [];
+    var return_details = ($('input[name="return_details"]').val()) ? jQuery.parseJSON($('input[name="return_details"]').val()) : [];
     var default_image = '{{asset(NO_PHOTO)}}';
 
     // Function to add row with form edit/create to table details
@@ -31,10 +31,7 @@
         var html_detail_label_color = '<label>' + data.product_color.name + '</label>';
 
         //---> Transport Warehouse
-        var html_detail_from_warehouse = '<label>' + data.from_warehouse.name + '</label>';
-
-        //---> Receive Warehouse
-        var html_detail_receive_warehouse = '<label>' + data.receive_warehouse.name + '</label>';
+        var html_detail_warehouse = '<label>' + data.warehouse.name + '</label>';
 
         // Row html
         var html = '<td>'+html_detail_photo+'</td>\
@@ -42,25 +39,24 @@
         <td class="c-quantity">'+html_detail_input_quantity+'</td>\
         <td>'+html_detail_label_size+'</td>\
         <td>'+html_detail_label_color+'</td>\
-        <td>'+html_detail_from_warehouse+'</td>\
-        <td>'+html_detail_receive_warehouse+'</td>\
+        <td>'+html_detail_warehouse+'</td>\
         <td><a href="javascript:;" onclick="deleteCartDetailItem('+key+');" class="bt-delete btn btn-xs btn-danger"><i class="fa fa-trash-o" aria-hidden="true"></i></a></td>';
         return html;
     }
 
     // When "Xóa" on row is clicked -> Remove current row, add delete:true to item on array details
     function deleteCartDetailItem(key) {
-        transport_details[key].delete = true;
-        $('#transport_detail_'+key).remove();
-        $('input[name="transport_details"]').val(JSON.stringify(transport_details));
+        return_details[key].delete = true;
+        $('#return_detail_'+key).remove();
+        $('input[name="return_details"]').val(JSON.stringify(return_details));
     }
 
     // First time show details to table
     function printTableTransportDetails(){
-        $.each(transport_details, function(key, value){
+        $.each(return_details, function(key, value){
             var html = htmlEditCreateRowProductDetail(value, key);
 
-            $('#i-cart-info tbody').append('<tr class="child" id="transport_detail_'+key+'">'+html+'</tr>');
+            $('#i-cart-info tbody').append('<tr class="child" id="return_detail_'+key+'">'+html+'</tr>');
         });
     }
 
@@ -71,12 +67,12 @@
 
     // Function update cart details data
     function updateTranslationDetailsData(){
-        $.each(transport_details, function(key, value){
+        $.each(return_details, function(key, value){
             if (value.delete != true) {
-                transport_details[key].product_quantity = parseInt($('#detail_quantity_'+key).val());
+                return_details[key].product_quantity = parseInt($('#detail_quantity_'+key).val());
             }
         });
-        $('input[name="transport_details"]').val(JSON.stringify(transport_details));
+        $('input[name="return_details"]').val(JSON.stringify(return_details));
     }
 
 
@@ -106,7 +102,7 @@
             }
         });
 
-        // When "Thêm" button is clicked -> Add new item to array transport_details, append new row to table
+        // When "Thêm" button is clicked -> Add new item to array return_details, append new row to table
         $('#add_details').click(function(){
             if (validateProductInfo($("select[name=product_name]").val(), "name") && validateProductInfo($("select[name=product_color]").val(), "color") && validateProductInfo($("select[name=product_size]").val(), "size") && validateNumberProduct()) {
                 // $('#add_details').removeAttr('disabled');
@@ -116,35 +112,34 @@
                 if (validateUniqueDetail()) {
                     var path_img_folder = window.location.origin + '/storage/';
                     $.ajax({
-                        url: "{{route('admin.transport_warehouse.view')}}",
+                        url: "{{route('admin.return_products.view')}}",
                         data:{
                             product_id:$('select[name="product_name"]').val(),
                             color_id:$('select[name="product_color"]').val(),
                             size_id:$('select[name="product_size"]').val(),
-                            warehouse_id:$('select[name="from_warehouse_id"]').val(),
+                            warehouse_id:$('select[name="warehouse_id"]').val(),
                             get_data:true
                         },
                         dataType:'json'
                     }).done(function(data) {
                         if (!$.isEmptyObject(data)) {
                             // $('#add_details').prop('disabled', true);
-                            transport_details.push({
+                            return_details.push({
                                 'product_image':(data.product.photo) ? path_img_folder + data.product.photo : default_image,
                                 'product_name':{id:$('select[name="product_name"]').val(), name:$('select[name="product_name"] option[value="'+$('select[name="product_name"]').val()+'"]').text()},
                                 'product_detail':(data.product_detail) ? data.product_detail : null,
                                 'product_quantity':parseInt($('input[name="product_quantity"]').val()),
                                 'product_size':{id:$('select[name="product_size"]').val(), name:$('select[name="product_size"] option[value="'+$('select[name="product_size"]').val()+'"]').text()},
                                 'product_color':{id:$('select[name="product_color"]').val(), name:$('select[name="product_color"] option[value="'+$('select[name="product_color"]').val()+'"]').text()},
-                                'from_warehouse': {id:$('select[name="from_warehouse_id"]').val(), name:$('select[name="from_warehouse_id"] option[value="'+$('select[name="from_warehouse_id"]').val()+'"]').text()},
-                                'receive_warehouse': {id:$('select[name="receive_warehouse_id"]').val(), name:$('select[name="receive_warehouse_id"] option[value="'+$('select[name="receive_warehouse_id"]').val()+'"]').text()},
+                                'warehouse': {id:$('select[name="warehouse_id"]').val(), name:$('select[name="warehouse_id"] option[value="'+$('select[name="warehouse_id"]').val()+'"]').text()},
                                 'warehouse_product_id': data.warehouse_product_id
                             });
 
-                            var key = transport_details.length-1;
-                            var html = htmlEditCreateRowProductDetail(transport_details[key], key);
+                            var key = return_details.length-1;
+                            var html = htmlEditCreateRowProductDetail(return_details[key], key);
 
-                            $('#i-cart-info tbody').append('<tr class="child" id="transport_detail_'+key+'">'+html+'</tr>');
-                            $('input[name="transport_details"]').val(JSON.stringify(transport_details));
+                            $('#i-cart-info tbody').append('<tr class="child" id="return_detail_'+key+'">'+html+'</tr>');
+                            $('input[name="return_details"]').val(JSON.stringify(return_details));
                         }else{
 
                         }
@@ -165,7 +160,7 @@
             //---> validatae product
             validateProductInfo($(this).val(), "name");
             $.ajax({
-                url: "{{route('admin.transport_warehouse.view')}}",
+                url: "{{route('admin.return_products.view')}}",
                 data:{
                     product_id:$(this).val()
                 },
@@ -212,7 +207,7 @@
 
             $('select[name="product_size"]').html('<option value="0"> -- Chọn kích thước -- </option>');
             $.ajax({
-                url: "{{route('admin.transport_warehouse.view')}}",
+                url: "{{route('admin.return_products.view')}}",
                 data:{
                     product_id:$('select[name="product_name"]').val(),
                     color_id:$(this).val()
@@ -244,7 +239,7 @@
             //---> validatae color
             validateProductInfo($(this).val(), "size");
             $.ajax({
-                url: "{{route('admin.transport_warehouse.view')}}",
+                url: "{{route('admin.return_products.view')}}",
                 data:{
                     product_id:$('select[name="product_name"]').val(),
                     color_id:$('select[name="product_color"]').val(),
@@ -254,8 +249,9 @@
             }).done(function(data) {
                 if (!$.isEmptyObject(data)) {
                     html_warehouses_options = '<option value="0"> -- Chọn nhà kho -- </option>' + generate_options(data.warehourses);
-                    $('select[name="from_warehouse_id"]').html(html_warehouses_options);
+                    $('select[name="warehouse_id"]').html(html_warehouses_options);
                     // $('input[name="product_quantity"]').attr('max_avaiable', data.quantity);
+                    // $('input[name="warehouse_product_id"]').val(data.product_detail.id);
                 }else{
                     $('input[name="product_quantity"]').removeAttr('max_avaiable');
                     $('input[name="product_quantity"]').val(0);
@@ -268,12 +264,12 @@
         });
 
         //---> Warehouse select change
-        $('select[name="from_warehouse_id"]').on('change', function(){
+        $('select[name="warehouse_id"]').on('change', function(){
             //---> validatae color
             validateProductInfo($(this).val(), "warehouse");
 
             $.ajax({
-                url: "{{route('admin.transport_warehouse.view')}}",
+                url: "{{route('admin.return_products.view')}}",
                 data:{
                     product_id: $('select[name="product_name"]').val(),
                     color_id: $('select[name="product_color"]').val(),
@@ -304,7 +300,7 @@
 
         function validateUniqueDetail(){
             var status = true;
-            $.each(transport_details, function(key, value){
+            $.each(return_details, function(key, value){
                 if (value.delete != true && value.warehouse_product_id == $('input[name="warehouse_product_id"]').val() ) {
                     status = false;
                 }
@@ -389,12 +385,12 @@
     <div class="col-lg-12">
         <div class="ibox float-e-margins pl-15 pr-15">
             @include('admin._partials._alert')
-            <form role="form" method="POST" id="mainForm" action="{{route('admin.transport_warehouse.store')}}">
+            <form role="form" method="POST" id="mainForm" action="{{route('admin.return_products.store')}}">
                 {{ csrf_field() }}
                 
                 <input type="hidden" name="id" value="@if(isset($data->id)){{$data->id}}@else{{null}}@endif" />
 
-                <input type="hidden" name="transport_details" value="@if(isset($transport_details)){{$transport_details}}@endif"/>
+                <input type="hidden" name="return_details" value="@if(isset($return_details)){{$return_details}}@endif"/>
                 
                 <div class="row">
                     <div class="col-md-8">
@@ -435,7 +431,7 @@
                             <div class="row xs-12-mg-bt-mobile">
                                 <!-- BEGIN: Select Warehouse -->
                                 <div class="col-md-4 col-sm-4 col-xs-12">
-                                    <select name="from_warehouse_id" class="form-control">
+                                    <select name="warehouse_id" class="form-control">
                                         <option value="0"> -- Chọn kho xuất -- </option>
                                     </select>
                                     <label id="product-warehouse-error" class="error hidden" for="product_warehouse1">Vui lòng chọn.</label>
@@ -444,13 +440,6 @@
                                     <input name="product_quantity" type="text" placeholder="Nhập số lượng" class="form-control m-b"
                                     value="0"/>
                                     <label id="product-quantity-error" class="error hidden" for="product_quantity1">Vui lòng nhập vào số lượng.</label>
-                                </div>
-                                <div class="col-md-4 col-sm-4 col-xs-12">
-                                    <select name="receive_warehouse_id" class="form-control">
-                                        <option value="0"> -- Chọn kho nhận -- </option>
-                                        {!! $warehouse_options !!}
-                                    </select>
-                                    <label id="product-warehouse-error" class="error hidden" for="product_warehouse1">Vui lòng chọn.</label>
                                 </div>
                                 <!-- END: Select Warehouse -->
                                 <div class="col-md-2 col-sm-2 col-xs-12">
@@ -470,8 +459,7 @@
                                                         <th>Số lượng</th>
                                                         <th>Size</th>
                                                         <th>Màu</th>
-                                                        <th>Chuyển từ</th>
-                                                        <th>Chuyển đến</th>
+                                                        <th>Kho</th>
                                                         <th></th>
                                                     </tr>
                                                 </thead>
@@ -492,7 +480,7 @@
 
                             <div class="row">
                                 <div class="col-md-12">
-                                    <h2>Thông tin chuyển kho</h2>
+                                    <h2>Thông tin trả hàng</h2>
                                 </div>
                             </div>
 
@@ -500,9 +488,9 @@
                                 <div class="form-group clearfix">
                                     <label class="col-md-4 control-label">Tên người phụ trách</label>
                                     <div class="col-md-8">
-                                        <select name="transport_staff_id" class="form-control required m-b">
+                                        <select name="return_staff_id" class="form-control required m-b">
                                             <option value="" selected>-- Chọn người phụ trách --</option>
-                                            {!! $transport_staff_options !!}
+                                            {!! $return_staff_options !!}
                                         </select>
                                     </div>
                                 </div>
@@ -513,8 +501,17 @@
                                     <label class="col-md-4 font-normal">Ngày chuyển</label>
                                     <div class="col-md-8">
                                         <div class="input-group date">
-                                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span><input type="text" name="transport_date" class="form-control required" value="@if(isset($data->transport_date)){{$data->transport_date}}@endif">
+                                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span><input type="text" name="return_date" class="form-control required" value="@if(isset($data->return_date)){{$data->return_date}}@endif">
                                         </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group clearfix">
+                                    <label class="col-md-4 font-normal">Lý do</label>
+                                    <div class="col-md-8">
+                                        <textarea name="reason" class="form-control">@if(isset($data->reason)){{$data->reason}}@endif</textarea>
                                     </div>
                                 </div>
                             </div>

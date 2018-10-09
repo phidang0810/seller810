@@ -54,7 +54,7 @@
                                 @if(isset($data->details))
                                     @foreach ($data->details as $detail)
                                     <tr>
-                                        <td colspan="1"><img src="{{asset('storage/' .$data->photo)}}" width="50" height="auto"></td>
+                                        <td colspan="1"><img src="@if(isset($data->photo) && $data->photo != ''){{asset('storage/' .$data->photo)}}@else{{asset('storage/' .$data->product->photo)}}@endif" width="50" height="auto"></td>
                                         <td class="" colspan="1">@if(isset($data->product)){{$data->product->name}}@endif</td>
                                         <td class="" colspan="1">@if(isset($data->product)){{$data->product->barcode_text}}@endif</td>
                                         <td class="" colspan="1">@if(isset($detail->productDetail)){{$detail->productDetail->color->name}}@endif</td>

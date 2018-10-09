@@ -248,7 +248,7 @@
                     $('select[name="product_size"]').html(html_sizes_options);
                     $('input[name="product_quantity"]').removeAttr('max_avaiable');
                     $('input[name="product_quantity"]').val(0);
-                    $('input[name="product_detail_id"]').val(0);
+                    $('input[name="warehouse_product_id"]').val(0);
                     
                     $('.col-md-8 .ibox-content .error').each(function(){
                         if (!$(this).hasClass('hidden')) {
@@ -262,7 +262,7 @@
                     $('select[name="product_size"]').html(html_sizes_options);
                     $('input[name="product_quantity"]').removeAttr('max_avaiable');
                     $('input[name="product_quantity"]').val(0);
-                    $('input[name="product_detail_id"]').val(0);
+                    $('input[name="warehouse_product_id"]').val(0);
 
                     $('.col-md-8 .ibox-content .error').each(function(){
                         if (!$(this).hasClass('hidden')) {
@@ -298,14 +298,14 @@
                     $('select[name="product_size"]').html(html_sizes_options);
                     $('input[name="product_quantity"]').removeAttr('max_avaiable');
                     $('input[name="product_quantity"]').val(0);
-                    $('input[name="product_detail_id"]').val(0);
+                    $('input[name="warehouse_product_id"]').val(0);
 
                 }else{
                     html_sizes_options = '<option value="0"> -- Chọn kích thước -- </option>';
                     $('select[name="product_size"]').html(html_sizes_options);
                     $('input[name="product_quantity"]').removeAttr('max_avaiable');
                     $('input[name="product_quantity"]').val(0);
-                    $('input[name="product_detail_id"]').val(0);
+                    $('input[name="warehouse_product_id"]').val(0);
 
                 }
             }).fail(function(jqXHR, textStatus){
@@ -330,11 +330,10 @@
                     html_warehouses_options = '<option value="0"> -- Chọn nhà kho -- </option>' + generate_options(data.warehourses);
                     $('select[name="product_warehouse"]').html(html_warehouses_options);
                     // $('input[name="product_quantity"]').attr('max_avaiable', data.quantity);
-                    $('input[name="product_detail_id"]').val(data.detail_id);
                 }else{
                     $('input[name="product_quantity"]').removeAttr('max_avaiable');
                     $('input[name="product_quantity"]').val(0);
-                    $('input[name="product_detail_id"]').val(0);
+                    $('input[name="warehouse_product_id"]').val(0);
 
                 }
             }).fail(function(jqXHR, textStatus){
@@ -359,11 +358,11 @@
             }).done(function(data) {
                 if (!$.isEmptyObject(data)) {
                     $('input[name="product_quantity"]').attr('max_avaiable', data.quantity);
-                    $('input[name="product_detail_id"]').val(data.detail_id);
+                    $('input[name="warehouse_product_id"]').val(data.warehouse_product_id);
                 }else{
                     $('input[name="product_quantity"]').removeAttr('max_avaiable');
                     $('input[name="product_quantity"]').val(0);
-                    $('input[name="product_detail_id"]').val(0);
+                    $('input[name="warehouse_product_id"]').val(0);
 
                 }
             }).fail(function(jqXHR, textStatus){
@@ -428,7 +427,7 @@
         function validateUniqueDetail(){
             var status = true;
             $.each(cart_details, function(key, value){
-                if (value.delete != true && value.product_detail.id == $('input[name="product_detail_id"]').val() ) {
+                if (value.delete != true && value.warehouse_product_id == $('input[name="warehouse_product_id"]').val() ) {
                     status = false;
                 }
             });
@@ -542,7 +541,8 @@
                                 'product_color':{id:$('select[name="product_color"]').val(), name:$('select[name="product_color"] option[value="'+$('select[name="product_color"]').val()+'"]').text()},
                                 'total_price':parseInt(data.product.sell_price)*parseInt($('input[name="product_quantity"]').val()),
                                 'product_detail':data.product_detail,
-                                'product_warehouse': data.warehouse.name
+                                'product_warehouse': data.warehouse.name,
+                                'warehouse_product_id': data.warehouse_product_id
                             });
 
                             var key = cart_details.length-1;
@@ -734,9 +734,9 @@ function getDataToPrint(data){
                                 </div>
                                 
                                 <div class="col-md-12">
-                                    <input type="hidden" name="product_detail_id">
-                                    <label id="product-detail-id-error" class="error hidden" for="product_detail_id">Sản phẩm giống nhau không thể thêm nhiều lần</label>
-                                    <label id="cart-details-empty-error" class="error hidden" for="product_detail_id">Phải có ít nhất 1 sản phẩm</label>
+                                    <input type="hidden" name="warehouse_product_id">
+                                    <label id="product-detail-id-error" class="error hidden" for="warehouse_product_id">Sản phẩm giống nhau không thể thêm nhiều lần</label>
+                                    <label id="cart-details-empty-error" class="error hidden" for="warehouse_product_id">Phải có ít nhất 1 sản phẩm</label>
                                 </div>
                             </div>
                             <div class="row xs-12-mg-bt-mobile">
