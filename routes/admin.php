@@ -175,4 +175,7 @@ Route::prefix('ke-toan')
     Route::delete ('/phieu-chi/', 'PayslipController@delete')->name('admin.payslips.delete');
     Route::get ('/doanh-thu', 'StatisticsController@revenue')->name('admin.statistics.revenue');
     Route::get ('/doanh-thu/export', 'StatisticsController@exportRevenue')->name('admin.statistics.exportRevenue');
+
+    Route::get ('/thong-ke-kho', 'StatisticsController@productQuantity')->name('admin.statistics.productQuantity');
+    Route::get ('/thong-ke-kho/export', 'StatisticsController@exportProductQuantity')->name('admin.statistics.exportProductQuantity');
 });

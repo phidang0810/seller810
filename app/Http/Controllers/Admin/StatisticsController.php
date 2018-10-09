@@ -159,4 +159,14 @@ class StatisticsController extends AdminController
             'result' => $data
         ]);
     }
+
+    public function productQuantity()
+    {
+
+    }
+
+    public function exportProductQuantity()
+    {
+
+    }
 }
