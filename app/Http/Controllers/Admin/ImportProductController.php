@@ -32,6 +32,21 @@ class ImportProductController extends AdminController
         return view('admin.import_products.index', $this->_data);
     }
 
+    /**
+     * Show the application dashboard.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function receive(ImportProductRepository $importProduct){
+        if ($this->_request->ajax()){
+            return $importProduct->dataTableReceive($this->_request);
+        }
+
+        $this->_data['title'] = 'Nhận hàng';
+
+        return view('admin.import_products.receive', $this->_data);
+    }
+
     public function view(ImportProductRepository $importProduct, ProductRepository $product, CategoryRepository $category)
     {
         if ($this->_request->ajax()){
@@ -46,9 +61,11 @@ class ImportProductController extends AdminController
         if ($id) {
             $this->_data['title'] = 'Chỉnh sửa nhập hàng';
             $this->_data['data'] = $importProduct->get($id);
+            $categories = $importProduct->idCategories($id);
             $this->_data['details'] = json_encode($importProduct->getDetails($id));
         }
 
+        $this->_data['supplier_options'] = $importProduct->getSupplierOptions($id);
         $this->_data['categoriesTree'] = make_list_hierarchy($category->getCategoriesTree(), $categories);
         $this->_data['size_options'] = $product->getSizeOptions($id);
         $this->_data['color_options'] = $product->getColorOptions($id);
@@ -80,6 +97,7 @@ class ImportProductController extends AdminController
             'product_id' => 'required',
             'warehouse_id' => 'required',
             'price' => 'required',
+            'active' => 'required'
         ];
 
         if ($product_option == 'new') {
@@ -96,7 +114,7 @@ class ImportProductController extends AdminController
         }
 
         $validator = Validator::make($input, $rules, [
-            // 'name.unique' => 'Tên kho hàng '.$input['name'].' đã được sử dụng!'
+            'name.unique' => 'Tên sản phẩm '.$input['name'].' đã được sử dụng!'
         ]);
 
         if ($validator->fails()) {
@@ -105,8 +123,10 @@ class ImportProductController extends AdminController
             ->withErrors($validator)
             ->withInput();
         }
+        $import_complete = false;
+        if($input['action'] === 'save_complete'){$import_complete = true;}
 
-        $data = $importProduct->createOrUpdate($input, $id);
+        $data = $importProduct->createOrUpdate($input, $id, $import_complete);
 
         if($input['action'] === 'save') {
             return redirect()->route('admin.import_products.view', ['id' => $data->id])->withSuccess($message);
@@ -127,6 +147,7 @@ class ImportProductController extends AdminController
         $id = $this->_request->get('id');
         $this->_data['title'] = 'Kiểm hàng nhập';
         $this->_data['data'] = $importProduct->getCheckImport($id);
+        $this->_data['all_confirmed'] = $importProduct->areAllDetailsConfirmed($id);
         $this->_pushBreadCrumbs($this->_data['title']);
         return view('admin.import_products.check', $this->_data);
     }
@@ -143,5 +164,21 @@ class ImportProductController extends AdminController
         $result = $importProduct->importWarehouse($id);
 
         return response()->json($result);
+    }
+
+    public function checkCompleted(ImportProductRepository $importProduct){
+        $input = $this->_request->all();
+        $id = $input['id'] ?? null;
+
+        if ($importProduct->checkCompleted($id)) {
+            $message = "Đơn hàng nhập đã được kiểm hàng xong.";
+            return redirect()->route('admin.import_products.receive')->withSuccess($message);
+        }
+
+        $message = "Đơn hàng nhập chưa được kiểm hàng xong, xin hãy kiểm tra hết.";
+
+        return redirect()->back()
+        ->withErrors($message)
+        ->withInput();
     }
 }

@@ -58,7 +58,7 @@ define('IMPORT_CHECKED', 3);
 define('IMPORT_COMPLETED', 4);
 define('IMPORT_TEXT', [
     1   =>  'Đang nhập',
-    2   =>  'Đã nhập hàng',
+    2   =>  'Đang kiểm',
     3   =>  'Đã kiểm',
     4   =>  'Đã nhập kho',
 ]);

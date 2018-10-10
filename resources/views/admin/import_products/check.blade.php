@@ -19,6 +19,9 @@
             dataType:'json'
         }).done(function(data) {
             $('#btn-'+id).hide()
+            if (data.all_confirmed == "true") {
+                $('button[name=action][value=save_complete]').removeAttr('disabled');
+            }
         })
     }
 </script>
@@ -27,6 +30,13 @@
 <div class="row">
     <div class="col-lg-12">
         <div class="ibox float-e-margins pl-15 pr-15">
+            @include('admin._partials._alert')
+            <form role="form" method="POST" id="mainForm" action="{{route('admin.import_products.check_completed')}}"
+            enctype="multipart/form-data">
+            {{ csrf_field() }}
+            @if (isset($data->id))
+            <input type="hidden" name="id" value="{{$data->id}}"/>
+            @endif
             <div class="row">
                 <div class="col-md-8">
                     <div class="ibox-content">
@@ -52,23 +62,23 @@
                             <tfoot></tfoot>
                             <tbody>
                                 @if(isset($data->details))
-                                    @foreach ($data->details as $detail)
-                                    <tr>
-                                        <td colspan="1"><img src="@if(isset($data->photo) && $data->photo != ''){{asset('storage/' .$data->photo)}}@else{{asset('storage/' .$data->product->photo)}}@endif" width="50" height="auto"></td>
-                                        <td class="" colspan="1">@if(isset($data->product)){{$data->product->name}}@endif</td>
-                                        <td class="" colspan="1">@if(isset($data->product)){{$data->product->barcode_text}}@endif</td>
-                                        <td class="" colspan="1">@if(isset($detail->productDetail)){{$detail->productDetail->color->name}}@endif</td>
-                                        <td class="" colspan="1">@if(isset($detail->productDetail)){{$detail->productDetail->size->name}}@endif</td>
-                                        <td class="thousand-number text-right" colspan="1">{{$detail->quantity}}</td>
-                                        <td class="thousand-number money text-right" colspan="1">{{$data->price}}</td>
-                                        <td class="thousand-number money text-right" colspan="1">{{$data->price * $detail->quantity}}</td>
-                                        <td>
-                                            @if($detail->status == 1)
-                                            <button class="btn btn-primary" id="btn-{{$detail->id}}" onclick="performDetail({{$detail->id}})">{{IMPORT_DETAIL_TEXT[$detail->status]}}</button>
-                                            @endif
-                                        </td>
-                                    </tr>
-                                    @endforeach
+                                @foreach ($data->details as $detail)
+                                <tr>
+                                    <td colspan="1"><img src="@if(isset($data->photo) && $data->photo != ''){{asset('storage/' .$data->photo)}}@else{{asset('storage/' .$data->product->photo)}}@endif" width="50" height="auto"></td>
+                                    <td class="" colspan="1">@if(isset($data)){{$data->name}}@endif</td>
+                                    <td class="" colspan="1">@if(isset($data)){{$data->barcode_text}}@endif</td>
+                                    <td class="" colspan="1">@if(isset($detail->color)){{$detail->color->name}}@endif</td>
+                                    <td class="" colspan="1">@if(isset($detail->size)){{$detail->size->name}}@endif</td>
+                                    <td class="thousand-number text-right" colspan="1">{{$detail->quantity}}</td>
+                                    <td class="thousand-number money text-right" colspan="1">{{$data->price}}</td>
+                                    <td class="thousand-number money text-right" colspan="1">{{$data->price * $detail->quantity}}</td>
+                                    <td>
+                                        @if($detail->status == 1)
+                                        <a href="#" class="btn btn-primary" id="btn-{{$detail->id}}" onclick="performDetail({{$detail->id}})">{{IMPORT_DETAIL_TEXT[$detail->status]}}</a>
+                                        @endif
+                                    </td>
+                                </tr>
+                                @endforeach
                                 @endif
                             </tbody>
                         </table>
@@ -192,11 +202,23 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="text-right">
+                                        <a href="{{route('admin.import_products.receive')}}" class="btn btn-default"><i class="fa fa-arrow-circle-o-left"></i> Trở lại</a>
+                                        <button name="action" class="btn btn-primary" value="save_complete" @if(!$all_confirmed)disabled="disabled"@endif><i
+                                            class="fa fa-save"></i> Nhập hàng xong
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </form>
     </div>
+</div>
 </div>
 @endsection

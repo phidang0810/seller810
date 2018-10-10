@@ -16,6 +16,7 @@ use App\Models\Warehouse;
 use App\Models\WarehouseProduct;
 use App\Models\Product;
 use App\Models\ProductDetail;
+use App\Models\Supplier;
 use App\Repositories\ProductRepository;
 use Illuminate\Support\Facades\Cache;
 use Yajra\DataTables\Facades\DataTables;
@@ -29,7 +30,8 @@ Class ImportProductRepository
 	const CACHE_NAME_PRODUCTS = 'import_products';
 
 	public function dataTable($request){
-		$importProducts = ImportProduct::select(['id', 'code', 'product_id', 'quantity', 'total_price', 'status', 'created_at']);
+		$importProducts = ImportProduct::select(['id', 'code', 'name', 'supplier_id', 'product_id', 'quantity', 'total_price', 'status', 'created_at'])
+		->where('status', IMPORT_IMPORTING);
 
 		$dataTable = DataTables::eloquent($importProducts)
 		->filter(function ($query) use ($request) {
@@ -40,11 +42,58 @@ Class ImportProductRepository
 		->addColumn('action', function ($importProduct) {
 			$html = '';
 			switch ($importProduct->status) {
-				case '1':
+				case IMPORT_IMPORTING:
+				$html .= '<a href="' . route('admin.import_products.view', ['id' => $importProduct->id]) . '" class="btn btn-xs btn-primary" style="margin-right: 5px"> Sửa</a>';
+				break;
+				
+				default:
+				break;
+			}
+			return $html;
+		})
+		->addColumn('status', function ($importProduct) {
+			$html = IMPORT_TEXT[$importProduct->status];
+			return $html;
+		})
+		->addColumn('product_name', function ($importProduct) {
+			$html = $importProduct->name;
+			return $html;
+		})
+		->addColumn('supplier_name', function ($importProduct) {
+			if ($importProduct->supplier) {
+				$html = $importProduct->supplier->name;
+				return $html;
+			}
+			return null;
+		})
+		->addColumn('product_category', function ($importProduct) {
+			$category =  $this->lowestLevelCategory($importProduct->id);
+			return ($category) ? $category->name : "";
+		})
+		->rawColumns(['action', 'product_name', 'supplier_name', 'product_category', 'status'])
+		->toJson();
+
+		return $dataTable;
+	}
+
+	public function dataTableReceive($request){
+		$importProducts = ImportProduct::select(['id', 'code', 'name', 'supplier_id', 'product_id', 'quantity', 'total_price', 'status', 'created_at'])
+		->where('status', '<>', IMPORT_IMPORTING);
+
+		$dataTable = DataTables::eloquent($importProducts)
+		->filter(function ($query) use ($request) {
+			if (trim($request->get('status')) !== "") {
+				$query->where('active', $request->get('status'));
+			}
+		}, true)
+		->addColumn('action', function ($importProduct) {
+			$html = '';
+			switch ($importProduct->status) {
+				case IMPORT_IMPORTED:
 				$html .= '<a href="' . route('admin.import_products.check', ['id' => $importProduct->id]) . '" class="btn btn-xs btn-primary" style="margin-right: 5px"> Kiểm hàng</a>';
 				break;
 
-				case '2':
+				case IMPORT_CHECKED:
 				$html .= '<a href="#" class="btn btn-xs btn-success bt-importwarehouse" style="margin-right: 5px" data-id="' . $importProduct->id . '" data-name="' . $importProduct->code . '"> Nhập kho</a>';
 				break;
 				
@@ -53,27 +102,26 @@ Class ImportProductRepository
 			}
 			return $html;
 		})
+		->addColumn('status', function ($importProduct) {
+			$html = IMPORT_TEXT[$importProduct->status];
+			return $html;
+		})
 		->addColumn('product_name', function ($importProduct) {
-			$product = $importProduct->product;
-			$html = $product->name;
+			$html = $importProduct->name;
 			return $html;
 		})
 		->addColumn('supplier_name', function ($importProduct) {
-			$product = $importProduct->product;
-			$supplier = $product->supplier;
-			if ($supplier) {
-				$html = $supplier->name;
+			if ($importProduct->supplier) {
+				$html = $importProduct->supplier->name;
 				return $html;
 			}
 			return null;
 		})
 		->addColumn('product_category', function ($importProduct) {
-			$productRepository = new ProductRepository;
-			$product = $importProduct->product;
-			$category =  $productRepository->lowestLevelCategory($product->id);
+			$category =  $this->lowestLevelCategory($importProduct->id);
 			return ($category) ? $category->name : "";
 		})
-		->rawColumns(['action', 'product_name', 'supplier_name', 'product_category'])
+		->rawColumns(['action', 'product_name', 'supplier_name', 'product_category', 'status'])
 		->toJson();
 
 		return $dataTable;
@@ -85,7 +133,7 @@ Class ImportProductRepository
 		return $data;
 	}
 
-	public function createOrUpdate($data, $id = null)
+	public function createOrUpdate($data, $id = null, $import_complete = false)
 	{
 		if ($id) {
 			$model = ImportProduct::find($id);
@@ -93,14 +141,14 @@ Class ImportProductRepository
 			$model = new ImportProduct;
 		}
 
-		$productRepository = new ProductRepository;
-		if ($data['product_option'] == 'new') {
-			$product_model = $productRepository->createOrUpdate($data);
-		}else{
-			$product_model = $productRepository->getProduct($data['product_id']);
+		$model->name = $data['name'];
+
+		if ($data['product_option'] == 'old') {
+			$model->product_id = $data['product_id'];
+			$product = Product::find($data['product_id']);
+			$model->name = $product->name;
 		}
 		
-		$model->product_id = $product_model->id;
 		$model->code = general_code('N H', $id, 6);
 		$model->quantity = $data['import_quantity'];
 		$model->import_staff_id = $data['import_staff_id'];
@@ -111,7 +159,11 @@ Class ImportProductRepository
 		}
 		$model->note = $data['note'];
 		$model->status = IMPORT_IMPORTING;
-		// $model->supplier_id = $data['supplier_id'];
+		if ($import_complete) {
+			$model->status = IMPORT_IMPORTED;
+		}
+		
+		$model->supplier_id = $data['supplier_id'];
 		$model->brand_id = $data['brand_id'];
 		$model->sell_price = preg_replace('/[^0-9]/', '', $data['sell_price']);
 		$model->description = $data['description'];
@@ -119,7 +171,7 @@ Class ImportProductRepository
 		$model->active = $data['active'];
 		$model->order = $data['order'];
 
-		if($data['product_option'] == 'old' && isset($data['photo'])) {
+		if(isset($data['photo'])) {
 			if ($model->photo) {
 				Storage::delete($model->photo);
 			}
@@ -128,72 +180,92 @@ Class ImportProductRepository
 		}
 
 		$model->save();
+
 		if (!$id) {
 			$model->code = general_code('N H', $model->id, 6);
+		}
+
+		if (isset($data['categories'])) {
+			$model->category_ids = $data['categories'];
+
+			// Generate product code based on category code
+			$category = $this->lowestLevelCategory($model->id);
+			$model->main_cate = $category->id;
+			$old_barcode_text = $model->barcode_text;
+			$model->barcode_text = general_product_code($category->code, $model->id, 7);
+
+			if ($model->barcode) {
+				if ($old_barcode_text != $model->barcode_text) {
+					Storage::delete($model->barcode);
+				}
+			}
+			Storage::disk('public')->put('barcodes/'.$model->barcode_text.'.png', base64_decode(DNS1D::getBarcodePNG($model->barcode_text, 'C128',2,33)));
+			$model->barcode = 'public/barcodes/'.$model->barcode_text.'.png';
+			
+			$model->save();
+		}else{
+			$old_barcode_text = $model->barcode_text;
+			$model->barcode_text = general_product_code('Sản Phẩm', $model->id, 7);
+
+			if ($model->barcode) {
+				if ($old_barcode_text != $model->barcode_text) {
+					Storage::delete($model->barcode);
+				}
+			}
+			Storage::disk('public')->put('barcodes/'.$model->barcode_text.'.png', base64_decode(DNS1D::getBarcodePNG($model->barcode_text, 'C128',2,33)));
+			$model->barcode = 'public/barcodes/'.$model->barcode_text.'.png';
+			
 			$model->save();
 		}
 
+		$model->save();
 
 		if (isset($data['importDetails'])) {
 			$importDetails = json_decode($data['importDetails']);
 
-			// Delete import detail if delete
+			$sizes = [];
+			$colors = [];
+
 			foreach ($importDetails as $detail) {
 				if (isset($detail->id)) {
-					$modelDetail = ImportProductDetail::find($detail->id);
-					if ($modelDetail) {
+					$detailModel = ImportProductDetail::find($detail->id);
+
+					if ($detailModel) {
 						if (isset($detail->delete) && $detail->delete == true) {
-							$modelDetail->delete();
+							$detailModel->delete();
 						}
 					}
 				}
 			}
 
-			$sizes = [];
-			$colors = [];
-			// Add/update import detail
-			foreach ($importDetails as $key => $importDetail) {
-				if (!isset($importDetail->delete) || $importDetail->delete != true) {
-					$productDetail = ProductDetail::where("product_id", $model->product_id)
-					->where("color_id", $importDetail->color_code->id)
-					->where("size_id", $importDetail->size->id)
+			foreach ($importDetails as $key => $detail) {
+				if (!isset($detail->delete) || $detail->delete != true) {
+					$detailModel = ImportProductDetail::where("import_product_id", $model->id)
+					->where("color_id", $detail->color_code->id)
+					->where("size_id", $detail->size->id)
 					->first();
 
-					if (!$productDetail) {
-						$productDetail = new ProductDetail([
-							'color_id' => ($importDetail->color_code) ? $importDetail->color_code->id : 0,
-							'size_id' => ($importDetail->size) ? $importDetail->size->id : 0,
-							'quantity' => 0
+					if (!$detailModel) {
+						$detailModel = new ImportProductDetail([
+							'import_product_id' => $model->id,
+							'color_id' => (isset($detail->color_code)) ? $detail->color_code->id : 0,
+							'size_id' => (isset($detail->size)) ? $detail->size->id : 0,
+							'quantity' => $detail->quantity,
+							'status'	=>	IMPORT_DETAIL_UNCONFIMRED
 						]);
-						$product = Product::find($model->product_id);
-						$product->details()->save($productDetail);
+						$model->details()->save($detailModel);
+					}else{
+						$detailModel->quantity = $detail->quantity;
+						$detailModel->save();
 					}
 
-					if ($productDetail) {
-						$detail = ImportProductDetail::where("import_product_id", $model->id)
-						->where("product_detail_id", $productDetail->id)->first();
-						if ($detail) {
-							$detail['quantity'] = $importDetail->quantity;
-							$detail->save();
-						}else{
-							$detail = new ImportProductDetail([
-								'import_product_id' => $model->id,
-								'product_id' => $model->product_id,
-								'product_detail_id' => $productDetail->id,
-								'quantity' => $importDetail->quantity,
-								'status' => IMPORT_DETAIL_UNCONFIMRED
-							]);
-							$model->details()->save($detail);
-						}
+					if ($detail->size && !in_array($detail->size->name, $sizes)) {
+						$sizes[] = $detail->size->name;
 					}
-				}
 
-				if ($importDetail->size && !in_array($importDetail->size->name, $sizes)) {
-					$sizes[] = $importDetail->size->name;
-				}
-
-				if ($importDetail->color_code && !in_array($importDetail->color_code->name, $colors)) {
-					$colors[] = $importDetail->color_code->name;
+					if ($detail->color_code && !in_array($detail->color_code->name, $colors)) {
+						$colors[] = $detail->color_code->name;
+					}
 				}
 			}
 
@@ -201,7 +273,6 @@ Class ImportProductRepository
 			$model->sizes = implode($sizes, ',');
 			$model->save();
 		}
-
 
 		return $model;
 	}
@@ -241,7 +312,20 @@ Class ImportProductRepository
 		}else{
 			$result = make_option($staffs, 0, "full_name");
 		}
-		
+
+		return $result;
+	}
+
+	public function getSupplierOptions($id){
+		$model = ImportProduct::find($id);
+		$suppliers = Supplier::where('active', 1)->get();
+
+		if ($model && $model->supplier_id) {
+			$result = make_option($suppliers, $model->supplier_id);
+		}else{
+			$result = make_option($suppliers, 0);
+		}
+
 		return $result;
 	}
 
@@ -253,28 +337,24 @@ Class ImportProductRepository
 		}else{
 			$result = make_option($warehouses);
 		}
-		
+
 		return $result;
 	}
 
 	public function getDetails($id){
 		$model = ImportProduct::find($id);
-		foreach ($model->details as $detail) {
-			$detail->productDetail;
-			$detail->productDetail->color;
-			$detail->productDetail->size;
-		}
+
 		$return = [];
 		foreach ($model->details as $key => $value) {
 			$return[] = [
 				'id' => $value->id,
 				'color_code' => [
-					'id' => ($value->productDetail->color) ? $value->productDetail->color->id : 0,
-					'name'	=>	($value->productDetail->color) ? $value->productDetail->color->name : ""
+					'id' => ($value->color) ? $value->color->id : 0,
+					'name'	=>	($value->color) ? $value->color->name : ""
 				],
 				'size' => [
-					'id' => ($value->productDetail->size) ? $value->productDetail->size->id : 0,
-					'name'	=>	($value->productDetail->size) ? $value->productDetail->size->name : ""
+					'id' => ($value->size) ? $value->size->id : 0,
+					'name'	=>	($value->size) ? $value->size->name : ""
 				],
 				'quantity' => ($value->quantity) ? $value->quantity : 0
 			];
@@ -301,10 +381,10 @@ Class ImportProductRepository
 		$model->status = IMPORT_DETAIL_CONFIMRED;
 		$model->save();
 
+		$result['all_confirmed'] = 'false';
+
 		if ($this->areAllDetailsConfirmed($model->importProduct->id)) {
-			$modelImportProduct = ImportProduct::find($model->importProduct->id);
-			$modelImportProduct->status = IMPORT_CHECKED;
-			$modelImportProduct->save();
+			$result['all_confirmed'] = 'true';
 		}
 
 		return $result;
@@ -333,51 +413,117 @@ Class ImportProductRepository
 			'id' => $id
 		];
 
+		$productRepository = new ProductRepository;
 		$importProduct = ImportProduct::find($id);
-		$product = Product::find($importProduct->product_id);
+		if ($importProduct->product_id) {
+			$model = Product::find($importProduct->product_id);
+		}else{
+			$model = new Product;
+		}
 
-		// Push data from import product to product
-		$product->price = $importProduct->price;
-		$product->supplier_id = $importProduct->supplier_id;
-		$product->brand_id = $importProduct->brand_id;
-		$product->sell_price = $importProduct->sell_price;
-		$product->photo = $importProduct->photo;
-		$product->description = $importProduct->description;
-		$product->content = $importProduct->content;
-		$product->sizes = implode(',', array_unique(array_merge(explode(',', $importProduct->sizes), explode(',', $product->sizes))));
-		$product->colors = implode(',', array_unique(array_merge(explode(',', $importProduct->colors), explode(',', $product->colors))));
-		$product->save();
+		$model->supplier_id = $importProduct->supplier_id;
+		$model->brand_id = $importProduct->brand_id;
+		$model->barcode_text = $importProduct->barcode_text;
+		$model->barcode = $importProduct->barcode;
+		$model->name = $importProduct->name;
+		$model->colors = $importProduct->colors;
+		$model->sizes = $importProduct->sizes;
+		$model->price = $importProduct->price;
+		$model->sell_price = $importProduct->sell_price;
+		$model->photo = $importProduct->photo;
+		$model->description = $importProduct->description;
+		$model->content = $importProduct->content;
+		$model->active = $importProduct->active;
+		$model->order = $importProduct->order;
+		$model->main_cate = $importProduct->main_cate;
+		$model->category_ids = $importProduct->category_ids;
+
+		$model->save();
+		$data['categories'] = $importProduct->category_ids;
+
+		if (isset($data['categories'])) {
+			$productRepository->addCategories($model->id, $data['categories']);
+
+			// Generate product code based on category code
+			$category = $productRepository->lowestLevelCategory($model->id);
+			$model->main_cate = $category->id;
+			$old_barcode_text = $model->barcode_text;
+			$model->barcode_text = general_product_code($category->code, $model->id, 7);
+
+			if ($model->barcode) {
+				if ($old_barcode_text != $model->barcode_text) {
+					Storage::delete($model->barcode);
+				}
+			}
+			Storage::disk('public')->put('barcodes/'.$model->barcode_text.'.png', base64_decode(DNS1D::getBarcodePNG($model->barcode_text, 'C128',2,33)));
+			$model->barcode = 'public/barcodes/'.$model->barcode_text.'.png';
+			
+			$model->save();
+		}else{
+			$old_barcode_text = $model->barcode_text;
+			$model->barcode_text = general_product_code('SP', $model->id, 7);
+
+			if ($model->barcode) {
+				if ($old_barcode_text != $model->barcode_text) {
+					Storage::delete($model->barcode);
+				}
+			}
+			Storage::disk('public')->put('barcodes/'.$model->barcode_text.'.png', base64_decode(DNS1D::getBarcodePNG($model->barcode_text, 'C128',2,33)));
+			$model->barcode = 'public/barcodes/'.$model->barcode_text.'.png';
+			
+			$model->save();
+		}
 
 		// Push details quantity to warehouse product detail & product detail, update product quantity
 		if ($importProduct->details) {
 			foreach ($importProduct->details as $importProductDetail) {
+				// Add to product & product detail
+				$productDetail = ProductDetail::where('product_id', $model->id)
+				->where('color_id', $importProductDetail->color_id)
+				->where('size_id', $importProductDetail->size_id)
+				->first();
+
+				if (!$productDetail) {
+					$productDetail = new ProductDetail([
+						'color_id' => ($importProductDetail->color) ? $importProductDetail->color->id : 0,
+						'size_id' => ($importProductDetail->size) ? $importProductDetail->size->id : 0,
+						'quantity' => 0,
+						'quantity_available' => 0
+					]);
+					$model->details()->save($productDetail);
+				}
+
+
+
+
 				$warehouseProduct = WarehouseProduct::where('warehouse_id', $importProduct->warehouse_id)
 				->where('product_id', $importProduct->product_id)
-				->where('product_detail_id', $importProductDetail->product_detail_id)
+				->where('product_detail_id', $productDetail->id)
 				->first();
 
 				if ($warehouseProduct) {
 					$warehouseProduct->quantity += $importProductDetail->quantity;
+					$warehouseProduct->quantity_available += $importProductDetail->quantity;
 				}else{
 					$warehouseProduct = new WarehouseProduct;
 					$warehouseProduct->warehouse_id = $importProduct->warehouse_id;
-					$warehouseProduct->product_id = $importProduct->product_id;
-					$warehouseProduct->product_detail_id = $importProductDetail->product_detail_id;
+					$warehouseProduct->product_id = $model->id;
+					$warehouseProduct->product_detail_id = $productDetail->id;
 					$warehouseProduct->quantity = $importProductDetail->quantity;
+					$warehouseProduct->quantity_available = $importProductDetail->quantity;
 				}
 				$warehouseProduct->save();
 
-				if ($productDetail = ProductDetail::find($importProductDetail->product_detail_id)) {
-					$productDetail->quantity += $importProductDetail->quantity;
-					$productDetail->save();
-					$product->quantity += $importProductDetail->quantity;
-					$product->quantity_available += $importProductDetail->quantity;
-					$product->save();
-				}
+				$productDetail->quantity += $importProductDetail->quantity;
+				$productDetail->quantity_available += $importProductDetail->quantity;
+				$productDetail->save();
+				$model->quantity += $importProductDetail->quantity;
+				$model->quantity_available += $importProductDetail->quantity;
+				$model->save();
 			}
 		}
 
-		$importProduct->status = IMPORT_IMPORTED;
+		$importProduct->status = IMPORT_COMPLETED;
 		$importProduct->save();
 
 		return $result;
@@ -438,6 +584,7 @@ Class ImportProductRepository
 
 		return $dataTable;
 	}
+
 	public function getStaticDataTable($request)
 	{
 		$data = $this->getStaticDataTableObj($request)
@@ -445,5 +592,27 @@ Class ImportProductRepository
 		->toJson();
 
 		return $data;
+	}
+
+	public function idCategories($id){
+		$model = ImportProduct::find($id);
+		return list_ids(Category::whereIn('id', explode(',', $model->category_ids))->get());
+	}
+
+	public function lowestLevelCategory($id){
+		$model = ImportProduct::find($id);
+		$category = Category::whereIn('id', explode(',', $model->category_ids))->orderBy('level', 'desc')->first();
+		return $category;
+	}
+
+	public function checkCompleted($id){
+		if ($this->areAllDetailsConfirmed($id)) {
+			$model = ImportProduct::find($id);
+			$model->status = IMPORT_CHECKED;
+			$model->save();
+
+			return true;
+		}
+		return false;
 	}
 }

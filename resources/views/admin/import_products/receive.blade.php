@@ -28,7 +28,7 @@
             serverSide: true,
             "dom": 'rt<"#pagination"flp>',
             ajax: {
-                "url": "{{route('admin.import_products.index')}}",
+                "url": "{{route('admin.import_products.receive')}}",
                 "data": function ( d ) {
                     d.status = $('#s-status').val();
                 },
@@ -229,9 +229,6 @@ $("#dataTables").on("click", '.bt-importwarehouse', function(){
     <div class="ibox float-e-margins pl-15 pr-15">
         @include('admin._partials._alert')
         <div class="ibox-content">
-            <div class="text-right" style="padding: 10px 10px 0px 10px;">
-                <a href="{{route('admin.import_products.create')}}" class="btn btn-sm btn-primary"><i class="fa fa-plus"></i> Tạo nhập hàng</a>
-            </div>
             <div class="hr-line-dashed"></div>
             <!-- Account list -->
             <table class="table table-striped table-hover" id="dataTables">

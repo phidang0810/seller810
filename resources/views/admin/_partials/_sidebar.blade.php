@@ -46,6 +46,7 @@
                     <ul class="nav nav-second-level">
                         <li class="{{ set_active(['quan-ly/kho-hang']) }}"><a href="{{route('admin.warehouses.index')}}">Danh Sách Kho</a></li>
                         <li class="{{ set_active(['quan-ly/kho-hang/nhap-hang']) }}"><a href="{{route('admin.import_products.index')}}">Nhập Hàng</a></li>
+                        <li class="{{ set_active(['quan-ly/kho-hang/nhap-hang/nhan-hang']) }}"><a href="{{route('admin.import_products.receive')}}">Nhận Hàng</a></li>
                         <li class="{{ set_active(['quan-ly/kho-hang/chuyen-kho']) }}"><a href="{{route('admin.transport_warehouse.index')}}">Chuyển kho</a></li>
                         <li class="{{ set_active(['quan-ly/kho-hang/tra-hang']) }}"><a href="{{route('admin.return_products.index')}}">Trả hàng</a></li>
                     </ul>

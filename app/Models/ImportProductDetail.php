@@ -14,7 +14,7 @@ class ImportProductDetail extends BaseModel
      * @var array
      */
     protected $fillable = [
-        'import_product_id', 'product_id', 'product_detail_id', 'quantity', 'status'
+        'import_product_id', 'product_id', 'product_detail_id', 'quantity', 'status', 'color_id', 'size_id'
     ];
 
     /**
@@ -26,10 +26,22 @@ class ImportProductDetail extends BaseModel
     }
 
     /**
-     * Get the product detail of import product detail.
+     * A product detail can have many sizes.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
-    public function productDetail()
-    {
-        return $this->belongsTo('App\Models\ProductDetail');
+    public function size() {
+
+        return $this->hasOne('App\Models\Size', 'id', 'size_id');
+    }
+
+    /**
+     * A product detail can have many colors.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function color() {
+
+        return $this->hasOne('App\Models\Color', 'id', 'color_id');
     }
 }

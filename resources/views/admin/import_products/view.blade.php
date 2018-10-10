@@ -2,6 +2,14 @@
 
 @section('title', $title)
 
+@section('css')
+<style type="text/css">
+span.select2.select2-container.select2-container--default {
+    width: 100%!important;
+}
+</style>
+@endsection
+
 @section('js')
 <!-- Page-Level Scripts -->
 <script>
@@ -354,6 +362,30 @@
     }
 
     $(document).ready(function ($) {
+
+        // Init select2
+        var url_get_products = '{{route("admin.carts.getProductAjax")}}';
+        $('select[name="product_id"]').select2({
+            placeholder: '-- Chọn sản phẩm --',
+            ajax: {//---> Retrieve post data
+                url: url_get_products,
+                dataType: 'json',
+                delay: 250, //---> Delay in ms while typing when to perform a AJAX search
+                data: function (params) {
+                    return {
+                        q: params.term, //---> Search query
+                        action: 'mishagetposts', // AJAX action for admin-ajax.php
+                    };
+                },
+                processResults: function( data ) {
+                    return {
+                        results: data
+                    };
+                },
+                cache: true,
+            }
+        });
+
         $( "#mainForm" ).submit(function( event ) {
             var searchIDs = $("#mainForm .list-tree-section input:checkbox:checked").map(function(){
               return $(this).val();
@@ -420,16 +452,18 @@
             })
         }
 
+        $('span.select2.select2-container.select2-container--default').hide();
+
         $('input[type=radio][name=product_option]').on('change', function(){
             switch($(this).val()){
                 case 'new' :
                 $("input[name=name]").show();
-                $("select[name=product_id]").hide();
+                $('span.select2.select2-container.select2-container--default').hide();
                 loadProductDatas();
                 break;
                 case 'old' :
                 $("input[name=name]").hide();
-                $("select[name=product_id]").show();
+                $('span.select2.select2-container.select2-container--default').show();
                 break;
             }            
         });
@@ -461,8 +495,6 @@
                         <div class="tabs-container m-b">
                             <ul class="nav nav-tabs">
                                 <li class="active"><a data-toggle="tab" href="#tab-3" aria-expanded="true">Thông tin sản phẩm</a></li>
-                                <li class=""><a data-toggle="tab" href="#tab-4" aria-expanded="false">Bộ sưu tập</a></li>
-                                <li class=""><a data-toggle="tab" href="#tab-5" aria-expanded="false">Meta SEO</a></li>
                             </ul>
                             <div class="tab-content">
                                 <div id="tab-3" class="tab-pane active">
@@ -474,10 +506,10 @@
                                                     <div class="form-group">
                                                         <div class="col-md-5 import-product-radios">
                                                             <label for="photo" class="mr-10 lbl-ratio">
-                                                                <input type="radio" @if (!isset($data->id)) checked @endif name="product_option" placeholder="" class="form-control required m-b" value="new" />Nhập hàng mới
+                                                                <input type="radio" @if (!isset($data->product_id)) checked @endif name="product_option" placeholder="" class="form-control required m-b" value="new" />Nhập hàng mới
                                                             </label>
                                                             <label for="code" class="lbl-ratio">
-                                                                <input type="radio" @if (isset($data->id)) checked @endif  name="product_option" placeholder="" class="form-control required m-b" value="old" />Nhập hàng đã tồn tại
+                                                                <input type="radio" @if (isset($data->product_id)) checked @endif  name="product_option" placeholder="" class="form-control required m-b" value="old" />Nhập hàng đã tồn tại
                                                             </label>
                                                         </div>
                                                     </div>
@@ -485,9 +517,9 @@
 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-3 control-label">Người nhập hàng</label>
+                                                        <label class="col-md-3 control-label">Người nhập hàng (<span class="text-danger">*</span>)</label>
                                                         <div class="col-md-9">
-                                                            <select name="import_staff_id" class="form-control m-b">
+                                                            <select name="import_staff_id" class="form-control required m-b">
                                                                 <option value="" selected>-- Chọn người nhập hàng --</option>
                                                                 {!! $import_staff_options !!}
                                                             </select>
@@ -497,9 +529,9 @@
 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-3 control-label">Kho hàng</label>
+                                                        <label class="col-md-3 control-label">Kho hàng (<span class="text-danger">*</span>)</label>
                                                         <div class="col-md-9">
-                                                            <select name="warehouse_id" class="form-control m-b">
+                                                            <select name="warehouse_id" class="form-control required m-b">
                                                                 <option value="" selected>-- Chọn kho hàng --</option>
                                                                 {!! $warehouse_options !!}
                                                             </select>
@@ -508,14 +540,13 @@
                                                 </div>
 
                                                 <div class="row">
-                                                    <div class="form-group">
+                                                    <div class="form-group clearfix">
                                                         <label class="col-md-3 control-label">Tên sản phẩm (<span class="text-danger">*</span>)</label>
-                                                        <div class="col-md-9">
-                                                            <input type="text" name="name" placeholder="" class="form-control m-b validate-ajax"
-                                                            value="@if(isset($data->name)){{$data->name}}@else{{old('name')}}@endif" @if (isset($data->id)) style="display: none;" @endif/>
-                                                            <select name="product_id" class="form-control m-b" @if (!isset($data->id)) style="display: none;" @endif>
+                                                        <div class="col-md-9 clearfix">
+                                                            <input type="text" name="name" placeholder="" class="form-control required m-b validate-ajax"
+                                                            value="@if(isset($data->name)){{$data->name}}@else{{old('name')}}@endif" @if (isset($data->product_id)) style="display: none;" @endif/>
+                                                            <select name="product_id" class="form-control m-b" @if (!isset($data->product_id)) style="display: none;" @endif>
                                                                 <option value="0" selected>-- Chọn sản phẩm --</option>
-                                                                {!! $product_options !!}
                                                             </select>
                                                         </div>
                                                     </div>
@@ -562,14 +593,26 @@
 
                                                 <div class="row">
                                                     <div class="form-group">
+                                                        <label class="col-md-3 control-label">Nhà cung cấp</label>
+                                                        <div class="col-md-9">
+                                                            <select name="supplier_id" class="form-control m-b">
+                                                                <option value="" selected>-- Chọn nhà cung cấp --</option>
+                                                                {!! $supplier_options !!}
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="form-group">
                                                         <label class="col-md-3 control-label">Giá nhập</label>
                                                         <div class="col-md-3">
                                                             <input type="text" name="price" placeholder="" class="form-control m-b input-price"
                                                             value="@if(isset($data->price)){{$data->price}}@else{{old('price')}}@endif"/>
                                                         </div>
-                                                        <label class="col-md-2 control-label">Giá bán</label>
+                                                        <label class="col-md-2 control-label">Giá bán (<span class="text-danger">*</span>)</label>
                                                         <div class="col-md-3">
-                                                            <input type="text" name="sell_price" placeholder="" class="form-control m-b input-sell-price" value="@if(isset($data->sell_price)){{$data->sell_price}}@else{{old('sell_price')}}@endif"/>
+                                                            <input type="text" name="sell_price" placeholder="" class="form-control required m-b input-sell-price" value="@if(isset($data->sell_price)){{$data->sell_price}}@else{{old('sell_price')}}@endif"/>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -604,9 +647,9 @@
 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-3 control-label">Trạng thái sản phẩm</label>
+                                                        <label class="col-md-3 control-label">Trạng thái sản phẩm (<span class="text-danger">*</span>)</label>
                                                         <div class="col-md-3">
-                                                            <select class="form-control m-b" name="active">
+                                                            <select class="form-control required m-b" name="active">
                                                                 <option @if(isset($data->active) && $data->active === ACTIVE || old('active') === ACTIVE) selected
                                                                     @endif value="{{ACTIVE}}">Đã kích hoạt
                                                                 </option>
@@ -691,73 +734,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div id="tab-4" class="tab-pane">
-                                    <div class="panel-body">
-                                        <div class="collection-photos">
-                                            <input class="c-mutiple-input" id="product_photos" name="product_photos[]" type="file" accept="image/*" multiple value="" />
-                                            <div class="row">
-                                                <div class="col-md-12 c-gallery-preview"></div>
-                                            </div>
-
-                                            <div class="row">
-                                                <div class="form-group">
-                                                    <div class="col-md-9">
-                                                        <div class="table-responsive">
-                                                            <table id="i-product-photos" class="table">
-                                                                <thead>
-                                                                    <tr>
-                                                                        <th>Hình</th>
-                                                                        <th>Màu</th>
-                                                                        <th>Tên</th>
-                                                                        <th>Số thứ tự</th>
-                                                                        <th></th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
-
-
-                                                                </tbody>
-                                                            </table>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div id="tab-5" class="tab-pane">
-                                    <div class="panel-body">
-                                        <div class="col-md-12">
-                                            <div class="row">
-                                                <div class="form-group">
-                                                    <label class="col-md-2 control-label">Keyword</label>
-                                                    <div class="col-md-8">
-                                                        <input type="text" name="meta_keyword" placeholder="" class="form-control m-b"
-                                                        value="@if(isset($data->meta_keyword)){{$data->meta_keyword}}@else{{old('meta_keyword')}}@endif"/>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="form-group">
-                                                    <label class="col-md-2 control-label">Meta Description</label>
-                                                    <div class="col-md-8">
-                                                        <input type="text" name="meta_description" placeholder="" class="form-control m-b"
-                                                        value="@if(isset($data->meta_description)){{$data->meta_description}}@else{{old('meta_description')}}@endif"/>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="form-group">
-                                                    <label class="col-md-2 control-label">Meta Robot</label>
-                                                    <div class="col-md-8">
-                                                        <input type="text" name="meta_robot" placeholder="" class="form-control m-b"
-                                                        value="@if(isset($data->meta_robot)){{$data->meta_robot}}@else{{old('meta_robot')}}@endif"/>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -774,6 +750,9 @@
                             </button>
                             <button type="submit" name="action" class="btn btn-warning" value="save_quit"><i
                                 class="fa fa-save"></i> Lưu &amp; Thoát
+                            </button>
+                            <button type="submit" name="action" class="btn btn-primary" value="save_complete"><i
+                                class="fa fa-save"></i> Nhập đơn xong
                             </button>
                         </div>
                     </div>
