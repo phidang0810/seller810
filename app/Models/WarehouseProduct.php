@@ -14,6 +14,6 @@ class WarehouseProduct extends BaseModel
      * @var array
      */
     protected $fillable = [
-        'warehouse_id', 'product_id', 'product_detail_id', 'quantity'
+        'warehouse_id', 'product_id', 'product_detail_id', 'quantity', 'quantity_available'
     ];
 }

@@ -149,10 +149,10 @@ Class ImportProductRepository
 				}
 			}
 
+			$sizes = [];
+			$colors = [];
 			// Add/update import detail
 			foreach ($importDetails as $key => $importDetail) {
-				$sizes = [];
-				$colors = [];
 				if (!isset($importDetail->delete) || $importDetail->delete != true) {
 					$productDetail = ProductDetail::where("product_id", $model->product_id)
 					->where("color_id", $importDetail->color_code->id)
@@ -384,66 +384,66 @@ Class ImportProductRepository
 	}
 
 	public function getStaticDataTableObj($request)
-    {
-        $builder = ImportProduct::selectRaw('import_products.price, import_products.created_at, products.main_cate, warehouses.name as warehouse_name, products.name as product_name, products.barcode_text as product_code, SUM(import_products.quantity) as quantity, suppliers.name as supplier_name')
-            ->join('warehouses', 'warehouses.id', '=', 'import_products.warehouse_id')
-            ->join('products', 'products.id', '=', 'import_products.product_id')
-            ->join('suppliers', 'suppliers.id', '=', 'products.supplier_id')
-            ->where('import_products.status', IMPORT_COMPLETED)
-            ->groupBy('import_products.product_id');
+	{
+		$builder = ImportProduct::selectRaw('import_products.price, import_products.created_at, products.main_cate, warehouses.name as warehouse_name, products.name as product_name, products.barcode_text as product_code, SUM(import_products.quantity) as quantity, suppliers.name as supplier_name')
+		->join('warehouses', 'warehouses.id', '=', 'import_products.warehouse_id')
+		->join('products', 'products.id', '=', 'import_products.product_id')
+		->join('suppliers', 'suppliers.id', '=', 'products.supplier_id')
+		->where('import_products.status', IMPORT_COMPLETED)
+		->groupBy('import_products.product_id');
 
-        $categories = Category::get()->pluck('name', 'id')->toArray();
-        $dataTable = DataTables::eloquent($builder)
-            ->filter(function ($query) use ($request) {
-                if (trim($request->get('status')) !== "") {
-                    $query->where('active', $request->get('status'));
-                }
+		$categories = Category::get()->pluck('name', 'id')->toArray();
+		$dataTable = DataTables::eloquent($builder)
+		->filter(function ($query) use ($request) {
+			if (trim($request->get('status')) !== "") {
+				$query->where('active', $request->get('status'));
+			}
 
-                if (trim($request->get('category_id')) !== "") {
-                    $query->join('product_category', 'products.id', '=', 'product_category.product_id')
-                        ->where('product_category.category_id', $request->get('category_id'));
-                }
+			if (trim($request->get('category_id')) !== "") {
+				$query->join('product_category', 'products.id', '=', 'product_category.product_id')
+				->where('product_category.category_id', $request->get('category_id'));
+			}
 
-                if (trim($request->get('warehouse_id')) !== "") {
-                    $query->where('warehouse_product.warehouse_id', $request->get('warehouse_id'));
-                }
-                if (trim($request->get('date_from')) !== "") {
-                    $dateFrom = \DateTime::createFromFormat('d/m/Y', $request->get('date_from'));
-                    $dateFrom = $dateFrom->format('Y-m-d 00:00:00');
-                    $query->where('import_products.created_at', '>=', $dateFrom);
-                }
+			if (trim($request->get('warehouse_id')) !== "") {
+				$query->where('warehouse_product.warehouse_id', $request->get('warehouse_id'));
+			}
+			if (trim($request->get('date_from')) !== "") {
+				$dateFrom = \DateTime::createFromFormat('d/m/Y', $request->get('date_from'));
+				$dateFrom = $dateFrom->format('Y-m-d 00:00:00');
+				$query->where('import_products.created_at', '>=', $dateFrom);
+			}
 
-                if (trim($request->get('date_to')) !== "") {
-                    $dateTo = \DateTime::createFromFormat('d/m/Y', $request->get('date_to'));
-                    $dateTo = $dateTo->format('Y-m-d 23:59:50');
-                    $query->where('import_products.created_at', '<=', $dateTo);
-                }
-                if (trim($request->get('keyword')) !== "") {
-                    $query->where(function ($sub) use ($request) {
-                        $sub->where('products.name', 'like', '%' . $request->get('keyword') . '%')
-                            ->orWhere('products.barcode_text', 'like', '%' . $request->get('keyword') . '%');
-                    });
+			if (trim($request->get('date_to')) !== "") {
+				$dateTo = \DateTime::createFromFormat('d/m/Y', $request->get('date_to'));
+				$dateTo = $dateTo->format('Y-m-d 23:59:50');
+				$query->where('import_products.created_at', '<=', $dateTo);
+			}
+			if (trim($request->get('keyword')) !== "") {
+				$query->where(function ($sub) use ($request) {
+					$sub->where('products.name', 'like', '%' . $request->get('keyword') . '%')
+					->orWhere('products.barcode_text', 'like', '%' . $request->get('keyword') . '%');
+				});
 
-                }
-            }, true)
-            ->addColumn('category', function($product) use ($categories) {
-                return $categories[$product->main_cate] ?? '';
-            })
-            ->addColumn('quantity', function($product) {
-                return format_number($product->quantity);
-            })
-        ->addColumn('total_price', function($product) {
-            return format_number($product->quantity * $product->price);
-        });
+			}
+		}, true)
+		->addColumn('category', function($product) use ($categories) {
+			return $categories[$product->main_cate] ?? '';
+		})
+		->addColumn('quantity', function($product) {
+			return format_number($product->quantity);
+		})
+		->addColumn('total_price', function($product) {
+			return format_number($product->quantity * $product->price);
+		});
 
-        return $dataTable;
-    }
-    public function getStaticDataTable($request)
-    {
-        $data = $this->getStaticDataTableObj($request)
-            ->rawColumns(['category', 'quantity'])
-            ->toJson();
+		return $dataTable;
+	}
+	public function getStaticDataTable($request)
+	{
+		$data = $this->getStaticDataTableObj($request)
+		->rawColumns(['category', 'quantity'])
+		->toJson();
 
-        return $data;
-    }
+		return $data;
+	}
 }

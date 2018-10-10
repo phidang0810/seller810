@@ -14,7 +14,7 @@ class ProductDetail extends BaseModel
      * @var array
      */
     protected $fillable = [
-        'product_id', 'color_id', 'size_id', 'quantity'
+        'product_id', 'color_id', 'size_id', 'quantity', 'quantity_available'
     ];
 
     /**
