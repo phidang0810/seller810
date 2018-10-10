@@ -4,16 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Repositories\CartRepository;
 use App\Repositories\CategoryRepository;
+use App\Repositories\ImportProductRepository;
 use App\Repositories\PaymentRepository;
 use App\Repositories\PlatformRepository;
-use App\Repositories\ProductRepository;
-use App\Repositories\RoleRepository;
-use App\Repositories\UserRepository;
 use App\Repositories\WarehouseRepository;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Validator;
 
 class StatisticsController extends AdminController
 {
@@ -22,21 +17,45 @@ class StatisticsController extends AdminController
         parent::__construct($request);
     }
 
-    /**
-     * Show the application dashboard.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function importProduct(ProductRepository $product, CategoryRepository $category)
+    public function importProduct(ImportProductRepository $product, CategoryRepository $category)
     {
         if ($this->_request->ajax()) {
-            return $product->dataTable($this->_request);
+            return $product->getStaticDataTable($this->_request);
         }
 
         $this->_data['title'] = 'Chi Phí Nhập Hàng';
         $this->_data['categoriesTree'] = option_menu($category->getCategoriesTree(), "");
 
         return view('admin.statistics.import_product', $this->_data);
+    }
+
+    public function exportProduct(ImportProductRepository $model)
+    {
+        $data = $model->getStaticDataTableObj($this->_request)->toArray();
+        $fileName = 'Chi Phí Nhập Hàng - ' . date('m-m-Y');
+        \Maatwebsite\Excel\Facades\Excel::create($fileName, function($excel) use($data) {
+
+            $excel->sheet('Sheetname', function($sheet) use($data) {
+                $excelData  = [];
+                foreach($data['data'] as $k => $row) {
+                    $index = $k+1;
+                    $excelData[] = [
+                        '#' => $index,
+                        'MÃ SẢN PHẨM' => $row['product_code'],
+                        'TÊN SẢN PHẨM' => $row['product_name'],
+                        'DANH MỤC' => $row['category'],
+                        'NHÀ KHO' => $row['warehouse_name'],
+                        'NHÀ CUNG CẤP' => $row['supplier_name'],
+                        'SỐ LƯỢNG' => $row['quantity'],
+                        'TỔNG GIÁ' => $row['total_price'],
+                        'NGÀY NHẬP' => $row['created_at']
+                    ];
+                }
+                $sheet->fromArray($excelData);
+
+            });
+
+        })->export('xls');
     }
 
     public function revenue(PaymentRepository $payment, CategoryRepository $category, PlatformRepository $platform)

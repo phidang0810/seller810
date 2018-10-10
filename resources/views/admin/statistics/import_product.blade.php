@@ -22,19 +22,29 @@
                     "url": "{{route('admin.statistics.importProduct')}}",
                     "data": function ( d ) {
                         d.keyword = $('#s-keyword').val();
-                        d.role = $('#s-role').val();
-                        d.status = $('#s-status').val();
+                        d.category_id = $('#s-category').val();
+                        d.date_from = $('#date_from').val();
+                        d.date_to = $('#date_to').val();
+                        d.date = true;
                     },
                     complete: function(){
                     }
                 },
                 columns: [
-                    {data: 'name'},
-                    {data: 'barcode_text'},
+                    {   // Responsive control column
+                        data: null,
+                        defaultContent: '',
+                        className: 'control',
+                        orderable: false
+                    },
+                    {data: 'product_code'},
+                    {data: 'product_name'},
                     {data: 'category'},
+                    {data: 'warehouse_name'},
+                    {data: 'supplier_name'},
                     {data: 'quantity'},
-                    {data: 'created_at'},
-                    {data: 'total_price'}
+                    {data: 'total_price'},
+                    {data: 'created_at'}
                 ],
                 "aoColumnDefs": [
                     // Column index begins at 0
@@ -103,7 +113,7 @@
                     <label>Chọn danh mục</label>
                     <select class="form-control" name="role" id="s-role">
                         <option value=""> -- Tất cả -- </option>
-                        {{$categoriesTree}}
+                        {!! $categoriesTree !!}
                     </select>
                 </div>
             </div>
@@ -137,21 +147,22 @@
             @include('admin._partials._alert')
             <div class="ibox-content">
                 <div class="text-right" style="padding: 10px 10px 0px 10px;">
-                    <a href="{{route('admin.users.create')}}" class="btn btn-sm btn-primary"><i class="fa fa-plus"></i> Tạo Tài Khoản</a>
+                    <a href="{{route('admin.statistics.exportProduct')}}" class="btn btn-sm btn-primary"><i class="fa fa-file-excel-o" aria-hidden="true"></i> Export Excel</a>
                 </div>
                 <div class="hr-line-dashed"></div>
                 <!-- Account list -->
                 <table class="table table-striped table-hover" id="dataTables">
                     <thead>
                     <tr>
-                        <th>Tên</th>
-                        <th>Mã Sản Phẩm</th>
-                        <th>Danh Mục</th>
-                        <th>Tổng Nhập</th>
-                        <th>Quyền</th>
-                        <th>Ngày Tạo</th>
-                        <th>Trạng Thái</th>
                         <th></th>
+                        <th>Mã Sản Phẩm</th>
+                        <th>Tên Sản Phẩm</th>
+                        <th>Danh Mục</th>
+                        <th>Nhà Kho</th>
+                        <th>Nhà Cung Cấp</th>
+                        <th>Số lượng</th>
+                        <th>Tổng Giá</th>
+                        <th>Ngày Tạo</th>
                     </tr>
                     </thead>
                     <tbody>

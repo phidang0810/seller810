@@ -130,7 +130,8 @@ Class WarehouseRepository
         $warehouses = WarehouseProduct::selectRaw('products.main_cate, warehouses.name as warehouse_name, products.name as product_name, products.barcode_text as product_code, SUM(warehouse_product.quantity) as quantity, SUM(warehouse_product.quantity_available) as quantity_available')
         ->join('warehouses', 'warehouses.id', '=', 'warehouse_product.warehouse_id')
         ->join('products', 'products.id', '=', 'warehouse_product.product_id')
-        ->groupBy('warehouse_product.product_id');
+        ->groupBy('warehouse_product.product_id')
+        ->groupBy('warehouse_product.warehouse_id');
 
         $categories = Category::get()->pluck('name', 'id')->toArray();
         $dataTable = DataTables::eloquent($warehouses)
@@ -140,7 +141,8 @@ Class WarehouseRepository
                 }
 
                 if (trim($request->get('category_id')) !== "") {
-                    $query->where('products.main_cate', $request->get('category_id'));
+                    $query->join('product_category', 'products.id', '=', 'product_category.product_id')
+                        ->where('product_category.category_id', $request->get('category_id'));
                 }
 
                 if (trim($request->get('warehouse_id')) !== "") {
@@ -173,7 +175,7 @@ Class WarehouseRepository
     public function getProductQuantityTable($request)
     {
         $data = $this->getProductQuantityObj($request)
-            ->rawColumns(['category', 'platform', 'photo'])
+            ->rawColumns(['category'])
             ->toJson();
 
         return $data;

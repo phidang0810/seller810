@@ -44,7 +44,7 @@
                 <li class="{{ set_active(['quan-ly/kho-hang', 'quan-ly/kho-hang/*']) }} nav-item">
                     <a href="#"><i class="fa fa-paint-brush"></i> <span class="nav-label">Quản Lý Kho Hàng</span><span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level">
-                        <li class="{{ set_active(['quan-ly/kho-hang']) }}"><a href="{{route('admin.warehouses.index')}}">Kho Hàng</a></li>
+                        <li class="{{ set_active(['quan-ly/kho-hang']) }}"><a href="{{route('admin.warehouses.index')}}">Danh Sách Kho</a></li>
                         <li class="{{ set_active(['quan-ly/kho-hang/nhap-hang']) }}"><a href="{{route('admin.import_products.index')}}">Nhập Hàng</a></li>
                         <li class="{{ set_active(['quan-ly/kho-hang/chuyen-kho']) }}"><a href="{{route('admin.transport_warehouse.index')}}">Chuyển kho</a></li>
                         <li class="{{ set_active(['quan-ly/kho-hang/tra-hang']) }}"><a href="{{route('admin.return_products.index')}}">Trả hàng</a></li>
@@ -74,6 +74,7 @@
                 <li class="{{ set_active(['quan-ly/ke-toan', 'quan-ly/ke-toan/*']) }} nav-item">
                     <a href="#"><i class="fa fa-calculator" aria-hidden="true"></i> <span class="nav-label">Kế Toán</span><span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level">
+                        <li class="{{ set_active(['quan-ly/ke-toan/chi-phi-nhap-hang']) }}"><a href="{{route('admin.statistics.importProduct')}}">Chi Phí Nhập Hàng</a></li>
                         <li class="{{ set_active(['quan-ly/ke-toan/thong-ke-kho']) }}"><a href="{{route('admin.statistics.productQuantity')}}">Kho Hàng</a></li>
                         <li class="{{ set_active(['quan-ly/ke-toan/doanh-thu']) }}"><a href="{{route('admin.statistics.revenue')}}">Doanh Thu Bán Hàng</a></li>
                         <li class="{{ set_active(['quan-ly/ke-toan/phieu-chi']) }}"><a href="{{route('admin.payslips.index')}}">Phiếu Chi</a></li>

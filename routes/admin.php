@@ -176,7 +176,6 @@ Route::prefix('don-hang')
 
 Route::prefix('thong-ke')
 ->middleware('permission:report_manager')->group(function () {
-       // Route::get ('/', 'StatisticsController@importProduct')->name('admin.statistics.importProduct');
     Route::get ('/doanh-thu', 'StatisticsController@revenueChart')->name('admin.statistics.revenueChart');
     Route::get ('/don-hang', 'StatisticsController@cartChart')->name('admin.statistics.cartChart');
 
@@ -200,4 +199,7 @@ Route::prefix('ke-toan')
 
     Route::get ('/thong-ke-kho', 'StatisticsController@productQuantity')->name('admin.statistics.productQuantity');
     Route::get ('/thong-ke-kho/export', 'StatisticsController@exportProductQuantity')->name('admin.statistics.exportProductQuantity');
+
+    Route::get ('/chi-phi-nhap-hang', 'StatisticsController@importProduct')->name('admin.statistics.importProduct');
+    Route::get ('/chi-phi-nhap-hang/export', 'StatisticsController@exportProduct')->name('admin.statistics.exportProduct');
 });

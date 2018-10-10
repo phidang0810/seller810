@@ -53,12 +53,14 @@ define('PAYSLIP_TEXT', [
 ]);
 
 define('IMPORT_IMPORTING', 1);
-define('IMPORT_CHECKED', 2);
-define('IMPORT_IMPORTED', 3);
+define('IMPORT_IMPORTED', 2);
+define('IMPORT_CHECKED', 3);
+define('IMPORT_COMPLETED', 4);
 define('IMPORT_TEXT', [
     1   =>  'Đang nhập',
-    2   =>  'Đã kiểm',
-    3   =>  'Đã nhập'
+    2   =>  'Đã nhập hàng',
+    3   =>  'Đã kiểm',
+    4   =>  'Đã nhập kho',
 ]);
 
 define('IMPORT_DETAIL_UNCONFIMRED', 1);
