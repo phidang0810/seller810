@@ -534,7 +534,7 @@ Class ImportProductRepository
 		$builder = ImportProduct::selectRaw('import_products.price, import_products.created_at, products.main_cate, warehouses.name as warehouse_name, products.name as product_name, products.barcode_text as product_code, SUM(import_products.quantity) as quantity, suppliers.name as supplier_name')
 		->join('warehouses', 'warehouses.id', '=', 'import_products.warehouse_id')
 		->join('products', 'products.id', '=', 'import_products.product_id')
-		->join('suppliers', 'suppliers.id', '=', 'products.supplier_id')
+		->leftJoin('suppliers', 'suppliers.id', '=', 'products.supplier_id')
 		->where('import_products.status', IMPORT_COMPLETED)
 		->groupBy('import_products.product_id');
 
