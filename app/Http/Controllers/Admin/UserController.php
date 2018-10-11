@@ -37,6 +37,10 @@ class UserController extends AdminController
 
     public function view(UserRepository $user, RoleRepository $role)
     {
+        if ($this->_request->ajax()) {
+            return $user->getStaff($this->_request);
+        }
+        
         $id = $this->_request->get('id');
         $this->_data['title'] = 'Thêm nhân viên';
         if ($id) {

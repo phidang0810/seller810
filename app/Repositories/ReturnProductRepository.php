@@ -111,11 +111,14 @@ Class ReturnProductRepository
 							$returnDetailModel->delete();
 
 							// Add product quantity, product detail quantity, warehouse product quantity
+							$productModel->quantity += $changeQuantity;
 							$productModel->quantity_available += $changeQuantity;
 							$productModel->save();
 							$productDetailModel->quantity += $changeQuantity;
+							$productDetailModel->quantity_available += $changeQuantity;
 							$productDetailModel->save();
 							$warehouseProduct->quantity += $changeQuantity;
+							$warehouseProduct->quantity_available += $changeQuantity;
 							$warehouseProduct->save();
 						}
 					}
@@ -148,11 +151,14 @@ Class ReturnProductRepository
 							// 'status'	=>	TRANSPORT_DETAIL_UNRECEIVE
 						]);
 						$model->details()->save($returnDetailModel);
+						$productModel->quantity -= $returnDetail->product_quantity;
 						$productModel->quantity_available -= $returnDetail->product_quantity;
 						$productModel->save();
 						$productDetailModel->quantity -= $returnDetail->product_quantity;
+						$productDetailModel->quantity_available -= $returnDetail->product_quantity;
 						$productDetailModel->save();
 						$warehouseProduct->quantity -= $returnDetail->product_quantity;
+						$warehouseProduct->quantity_available -= $returnDetail->product_quantity;
 						$warehouseProduct->save();
 						$model->quantity += $returnDetail->product_quantity;
 						$model->save();
@@ -163,11 +169,14 @@ Class ReturnProductRepository
 					if ($returnDetailModel) {
 						$returnDetailModel->quantity = $returnDetail->product_quantity;
 						$returnDetailModel->save();
+						$productModel->quantity -= $changeQuantity;
 						$productModel->quantity_available -= $changeQuantity;
 						$productModel->save();
 						$productDetailModel->quantity -= $changeQuantity;
+						$productDetailModel->quantity_available -= $changeQuantity;
 						$productDetailModel->save();
 						$warehouseProduct->quantity -= $changeQuantity;
+						$warehouseProduct->quantity_available -= $changeQuantity;
 						$warehouseProduct->save();
 						$model->quantity += $changeQuantity;
 						$model->save();
@@ -276,6 +285,20 @@ Class ReturnProductRepository
 		$model->status = RETURN_RETURNED;
 		$model->save();
 
+		return $result;
+	}
+
+	public function getStatusOptions($id){
+		$model = ReturnProduct::find($id);
+		$staffs = [];
+		$staffs[] = ["id" => RETURN_RETURNING, "name" => RETURN_TEXT[RETURN_RETURNING]];
+		$staffs[] = ["id" => RETURN_RETURNED, "name" => RETURN_TEXT[RETURN_RETURNED]];
+		if ($model && $model->status) {
+			$result = make_option($staffs, $model->status);
+		}else{
+			$result = make_option($staffs);
+		}
+		
 		return $result;
 	}
 }

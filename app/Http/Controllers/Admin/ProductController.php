@@ -52,6 +52,7 @@ class ProductController extends AdminController
             $this->_data['photos'] = json_encode($product->getPhotos($id));
         }
 
+        $this->_data['supplier_options'] = $product->getSupplierOptions($id);
         $this->_data['categoriesTree'] = make_list_hierarchy($category->getCategoriesTree(), $categories);
         $this->_data['size_options'] = $product->getSizeOptions($id);
         $this->_data['color_options'] = $product->getColorOptions($id);

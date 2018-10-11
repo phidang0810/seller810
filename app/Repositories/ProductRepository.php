@@ -17,6 +17,7 @@ use App\Models\Color;
 use App\Models\Brand;
 use App\Models\Warehouse;
 use App\Models\WarehouseProduct;
+use App\Models\Supplier;
 use Illuminate\Support\Facades\Cache;
 use Yajra\DataTables\Facades\DataTables;
 use App\Libraries\Photo;
@@ -144,6 +145,7 @@ Class ProductRepository
 			$model->quantity_available = $data['quantity'];
 		}
 		$model->brand_id = $data['brand_id'];
+		$model->supplier_id = $data['supplier_id'];
 		$model->content = $data['content'];
 		// $model->code = $data['code'];
 		// $model->barcode = $data['barcode'];
@@ -316,6 +318,7 @@ Class ProductRepository
 				if ($modelDetail) {
 					if (!isset($detail->delete) || $detail->delete != true) {
 						$modelDetail->quantity = ($detail->quantity) ? $detail->quantity : 0;
+						$modelDetail->quantity_available = ($detail->quantity) ? $detail->quantity : 0;
 						$modelDetail->color_id = ($detail->color_code) ? $detail->color_code->id : 0;
 						$modelDetail->size_id = ($detail->size) ? $detail->size->id : 0;
 						$modelDetail->save();
@@ -326,7 +329,8 @@ Class ProductRepository
 					$modelDetail = new ProductDetail([
 						'color_id' => ($detail->color_code) ? $detail->color_code->id : 0,
 						'size_id' => ($detail->size) ? $detail->size->id : 0,
-						'quantity' => ($detail->quantity) ? $detail->quantity : 0
+						'quantity' => ($detail->quantity) ? $detail->quantity : 0,
+						'quantity_available' => ($detail->quantity) ? $detail->quantity : 0
 					]);
 					$model->details()->save($modelDetail);
 				}
@@ -755,4 +759,17 @@ Class ProductRepository
 
 		return Response::json($return);
     }
+
+	public function getSupplierOptions($id){
+		$model = Product::find($id);
+		$suppliers = Supplier::where('active', 1)->get();
+
+		if ($model && $model->supplier_id) {
+			$result = make_option($suppliers, $model->supplier_id);
+		}else{
+			$result = make_option($suppliers, 0);
+		}
+
+		return $result;
+	}
 }

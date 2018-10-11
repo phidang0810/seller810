@@ -420,6 +420,18 @@
 
                                                 <div class="row">
                                                     <div class="form-group">
+                                                        <label class="col-md-3 control-label">Nhà cung cấp</label>
+                                                        <div class="col-md-9">
+                                                            <select name="supplier_id" class="form-control m-b">
+                                                                <option value="" selected>-- Chọn nhà cung cấp --</option>
+                                                                {!! $supplier_options !!}
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="form-group">
                                                         <label class="col-md-3 control-label">Giá nhập</label>
                                                         <div class="col-md-3">
                                                             <input type="text" name="price" placeholder="" class="form-control m-b input-price"

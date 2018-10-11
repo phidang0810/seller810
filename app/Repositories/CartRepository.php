@@ -224,7 +224,7 @@ Class CartRepository
         if ($modelDetail) {
             $modelProductDetail = ProductDetail::find($modelDetail->product_detail_id);
             if ($modelProductDetail) {
-                $modelProductDetail->quantity += $modelDetail->quantity;
+                $modelProductDetail->quantity_available += $modelDetail->quantity;
                 $modelProductDetail->save();
             }
 
@@ -235,7 +235,7 @@ Class CartRepository
             }
 
             if ($modelWarehouseProduct = WarehouseProduct::find($modelDetail->warehouse_product_id)) {
-                $modelWarehouseProduct->quantity += $modelDetail->quantity;
+                $modelWarehouseProduct->quantity_available += $modelDetail->quantity;
                 $modelWarehouseProduct->save();
             }
 
@@ -410,7 +410,7 @@ Class CartRepository
                         $modelDetail->save();
                         if (isset($detail->product_detail)) {
                             if ($modelProductDetail = ProductDetail::find($detail->product_detail->id)) {
-                                $modelProductDetail->quantity -= $detail->product_quantity - $old_quantity;
+                                $modelProductDetail->quantity_available -= $detail->product_quantity - $old_quantity;
                                 $modelProductDetail->save();
                             }
 
@@ -420,7 +420,7 @@ Class CartRepository
                             }
 
                             if ($modelWarehouseProduct = WarehouseProduct::find($detail->warehouse_product_id)) {
-                                $modelWarehouseProduct->quantity -= $detail->product_quantity - $old_quantity;
+                                $modelWarehouseProduct->quantity_available -= $detail->product_quantity - $old_quantity;
                                 $modelWarehouseProduct->save();
                             }
                         }
@@ -443,7 +443,7 @@ Class CartRepository
                     $model->details()->save($modelDetail);
                     if (isset($detail->product_detail)) {
                         if ($modelProductDetail = ProductDetail::find($detail->product_detail->id)) {
-                            $modelProductDetail->quantity -= $detail->product_quantity;
+                            $modelProductDetail->quantity_available -= $detail->product_quantity;
                             $modelProductDetail->save();
                         }
 
@@ -453,7 +453,7 @@ Class CartRepository
                         }
 
                         if ($modelWarehouseProduct = WarehouseProduct::find($detail->warehouse_product_id)) {
-                            $modelWarehouseProduct->quantity -= $detail->product_quantity;
+                            $modelWarehouseProduct->quantity_available -= $detail->product_quantity;
                             $modelWarehouseProduct->save();
                         }
                     }

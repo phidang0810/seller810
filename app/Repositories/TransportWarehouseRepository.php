@@ -96,8 +96,8 @@ Class TransportWarehouseRepository
 			foreach ($transport_details as $transportDetail) {
 				if (isset($transportDetail->id)) {
 					$transportDetailModel = TransportWarehouseDetail::find($transportDetail->id);
-					$productModel = Product::find($transportDetail->product_name->id);
-					$productDetailModel = ProductDetail::find($transportDetail->product_detail->id);
+					// $productModel = Product::find($transportDetail->product_name->id);
+					// $productDetailModel = ProductDetail::find($transportDetail->product_detail->id);
 					$warehouseProduct = WarehouseProduct::where('warehouse_id', $transportDetail->from_warehouse->id)
 					->where('product_id', $transportDetail->product_name->id)
 					->where("product_detail_id", $transportDetail->product_detail->id)
@@ -110,11 +110,12 @@ Class TransportWarehouseRepository
 							$transportDetailModel->delete();
 
 							// Add product quantity, product detail quantity, warehouse product quantity
-							$productModel->quantity_available += $changeQuantity;
-							$productModel->save();
-							$productDetailModel->quantity += $changeQuantity;
-							$productDetailModel->save();
+							// $productModel->quantity_available += $changeQuantity;
+							// $productModel->save();
+							// $productDetailModel->quantity += $changeQuantity;
+							// $productDetailModel->save();
 							$warehouseProduct->quantity += $changeQuantity;
+							$warehouseProduct->quantity_available += $changeQuantity;
 							$warehouseProduct->save();
 						}
 					}
@@ -132,8 +133,8 @@ Class TransportWarehouseRepository
 					->where("product_detail_id", $transportDetail->product_detail->id)
 					->first();
 
-					$productModel = Product::find($transportDetail->product_name->id);
-					$productDetailModel = ProductDetail::find($transportDetail->product_detail->id);
+					// $productModel = Product::find($transportDetail->product_name->id);
+					// $productDetailModel = ProductDetail::find($transportDetail->product_detail->id);
 					$warehouseProduct = WarehouseProduct::where('warehouse_id', $transportDetail->from_warehouse->id)
 					->where('product_id', $transportDetail->product_name->id)
 					->where("product_detail_id", $transportDetail->product_detail->id)
@@ -149,11 +150,12 @@ Class TransportWarehouseRepository
 							'status'	=>	TRANSPORT_DETAIL_UNRECEIVE
 						]);
 						$model->details()->save($transportDetailModel);
-						$productModel->quantity_available -= $transportDetail->product_quantity;
-						$productModel->save();
-						$productDetailModel->quantity -= $transportDetail->product_quantity;
-						$productDetailModel->save();
+						// $productModel->quantity_available -= $transportDetail->product_quantity;
+						// $productModel->save();
+						// $productDetailModel->quantity -= $transportDetail->product_quantity;
+						// $productDetailModel->save();
 						$warehouseProduct->quantity -= $transportDetail->product_quantity;
+						$warehouseProduct->quantity_available -= $transportDetail->product_quantity;
 						$warehouseProduct->save();
 					}
 
@@ -162,11 +164,12 @@ Class TransportWarehouseRepository
 					if ($transportDetailModel) {
 						$transportDetailModel->quantity = $transportDetail->product_quantity;
 						$transportDetailModel->save();
-						$productModel->quantity_available -= $changeQuantity;
-						$productModel->save();
-						$productDetailModel->quantity -= $changeQuantity;
-						$productDetailModel->save();
+						// $productModel->quantity_available -= $changeQuantity;
+						// $productModel->save();
+						// $productDetailModel->quantity -= $changeQuantity;
+						// $productDetailModel->save();
 						$warehouseProduct->quantity -= $changeQuantity;
+						$warehouseProduct->quantity_available -= $changeQuantity;
 						$warehouseProduct->save();
 					}
 				}
@@ -210,6 +213,20 @@ Class TransportWarehouseRepository
 			$result = make_option($staffs, $model->transport_staff_id, "full_name");
 		}else{
 			$result = make_option($staffs, 0, "full_name");
+		}
+		
+		return $result;
+	}
+
+	public function getStatusOptions($id){
+		$model = TransportWarehouse::find($id);
+		$staffs = [];
+		$staffs[] = ["id" => TRANSPORT_TRANSPORTING, "name" => TRANSPORT_TEXT[TRANSPORT_TRANSPORTING]];
+		$staffs[] = ["id" => TRANSPORT_TRANSPORTED, "name" => TRANSPORT_TEXT[TRANSPORT_TRANSPORTED]];
+		if ($model && $model->status) {
+			$result = make_option($staffs, $model->status);
+		}else{
+			$result = make_option($staffs);
 		}
 		
 		return $result;
@@ -285,8 +302,8 @@ Class TransportWarehouseRepository
 		}
 
 		// Plus product quantity to product, product detail, product warehouse
-		$productModel = Product::find($model->product_id);
-		$productDetailModel = ProductDetail::find($model->product_detail_id);
+		// $productModel = Product::find($model->product_id);
+		// $productDetailModel = ProductDetail::find($model->product_detail_id);
 		$warehouseProduct = WarehouseProduct::where('warehouse_id', $model->receive_warehouse_id)
 		->where('product_id', $model->product_id)
 		->where("product_detail_id", $model->product_detail_id)
@@ -297,15 +314,17 @@ Class TransportWarehouseRepository
 			$warehouseProduct->product_id = $model->product_id;
 			$warehouseProduct->product_detail_id = $model->product_detail_id;
 			$warehouseProduct->quantity = $model->quantity;
+			$warehouseProduct->quantity_available = $model->quantity;
 			$warehouseProduct->save();
 		}else{
 			$warehouseProduct->quantity += $model->quantity;
+			$warehouseProduct->quantity_available += $model->quantity;
 			$warehouseProduct->save();
 		}
-		$productModel->quantity_available += $model->quantity;
-		$productModel->save();
-		$productDetailModel->quantity += $model->quantity;
-		$productDetailModel->save();
+		// $productModel->quantity_available += $model->quantity;
+		// $productModel->save();
+		// $productDetailModel->quantity += $model->quantity;
+		// $productDetailModel->save();
 
 		$model->status = TRANSPORT_DETAIL_RECEIVED;
 		$model->save();

@@ -62,6 +62,7 @@ class TransportWarehouseController extends AdminController
         $this->_data['transport_staff_options'] = $transportWarehouse->getTransportStaffOptions($id);
         $this->_data['product_options'] = $product->getProductOptions();
         $this->_data['warehouse_options'] = $warehouse->getWarehouseOptions();
+        $this->_data['status_options'] = $transportWarehouse->getStatusOptions($id);
 
         $this->_pushBreadCrumbs($this->_data['title']);
         return view('admin.transport_warehouse.view', $this->_data);

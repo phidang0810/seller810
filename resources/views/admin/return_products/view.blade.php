@@ -79,6 +79,8 @@
     $(document).ready(function(){
         printTableTransportDetails();
 
+        $("#mainForm").validate();
+
         // Init select2
         var url_get_products = '{{route("admin.carts.getProductAjax")}}';
         $('select[name="product_name"]').select2({
@@ -100,6 +102,26 @@
                 },
                 cache: true,
             }
+        });
+
+        $('select[name="return_staff_id"]').on('change', function(){
+            //---> validatae color
+            $.ajax({
+                url: "{{route('admin.users.view')}}",
+                data:{
+                    id:$('select[name="return_staff_id"]').val()
+                },
+                dataType:'json'
+            }).done(function(data) {
+                if (!$.isEmptyObject(data)) {
+                    $('input[name=return_staff_phone]').val(data.staff.phone);
+                    $('input[name=return_staff_email]').val(data.staff.email);
+                }else{
+
+                }
+            }).fail(function(jqXHR, textStatus){
+                alert('Có lỗi xảy ra, xin hãy làm mới trình duyệt');
+            })
         });
 
         // When "Thêm" button is clicked -> Add new item to array return_details, append new row to table
@@ -497,8 +519,28 @@
                             </div>
 
                             <div class="row">
+                                <div class="form-group">
+                                    <label class="col-md-4 control-label">Số điện thoại</label>
+                                    <div class="col-md-8">
+                                        <input type="text" name="return_staff_phone" placeholder="" class="form-control m-b"
+                                        value="@if(isset($data->staff) && isset($data->staff->phone)){{$data->staff->phone}}@else{{old('return_staff_phone')}}@endif" readonly="readonly" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group">
+                                    <label class="col-md-4 control-label">Email</label>
+                                    <div class="col-md-8">
+                                        <input type="text" name="return_staff_email" placeholder="" class="form-control m-b"
+                                        value="@if(isset($data->staff) && isset($data->staff->email)){{$data->staff->email}}@else{{old('return_staff_email')}}@endif" readonly="readonly" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
                                 <div class="form-group clearfix">
-                                    <label class="col-md-4 font-normal">Ngày chuyển</label>
+                                    <label class="col-md-4 font-normal">Ngày trả</label>
                                     <div class="col-md-8">
                                         <div class="input-group date">
                                             <span class="input-group-addon"><i class="fa fa-calendar"></i></span><input type="text" name="return_date" class="form-control required" value="@if(isset($data->return_date)){{$data->return_date}}@endif">
@@ -512,6 +554,17 @@
                                     <label class="col-md-4 font-normal">Lý do</label>
                                     <div class="col-md-8">
                                         <textarea name="reason" class="form-control">@if(isset($data->reason)){{$data->reason}}@endif</textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group clearfix">
+                                    <label class="col-md-4 control-label">Tình trạng</label>
+                                    <div class="col-md-8">
+                                        <select name="status" class="form-control required m-b">
+                                            {!! $status_options !!}
+                                        </select>
                                     </div>
                                 </div>
                             </div>

@@ -799,3 +799,7 @@ div#barcode_image div {
 .group-box {
   margin-bottom: 10px;
 }
+
+.group-box .form-group {
+  margin-bottom: 25px;
+}

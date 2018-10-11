@@ -61,6 +61,7 @@ class ReturnProductController extends AdminController
         }
         $this->_data['return_staff_options'] = $returnProduct->getReturnStaffOptions($id);
         $this->_data['product_options'] = $product->getProductOptions();
+        $this->_data['status_options'] = $returnProduct->getStatusOptions($id);
 
         $this->_pushBreadCrumbs($this->_data['title']);
         return view('admin.return_products.view', $this->_data);

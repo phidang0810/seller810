@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
+use Response;
 
 class UserRepository
 {
@@ -24,57 +25,57 @@ class UserRepository
     public function dataTable($request)
     {
         $users = User::select(['users.id', 'users.avatar', 'roles.name as role', 'full_name', 'email', 'users.active', 'users.created_at'])
-            ->join('roles', 'roles.id', '=', 'users.role_id');
+        ->join('roles', 'roles.id', '=', 'users.role_id');
 
         $dataTable = DataTables::eloquent($users)
-            ->filter(function ($query) use ($request) {
-                if (trim($request->get('role')) !== "") {
-                    $query->where('role_id', $request->get('role'));
-                }
+        ->filter(function ($query) use ($request) {
+            if (trim($request->get('role')) !== "") {
+                $query->where('role_id', $request->get('role'));
+            }
 
-                if (trim($request->get('status')) !== "") {
-                    $query->where('users.active', $request->get('status'));
-                }
+            if (trim($request->get('status')) !== "") {
+                $query->where('users.active', $request->get('status'));
+            }
 
-                if (trim($request->get('keyword')) !== "") {
-                    $query->where(function ($sub) use ($request) {
-                        $sub->where('users.full_name', 'like', '%' . $request->get('keyword') . '%')
-                            ->orWhere('users.email', 'like', '%' . $request->get('keyword') . '%');
-                    });
+            if (trim($request->get('keyword')) !== "") {
+                $query->where(function ($sub) use ($request) {
+                    $sub->where('users.full_name', 'like', '%' . $request->get('keyword') . '%')
+                    ->orWhere('users.email', 'like', '%' . $request->get('keyword') . '%');
+                });
 
-                }
-            }, true)
-            ->addColumn('avatar', function ($user) {
-                if ($user->avatar) {
-                    $html = '<img style="width: 80px; height: 60px;" class="img-thumbnail" src="' . asset('storage/' . $user->avatar). '" />';
-                } else {
-                    $html = ' <img alt="No Photo" style="width: 80px; height: 60px;" class="img-thumbnail" src="'.asset(NO_PHOTO).'" >';
-                }
-                return $html;
-            })
-            ->addColumn('action', function ($user) {
-                $html = '';
-                if ($user->id != Auth::id()) {
-                    $html .= '<a href="' . route('admin.users.view', ['id' => $user->id]) . '" class="btn btn-xs btn-primary" style="margin-right: 5px"><i class="glyphicon glyphicon-edit"></i> Sửa</a>';
-                    $html .= '<a href="#" class="bt-delete btn btn-xs btn-danger" data-id="' . $user->id . '" data-email="' . $user->email . '">';
-                    $html .= '<i class="fa fa-trash-o" aria-hidden="true"></i> Xóa</a>';
-                }
-                return $html;
-            })
-            ->addColumn('status', function ($user) {
-                $active = '';
-                $disable = '';
-                if ($user->id === Auth::id()) {
-                    $disable = 'disabled';
-                }
-                if ($user->active === ACTIVE) {
-                    $active  = 'checked';
-                }
-                $html = '<input type="checkbox" '.$disable.' data-email="'.$user->email.'" data-id="'.$user->id.'" name="social' . $user->active . '" class="js-switch" value="' . $user->active . '" ' . $active . ' ./>';
-                return $html;
-            })
-            ->rawColumns(['avatar','status', 'action'])
-            ->toJson();
+            }
+        }, true)
+        ->addColumn('avatar', function ($user) {
+            if ($user->avatar) {
+                $html = '<img style="width: 80px; height: 60px;" class="img-thumbnail" src="' . asset('storage/' . $user->avatar). '" />';
+            } else {
+                $html = ' <img alt="No Photo" style="width: 80px; height: 60px;" class="img-thumbnail" src="'.asset(NO_PHOTO).'" >';
+            }
+            return $html;
+        })
+        ->addColumn('action', function ($user) {
+            $html = '';
+            if ($user->id != Auth::id()) {
+                $html .= '<a href="' . route('admin.users.view', ['id' => $user->id]) . '" class="btn btn-xs btn-primary" style="margin-right: 5px"><i class="glyphicon glyphicon-edit"></i> Sửa</a>';
+                $html .= '<a href="#" class="bt-delete btn btn-xs btn-danger" data-id="' . $user->id . '" data-email="' . $user->email . '">';
+                $html .= '<i class="fa fa-trash-o" aria-hidden="true"></i> Xóa</a>';
+            }
+            return $html;
+        })
+        ->addColumn('status', function ($user) {
+            $active = '';
+            $disable = '';
+            if ($user->id === Auth::id()) {
+                $disable = 'disabled';
+            }
+            if ($user->active === ACTIVE) {
+                $active  = 'checked';
+            }
+            $html = '<input type="checkbox" '.$disable.' data-email="'.$user->email.'" data-id="'.$user->id.'" name="social' . $user->active . '" class="js-switch" value="' . $user->active . '" ' . $active . ' ./>';
+            return $html;
+        })
+        ->rawColumns(['avatar','status', 'action'])
+        ->toJson();
 
         return $dataTable;
     }
@@ -162,5 +163,23 @@ class UserRepository
     {
         $data = User::where('active', ACTIVE)->count();
         return $data;
+    }
+
+    public function getStaff($request){
+        $id = $request->get('id');
+
+        $return = [
+            'status'    =>  'true',
+            'message'   =>  'Lấy datas nhân viên thành công',
+        ];
+
+        $staff = User::find($id);
+        if ($staff) {
+            $return['staff'] = $staff;
+        }else{
+            $return['status'] = 'false';
+        }
+
+        return Response::json($return);
     }
 }
