@@ -91,10 +91,10 @@
     // When "Lưu", "Lưu và thoát" on form are clicked -> Update data for array details
     $( "#mainForm" ).submit(function( event ) {
         updatePhotosData();
-        var boolValidateDetails = updateDetailsData();
-        if (boolValidateDetails == false) {
-            event.preventDefault();
-        }
+        // var boolValidateDetails = updateDetailsData();
+        // if (boolValidateDetails == false) {
+        //     event.preventDefault();
+        // }
     });
 
     // Function update details data
@@ -306,7 +306,7 @@
             }
         });
         
-        printTableDetails();
+        // printTableDetails();
         printTablePhotos();
         // print_table_photos(photos);
         synchronize_child_and_parent_category($);
@@ -410,7 +410,10 @@
                                                     <div class="form-group">
                                                         <label class="col-md-3 control-label">Thương hiệu</label>
                                                         <div class="col-md-9">
-                                                            <select name="brand_id" class="form-control m-b">
+                                                            @if(isset($data->id)) 
+                                                            <input type="hidden" name="brand_id" value="{{$data->brand_id}}">
+                                                            @endif
+                                                            <select name="brand_id" class="form-control m-b" @if(isset($data->id)) disabled="true" @endif>
                                                                 <option value="" selected>-- Chọn thương hiệu --</option>
                                                                 {!! $brand_options !!}
                                                             </select>
@@ -422,7 +425,10 @@
                                                     <div class="form-group">
                                                         <label class="col-md-3 control-label">Nhà cung cấp</label>
                                                         <div class="col-md-9">
-                                                            <select name="supplier_id" class="form-control m-b">
+                                                            @if(isset($data->id)) 
+                                                            <input type="hidden" name="supplier_id" value="{{$data->supplier_id}}">
+                                                            @endif
+                                                            <select name="supplier_id" class="form-control m-b" @if(isset($data->id)) disabled="true" @endif>
                                                                 <option value="" selected>-- Chọn nhà cung cấp --</option>
                                                                 {!! $supplier_options !!}
                                                             </select>
@@ -435,7 +441,7 @@
                                                         <label class="col-md-3 control-label">Giá nhập</label>
                                                         <div class="col-md-3">
                                                             <input type="text" name="price" placeholder="" class="form-control m-b input-price"
-                                                            value="@if(isset($data->price)){{$data->price}}@else{{old('price')}}@endif"/>
+                                                            value="@if(isset($data->price)){{$data->price}}@else{{old('price')}}@endif" @if(isset($data->id)) readonly="readonly" @endif/>
                                                         </div>
                                                         <label class="col-md-2 control-label">Giá bán</label>
                                                         <div class="col-md-3">
@@ -487,32 +493,56 @@
                                                         </div>
                                                     </div>
                                                 </div>
-
-                                                <div class="row">
-                                                    <div class="form-group">
-                                                        <div class="col-md-3">
-                                                            <button type="button" class="btn btn-success pull-right c-add-info" id="add_details">Thêm</button>
-                                                        </div>
-                                                        <div class="col-md-9">
-                                                            <div class="table-responsive">
-                                                                <table id="i-product-info" class="table">
-                                                                    <thead>
-                                                                        <tr>
-                                                                            <th>Màu sắc</th>
-                                                                            <th>Kích thước</th>
-                                                                            <th>Số lượng</th>
-                                                                            <th></th>
-                                                                        </tr>
-                                                                    </thead>
-                                                                    <tbody>
-                                                                    </tbody>
-                                                                    <tfoot>
-                                                                    </tfoot>
-                                                                </table>
+                                        
+                                                @if(isset($detailsByWarehouses))
+                                                <div class="tabs-container m-b">
+                                                    <ul class="nav nav-tabs">
+                                                        @foreach($detailsByWarehouses as $key => $warehouse)
+                                                        <li @if($key == 0)class="active"@endif><a data-toggle="tab" href="#tab-{{$warehouse['code']}}" aria-expanded="true">{{$warehouse['name']}}</a></li>
+                                                        @endforeach
+                                                    </ul>
+                                                    <div class="tab-content">
+                                                        @foreach($detailsByWarehouses as $key => $warehouse)
+                                                        <div id="tab-{{$warehouse['code']}}" @if($key == 0) class="tab-pane active" @else class="tab-pane" @endif>
+                                                            <div class="panel-body">
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <!-- <div class="col-md-3">
+                                                                            <button type="button" class="btn btn-success pull-right c-add-info" id="add_details">Thêm</button>
+                                                                        </div> -->
+                                                                        <div class="col-md-12">
+                                                                            <div class="table-responsive">
+                                                                                <table id="i-product-info" class="table">
+                                                                                    <thead>
+                                                                                        <tr>
+                                                                                            <th>Màu sắc</th>
+                                                                                            <th>Kích thước</th>
+                                                                                            <th>Số lượng</th>
+                                                                                        </tr>
+                                                                                    </thead>
+                                                                                    <tbody>
+                                                                                        @foreach($warehouse['details'] as $detail)
+                                                                                        <tr>
+                                                                                            <th>@if(isset($detail['color_code'])){{$detail['color_code']['name']}}@endif</th>
+                                                                                            <th>@if(isset($detail['size'])){{$detail['size']['name']}}@endif</th>
+                                                                                            <th>{{$detail['quantity']}}</th>
+                                                                                        </tr>
+                                                                                        @endforeach
+                                                                                    </tbody>
+                                                                                    <tfoot>
+                                                                                    </tfoot>
+                                                                                </table>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                         </div>
+                                                        @endforeach
                                                     </div>
                                                 </div>
+                                                @endif
+
                                             </div>
                                             <div class="col-md-4">
                                                 <!-- BEGIN: Product photo -->

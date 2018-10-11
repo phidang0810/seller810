@@ -364,7 +364,7 @@ span.select2.select2-container.select2-container--default {
     $(document).ready(function ($) {
 
         // Init select2
-        var url_get_products = '{{route("admin.carts.getProductAjax")}}';
+        var url_get_products = '{{route("admin.products.getProductEmptiableAjax")}}';
         $('select[name="product_id"]').select2({
             placeholder: '-- Chọn sản phẩm --',
             ajax: {//---> Retrieve post data

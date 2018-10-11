@@ -49,11 +49,12 @@ class ProductController extends AdminController
             $this->_data['categories'] = array_to_string($categories);
 
             $this->_data['details'] = json_encode($product->getDetails($id));
+            $this->_data['detailsByWarehouses'] = $product->getDetailsByWarehouses($id);
             $this->_data['photos'] = json_encode($product->getPhotos($id));
         }
 
         $this->_data['supplier_options'] = $product->getSupplierOptions($id);
-        $this->_data['categoriesTree'] = make_list_hierarchy($category->getCategoriesTree(), $categories);
+        $this->_data['categoriesTree'] = make_list_hierarchy($category->getCategoriesTree(), $categories, '', $id != null);
         $this->_data['size_options'] = $product->getSizeOptions($id);
         $this->_data['color_options'] = $product->getColorOptions($id);
         $this->_data['brand_options'] = $product->getBrandOptions($id);
@@ -118,5 +119,14 @@ class ProductController extends AdminController
         return response()->json([
             'success' => true
         ]);
+    }
+
+    public function getProductEmptiableAjax(ProductRepository $product){
+        $data = $product->getProductsEmptiable($this->_request);
+        $message = 'Không có sản phẩm';
+        if (count($data)) {
+            $message = 'Sản phẩm được lấy thành công.';
+        }
+        return response()->json($data);
     }
 }

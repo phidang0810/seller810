@@ -67,4 +67,14 @@ class Product extends BaseModel
     {
         return $this->belongsTo('App\Models\Supplier');
     }
+
+    /**
+     * A product can have many photos.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function warehouseProducts() {
+
+        return $this->hasMany('App\Models\WarehouseProduct');
+    }
 }

@@ -64,7 +64,7 @@ Route::prefix('khach-hang')
 });
 
 Route::prefix('thuong-hieu')
-    ->middleware('permission:product_manager')->group(function () {
+->middleware('permission:product_manager')->group(function () {
     Route::get ('/', 'BrandController@index')->name('admin.brands.index');
     Route::get ('/chi-tiet', 'BrandController@view')->name('admin.brands.view');
     Route::get ('/them', 'BrandController@view')->name('admin.brands.create');
@@ -146,6 +146,7 @@ Route::prefix('san-pham')
     Route::post ('/them', 'ProductController@store')->name('admin.products.store');
     Route::delete ('/', 'ProductController@delete')->name('admin.products.delete');
     Route::put ('/change-status', 'ProductController@changeStatus')->name('admin.products.changeStatus');
+    Route::get ('/danh-sach-san-pham', 'ProductController@getProductEmptiableAjax')->name('admin.products.getProductEmptiableAjax');
 
     Route::get ('/mau-sac/', 'ColorController@index')->name('admin.colors.index');
     Route::get ('/mau-sac/chi-tiet', 'ColorController@view')->name('admin.colors.view');

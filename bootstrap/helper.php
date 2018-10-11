@@ -51,21 +51,20 @@ function option_menu($array, $text = "", $select = 0, $result = ''){
 	return $result;
 }
 
-function make_list_hierarchy($array, $checked = array(), $result = ''){
+function make_list_hierarchy($array, $checked = array(), $result = '', $disable = false){
 	$result .= '<ul class="list-tree">';
 	foreach ($array as $key => $value) {
+		$result .= '<li class="list-tree-item">
+			<input type="checkbox" value="'.$key.'"';
 		if (array_key_exists($key, $checked)) {
-			$result .= '<li class="list-tree-item">
-			
-			<input type="checkbox" value="'.$key.'" checked>'.$value['name'];
-		}else{
-			$result .= '<li class="list-tree-item">
-	
-			<input type="checkbox" value="'.$key.'">'.$value['name'];
+			$result .= ' checked ';
 		}
-		
+		if ($disable) {
+			$result .= ' disabled="true" ';
+		}
+		$result .= '>'.$value['name'];
 		if (count($value['children']) > 0) {
-			$result .= make_list_hierarchy($value['children'], $checked);
+			$result .= make_list_hierarchy($value['children'], $checked, '', $disable);
 		}
 		$result .= '</li>';
 
