@@ -189,7 +189,7 @@ Class ImportProductRepository
 			$model->category_ids = $data['categories'];
 
 			// Generate product code based on category code
-			$category = $this->lowestLevelCategory($model->id);
+			$category = $this->lowestLevelCategory($model->id, $data['categories']);
 			$model->main_cate = $category->id;
 			$old_barcode_text = $model->barcode_text;
 			$model->barcode_text = general_product_code($category->code, $model->id, 7);
@@ -599,9 +599,12 @@ Class ImportProductRepository
 		return list_ids(Category::whereIn('id', explode(',', $model->category_ids))->get());
 	}
 
-	public function lowestLevelCategory($id){
+	public function lowestLevelCategory($id, $categories = null){
 		$model = ImportProduct::find($id);
-		$category = Category::whereIn('id', explode(',', $model->category_ids))->orderBy('level', 'desc')->first();
+		if ($categories == null) {
+			$categories = $model->category_ids;
+		}
+		$category = Category::whereIn('id', explode(',', $categories))->orderBy('level', 'desc')->first();
 		return $category;
 	}
 
