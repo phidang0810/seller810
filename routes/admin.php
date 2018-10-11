@@ -122,6 +122,7 @@ Route::prefix('kho-hang')
         Route::delete ('/', 'TransportWarehouseController@delete')->name('admin.transport_warehouse.delete');
         Route::get ('/nhan-hang', 'TransportWarehouseController@receive')->name('admin.transport_warehouse.receive');
         Route::get ('/nhan-hang/san-pham', 'TransportWarehouseController@receiveProduct')->name('admin.transport_warehouse.receiveProduct');
+        Route::post ('/nhan-hang/hoan-tat', 'TransportWarehouseController@received')->name('admin.transport_warehouse.received');
         Route::get ('/in', 'TransportWarehouseController@print')->name('admin.transport_warehouse.print');
     });
 

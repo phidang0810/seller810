@@ -20,6 +20,9 @@
         }).done(function(data) {
             $('#btn-'+id).hide();
             $('#detail_status_'+id).html("{{TRANSPORT_DETAIL_TEXT[TRANSPORT_DETAIL_RECEIVED]}}");
+            if (data.all_received == "true") {
+                $('button[name=action][value=save_complete]').removeAttr('disabled');
+            }
         });
     }
 </script>
@@ -28,6 +31,13 @@
 <div class="row">
     <div class="col-lg-12">
         <div class="ibox float-e-margins pl-15 pr-15">
+            @include('admin._partials._alert')
+            <form role="form" method="POST" id="mainForm" action="{{route('admin.transport_warehouse.received')}}"
+            enctype="multipart/form-data">
+            {{ csrf_field() }}
+            @if (isset($data->id))
+            <input type="hidden" name="id" value="{{$data->id}}"/>
+            @endif
             <div class="row">
                 <div class="col-md-8">
                     <div class="ibox-content">
@@ -146,11 +156,23 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="text-right">
+                                        <a href="{{route('admin.transport_warehouse.index')}}" class="btn btn-default"><i class="fa fa-arrow-circle-o-left"></i> Trở lại</a>
+                                        <button name="action" class="btn btn-primary" value="save_complete" @if(!$all_received)disabled="disabled"@endif><i
+                                            class="fa fa-save"></i> Nhận hàng xong
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </form>
     </div>
+</div>
 </div>
 @endsection

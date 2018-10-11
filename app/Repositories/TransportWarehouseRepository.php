@@ -330,13 +330,24 @@ Class TransportWarehouseRepository
 		$model->status = TRANSPORT_DETAIL_RECEIVED;
 		$model->save();
 
+		$result['all_received'] = 'false';
+
 		if ($this->areAllDetailsReceived($model->transportWarehouse->id)) {
-			$modelTransportWarehouse = TransportWarehouse::find($model->transportWarehouse->id);
-			$modelTransportWarehouse->status = TRANSPORT_TRANSPORTED;
-			$modelTransportWarehouse->save();
+			$result['all_received'] = 'true';
 		}
 
 		return $result;
+	}
+
+	public function checkReceived($id){
+		if ($this->areAllDetailsReceived($id)) {
+			$model = TransportWarehouse::find($id);
+			$model->status = TRANSPORT_TRANSPORTED;
+			$model->save();
+
+			return true;
+		}
+		return false;
 	}
 
 	public function areAllDetailsReceived($id){
