@@ -619,7 +619,7 @@ span.select2.select2-container.select2-container--default {
 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-3 control-label">Mô tả sản phẩm</label>
+                                                        <label class="col-md-3 control-label">Mô tả</label>
                                                         <div class="col-md-9">
                                                             <textarea name="description" id="" cols="30" rows="10"  class="form-control m-b">@if(isset($data->description)){{$data->description}}@else{{old('description')}}@endif</textarea>
                                                         </div>
@@ -637,7 +637,7 @@ span.select2.select2-container.select2-container--default {
 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-3 control-label">Thứ tự sản phẩm</label>
+                                                        <label class="col-md-3 control-label">Thứ tự</label>
                                                         <div class="col-md-3">
                                                             <input type="text" name="order" placeholder="" class="form-control m-b"
                                                             value="@if(isset($data->order)){{$data->order}}@else{{old('order')}}@endif"/>

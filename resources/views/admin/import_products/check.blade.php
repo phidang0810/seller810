@@ -64,7 +64,7 @@
                                 @if(isset($data->details))
                                 @foreach ($data->details as $detail)
                                 <tr>
-                                    <td colspan="1"><img src="@if(isset($data->photo) && $data->photo != ''){{asset('storage/' .$data->photo)}}@else{{asset('storage/' .$data->product->photo)}}@endif" width="50" height="auto"></td>
+                                    <td colspan="1"><img src="@if(isset($data->photo) && $data->photo != ''){{asset('storage/' .$data->photo)}}@endif" width="50" height="auto"></td>
                                     <td class="" colspan="1">@if(isset($data)){{$data->name}}@endif</td>
                                     <td class="" colspan="1">@if(isset($data)){{$data->barcode_text}}@endif</td>
                                     <td class="" colspan="1">@if(isset($detail->color)){{$detail->color->name}}@endif</td>
@@ -73,7 +73,7 @@
                                     <td class="thousand-number money text-right" colspan="1">{{$data->price}}</td>
                                     <td class="thousand-number money text-right" colspan="1">{{$data->price * $detail->quantity}}</td>
                                     <td>
-                                        @if($detail->status == 1)
+                                        @if($detail->status == IMPORT_DETAIL_UNCONFIMRED)
                                         <a href="#" class="btn btn-primary" id="btn-{{$detail->id}}" onclick="performDetail({{$detail->id}})">{{IMPORT_DETAIL_TEXT[$detail->status]}}</a>
                                         @endif
                                     </td>
