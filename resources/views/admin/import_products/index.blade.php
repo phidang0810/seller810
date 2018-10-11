@@ -6,7 +6,6 @@
 <!-- Page-Level Scripts -->
 <script>
     var url_delete = "{{route('admin.import_products.delete')}}";
-    var url_importWarehouse = "{{route('admin.import_products.importWarehouse')}}";
     var table;
     $.ajaxSetup({
         headers: {
@@ -117,58 +116,6 @@ $("#dataTables").on("click", '.bt-delete', function(){
                     swal({
                         title: "Thành công!",
                         text: "Sản phẩm " + name + " đã bị xóa.",
-                        html: true,
-                        type: "success",
-                        confirmButtonClass: "btn-primary",
-                        confirmButtonText: "Đóng lại."
-                    });
-                } else {
-                    errorHtml = '<ul class="text-left">';
-                    $.each( response.errors, function( key, error ) {
-                        errorHtml += '<li>' + error + '</li>';
-                    });
-                    errorHtml += '</ul>';
-                    swal({
-                        title: "Error! Refresh page and try again.",
-                        text: errorHtml,
-                        html: true,
-                        type: "error",
-                        confirmButtonClass: "btn-danger"
-                    });
-                }
-                table.fnDraw();
-            }
-        });
-
-    });
-});
-
-$("#dataTables").on("click", '.bt-importwarehouse', function(){
-    var name = $(this).attr('data-name');
-    var data = {
-        id: $(this).attr('data-id')
-    };
-    swal({
-        title: "Cảnh Báo!",
-        text: "Bạn có chắc muốn nhập mã nhập hàng <b>"+name+"</b> vào kho ?",
-        html:true,
-        type: "warning",
-        showCancelButton: true,
-        confirmButtonClass: "btn-primary",
-        confirmButtonText: "Vâng, nhập!",
-        closeOnConfirm: false
-    },
-    function(){
-        $.ajax({
-            url: url_importWarehouse,
-            type: 'get',
-            data: data,
-            dataType:'json',
-            success: function(response) {
-                if (response.success) {
-                    swal({
-                        title: "Thành công!",
-                        text: "Mã nhập hàng " + name + " đã nhập hàng thành công.",
                         html: true,
                         type: "success",
                         confirmButtonClass: "btn-primary",

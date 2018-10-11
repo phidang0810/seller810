@@ -84,6 +84,9 @@ Class WarehouseRepository
 		$model->active = $data['active'];
 
 		$model->save();
+		if ($id == null) {
+			$model->code = general_code('K H', $id, 2);
+		}
 
 		return $model;
 	}

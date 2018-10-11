@@ -12,14 +12,14 @@
 
     function performDetail(id){
         $.ajax({
-            url: "{{route('admin.import_products.confirm')}}",
+            url: "{{route('admin.import_products.confirmImport')}}",
             data:{
                 id:id,
             },
             dataType:'json'
         }).done(function(data) {
             $('#btn-'+id).hide()
-            if (data.all_confirmed == "true") {
+            if (data.all_imported == "true") {
                 $('button[name=action][value=save_complete]').removeAttr('disabled');
             }
         })
@@ -31,7 +31,7 @@
     <div class="col-lg-12">
         <div class="ibox float-e-margins pl-15 pr-15">
             @include('admin._partials._alert')
-            <form role="form" method="POST" id="mainForm" action="{{route('admin.import_products.check_completed')}}"
+            <form role="form" method="POST" id="mainForm" action="{{route('admin.import_products.import_completed')}}"
             enctype="multipart/form-data">
             {{ csrf_field() }}
             @if (isset($data->id))
@@ -42,7 +42,7 @@
                     <div class="ibox-content">
                         <div class="row">
                             <div class="col-md-12">
-                                <h2>Kiểm hàng</h2>
+                                <h2>Nhập kho</h2>
                             </div>
                         </div>
                         <table class="table table-borderless">
@@ -73,7 +73,7 @@
                                     <td class="thousand-number money text-right" colspan="1">{{$data->price}}</td>
                                     <td class="thousand-number money text-right" colspan="1">{{$data->price * $detail->quantity}}</td>
                                     <td>
-                                        @if($detail->status == IMPORT_DETAIL_UNCONFIMRED)
+                                        @if($detail->status == IMPORT_DETAIL_CONFIMRED)
                                         <a href="#" class="btn btn-primary" id="btn-{{$detail->id}}" onclick="performDetail({{$detail->id}})">{{IMPORT_DETAIL_ACTION_TEXT[$detail->status]}}</a>
                                         @endif
                                     </td>
@@ -207,8 +207,8 @@
                                 <div class="col-md-12">
                                     <div class="text-right">
                                         <a href="{{route('admin.import_products.receive')}}" class="btn btn-default"><i class="fa fa-arrow-circle-o-left"></i> Trở lại</a>
-                                        <button name="action" class="btn btn-primary" value="save_complete" @if(!$all_confirmed)disabled="disabled"@endif><i
-                                            class="fa fa-save"></i> Kiểm hàng xong
+                                        <button name="action" class="btn btn-primary" value="save_complete" @if(!$all_imported)disabled="disabled"@endif><i
+                                            class="fa fa-save"></i> Nhập kho xong
                                         </button>
                                     </div>
                                 </div>

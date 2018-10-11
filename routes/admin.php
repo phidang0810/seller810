@@ -108,7 +108,9 @@ Route::prefix('kho-hang')
         Route::get ('/kiem-hang', 'ImportProductController@check')->name('admin.import_products.check');
         Route::post ('/kiem-hang/hoan-tat', 'ImportProductController@checkCompleted')->name('admin.import_products.check_completed');
         Route::get ('/kiem-hang/xac-nhan', 'ImportProductController@confirm')->name('admin.import_products.confirm');
-        Route::get ('/nhap-kho', 'ImportProductController@importWarehouse')->name('admin.import_products.importWarehouse');
+        Route::get ('/nhap-kho', 'ImportProductController@import')->name('admin.import_products.import');
+        Route::get ('/nhap-kho/xac-nhan', 'ImportProductController@confirmImport')->name('admin.import_products.confirmImport');
+        Route::post ('/nhap-kho/hoan-tat', 'ImportProductController@importCompleted')->name('admin.import_products.import_completed');
         Route::get ('/in', 'ImportProductController@print')->name('admin.import_products.print');
     });
 
