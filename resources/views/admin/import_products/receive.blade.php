@@ -163,7 +163,8 @@
         $('label.lbl-customer-code').text("");
         $('label.lbl-customer-address').text("");
         $('table.tbl-list-product tbody').html("");
-        transport_quantity = 0;
+        import_quantity = 0;
+        import_total_price = 0;
     }
 
     $("#dataTables").on("click", '.bt-print', function(){
@@ -172,7 +173,8 @@
             id: $(this).attr('data-id')
         };
 
-        var transport_quantity = 0;
+        var import_quantity = 0;
+        var import_total_price = 0;
 
         $.ajax({
             url: url_print,
@@ -181,18 +183,16 @@
             dataType:'json',
             success: function(response) {
                 if (response.success) {
-                    // console.log(response);
                     resetDataPrint();
-                    $('label.lbl-customer-name').text(response.import_warehouse.staff.full_name);
-                    $('label.lbl-customer-created').text(response.import_warehouse.created_at);
-                    $('label.lbl-customer-phone').text(response.import_warehouse.staff.phone);
-                    $('label.lbl-customer-email').text(response.import_warehouse.staff.email);
-                    $('label.lbl-customer-code').text(response.import_warehouse.code);
-                    $('label.lbl-customer-address').text(response.import_warehouse.supplier.name);
-                    // if (response.import_warehouse.product.length > 0) {
-
-                    //     $('table.tbl-list-product tbody').html(printTableRows(response.import_warehouse.products));
-                    // }
+                    $('label.lbl-customer-name').text(response.import_product.staff.full_name);
+                    $('label.lbl-customer-created').text(response.import_product.created_at);
+                    $('label.lbl-customer-phone').text(response.import_product.staff.phone);
+                    $('label.lbl-customer-email').text(response.import_product.staff.email);
+                    $('label.lbl-customer-code').text(response.import_product.code);
+                    $('label.lbl-customer-address').text(response.import_product.supplier.name);
+                    if (response.import_product.details.length > 0) {
+                        $('table.tbl-list-product tbody').html(printTableRows(response.import_product));
+                    }
                     var print_el = $("#print-section");
                     print_el.removeClass("hidden");
                     print_el.printThis({
@@ -206,16 +206,23 @@
         });
     });
 
-    function printTableRows(details){
+    function printTableRows(import_product){
         html = "";
-        $.each(details, function(key, detail){
-            html_product_name = detail.product.name;
-            html_product_code = detail.product.barcode_text;
+        $.each(import_product.details, function(key, detail){
+            html_product_name = import_product.name;
+            html_product_code = import_product.barcode_text;
             html_quantity = detail.quantity;
-            html += '<tr><th>'+html_product_name+'</th><th>'+html_product_code+'</th><th style="text-align: right;">'+html_quantity+'</th></tr>';
-            transport_quantity += parseInt(detail.quantity);
+            html_color = detail.color.name;
+            html_size = detail.size.name;
+            html_price = import_product.price;
+            html_total_price = parseInt(import_product.price)*parseInt(detail.quantity);
+            html += '<tr><th>'+html_product_name+'</th><th>'+html_product_code+'</th><th style="text-align: right;">'+html_quantity+'</th><th>'+html_color+'</th><th>'+html_size+'</th><th style="text-align: right;">'+html_price+'</th><th style="text-align: right;">'+html_total_price+'</th></tr>';
+            import_quantity += parseInt(detail.quantity);
+            import_total_price += parseInt(import_product.price)*parseInt(detail.quantity);
         });
-        $('label.lbl-transport-quantity').text(transport_quantity);
+        $('label.lbl-transport-total-quantity').text(import_quantity);
+        $('label.lbl-transport-total-price').text(import_total_price);
+        $('h4.lbl-transport-total').text(import_total_price);
         return html;
     }
 </script>

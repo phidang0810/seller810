@@ -762,14 +762,15 @@ Class ImportProductRepository
 			$model->staff;
 			$model->details;
 			$model->supplier;
-			$model->product;
-			// if ($model->details) {
-			// 	foreach ($model->details as $detail) {
-			// 		$detail->product;
-			// 	}
-			// }
+			// $model->product;
+			if ($model->details) {
+				foreach ($model->details as $detail) {
+					$detail->color;
+					$detail->size;
+				}
+			}
 		}
-		$result['import_warehouse'] = $model;
+		$result['import_product'] = $model;
 		return $result;
 	}
 }

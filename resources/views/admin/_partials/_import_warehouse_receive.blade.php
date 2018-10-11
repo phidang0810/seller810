@@ -71,7 +71,7 @@
             </div>
         </div>
     </div>
-    <div class="col-sm-12" style="border: 3px solid #333; margin-top: 30px;">
+    <div class="col-sm-12" style="border: 3px solid #333; margin-top: 30px; position: relative;">
         <div class="table-wrapper">
             <table class="table bordered tbl-list-product table-borderless">
                 <thead style="border-bottom: 3px solid #333;">
@@ -79,6 +79,10 @@
                         <th>Tên sản phẩm</th>
                         <th>Mã sản phẩm</th>
                         <th style="text-align: right;">Số lượng</th>
+                        <th>Màu sắc</th>
+                        <th>Kích thước</th>
+                        <th style="text-align: right;">Giá</th>
+                        <th style="text-align: right;">Tổng giá</th>
                     </tr>
                 </thead>
                 <tfoot>
@@ -92,8 +96,8 @@
             </div>
             <div class="col-sm-5">
                 <div class="form-group">
-                    <label class="col-sm-8 control-label font-bold">Tổng số lượng chuyển:</label>
-                    <label class="col-sm-4 control-label lbl-transport-quantity" style="text-align: right;"></label>
+                    <label class="col-sm-8 control-label font-bold">Tổng cộng:</label>
+                    <label class="col-sm-4 control-label lbl-transport-total-price" style="text-align: right;"></label>
                 </div>
             </div>
         </div>
@@ -102,8 +106,15 @@
             </div>
             <div class="col-sm-5">
                 <div class="form-group">
-                    <label class="col-sm-8 control-label font-bold">Chi phí vận chuyển:</label>
+                    <label class="col-sm-8 control-label font-bold">Tổng số lượng:</label>
+                    <label class="col-sm-4 control-label lbl-transport-total-quantity" style="text-align: right;"></label>
                 </div>
+            </div>
+        </div>
+        <div class="row" style="position: absolute; bottom: 0; right: 70px; width: 150px;">
+            <div class="form-group">
+                <h4 class="col-sm-8 control-label font-bold">Thành tiền:</h4>
+                <h4 class="col-sm-4 control-label lbl-transport-total" style="text-align: right;"></h4>
             </div>
         </div>
     </div>
@@ -111,7 +122,7 @@
         <div class="row" style="text-align: center; margin-top: 30px;">
             <div class="col-sm-4">
                 <div class="form-group">
-                    <label class="col-sm-12 control-label font-bold">Người xuất kho</label>
+                    <label class="col-sm-12 control-label font-bold">Người nhập</label>
                     <label class="col-sm-12 control-label">(Ký, ghi rõ họ tên)</label>
                 </div>
             </div>
@@ -123,7 +134,7 @@
             </div>
             <div class="col-sm-4">
                 <div class="form-group">
-                    <label class="col-sm-12 control-label font-bold">Người lập</label>
+                    <label class="col-sm-12 control-label font-bold">Giám đốc</label>
                     <label class="col-sm-12 control-label">(Ký, ghi rõ họ tên)</label>
                 </div>
             </div>
