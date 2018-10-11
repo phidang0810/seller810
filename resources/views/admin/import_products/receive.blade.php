@@ -6,6 +6,7 @@
 <!-- Page-Level Scripts -->
 <script>
     var url_delete = "{{route('admin.import_products.delete')}}";
+    var url_print = "{{route('admin.import_products.print')}}";
     var table;
     $.ajaxSetup({
         headers: {
@@ -79,68 +80,132 @@
 
                 });
 
-$('#fSearch').submit(function(){
-    table.fnDraw();
-    return false;
-});
+        $('#fSearch').submit(function(){
+            table.fnDraw();
+            return false;
+        });
 
-$('#bt-reset').click(function(){
-    $('#fSearch')[0].reset();
-    table.fnDraw();
-});
-});
+        $('#bt-reset').click(function(){
+            $('#fSearch')[0].reset();
+            table.fnDraw();
+        });
+    });
 
-$("#dataTables").on("click", '.bt-delete', function(){
-    var name = $(this).attr('data-name');
-    var data = {
-        ids: [$(this).attr('data-id')]
-    };
-    swal({
-        title: "Cảnh Báo!",
-        text: "Bạn có chắc muốn xóa <b>"+name+"</b> ?",
-        html:true,
-        type: "warning",
-        showCancelButton: true,
-        confirmButtonClass: "btn-danger",
-        confirmButtonText: "Vâng, xóa!",
-        closeOnConfirm: false
-    },
-    function(){
+    $("#dataTables").on("click", '.bt-delete', function(){
+        var name = $(this).attr('data-name');
+        var data = {
+            ids: [$(this).attr('data-id')]
+        };
+        swal({
+            title: "Cảnh Báo!",
+            text: "Bạn có chắc muốn xóa <b>"+name+"</b> ?",
+            html:true,
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonClass: "btn-danger",
+            confirmButtonText: "Vâng, xóa!",
+            closeOnConfirm: false
+        },
+        function(){
+            $.ajax({
+                url: url_delete,
+                type: 'DELETE',
+                data: data,
+                dataType:'json',
+                success: function(response) {
+                    if (response.success) {
+                        swal({
+                            title: "Thành công!",
+                            text: "Sản phẩm " + name + " đã bị xóa.",
+                            html: true,
+                            type: "success",
+                            confirmButtonClass: "btn-primary",
+                            confirmButtonText: "Đóng lại."
+                        });
+                    } else {
+                        errorHtml = '<ul class="text-left">';
+                        $.each( response.errors, function( key, error ) {
+                            errorHtml += '<li>' + error + '</li>';
+                        });
+                        errorHtml += '</ul>';
+                        swal({
+                            title: "Error! Refresh page and try again.",
+                            text: errorHtml,
+                            html: true,
+                            type: "error",
+                            confirmButtonClass: "btn-danger"
+                        });
+                    }
+                    table.fnDraw();
+                }
+            });
+
+        });
+    });
+
+    function resetDataPrint(){
+        $('label.lbl-customer-name').text("");
+        $('label.lbl-customer-created').text("");
+        $('label.lbl-customer-phone').text("");
+        $('label.lbl-customer-email').text("");
+        $('label.lbl-customer-code').text("");
+        $('label.lbl-customer-address').text("");
+        $('table.tbl-list-product tbody').html("");
+        transport_quantity = 0;
+    }
+
+    $("#dataTables").on("click", '.bt-print', function(){
+        var name = $(this).attr('data-name');
+        var data = {
+            id: $(this).attr('data-id')
+        };
+
+        var transport_quantity = 0;
+
         $.ajax({
-            url: url_delete,
-            type: 'DELETE',
+            url: url_print,
+            type: 'get',
             data: data,
             dataType:'json',
             success: function(response) {
                 if (response.success) {
-                    swal({
-                        title: "Thành công!",
-                        text: "Sản phẩm " + name + " đã bị xóa.",
-                        html: true,
-                        type: "success",
-                        confirmButtonClass: "btn-primary",
-                        confirmButtonText: "Đóng lại."
+                    // console.log(response);
+                    resetDataPrint();
+                    $('label.lbl-customer-name').text(response.import_warehouse.staff.full_name);
+                    $('label.lbl-customer-created').text(response.import_warehouse.created_at);
+                    $('label.lbl-customer-phone').text(response.import_warehouse.staff.phone);
+                    $('label.lbl-customer-email').text(response.import_warehouse.staff.email);
+                    $('label.lbl-customer-code').text(response.import_warehouse.code);
+                    $('label.lbl-customer-address').text(response.import_warehouse.supplier.name);
+                    // if (response.import_warehouse.product.length > 0) {
+
+                    //     $('table.tbl-list-product tbody').html(printTableRows(response.import_warehouse.products));
+                    // }
+                    var print_el = $("#print-section");
+                    print_el.removeClass("hidden");
+                    print_el.printThis({
+                        header: null,
+
                     });
                 } else {
-                    errorHtml = '<ul class="text-left">';
-                    $.each( response.errors, function( key, error ) {
-                        errorHtml += '<li>' + error + '</li>';
-                    });
-                    errorHtml += '</ul>';
-                    swal({
-                        title: "Error! Refresh page and try again.",
-                        text: errorHtml,
-                        html: true,
-                        type: "error",
-                        confirmButtonClass: "btn-danger"
-                    });
+
                 }
-                table.fnDraw();
             }
         });
-
     });
-});
+
+    function printTableRows(details){
+        html = "";
+        $.each(details, function(key, detail){
+            html_product_name = detail.product.name;
+            html_product_code = detail.product.barcode_text;
+            html_quantity = detail.quantity;
+            html += '<tr><th>'+html_product_name+'</th><th>'+html_product_code+'</th><th style="text-align: right;">'+html_quantity+'</th></tr>';
+            transport_quantity += parseInt(detail.quantity);
+        });
+        $('label.lbl-transport-quantity').text(transport_quantity);
+        return html;
+    }
 </script>
 @endsection
 @section('content')
@@ -199,4 +264,5 @@ $("#dataTables").on("click", '.bt-delete', function(){
         </div>
     </div>
 </div>
+@include('admin._partials._import_warehouse_receive')
 @endsection

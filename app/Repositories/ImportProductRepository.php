@@ -88,6 +88,7 @@ Class ImportProductRepository
 		}, true)
 		->addColumn('action', function ($importProduct) {
 			$html = '';
+			$html .= '<a href="#" class="btn btn-xs btn-success bt-print" style="margin-right: 5px" data-id="' . $importProduct->id . '" data-name="' . $importProduct->code . '"> In</a>';
 			switch ($importProduct->status) {
 				case IMPORT_IMPORTED:
 				$html .= '<a href="' . route('admin.import_products.check', ['id' => $importProduct->id]) . '" class="btn btn-xs btn-primary" style="margin-right: 5px"> Kiểm hàng</a>';
@@ -716,7 +717,22 @@ Class ImportProductRepository
 	}
 
 	public function getPrintDatas($id){
-		$result = [];
+		$result = [
+			'success' => true
+		];
+		$model = ImportProduct::find($id);
+		if ($model) {
+			$model->staff;
+			$model->details;
+			$model->supplier;
+			$model->product;
+			// if ($model->details) {
+			// 	foreach ($model->details as $detail) {
+			// 		$detail->product;
+			// 	}
+			// }
+		}
+		$result['import_warehouse'] = $model;
 		return $result;
 	}
 }
