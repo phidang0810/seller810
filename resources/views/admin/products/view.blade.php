@@ -386,6 +386,12 @@
                                                             <input readonly type="text" name="quantity" placeholder="0" class="form-control m-b c-quatity-input"
                                                             value="@if(isset($data->quantity)){{$data->quantity}}@else{{old('quantity')}}@endif"/>
                                                         </div>
+
+                                                        <label class="col-md-3 control-label">Số lượng tồn</label>
+                                                        <div class="col-md-3">
+                                                            <input readonly type="text" name="quantity_available" placeholder="0" class="form-control m-b c-quatity-input"
+                                                            value="@if(isset($data->quantity_available)){{$data->quantity_available}}@else{{old('quantity_available')}}@endif"/>
+                                                        </div>
                                                     </div>
                                                 </div>
 
@@ -518,6 +524,7 @@
                                                                                             <th>Màu sắc</th>
                                                                                             <th>Kích thước</th>
                                                                                             <th>Số lượng</th>
+                                                                                            <th>Số lượng tồn</th>
                                                                                         </tr>
                                                                                     </thead>
                                                                                     <tbody>
@@ -526,6 +533,7 @@
                                                                                             <th>@if(isset($detail['color_code'])){{$detail['color_code']['name']}}@endif</th>
                                                                                             <th>@if(isset($detail['size'])){{$detail['size']['name']}}@endif</th>
                                                                                             <th>{{$detail['quantity']}}</th>
+                                                                                            <th>{{$detail['quantity_available']}}</th>
                                                                                         </tr>
                                                                                         @endforeach
                                                                                     </tbody>

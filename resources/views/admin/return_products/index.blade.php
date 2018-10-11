@@ -20,7 +20,16 @@
         }
     }
     $(document).ready(function() {
+
+        $('#date_range_picker').datepicker({
+            keyboardNavigation: false,
+            forceParse: false,
+            autoclose: true,
+            format: 'dd/mm/yyyy'
+        });
+
         formar_money();
+
         table = $('#dataTables').dataTable({
             // responsive: true,
             searching: false,
@@ -31,6 +40,9 @@
                 "url": "{{route('admin.return_products.index')}}",
                 "data": function ( d ) {
                     d.status = $('#s-status').val();
+                    d.code = $('#s-code').val();
+                    d.start_date = $('input[name=start]').val();
+                    d.end_date = $('input[name=end]').val();
                 },
                 complete: function(){
                     formar_money();
@@ -204,9 +216,26 @@ $("#dataTables").on("click", '.bt-returned', function(){
                     <label>Chọn trạng thái</label>
                     <select class="form-control" name="status" id="s-status">
                         <option value=""> -- Tất cả -- </option>
-                        <option @if(app('request')->has('status') && app('request')->input('status') == ACTIVE) selected @endif value="{{ACTIVE}}">Đã kích hoạt</option>
-                        <option @if(app('request')->has('status') && app('request')->input('status') == INACTIVE) selected @endif value="{{INACTIVE}}">Chưa kích hoạt</option>
+                        <option @if(app('request')->has('status') && app('request')->input('status') == RETURN_RETURNING) selected @endif value="{{RETURN_RETURNING}}">{{RETURN_TEXT[RETURN_RETURNING]}}</option>
+                        <option @if(app('request')->has('status') && app('request')->input('status') == RETURN_RETURNED) selected @endif value="{{RETURN_RETURNED}}">{{RETURN_TEXT[RETURN_RETURNED]}}</option>
                     </select>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label>Mã trả hàng</label>
+                    <input type="text" placeholder="Nhập mã" name="code" id="s-code" class="form-control"
+                    value="{{app('request')->input('code')}}">
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label>Ngày trả</label>
+                    <div class="input-daterange input-group" id="date_range_picker">
+                        <input type="text" class="input-sm form-control" name="start" value="">
+                        <span class="input-group-addon lbl-to">to</span>
+                        <input type="text" class="input-sm form-control" name="end" value="">
+                    </div>
                 </div>
             </div>
             <div class="col-sm-3">

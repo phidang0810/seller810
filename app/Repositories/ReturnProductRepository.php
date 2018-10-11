@@ -22,6 +22,7 @@ use App\Libraries\Photo;
 use Illuminate\Support\Facades\Storage;
 use Response;
 use DNS1D;
+use Carbon\Carbon;
 
 Class ReturnProductRepository
 {
@@ -33,8 +34,26 @@ Class ReturnProductRepository
 		$dataTable = DataTables::eloquent($returnProduct)
 		->filter(function ($query) use ($request) {
 			if (trim($request->get('status')) !== "") {
-				$query->where('active', $request->get('status'));
+				$query->where('status', $request->get('status'));
 			}
+
+            if (trim($request->get('code')) !== "") {
+                $query->where(function ($sub) use ($request) {
+                    $sub->where('code', 'like', '%' . $request->get('code') . '%');
+                });
+            }
+
+            if (trim($request->get('start_date')) !== "") {
+                $fromDate = Carbon::createFromFormat('d/m/Y H:i:s', $request->get('start_date') . ' 00:00:00')->toDateTimeString();
+
+                if (trim($request->get('end_date')) !== "") {
+
+                    $toDate = Carbon::createFromFormat('d/m/Y H:i:s', $request->get('end_date') . ' 23:59:59')->toDateTimeString();
+                    $query->whereBetween('return_date', [$fromDate, $toDate]);
+                } else {
+                    $query->whereDate('return_date', '>=', $fromDate);
+                }
+            }
 		}, true)
 		->addColumn('action', function ($returnProduct) {
 			$html = '';

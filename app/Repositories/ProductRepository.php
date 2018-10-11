@@ -817,7 +817,8 @@ public function getDetailsByWarehouse($id, $warehouse_id){
 				'id' => ($warehouseProduct->productDetail && $warehouseProduct->productDetail->size) ? $warehouseProduct->productDetail->size->id : 0,
 				'name'	=>	($warehouseProduct->productDetail && $warehouseProduct->productDetail->size) ? $warehouseProduct->productDetail->size->name : ""
 			],
-			'quantity' => ($warehouseProduct->quantity) ? $warehouseProduct->quantity : 0
+			'quantity' => ($warehouseProduct->quantity) ? $warehouseProduct->quantity : 0,
+			'quantity_available' => ($warehouseProduct->quantity_available) ? $warehouseProduct->quantity_available : 0
 		];
 	}
 	return $return;

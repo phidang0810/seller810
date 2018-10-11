@@ -20,7 +20,16 @@
         }
     }
     $(document).ready(function() {
+
+        $('#date_range_picker').datepicker({
+            keyboardNavigation: false,
+            forceParse: false,
+            autoclose: true,
+            format: 'dd/mm/yyyy'
+        });
+
         formar_money();
+        
         table = $('#dataTables').dataTable({
             // responsive: true,
             searching: false,
@@ -31,6 +40,9 @@
                 "url": "{{route('admin.transport_warehouse.index')}}",
                 "data": function ( d ) {
                     d.status = $('#s-status').val();
+                    d.code = $('#s-code').val();
+                    d.start_date = $('input[name=start]').val();
+                    d.end_date = $('input[name=end]').val();
                 },
                 complete: function(){
                     formar_money();
@@ -213,9 +225,26 @@
                     <label>Chọn trạng thái</label>
                     <select class="form-control" name="status" id="s-status">
                         <option value=""> -- Tất cả -- </option>
-                        <option @if(app('request')->has('status') && app('request')->input('status') == ACTIVE) selected @endif value="{{ACTIVE}}">Đã kích hoạt</option>
-                        <option @if(app('request')->has('status') && app('request')->input('status') == INACTIVE) selected @endif value="{{INACTIVE}}">Chưa kích hoạt</option>
+                        <option @if(app('request')->has('status') && app('request')->input('status') == TRANSPORT_TRANSPORTING) selected @endif value="{{TRANSPORT_TRANSPORTING}}">{{TRANSPORT_TEXT[TRANSPORT_TRANSPORTING]}}</option>
+                        <option @if(app('request')->has('status') && app('request')->input('status') == TRANSPORT_TRANSPORTED) selected @endif value="{{TRANSPORT_TRANSPORTED}}">{{TRANSPORT_TEXT[TRANSPORT_TRANSPORTED]}}</option>
                     </select>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label>Mã chuyển kho</label>
+                    <input type="text" placeholder="Nhập mã" name="code" id="s-code" class="form-control"
+                    value="{{app('request')->input('code')}}">
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label>Ngày chuyển</label>
+                    <div class="input-daterange input-group" id="date_range_picker">
+                        <input type="text" class="input-sm form-control" name="start" value="">
+                        <span class="input-group-addon lbl-to">to</span>
+                        <input type="text" class="input-sm form-control" name="end" value="">
+                    </div>
                 </div>
             </div>
             <div class="col-sm-3">
