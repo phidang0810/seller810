@@ -605,9 +605,9 @@ span.select2.select2-container.select2-container--default {
 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-3 control-label">Giá nhập</label>
+                                                        <label class="col-md-3 control-label">Giá nhập (<span class="text-danger">*</span>)</label>
                                                         <div class="col-md-3">
-                                                            <input type="text" name="price" placeholder="" class="form-control m-b input-price"
+                                                            <input type="text" name="price" placeholder="" class="form-control required m-b input-price"
                                                             value="@if(isset($data->price)){{$data->price}}@else{{old('price')}}@endif"/>
                                                         </div>
                                                         <label class="col-md-2 control-label">Giá bán (<span class="text-danger">*</span>)</label>
@@ -641,22 +641,6 @@ span.select2.select2-container.select2-container--default {
                                                         <div class="col-md-3">
                                                             <input type="text" name="order" placeholder="" class="form-control m-b"
                                                             value="@if(isset($data->order)){{$data->order}}@else{{old('order')}}@endif"/>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="row">
-                                                    <div class="form-group">
-                                                        <label class="col-md-3 control-label">Trạng thái sản phẩm (<span class="text-danger">*</span>)</label>
-                                                        <div class="col-md-3">
-                                                            <select class="form-control required m-b" name="active">
-                                                                <option @if(isset($data->active) && $data->active === ACTIVE || old('active') === ACTIVE) selected
-                                                                    @endif value="{{ACTIVE}}">Đã kích hoạt
-                                                                </option>
-                                                                <option @if(isset($data->active) && $data->active === INACTIVE || old('active') === INACTIVE) selected
-                                                                    @endif value="{{INACTIVE}}">Chưa kích hoạt
-                                                                </option>
-                                                            </select>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -741,7 +725,7 @@ span.select2.select2-container.select2-container--default {
                 <div class="row">
                     <div class="col-md-12">
                         <div class="text-right">
-                            <a href="{{route('admin.products.index')}}" class="btn btn-default"><i class="fa fa-arrow-circle-o-left"></i> Trở lại</a>
+                            <a href="{{route('admin.import_products.index')}}" class="btn btn-default"><i class="fa fa-arrow-circle-o-left"></i> Trở lại</a>
                             <button type="button" class="btn btn-default" id="bt-reset"><i class="fa fa-refresh"></i>
                                 Làm mới
                             </button>

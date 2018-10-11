@@ -168,7 +168,7 @@ Class ImportProductRepository
 		$model->sell_price = preg_replace('/[^0-9]/', '', $data['sell_price']);
 		$model->description = $data['description'];
 		$model->content = $data['content'];
-		$model->active = $data['active'];
+		$model->active = INACTIVE;
 		$model->order = $data['order'];
 
 		if(isset($data['photo'])) {
@@ -205,7 +205,7 @@ Class ImportProductRepository
 			$model->save();
 		}else{
 			$old_barcode_text = $model->barcode_text;
-			$model->barcode_text = general_product_code('Sản Phẩm', $model->id, 7);
+			$model->barcode_text = general_product_code('SP', $model->id, 7);
 
 			if ($model->barcode) {
 				if ($old_barcode_text != $model->barcode_text) {

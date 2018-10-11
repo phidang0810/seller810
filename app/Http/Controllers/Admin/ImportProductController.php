@@ -96,8 +96,7 @@ class ImportProductController extends AdminController
             'import_staff_id' => 'required',
             'product_id' => 'required',
             'warehouse_id' => 'required',
-            'price' => 'required',
-            'active' => 'required'
+            'price' => 'required'
         ];
 
         if ($product_option == 'new') {
