@@ -98,7 +98,6 @@
                                         }
                                     });
                                 } else {
-                                    $(elem).prop('checked', !elem.checked);
                                     $(elem).parent().find(".switchery").trigger("click");
                                 }
                             });
