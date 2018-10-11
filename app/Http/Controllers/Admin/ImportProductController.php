@@ -181,4 +181,11 @@ class ImportProductController extends AdminController
         ->withErrors($message)
         ->withInput();
     }
+
+    public function print(ImportProductRepository $importProduct){
+        $id = $this->_request->get('id');
+        $result = $importProduct->getPrintDatas($id);
+
+        return response()->json($result);
+    }
 }

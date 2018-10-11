@@ -109,6 +109,7 @@ Route::prefix('kho-hang')
         Route::post ('/kiem-hang/hoan-tat', 'ImportProductController@checkCompleted')->name('admin.import_products.check_completed');
         Route::get ('/kiem-hang/xac-nhan', 'ImportProductController@confirm')->name('admin.import_products.confirm');
         Route::get ('/nhap-kho', 'ImportProductController@importWarehouse')->name('admin.import_products.importWarehouse');
+        Route::get ('/in', 'ImportProductController@print')->name('admin.import_products.print');
     });
 
     Route::prefix('chuyen-kho')->group(function () {
@@ -119,6 +120,7 @@ Route::prefix('kho-hang')
         Route::delete ('/', 'TransportWarehouseController@delete')->name('admin.transport_warehouse.delete');
         Route::get ('/nhan-hang', 'TransportWarehouseController@receive')->name('admin.transport_warehouse.receive');
         Route::get ('/nhan-hang/san-pham', 'TransportWarehouseController@receiveProduct')->name('admin.transport_warehouse.receiveProduct');
+        Route::get ('/in', 'TransportWarehouseController@print')->name('admin.transport_warehouse.print');
     });
 
     Route::prefix('tra-hang')->group(function () {

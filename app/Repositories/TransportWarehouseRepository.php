@@ -38,6 +38,7 @@ Class TransportWarehouseRepository
 		}, true)
 		->addColumn('action', function ($transportWarehouse) {
 			$html = '';
+			$html .= '<a href="#" class="btn btn-xs btn-success bt-print" style="margin-right: 5px" data-id="' . $transportWarehouse->id . '" data-name="' . $transportWarehouse->code . '"> In</a>';
 			switch ($transportWarehouse->status) {
 				case TRANSPORT_TRANSPORTING:
 				$html .= '<a href="' . route('admin.transport_warehouse.receive', ['id' => $transportWarehouse->id]) . '" class="btn btn-xs btn-primary" style="margin-right: 5px"> Nhận hàng</a>';
@@ -351,5 +352,24 @@ Class TransportWarehouseRepository
 			}
 		}
 		return false;
+	}
+
+	public function getPrintDatas($id){
+		$result = [
+			'success' => true
+		];
+		$model = TransportWarehouse::find($id);
+		if ($model) {
+			$model->staff;
+			$model->details;
+			if ($model->details) {
+				foreach ($model->details as $detail) {
+					$detail->receiveWarehouse;
+					$detail->product;
+				}
+			}
+		}
+		$result['transportWarehouse'] = $model;
+		return $result;
 	}
 }

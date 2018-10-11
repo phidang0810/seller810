@@ -133,4 +133,11 @@ class TransportWarehouseController extends AdminController
 
         return response()->json($result);
     }
+
+    public function print(TransportWarehouseRepository $transportWarehouse){
+        $id = $this->_request->get('id');
+        $result = $transportWarehouse->getPrintDatas($id);
+
+        return response()->json($result);
+    }
 }

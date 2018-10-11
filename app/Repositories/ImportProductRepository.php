@@ -618,4 +618,9 @@ Class ImportProductRepository
 		}
 		return false;
 	}
+
+	public function getPrintDatas($id){
+		$result = [];
+		return $result;
+	}
 }

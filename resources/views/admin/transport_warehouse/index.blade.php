@@ -6,6 +6,7 @@
 <!-- Page-Level Scripts -->
 <script>
     var url_delete = "{{route('admin.transport_warehouse.delete')}}";
+    var url_print = "{{route('admin.transport_warehouse.print')}}";
     var table;
     $.ajaxSetup({
         headers: {
@@ -85,15 +86,6 @@
             $('#fSearch')[0].reset();
             table.fnDraw();
         });
-
-        $(".btn-print").click(function(){
-            var print_el = $("#print-section");
-            print_el.removeClass("hidden");
-            print_el.printThis({
-                header: null,
-
-            });
-        });
     });
 
     $("#dataTables").on("click", '.bt-delete', function(){
@@ -147,6 +139,68 @@
 
         });
     });
+
+    $("#dataTables").on("click", '.bt-print', function(){
+        var name = $(this).attr('data-name');
+        var data = {
+            id: $(this).attr('data-id')
+        };
+
+        var transport_quantity = 0;
+
+        $.ajax({
+            url: url_print,
+            type: 'get',
+            data: data,
+            dataType:'json',
+            success: function(response) {
+                if (response.success) {
+                    resetDataPrint();
+                    $('label.lbl-customer-name').text(response.transportWarehouse.staff.full_name);
+                    $('label.lbl-customer-created').text(response.transportWarehouse.transport_date);
+                    $('label.lbl-customer-phone').text(response.transportWarehouse.staff.phone);
+                    $('label.lbl-customer-email').text(response.transportWarehouse.staff.email);
+                    $('label.lbl-customer-code').text(response.transportWarehouse.code);
+                    if (response.transportWarehouse.details.length > 0) {
+                        $('label.lbl-customer-address').text(response.transportWarehouse.details[0].receive_warehouse.address);
+                        $('table.tbl-list-product tbody').html(printTableRows(response.transportWarehouse.details));
+                    }
+                    var print_el = $("#print-section");
+                    print_el.removeClass("hidden");
+                    print_el.printThis({
+                        header: null,
+
+                    });
+                } else {
+
+                }
+            }
+        });
+    });
+
+    function resetDataPrint(){
+        $('label.lbl-customer-name').text("");
+        $('label.lbl-customer-created').text("");
+        $('label.lbl-customer-phone').text("");
+        $('label.lbl-customer-email').text("");
+        $('label.lbl-customer-code').text("");
+        $('label.lbl-customer-address').text("");
+        $('table.tbl-list-product tbody').html("");
+        transport_quantity = 0;
+    }
+
+    function printTableRows(details){
+        html = "";
+        $.each(details, function(key, detail){
+            html_product_name = detail.product.name;
+            html_product_code = detail.product.barcode_text;
+            html_quantity = detail.quantity;
+            html += '<tr><th>'+html_product_name+'</th><th>'+html_product_code+'</th><th style="text-align: right;">'+html_quantity+'</th></tr>';
+            transport_quantity += parseInt(detail.quantity);
+        });
+        $('label.lbl-transport-quantity').text(transport_quantity);
+        return html;
+    }
 </script>
 @endsection
 @section('content')
@@ -183,7 +237,6 @@
         @include('admin._partials._alert')
         <div class="ibox-content">
             <div class="text-right" style="padding: 10px 10px 0px 10px;">
-                <a href="javascript:;" class="btn btn-sm btn-primary btn-print"><i class="fa fa-print"></i> In</a>
                 <a href="{{route('admin.transport_warehouse.create')}}" class="btn btn-sm btn-primary"><i class="fa fa-plus"></i> Tạo chuyển kho</a>
             </div>
             <div class="hr-line-dashed"></div>
