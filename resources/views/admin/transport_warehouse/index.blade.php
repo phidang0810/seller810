@@ -76,68 +76,77 @@
 
                 });
 
-$('#fSearch').submit(function(){
-    table.fnDraw();
-    return false;
-});
-
-$('#bt-reset').click(function(){
-    $('#fSearch')[0].reset();
-    table.fnDraw();
-});
-});
-
-$("#dataTables").on("click", '.bt-delete', function(){
-    var name = $(this).attr('data-name');
-    var data = {
-        ids: [$(this).attr('data-id')]
-    };
-    swal({
-        title: "Cảnh Báo!",
-        text: "Bạn có chắc muốn xóa <b>"+name+"</b> ?",
-        html:true,
-        type: "warning",
-        showCancelButton: true,
-        confirmButtonClass: "btn-danger",
-        confirmButtonText: "Vâng, xóa!",
-        closeOnConfirm: false
-    },
-    function(){
-        $.ajax({
-            url: url_delete,
-            type: 'DELETE',
-            data: data,
-            dataType:'json',
-            success: function(response) {
-                if (response.success) {
-                    swal({
-                        title: "Thành công!",
-                        text: "Sản phẩm " + name + " đã bị xóa.",
-                        html: true,
-                        type: "success",
-                        confirmButtonClass: "btn-primary",
-                        confirmButtonText: "Đóng lại."
-                    });
-                } else {
-                    errorHtml = '<ul class="text-left">';
-                    $.each( response.errors, function( key, error ) {
-                        errorHtml += '<li>' + error + '</li>';
-                    });
-                    errorHtml += '</ul>';
-                    swal({
-                        title: "Error! Refresh page and try again.",
-                        text: errorHtml,
-                        html: true,
-                        type: "error",
-                        confirmButtonClass: "btn-danger"
-                    });
-                }
-                table.fnDraw();
-            }
+        $('#fSearch').submit(function(){
+            table.fnDraw();
+            return false;
         });
 
+        $('#bt-reset').click(function(){
+            $('#fSearch')[0].reset();
+            table.fnDraw();
+        });
+
+        $(".btn-print").click(function(){
+            var print_el = $("#print-section");
+            print_el.removeClass("hidden");
+            print_el.printThis({
+                header: null,
+
+            });
+        });
     });
-});
+
+    $("#dataTables").on("click", '.bt-delete', function(){
+        var name = $(this).attr('data-name');
+        var data = {
+            ids: [$(this).attr('data-id')]
+        };
+        swal({
+            title: "Cảnh Báo!",
+            text: "Bạn có chắc muốn xóa <b>"+name+"</b> ?",
+            html:true,
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonClass: "btn-danger",
+            confirmButtonText: "Vâng, xóa!",
+            closeOnConfirm: false
+        },
+        function(){
+            $.ajax({
+                url: url_delete,
+                type: 'DELETE',
+                data: data,
+                dataType:'json',
+                success: function(response) {
+                    if (response.success) {
+                        swal({
+                            title: "Thành công!",
+                            text: "Sản phẩm " + name + " đã bị xóa.",
+                            html: true,
+                            type: "success",
+                            confirmButtonClass: "btn-primary",
+                            confirmButtonText: "Đóng lại."
+                        });
+                    } else {
+                        errorHtml = '<ul class="text-left">';
+                        $.each( response.errors, function( key, error ) {
+                            errorHtml += '<li>' + error + '</li>';
+                        });
+                        errorHtml += '</ul>';
+                        swal({
+                            title: "Error! Refresh page and try again.",
+                            text: errorHtml,
+                            html: true,
+                            type: "error",
+                            confirmButtonClass: "btn-danger"
+                        });
+                    }
+                    table.fnDraw();
+                }
+            });
+
+        });
+    });
 </script>
 @endsection
 @section('content')
@@ -174,6 +183,7 @@ $("#dataTables").on("click", '.bt-delete', function(){
         @include('admin._partials._alert')
         <div class="ibox-content">
             <div class="text-right" style="padding: 10px 10px 0px 10px;">
+                <a href="javascript:;" class="btn btn-sm btn-primary btn-print"><i class="fa fa-print"></i> In</a>
                 <a href="{{route('admin.transport_warehouse.create')}}" class="btn btn-sm btn-primary"><i class="fa fa-plus"></i> Tạo chuyển kho</a>
             </div>
             <div class="hr-line-dashed"></div>
@@ -196,4 +206,5 @@ $("#dataTables").on("click", '.bt-delete', function(){
         </div>
     </div>
 </div>
+@include('admin._partials._transport_warehouse_receive')
 @endsection
