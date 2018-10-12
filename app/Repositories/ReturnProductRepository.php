@@ -73,10 +73,10 @@ Class ReturnProductRepository
 			return $html;
 		})
 		->addColumn('status', function ($returnProduct) {
-			$html = RETURN_TEXT[$returnProduct->status];
+			$html = '<span class="label label-'.RETURN_LABEL[$returnProduct->status].'">'.RETURN_TEXT[$returnProduct->status].'</span>';
 			return $html;
 		})
-		->rawColumns(['action', 'staff_name'])
+		->rawColumns(['action', 'staff_name', 'status'])
 		->toJson();
 
 		return $dataTable;

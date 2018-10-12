@@ -64,6 +64,13 @@ define('IMPORT_TEXT', [
     5   =>  'Đang nhập kho',
     4   =>  'Đã nhập kho'
 ]);
+define('IMPORT_LABEL', [
+    1   =>  'default',
+    2   =>  'Warning',
+    3   =>  'info',
+    5   =>  'success',
+    4   =>  'primary'
+]);
 
 define('IMPORT_DETAIL_UNCONFIMRED', 1);
 define('IMPORT_DETAIL_CONFIMRED', 2);
@@ -84,6 +91,10 @@ define('TRANSPORT_TEXT', [
     1   =>  'Đang chuyển',
     2   =>  'Đã chuyển',
 ]);
+define('TRANSPORT_LABEL', [
+    1   =>  'primary',
+    2   =>  'success',
+]);
 
 define('TRANSPORT_DETAIL_UNRECEIVE', 1);
 define('TRANSPORT_DETAIL_RECEIVED', 2);
@@ -100,6 +111,10 @@ define('RETURN_RETURNED', 2);
 define('RETURN_TEXT', [
     1   =>  'Đang trả',
     2   =>  'Đã trả',
+]);
+define('RETURN_LABEL', [
+    1   =>  'primary',
+    2   =>  'success',
 ]);
 define('RETURN_ACTION_TEXT', [
     1   =>  'Đã trả',

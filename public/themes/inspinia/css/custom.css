@@ -801,5 +801,19 @@ div#barcode_image div {
 }
 
 .group-box .form-group {
-  margin-bottom: 25px;
+  margin-bottom: 30px;
+}
+
+.relative-section {
+  position: relative;
+}
+
+.right-conner{
+  position: absolute;
+  right: 5px;
+}
+
+h2.section-title {
+  font-size: 20px;
+  font-weight: 700;
 }

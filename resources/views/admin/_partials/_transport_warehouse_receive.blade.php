@@ -78,6 +78,8 @@
                     <tr>
                         <th>Tên sản phẩm</th>
                         <th>Mã sản phẩm</th>
+                        <th>Màu sắc</th>
+                        <th>Kích thước</th>
                         <th style="text-align: right;">Số lượng</th>
                     </tr>
                 </thead>

@@ -57,7 +57,6 @@ Class TransportWarehouseRepository
 		}, true)
 		->addColumn('action', function ($transportWarehouse) {
 			$html = '';
-			$html .= '<a href="#" class="btn btn-xs btn-success bt-print" style="margin-right: 5px" data-id="' . $transportWarehouse->id . '" data-name="' . $transportWarehouse->code . '"> In</a>';
 			switch ($transportWarehouse->status) {
 				case TRANSPORT_TRANSPORTING:
 				$html .= '<a href="' . route('admin.transport_warehouse.receive', ['id' => $transportWarehouse->id]) . '" class="btn btn-xs btn-primary" style="margin-right: 5px"> Nhận hàng</a>';
@@ -74,10 +73,10 @@ Class TransportWarehouseRepository
 			return $html;
 		})
 		->addColumn('status', function ($transportWarehouse) {
-			$html = TRANSPORT_TEXT[$transportWarehouse->status];
+			$html = '<span class="label label-'.TRANSPORT_LABEL[$transportWarehouse->status].'">'.TRANSPORT_TEXT[$transportWarehouse->status].'</span>';
 			return $html;
 		})
-		->rawColumns(['action', 'staff_name'])
+		->rawColumns(['action', 'staff_name', 'status'])
 		->toJson();
 
 		return $dataTable;
@@ -396,6 +395,11 @@ Class TransportWarehouseRepository
 				foreach ($model->details as $detail) {
 					$detail->receiveWarehouse;
 					$detail->product;
+					$detail->productDetail;
+					if ($detail->productDetail) {
+						$detail->productDetail->color;
+						$detail->productDetail->size;
+					}
 				}
 			}
 		}

@@ -575,9 +575,8 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="text-right">
-                                        <button type="button" class="btn btn-default" id="bt-reset"><i class="fa fa-refresh"></i> Làm mới</button>
+                                        <a href="{{route('admin.transport_warehouse.index')}}" class="btn btn-default"><i class="fa fa-arrow-circle-o-left"></i> Trở lại</a>
                                         <button type="submit" name="action" class="btn btn-success" value="save"><i class="fa fa-save"></i> Lưu</button>
-                                        <button type="submit" name="action" class="btn btn-primary" value="save_print"><i class="fa fa-save"></i> Lưu &amp; In</button>
                                     </div>
                                 </div>
                             </div>
@@ -589,5 +588,4 @@
         </div>
     </div>
 </div>
-@include('admin._partials._cart_view_print')
 @endsection

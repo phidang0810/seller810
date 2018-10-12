@@ -74,7 +74,7 @@ Class ImportProductRepository
 			return $html;
 		})
 		->addColumn('status', function ($importProduct) {
-			$html = IMPORT_TEXT[$importProduct->status];
+			$html = '<span class="label label-'.IMPORT_LABEL[$importProduct->status].'">'.IMPORT_TEXT[$importProduct->status].'</span>';
 			return $html;
 		})
 		->addColumn('product_name', function ($importProduct) {
@@ -128,13 +128,13 @@ Class ImportProductRepository
 		}, true)
 		->addColumn('action', function ($importProduct) {
 			$html = '';
-			$html .= '<a href="#" class="btn btn-xs btn-success bt-print" style="margin-right: 5px" data-id="' . $importProduct->id . '" data-name="' . $importProduct->code . '"> In</a>';
 			switch ($importProduct->status) {
 				case IMPORT_IMPORTED:
 				$html .= '<a href="' . route('admin.import_products.check', ['id' => $importProduct->id]) . '" class="btn btn-xs btn-primary" style="margin-right: 5px"> Kiểm hàng</a>';
 				break;
 
 				case IMPORT_CHECKED:
+				case IMPORT_COMPLETING:
 				// $html .= '<a href="#" class="btn btn-xs btn-success bt-importwarehouse" style="margin-right: 5px" data-id="' . $importProduct->id . '" data-name="' . $importProduct->code . '"> Nhập kho</a>';
 				$html .= '<a href="' . route('admin.import_products.import', ['id' => $importProduct->id]) . '" class="btn btn-xs btn-success" style="margin-right: 5px"> Nhập kho</a>';
 				break;
@@ -148,7 +148,7 @@ Class ImportProductRepository
 			return $html;
 		})
 		->addColumn('status', function ($importProduct) {
-			$html = IMPORT_TEXT[$importProduct->status];
+			$html = '<span class="label label-'.IMPORT_LABEL[$importProduct->status].'">'.IMPORT_TEXT[$importProduct->status].'</span>';
 			return $html;
 		})
 		->addColumn('product_name', function ($importProduct) {
@@ -432,6 +432,7 @@ Class ImportProductRepository
 		$changeQuantity = $model->quantity - $quantity;
 
 		$importProduct->quantity -= $changeQuantity;
+		$importProduct->total_price = $importProduct->quantity * $importProduct->price;
 		$importProduct->save();
 		$model->quantity -= $changeQuantity;
 		$model->status = IMPORT_DETAIL_CONFIMRED;
@@ -464,6 +465,7 @@ Class ImportProductRepository
 		$changeQuantity = $importProductDetail->quantity - $quantity;
 
 		$importProduct->quantity -= $changeQuantity;
+		$importProduct->total_price = $importProduct->quantity * $importProduct->price;
 		$importProduct->save();
 		$importProductDetail->quantity -= $changeQuantity;
 		$importProductDetail->save();
@@ -712,8 +714,8 @@ Class ImportProductRepository
 			}
 			if (trim($request->get('keyword')) !== "") {
 				$query->where(function ($sub) use ($request) {
-					$sub->where('import_products.name', 'like', '%' . $request->get('keyword') . '%')
-					->orWhere('import_products.barcode_text', 'like', '%' . $request->get('keyword') . '%');
+					$sub->where('products.name', 'like', '%' . $request->get('keyword') . '%')
+					->orWhere('products.barcode_text', 'like', '%' . $request->get('keyword') . '%');
 				});
 
 			}
