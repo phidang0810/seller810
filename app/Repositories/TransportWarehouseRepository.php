@@ -67,6 +67,9 @@ Class TransportWarehouseRepository
 			}
 			return $html;
 		})
+		->addColumn('transport_date', function($transportWarehouse){
+			return Carbon::createFromFormat('Y-m-d H:i:s', $transportWarehouse->transport_date)->format('d/m/Y');
+		})
 		->addColumn('staff_name', function ($transportWarehouse) {
 			$staff = $transportWarehouse->staff;
 			$html = $staff->full_name;

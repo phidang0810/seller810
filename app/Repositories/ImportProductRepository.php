@@ -714,8 +714,8 @@ Class ImportProductRepository
 			}
 			if (trim($request->get('keyword')) !== "") {
 				$query->where(function ($sub) use ($request) {
-					$sub->where('products.name', 'like', '%' . $request->get('keyword') . '%')
-					->orWhere('products.barcode_text', 'like', '%' . $request->get('keyword') . '%');
+					$sub->where('import_products.name', 'like', '%' . $request->get('keyword') . '%')
+					->orWhere('import_products.barcode_text', 'like', '%' . $request->get('keyword') . '%');
 				});
 
 			}

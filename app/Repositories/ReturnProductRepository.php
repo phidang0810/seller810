@@ -67,6 +67,9 @@ Class ReturnProductRepository
 			}
 			return $html;
 		})
+		->addColumn('return_date', function($returnProduct){
+			return Carbon::createFromFormat('Y-m-d H:i:s', $returnProduct->return_date)->format('d/m/Y');
+		})
 		->addColumn('staff_name', function ($returnProduct) {
 			$staff = $returnProduct->staff;
 			$html = $staff->full_name;
