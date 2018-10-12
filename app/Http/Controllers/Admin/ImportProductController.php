@@ -153,7 +153,8 @@ class ImportProductController extends AdminController
 
     public function confirm(ImportProductRepository $importProduct){
         $id = $this->_request->get('id');
-        $result = $importProduct->confirmDetail($id);
+        $quantity = $this->_request->get('quantity');
+        $result = $importProduct->confirmDetail($id, $quantity);
 
         return response()->json($result);
     }
@@ -205,7 +206,8 @@ class ImportProductController extends AdminController
 
     public function confirmImport(ImportProductRepository $importProduct){
         $id = $this->_request->get('id');
-        $result = $importProduct->confirmImportDetail($id);
+        $quantity = $this->_request->get('quantity');
+        $result = $importProduct->confirmImportDetail($id, $quantity);
 
         return response()->json($result);
     }

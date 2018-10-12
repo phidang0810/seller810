@@ -40,23 +40,23 @@ Class ImportProductRepository
 				$query->where('status', $request->get('status'));
 			}
 
-            if (trim($request->get('code')) !== "") {
-                $query->where(function ($sub) use ($request) {
-                    $sub->where('code', 'like', '%' . $request->get('code') . '%');
-                });
-            }
+			if (trim($request->get('code')) !== "") {
+				$query->where(function ($sub) use ($request) {
+					$sub->where('code', 'like', '%' . $request->get('code') . '%');
+				});
+			}
 
-            if (trim($request->get('start_date')) !== "") {
-                $fromDate = Carbon::createFromFormat('d/m/Y H:i:s', $request->get('start_date') . ' 00:00:00')->toDateTimeString();
+			if (trim($request->get('start_date')) !== "") {
+				$fromDate = Carbon::createFromFormat('d/m/Y H:i:s', $request->get('start_date') . ' 00:00:00')->toDateTimeString();
 
-                if (trim($request->get('end_date')) !== "") {
+				if (trim($request->get('end_date')) !== "") {
 
-                    $toDate = Carbon::createFromFormat('d/m/Y H:i:s', $request->get('end_date') . ' 23:59:59')->toDateTimeString();
-                    $query->whereBetween('created_at', [$fromDate, $toDate]);
-                } else {
-                    $query->whereDate('created_at', '>=', $fromDate);
-                }
-            }
+					$toDate = Carbon::createFromFormat('d/m/Y H:i:s', $request->get('end_date') . ' 23:59:59')->toDateTimeString();
+					$query->whereBetween('created_at', [$fromDate, $toDate]);
+				} else {
+					$query->whereDate('created_at', '>=', $fromDate);
+				}
+			}
 		}, true)
 		->addColumn('action', function ($importProduct) {
 			$html = '';
@@ -67,6 +67,9 @@ Class ImportProductRepository
 				
 				default:
 				break;
+			}
+			if ($importProduct->status != IMPORT_COMPLETED) {
+				$html .= '<a href="#" class="bt-delete btn btn-xs btn-danger" data-id="' . $importProduct->id . '" data-name="' . $importProduct->code . '"><i class="fa fa-trash-o" aria-hidden="true"></i> Xóa</a>';
 			}
 			return $html;
 		})
@@ -105,23 +108,23 @@ Class ImportProductRepository
 				$query->where('status', $request->get('status'));
 			}
 
-            if (trim($request->get('code')) !== "") {
-                $query->where(function ($sub) use ($request) {
-                    $sub->where('code', 'like', '%' . $request->get('code') . '%');
-                });
-            }
+			if (trim($request->get('code')) !== "") {
+				$query->where(function ($sub) use ($request) {
+					$sub->where('code', 'like', '%' . $request->get('code') . '%');
+				});
+			}
 
-            if (trim($request->get('start_date')) !== "") {
-                $fromDate = Carbon::createFromFormat('d/m/Y H:i:s', $request->get('start_date') . ' 00:00:00')->toDateTimeString();
+			if (trim($request->get('start_date')) !== "") {
+				$fromDate = Carbon::createFromFormat('d/m/Y H:i:s', $request->get('start_date') . ' 00:00:00')->toDateTimeString();
 
-                if (trim($request->get('end_date')) !== "") {
+				if (trim($request->get('end_date')) !== "") {
 
-                    $toDate = Carbon::createFromFormat('d/m/Y H:i:s', $request->get('end_date') . ' 23:59:59')->toDateTimeString();
-                    $query->whereBetween('created_at', [$fromDate, $toDate]);
-                } else {
-                    $query->whereDate('created_at', '>=', $fromDate);
-                }
-            }
+					$toDate = Carbon::createFromFormat('d/m/Y H:i:s', $request->get('end_date') . ' 23:59:59')->toDateTimeString();
+					$query->whereBetween('created_at', [$fromDate, $toDate]);
+				} else {
+					$query->whereDate('created_at', '>=', $fromDate);
+				}
+			}
 		}, true)
 		->addColumn('action', function ($importProduct) {
 			$html = '';
@@ -138,6 +141,9 @@ Class ImportProductRepository
 				
 				default:
 				break;
+			}
+			if ($importProduct->status != IMPORT_COMPLETED) {
+				$html .= '<a href="#" class="bt-delete btn btn-xs btn-danger" data-id="' . $importProduct->id . '" data-name="' . $importProduct->code . '"><i class="fa fa-trash-o" aria-hidden="true"></i> Xóa</a>';
 			}
 			return $html;
 		})
@@ -329,6 +335,11 @@ Class ImportProductRepository
 				$result['success'] = false;
 				continue;
 			}
+			if ($model->details) {
+				foreach ($model->details as $detail) {
+					$detail->delete();
+				}
+			}
 			$model->delete();
 		}
 
@@ -406,7 +417,7 @@ Class ImportProductRepository
 		return $data;
 	}
 
-	public function confirmDetail($id)
+	public function confirmDetail($id, $quantity)
 	{
 		$result = [
 			'success' => true,
@@ -417,6 +428,12 @@ Class ImportProductRepository
 			$result['errors'][] = 'ID nhập hàng chi tiết: ' . $id . ' không tồn tại';
 			$result['success'] = false;
 		}
+		$importProduct = ImportProduct::find($model->import_product_id);
+		$changeQuantity = $model->quantity - $quantity;
+
+		$importProduct->quantity -= $changeQuantity;
+		$importProduct->save();
+		$model->quantity -= $changeQuantity;
 		$model->status = IMPORT_DETAIL_CONFIMRED;
 		$model->save();
 
@@ -429,7 +446,7 @@ Class ImportProductRepository
 		return $result;
 	}
 
-	public function confirmImportDetail($id)
+	public function confirmImportDetail($id, $quantity)
 	{
 		$result = [
 			'success' => true,
@@ -443,6 +460,13 @@ Class ImportProductRepository
 
 		$importProduct = ImportProduct::find($importProductDetail->import_product_id);
 		$model = Product::find($importProduct->product_id);
+		
+		$changeQuantity = $importProductDetail->quantity - $quantity;
+
+		$importProduct->quantity -= $changeQuantity;
+		$importProduct->save();
+		$importProductDetail->quantity -= $changeQuantity;
+		$importProductDetail->save();
 
 		// Add to product & product detail
 		$productDetail = ProductDetail::where('product_id', $model->id)

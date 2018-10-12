@@ -15,6 +15,7 @@
             url: "{{route('admin.import_products.confirmImport')}}",
             data:{
                 id:id,
+                quantity:$('input[name=quantity-'+id+']').val()
             },
             dataType:'json'
         }).done(function(data) {
@@ -69,7 +70,9 @@
                                     <td class="" colspan="1">@if(isset($data)){{$data->barcode_text}}@endif</td>
                                     <td class="" colspan="1">@if(isset($detail->color)){{$detail->color->name}}@endif</td>
                                     <td class="" colspan="1">@if(isset($detail->size)){{$detail->size->name}}@endif</td>
-                                    <td class="thousand-number text-right" colspan="1">{{$detail->quantity}}</td>
+                                    <td class="thousand-number text-right" colspan="1">
+                                        <input type="text" name="quantity-{{$detail->id}}" value="{{$detail->quantity}}">
+                                    </td>
                                     <td class="thousand-number money text-right" colspan="1">{{$data->price}}</td>
                                     <td class="thousand-number money text-right" colspan="1">{{$data->price * $detail->quantity}}</td>
                                     <td>
