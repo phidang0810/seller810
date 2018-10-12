@@ -24,6 +24,7 @@ use App\Libraries\Photo;
 use Illuminate\Support\Facades\Storage;
 use Response;
 use DNS1D;
+use Carbon\Carbon;
 
 Class ImportProductRepository
 {
@@ -36,7 +37,25 @@ Class ImportProductRepository
 		$dataTable = DataTables::eloquent($importProducts)
 		->filter(function ($query) use ($request) {
 			if (trim($request->get('status')) !== "") {
-				$query->where('active', $request->get('status'));
+				$query->where('status', $request->get('status'));
+			}
+
+			if (trim($request->get('code')) !== "") {
+				$query->where(function ($sub) use ($request) {
+					$sub->where('code', 'like', '%' . $request->get('code') . '%');
+				});
+			}
+
+			if (trim($request->get('start_date')) !== "") {
+				$fromDate = Carbon::createFromFormat('d/m/Y H:i:s', $request->get('start_date') . ' 00:00:00')->toDateTimeString();
+
+				if (trim($request->get('end_date')) !== "") {
+
+					$toDate = Carbon::createFromFormat('d/m/Y H:i:s', $request->get('end_date') . ' 23:59:59')->toDateTimeString();
+					$query->whereBetween('created_at', [$fromDate, $toDate]);
+				} else {
+					$query->whereDate('created_at', '>=', $fromDate);
+				}
 			}
 		}, true)
 		->addColumn('action', function ($importProduct) {
@@ -48,6 +67,9 @@ Class ImportProductRepository
 				
 				default:
 				break;
+			}
+			if ($importProduct->status != IMPORT_COMPLETED) {
+				$html .= '<a href="#" class="bt-delete btn btn-xs btn-danger" data-id="' . $importProduct->id . '" data-name="' . $importProduct->code . '"><i class="fa fa-trash-o" aria-hidden="true"></i> Xóa</a>';
 			}
 			return $html;
 		})
@@ -83,22 +105,45 @@ Class ImportProductRepository
 		$dataTable = DataTables::eloquent($importProducts)
 		->filter(function ($query) use ($request) {
 			if (trim($request->get('status')) !== "") {
-				$query->where('active', $request->get('status'));
+				$query->where('status', $request->get('status'));
+			}
+
+			if (trim($request->get('code')) !== "") {
+				$query->where(function ($sub) use ($request) {
+					$sub->where('code', 'like', '%' . $request->get('code') . '%');
+				});
+			}
+
+			if (trim($request->get('start_date')) !== "") {
+				$fromDate = Carbon::createFromFormat('d/m/Y H:i:s', $request->get('start_date') . ' 00:00:00')->toDateTimeString();
+
+				if (trim($request->get('end_date')) !== "") {
+
+					$toDate = Carbon::createFromFormat('d/m/Y H:i:s', $request->get('end_date') . ' 23:59:59')->toDateTimeString();
+					$query->whereBetween('created_at', [$fromDate, $toDate]);
+				} else {
+					$query->whereDate('created_at', '>=', $fromDate);
+				}
 			}
 		}, true)
 		->addColumn('action', function ($importProduct) {
 			$html = '';
+			$html .= '<a href="#" class="btn btn-xs btn-success bt-print" style="margin-right: 5px" data-id="' . $importProduct->id . '" data-name="' . $importProduct->code . '"> In</a>';
 			switch ($importProduct->status) {
 				case IMPORT_IMPORTED:
 				$html .= '<a href="' . route('admin.import_products.check', ['id' => $importProduct->id]) . '" class="btn btn-xs btn-primary" style="margin-right: 5px"> Kiểm hàng</a>';
 				break;
 
 				case IMPORT_CHECKED:
-				$html .= '<a href="#" class="btn btn-xs btn-success bt-importwarehouse" style="margin-right: 5px" data-id="' . $importProduct->id . '" data-name="' . $importProduct->code . '"> Nhập kho</a>';
+				// $html .= '<a href="#" class="btn btn-xs btn-success bt-importwarehouse" style="margin-right: 5px" data-id="' . $importProduct->id . '" data-name="' . $importProduct->code . '"> Nhập kho</a>';
+				$html .= '<a href="' . route('admin.import_products.import', ['id' => $importProduct->id]) . '" class="btn btn-xs btn-success" style="margin-right: 5px"> Nhập kho</a>';
 				break;
 				
 				default:
 				break;
+			}
+			if ($importProduct->status != IMPORT_COMPLETED) {
+				$html .= '<a href="#" class="bt-delete btn btn-xs btn-danger" data-id="' . $importProduct->id . '" data-name="' . $importProduct->code . '"><i class="fa fa-trash-o" aria-hidden="true"></i> Xóa</a>';
 			}
 			return $html;
 		})
@@ -290,6 +335,11 @@ Class ImportProductRepository
 				$result['success'] = false;
 				continue;
 			}
+			if ($model->details) {
+				foreach ($model->details as $detail) {
+					$detail->delete();
+				}
+			}
 			$model->delete();
 		}
 
@@ -367,7 +417,7 @@ Class ImportProductRepository
 		return $data;
 	}
 
-	public function confirmDetail($id)
+	public function confirmDetail($id, $quantity)
 	{
 		$result = [
 			'success' => true,
@@ -378,6 +428,12 @@ Class ImportProductRepository
 			$result['errors'][] = 'ID nhập hàng chi tiết: ' . $id . ' không tồn tại';
 			$result['success'] = false;
 		}
+		$importProduct = ImportProduct::find($model->import_product_id);
+		$changeQuantity = $model->quantity - $quantity;
+
+		$importProduct->quantity -= $changeQuantity;
+		$importProduct->save();
+		$model->quantity -= $changeQuantity;
 		$model->status = IMPORT_DETAIL_CONFIMRED;
 		$model->save();
 
@@ -390,12 +446,102 @@ Class ImportProductRepository
 		return $result;
 	}
 
+	public function confirmImportDetail($id, $quantity)
+	{
+		$result = [
+			'success' => true,
+			'errors' => []
+		];
+		$importProductDetail = ImportProductDetail::find($id);
+		if ($importProductDetail === null) {
+			$result['errors'][] = 'ID nhập hàng chi tiết: ' . $id . ' không tồn tại';
+			$result['success'] = false;
+		}
+
+		$importProduct = ImportProduct::find($importProductDetail->import_product_id);
+		$model = Product::find($importProduct->product_id);
+		
+		$changeQuantity = $importProductDetail->quantity - $quantity;
+
+		$importProduct->quantity -= $changeQuantity;
+		$importProduct->save();
+		$importProductDetail->quantity -= $changeQuantity;
+		$importProductDetail->save();
+
+		// Add to product & product detail
+		$productDetail = ProductDetail::where('product_id', $model->id)
+		->where('color_id', $importProductDetail->color_id)
+		->where('size_id', $importProductDetail->size_id)
+		->first();
+
+		if (!$productDetail) {
+			$productDetail = new ProductDetail([
+				'color_id' => ($importProductDetail->color) ? $importProductDetail->color->id : 0,
+				'size_id' => ($importProductDetail->size) ? $importProductDetail->size->id : 0,
+				'quantity' => 0,
+				'quantity_available' => 0
+			]);
+			$model->details()->save($productDetail);
+		}
+
+		$warehouseProduct = WarehouseProduct::where('warehouse_id', $importProduct->warehouse_id)
+		->where('product_id', $importProduct->product_id)
+		->where('product_detail_id', $productDetail->id)
+		->first();
+
+		if ($warehouseProduct) {
+			$warehouseProduct->quantity += $importProductDetail->quantity;
+			$warehouseProduct->quantity_available += $importProductDetail->quantity;
+		}else{
+			$warehouseProduct = new WarehouseProduct;
+			$warehouseProduct->warehouse_id = $importProduct->warehouse_id;
+			$warehouseProduct->product_id = $model->id;
+			$warehouseProduct->product_detail_id = $productDetail->id;
+			$warehouseProduct->quantity = $importProductDetail->quantity;
+			$warehouseProduct->quantity_available = $importProductDetail->quantity;
+		}
+		$warehouseProduct->save();
+
+		$productDetail->quantity += $importProductDetail->quantity;
+		$productDetail->quantity_available += $importProductDetail->quantity;
+		$productDetail->save();
+		$model->quantity += $importProductDetail->quantity;
+		$model->quantity_available += $importProductDetail->quantity;
+		$model->save();
+
+		$importProductDetail->status = IMPORT_DETAIL_IMPORTED;
+		$importProductDetail->save();
+
+		$result['all_imported'] = 'false';
+
+		if ($this->areAllDetailsImported($importProductDetail->importProduct->id)) {
+			$result['all_imported'] = 'true';
+		}
+
+		return $result;
+	}
+
 	public function areAllDetailsConfirmed($id){
 		$model = ImportProduct::find($id);
 		if ($model) {
 			if($model->details){
 				foreach ($model->details as $detail) {
 					if($detail->status == IMPORT_DETAIL_UNCONFIMRED){
+						return false;
+					}
+				}
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public function areAllDetailsImported($id){
+		$model = ImportProduct::find($id);
+		if ($model) {
+			if($model->details){
+				foreach ($model->details as $detail) {
+					if($detail->status == IMPORT_DETAIL_CONFIMRED){
 						return false;
 					}
 				}
@@ -474,56 +620,57 @@ Class ImportProductRepository
 			$model->save();
 		}
 
-		// Push details quantity to warehouse product detail & product detail, update product quantity
-		if ($importProduct->details) {
-			foreach ($importProduct->details as $importProductDetail) {
-				// Add to product & product detail
-				$productDetail = ProductDetail::where('product_id', $model->id)
-				->where('color_id', $importProductDetail->color_id)
-				->where('size_id', $importProductDetail->size_id)
-				->first();
+		// // Push details quantity to warehouse product detail & product detail, update product quantity
+		// if ($importProduct->details) {
+		// 	foreach ($importProduct->details as $importProductDetail) {
+		// 		// Add to product & product detail
+		// 		$productDetail = ProductDetail::where('product_id', $model->id)
+		// 		->where('color_id', $importProductDetail->color_id)
+		// 		->where('size_id', $importProductDetail->size_id)
+		// 		->first();
 
-				if (!$productDetail) {
-					$productDetail = new ProductDetail([
-						'color_id' => ($importProductDetail->color) ? $importProductDetail->color->id : 0,
-						'size_id' => ($importProductDetail->size) ? $importProductDetail->size->id : 0,
-						'quantity' => 0,
-						'quantity_available' => 0
-					]);
-					$model->details()->save($productDetail);
-				}
-
-
+		// 		if (!$productDetail) {
+		// 			$productDetail = new ProductDetail([
+		// 				'color_id' => ($importProductDetail->color) ? $importProductDetail->color->id : 0,
+		// 				'size_id' => ($importProductDetail->size) ? $importProductDetail->size->id : 0,
+		// 				'quantity' => 0,
+		// 				'quantity_available' => 0
+		// 			]);
+		// 			$model->details()->save($productDetail);
+		// 		}
 
 
-				$warehouseProduct = WarehouseProduct::where('warehouse_id', $importProduct->warehouse_id)
-				->where('product_id', $importProduct->product_id)
-				->where('product_detail_id', $productDetail->id)
-				->first();
 
-				if ($warehouseProduct) {
-					$warehouseProduct->quantity += $importProductDetail->quantity;
-					$warehouseProduct->quantity_available += $importProductDetail->quantity;
-				}else{
-					$warehouseProduct = new WarehouseProduct;
-					$warehouseProduct->warehouse_id = $importProduct->warehouse_id;
-					$warehouseProduct->product_id = $model->id;
-					$warehouseProduct->product_detail_id = $productDetail->id;
-					$warehouseProduct->quantity = $importProductDetail->quantity;
-					$warehouseProduct->quantity_available = $importProductDetail->quantity;
-				}
-				$warehouseProduct->save();
 
-				$productDetail->quantity += $importProductDetail->quantity;
-				$productDetail->quantity_available += $importProductDetail->quantity;
-				$productDetail->save();
-				$model->quantity += $importProductDetail->quantity;
-				$model->quantity_available += $importProductDetail->quantity;
-				$model->save();
-			}
-		}
+		// 		$warehouseProduct = WarehouseProduct::where('warehouse_id', $importProduct->warehouse_id)
+		// 		->where('product_id', $importProduct->product_id)
+		// 		->where('product_detail_id', $productDetail->id)
+		// 		->first();
 
-		$importProduct->status = IMPORT_COMPLETED;
+		// 		if ($warehouseProduct) {
+		// 			$warehouseProduct->quantity += $importProductDetail->quantity;
+		// 			$warehouseProduct->quantity_available += $importProductDetail->quantity;
+		// 		}else{
+		// 			$warehouseProduct = new WarehouseProduct;
+		// 			$warehouseProduct->warehouse_id = $importProduct->warehouse_id;
+		// 			$warehouseProduct->product_id = $model->id;
+		// 			$warehouseProduct->product_detail_id = $productDetail->id;
+		// 			$warehouseProduct->quantity = $importProductDetail->quantity;
+		// 			$warehouseProduct->quantity_available = $importProductDetail->quantity;
+		// 		}
+		// 		$warehouseProduct->save();
+
+		// 		$productDetail->quantity += $importProductDetail->quantity;
+		// 		$productDetail->quantity_available += $importProductDetail->quantity;
+		// 		$productDetail->save();
+		// 		$model->quantity += $importProductDetail->quantity;
+		// 		$model->quantity_available += $importProductDetail->quantity;
+		// 		$model->save();
+		// 	}
+		// }
+
+		$importProduct->product_id = $model->id;
+		$importProduct->status = IMPORT_COMPLETING;
 		$importProduct->save();
 
 		return $result;
@@ -618,8 +765,35 @@ Class ImportProductRepository
 		return false;
 	}
 
+	public function checkImportCompleted($id){
+		if ($this->areAllDetailsImported($id)) {
+			$model = ImportProduct::find($id);
+			$model->status = IMPORT_COMPLETED;
+			$model->save();
+
+			return true;
+		}
+		return false;
+	}
+
 	public function getPrintDatas($id){
-		$result = [];
+		$result = [
+			'success' => true
+		];
+		$model = ImportProduct::find($id);
+		if ($model) {
+			$model->staff;
+			$model->details;
+			$model->supplier;
+			// $model->product;
+			if ($model->details) {
+				foreach ($model->details as $detail) {
+					$detail->color;
+					$detail->size;
+				}
+			}
+		}
+		$result['import_product'] = $model;
 		return $result;
 	}
 }

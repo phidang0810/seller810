@@ -55,19 +55,27 @@ define('PAYSLIP_TEXT', [
 define('IMPORT_IMPORTING', 1);
 define('IMPORT_IMPORTED', 2);
 define('IMPORT_CHECKED', 3);
+define('IMPORT_COMPLETING', 5);
 define('IMPORT_COMPLETED', 4);
 define('IMPORT_TEXT', [
     1   =>  'Đang nhập',
     2   =>  'Đang kiểm',
     3   =>  'Đã kiểm',
-    4   =>  'Đã nhập kho',
+    5   =>  'Đang nhập kho',
+    4   =>  'Đã nhập kho'
 ]);
 
 define('IMPORT_DETAIL_UNCONFIMRED', 1);
 define('IMPORT_DETAIL_CONFIMRED', 2);
+define('IMPORT_DETAIL_IMPORTED', 3);
 define('IMPORT_DETAIL_TEXT', [
+    1   =>  'Chưa xác nhận',
+    2   =>  'Đã xác nhận',
+    3   =>  'Đã nhập kho'
+]);
+define('IMPORT_DETAIL_ACTION_TEXT', [
     1   =>  'xác nhận',
-    2   =>  'Đã xác nhận'
+    2   =>  'Nhập kho'
 ]);
 
 define('TRANSPORT_TRANSPORTING', 1);

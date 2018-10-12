@@ -153,7 +153,8 @@ class ImportProductController extends AdminController
 
     public function confirm(ImportProductRepository $importProduct){
         $id = $this->_request->get('id');
-        $result = $importProduct->confirmDetail($id);
+        $quantity = $this->_request->get('quantity');
+        $result = $importProduct->confirmDetail($id, $quantity);
 
         return response()->json($result);
     }
@@ -186,5 +187,44 @@ class ImportProductController extends AdminController
         $result = $importProduct->getPrintDatas($id);
 
         return response()->json($result);
+    }
+
+    public function import(ImportProductRepository $importProduct){
+        $id = $this->_request->get('id');
+        $this->_data['title'] = 'Nhập kho';
+        $this->_data['data'] = $importProduct->getCheckImport($id);
+        $this->_data['all_imported'] = $importProduct->areAllDetailsImported($id);
+        $this->_pushBreadCrumbs($this->_data['title']);
+        $result = $importProduct->importWarehouse($id);
+        if (!$result['success']) {
+            $message = "Đơn hàng nhập bị lỗi.";
+
+            return redirect()->back()->withErrors($message);
+        }
+        return view('admin.import_products.import', $this->_data);
+    }
+
+    public function confirmImport(ImportProductRepository $importProduct){
+        $id = $this->_request->get('id');
+        $quantity = $this->_request->get('quantity');
+        $result = $importProduct->confirmImportDetail($id, $quantity);
+
+        return response()->json($result);
+    }
+
+    public function importCompleted(ImportProductRepository $importProduct){
+        $input = $this->_request->all();
+        $id = $input['id'] ?? null;
+
+        if ($importProduct->checkImportCompleted($id)) {
+            $message = "Đơn hàng nhập đã được nhập kho xong.";
+            return redirect()->route('admin.import_products.receive')->withSuccess($message);
+        }
+
+        $message = "Đơn hàng nhập chưa được nhập kho xong, xin hãy nhập hết.";
+
+        return redirect()->back()
+        ->withErrors($message)
+        ->withInput();
     }
 }

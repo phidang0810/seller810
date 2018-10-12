@@ -22,6 +22,7 @@ use App\Libraries\Photo;
 use Illuminate\Support\Facades\Storage;
 use Response;
 use DNS1D;
+use Carbon\Carbon;
 
 Class TransportWarehouseRepository
 {
@@ -33,8 +34,26 @@ Class TransportWarehouseRepository
 		$dataTable = DataTables::eloquent($transportWarehouse)
 		->filter(function ($query) use ($request) {
 			if (trim($request->get('status')) !== "") {
-				$query->where('active', $request->get('status'));
+				$query->where('status', $request->get('status'));
 			}
+
+            if (trim($request->get('code')) !== "") {
+                $query->where(function ($sub) use ($request) {
+                    $sub->where('code', 'like', '%' . $request->get('code') . '%');
+                });
+            }
+
+            if (trim($request->get('start_date')) !== "") {
+                $fromDate = Carbon::createFromFormat('d/m/Y H:i:s', $request->get('start_date') . ' 00:00:00')->toDateTimeString();
+
+                if (trim($request->get('end_date')) !== "") {
+
+                    $toDate = Carbon::createFromFormat('d/m/Y H:i:s', $request->get('end_date') . ' 23:59:59')->toDateTimeString();
+                    $query->whereBetween('transport_date', [$fromDate, $toDate]);
+                } else {
+                    $query->whereDate('transport_date', '>=', $fromDate);
+                }
+            }
 		}, true)
 		->addColumn('action', function ($transportWarehouse) {
 			$html = '';
@@ -330,13 +349,24 @@ Class TransportWarehouseRepository
 		$model->status = TRANSPORT_DETAIL_RECEIVED;
 		$model->save();
 
+		$result['all_received'] = 'false';
+
 		if ($this->areAllDetailsReceived($model->transportWarehouse->id)) {
-			$modelTransportWarehouse = TransportWarehouse::find($model->transportWarehouse->id);
-			$modelTransportWarehouse->status = TRANSPORT_TRANSPORTED;
-			$modelTransportWarehouse->save();
+			$result['all_received'] = 'true';
 		}
 
 		return $result;
+	}
+
+	public function checkReceived($id){
+		if ($this->areAllDetailsReceived($id)) {
+			$model = TransportWarehouse::find($id);
+			$model->status = TRANSPORT_TRANSPORTED;
+			$model->save();
+
+			return true;
+		}
+		return false;
 	}
 
 	public function areAllDetailsReceived($id){

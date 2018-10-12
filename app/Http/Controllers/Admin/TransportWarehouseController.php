@@ -123,6 +123,7 @@ class TransportWarehouseController extends AdminController
         $this->_data['title'] = 'Nhận hàng chuyển';
         $this->_data['data'] = $transportWarehouse->getReceiveTransport($id);
         $this->_pushBreadCrumbs($this->_data['title']);
+        $this->_data['all_received'] = $transportWarehouse->areAllDetailsReceived($id);
         return view('admin.transport_warehouse.receive', $this->_data);
     }
 
@@ -132,6 +133,22 @@ class TransportWarehouseController extends AdminController
         $result = $transportWarehouse->receiveProduct($id);
 
         return response()->json($result);
+    }
+
+    public function received(TransportWarehouseRepository $transportWarehouse){
+        $input = $this->_request->all();
+        $id = $input['id'] ?? null;
+
+        if ($transportWarehouse->checkReceived($id)) {
+            $message = "Đơn chuyển hàng đã được chuyển xong.";
+            return redirect()->route('admin.import_products.receive')->withSuccess($message);
+        }
+
+        $message = "Đơn chuyển hàng chưa được chuyển xong, xin hãy chuyển hết.";
+
+        return redirect()->back()
+        ->withErrors($message)
+        ->withInput();
     }
 
     public function print(TransportWarehouseRepository $transportWarehouse){
