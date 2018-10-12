@@ -25,7 +25,6 @@
                         d.category_id = $('#s-category').val();
                         d.date_from = $('#date_from').val();
                         d.date_to = $('#date_to').val();
-                        d.date = true;
                     },
                     complete: function(){
                     }
@@ -120,11 +119,11 @@
 
             <div class="col-sm-3">
                 <div class="form-group">
-                    <label>Ngày nhập</label>
+                    <label>Ngày</label>
                     <div class="input-daterange input-group" id="date_range_picker">
-                        <input type="text" class="input-sm form-control" name="start" value="">
+                        <input type="text" class="input-sm form-control" id="date_from" name="start" value="">
                         <span class="input-group-addon lbl-to">to</span>
-                        <input type="text" class="input-sm form-control" name="end" value="">
+                        <input type="text" class="input-sm form-control" id="date_to" name="end" value="">
                     </div>
                 </div>
             </div>
