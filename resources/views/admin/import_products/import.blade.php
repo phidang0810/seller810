@@ -51,7 +51,7 @@
                     $('label.lbl-customer-phone').text(response.import_product.staff.phone);
                     $('label.lbl-customer-email').text(response.import_product.staff.email);
                     $('label.lbl-customer-code').text(response.import_product.code);
-                    $('label.lbl-customer-address').text(response.import_product.supplier.name);
+                    if(response.import_product.supplier){$('label.lbl-customer-address').text(response.import_product.supplier.name);}
                     if (response.import_product.details.length > 0) {
                         $('table.tbl-list-product tbody').html(printTableRows(response.import_product));
                     }

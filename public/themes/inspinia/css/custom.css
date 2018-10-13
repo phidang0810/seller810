@@ -817,3 +817,11 @@ h2.section-title {
   font-size: 20px;
   font-weight: 700;
 }
+
+input.quantity-editable.number-input {
+    width: 50px;
+}
+
+.c-quantity input.detail_quantity{
+  width: 60px;
+}
