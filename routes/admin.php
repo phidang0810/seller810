@@ -133,6 +133,7 @@ Route::prefix('kho-hang')
         Route::post ('/them', 'ReturnProductController@store')->name('admin.return_products.store');
         Route::delete ('/', 'ReturnProductController@delete')->name('admin.return_products.delete');
         Route::get ('/da-tra', 'ReturnProductController@returned')->name('admin.return_products.returned');
+        Route::get ('/in', 'ReturnProductController@print')->name('admin.return_products.print');
     });
 });
 

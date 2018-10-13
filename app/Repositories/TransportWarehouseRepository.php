@@ -67,6 +67,11 @@ Class TransportWarehouseRepository
 			}
 			return $html;
 		})
+		->addColumn('code', function($transportWarehouse){
+			$html = '';
+			$html .= '<a href="' . route('admin.transport_warehouse.receive', ['id' => $transportWarehouse->id]) . '" style="margin-right: 5px"> '.$transportWarehouse->code.'</a>';
+			return $html;
+		})
 		->addColumn('transport_date', function($transportWarehouse){
 			return Carbon::createFromFormat('Y-m-d H:i:s', $transportWarehouse->transport_date)->format('d/m/Y');
 		})
@@ -79,7 +84,7 @@ Class TransportWarehouseRepository
 			$html = '<span class="label label-'.TRANSPORT_LABEL[$transportWarehouse->status].'">'.TRANSPORT_TEXT[$transportWarehouse->status].'</span>';
 			return $html;
 		})
-		->rawColumns(['action', 'staff_name', 'status'])
+		->rawColumns(['action', 'staff_name', 'status', 'code'])
 		->toJson();
 
 		return $dataTable;
@@ -394,6 +399,7 @@ Class TransportWarehouseRepository
 		if ($model) {
 			$model->staff;
 			$model->details;
+			$model->transport_date = Carbon::createFromFormat('Y-m-d H:i:s', $model->transport_date)->format('d/m/Y');
 			if ($model->details) {
 				foreach ($model->details as $detail) {
 					$detail->receiveWarehouse;

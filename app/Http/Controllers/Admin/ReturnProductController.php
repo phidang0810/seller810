@@ -123,4 +123,11 @@ class ReturnProductController extends AdminController
 
         return response()->json($result);
     }
+
+    public function print(ReturnProductRepository $returnProduct){
+        $id = $this->_request->get('id');
+        $result = $returnProduct->getPrintDatas($id);
+
+        return response()->json($result);
+    }
 }

@@ -78,7 +78,7 @@ Class ImportProductRepository
 			return $html;
 		})
 		->addColumn('product_name', function ($importProduct) {
-			$html = $importProduct->name;
+			$html = '<a href="' . route('admin.import_products.view', ['id' => $importProduct->id]) . '" style="margin-right: 5px"> '.$importProduct->name.'</a>';
 			return $html;
 		})
 		->addColumn('supplier_name', function ($importProduct) {
@@ -152,7 +152,7 @@ Class ImportProductRepository
 			return $html;
 		})
 		->addColumn('product_name', function ($importProduct) {
-			$html = $importProduct->name;
+			$html = '<a href="' . route('admin.import_products.check', ['id' => $importProduct->id]) . '" style="margin-right: 5px"> '.$importProduct->name.'</a>';
 			return $html;
 		})
 		->addColumn('supplier_name', function ($importProduct) {

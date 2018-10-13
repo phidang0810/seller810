@@ -12,6 +12,85 @@
 <script src="{{asset('themes/inspinia/js/plugins/select2/select2.full.min.js')}}"></script>
 <!-- Page-Level Scripts -->
 <script>
+    var url_print = "{{route('admin.return_products.print')}}";
+
+    function print(id) {
+        var transport_quantity = 0;
+
+        var data = {
+            id: id
+        };
+
+        $.ajax({
+            url: url_print,
+            type: 'get',
+            data: data,
+            dataType:'json',
+            success: function(response) {
+                if (response.success) {
+                    resetDataPrint();
+                    $('label.lbl-customer-name').text(response.transportWarehouse.staff.full_name);
+                    $('label.lbl-customer-created').text(response.transportWarehouse.return_date);
+                    $('label.lbl-customer-phone').text(response.transportWarehouse.staff.phone);
+                    $('label.lbl-customer-email').text(response.transportWarehouse.staff.email);
+                    $('label.lbl-customer-code').text(response.transportWarehouse.code);
+                    if (response.transportWarehouse.details.length > 0) {
+                        $('table.tbl-list-product tbody').html(printTableRows(response.transportWarehouse.details));
+                    }
+                    var print_el = $("#print-section");
+                    print_el.removeClass("hidden");
+                    print_el.printThis({
+                        header: null,
+
+                    });
+                } else {
+
+                }
+            }
+        });
+    };
+
+    function resetDataPrint(){
+        $('label.lbl-customer-name').text("");
+        $('label.lbl-customer-created').text("");
+        $('label.lbl-customer-phone').text("");
+        $('label.lbl-customer-email').text("");
+        $('label.lbl-customer-code').text("");
+        $('label.lbl-customer-address').text("");
+        $('table.tbl-list-product tbody').html("");
+        transport_quantity = 0;
+    }
+
+    function printTableRows(details){
+        html = "";
+        $.each(details, function(key, detail){
+            html_product_name = detail.product.name;
+            html_product_code = detail.product.barcode_text;
+            html_quantity = detail.quantity;
+            html_color = detail.product_detail.color.name;
+            html_size = detail.product_detail.size.name;
+            html += '<tr><th>'+html_product_name+'</th><th>'+html_product_code+'</th><th>'+html_color+'</th><th>'+html_size+'</th><th style="text-align: right;">'+html_quantity+'</th></tr>';
+            transport_quantity += parseInt(detail.quantity);
+        });
+        $('label.lbl-transport-quantity').text(transport_quantity);
+        return html;
+    }
+
+    $('.quantity-editable').on('change', function(){
+        var id = $(this).attr('data-id');
+        var quantity = parseInt(removeNonDigit($(this).val()));
+        var price = parseInt(removeNonDigit($('#price_'+id).text()));
+        var info_total_quantity = 0;
+        $.each($('.quantity-editable'), function(key, item){
+            info_total_quantity += parseInt(removeNonDigit($(item).val()));
+        });
+
+        $(this).val(addCommas(quantity));
+        $('#total_price_'+id).text(addCommas(quantity * price));
+        $('#info-total-quantity').text(addCommas(info_total_quantity));
+        $('#info-total-price').text(addCommas(info_total_quantity * price));
+    });
+
     $('input[name=return_date]').datepicker();
 
     var return_details = ($('input[name="return_details"]').val()) ? jQuery.parseJSON($('input[name="return_details"]').val()) : [];
@@ -497,13 +576,14 @@
 
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-4 relative-section">
                         <div class="ibox-content">
 
                             <div class="row">
                                 <div class="col-md-12">
-                                    <h2>Thông tin trả hàng</h2>
+                                    <h2 class="section-title">Thông tin trả hàng</h2>
                                 </div>
+                                @if(isset($data->id))<div class="right-conner"><a href="#" class="btn btn-default" onclick="print({{$data->id}});"><i class="fa fa-print" aria-hidden="true"></i> In</a></div>@endif
                             </div>
 
                             <div class="row">
@@ -573,7 +653,9 @@
                                 <div class="col-md-12">
                                     <div class="text-right">
                                         <a href="{{route('admin.return_products.index')}}" class="btn btn-default"><i class="fa fa-arrow-circle-o-left"></i> Trở lại</a>
+                                        @if($data->status == RETURN_RETURNING)
                                         <button type="submit" name="action" class="btn btn-success" value="save"><i class="fa fa-save"></i> Lưu</button>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
@@ -585,5 +667,5 @@
         </div>
     </div>
 </div>
-@include('admin._partials._cart_view_print')
+@include('admin._partials._return_products')
 @endsection

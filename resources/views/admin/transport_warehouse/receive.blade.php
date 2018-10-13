@@ -41,7 +41,6 @@
             data: data,
             dataType:'json',
             success: function(response) {
-                console.log(response);
                 if (response.success) {
                     resetDataPrint();
                     $('label.lbl-customer-name').text(response.transportWarehouse.staff.full_name);
@@ -243,9 +242,11 @@
                                 <div class="col-md-12">
                                     <div class="text-right">
                                         <a href="{{route('admin.transport_warehouse.index')}}" class="btn btn-default"><i class="fa fa-arrow-circle-o-left"></i> Trở lại</a>
+                                        @if($data->status == TRANSPORT_TRANSPORTING)
                                         <button name="action" class="btn btn-primary" value="save_complete" @if(!$all_received)disabled="disabled"@endif><i
                                             class="fa fa-save"></i> Nhận hàng xong
                                         </button>
+                                        @endif
                                     </div>
                                 </div>
                             </div>

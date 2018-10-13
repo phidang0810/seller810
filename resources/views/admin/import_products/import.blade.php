@@ -325,9 +325,11 @@
                                 <div class="col-md-12">
                                     <div class="text-right">
                                         <a href="{{route('admin.import_products.receive')}}" class="btn btn-default"><i class="fa fa-arrow-circle-o-left"></i> Trở lại</a>
+                                        @if($data->status == IMPORT_CHECKED || $data->status == IMPORT_COMPLETING)
                                         <button name="action" class="btn btn-primary" value="save_complete" @if(!$all_imported)disabled="disabled"@endif><i
                                             class="fa fa-save"></i> Nhập kho xong
                                         </button>
+                                        @endif
                                     </div>
                                 </div>
                             </div>

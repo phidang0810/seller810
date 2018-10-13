@@ -325,8 +325,10 @@
                                 <div class="col-md-12">
                                     <div class="text-right">
                                         <a href="{{route('admin.import_products.receive')}}" class="btn btn-default"><i class="fa fa-arrow-circle-o-left"></i> Trở lại</a>
+                                        @if($data->status == IMPORT_IMPORTED)
                                         <button name="action" class="btn btn-primary" value="save_complete" @if(!$all_confirmed)disabled="disabled"@endif> Kiểm hàng xong
                                         </button>
+                                        @endif
                                     </div>
                                 </div>
                             </div>

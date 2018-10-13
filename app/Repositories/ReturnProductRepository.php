@@ -67,6 +67,11 @@ Class ReturnProductRepository
 			}
 			return $html;
 		})
+		->addColumn('code', function($returnProduct){
+			$html = '';
+			$html .= '<a href="' . route('admin.return_products.view', ['id' => $returnProduct->id]) . '" style="margin-right: 5px"> '.$returnProduct->code.'</a>';
+			return $html;
+		})
 		->addColumn('return_date', function($returnProduct){
 			return Carbon::createFromFormat('Y-m-d H:i:s', $returnProduct->return_date)->format('d/m/Y');
 		})
@@ -79,7 +84,7 @@ Class ReturnProductRepository
 			$html = '<span class="label label-'.RETURN_LABEL[$returnProduct->status].'">'.RETURN_TEXT[$returnProduct->status].'</span>';
 			return $html;
 		})
-		->rawColumns(['action', 'staff_name', 'status'])
+		->rawColumns(['action', 'staff_name', 'status', 'code'])
 		->toJson();
 
 		return $dataTable;
@@ -321,6 +326,31 @@ Class ReturnProductRepository
 			$result = make_option($staffs);
 		}
 		
+		return $result;
+	}
+
+	public function getPrintDatas($id){
+		$result = [
+			'success' => true
+		];
+		$model = ReturnProduct::find($id);
+		if ($model) {
+			$model->staff;
+			$model->details;
+			$model->return_date = Carbon::createFromFormat('Y-m-d H:i:s', $model->return_date)->format('d/m/Y');
+			if ($model->details) {
+				foreach ($model->details as $detail) {
+					$detail->warehouse;
+					$detail->product;
+					$detail->productDetail;
+					if ($detail->productDetail) {
+						$detail->productDetail->color;
+						$detail->productDetail->size;
+					}
+				}
+			}
+		}
+		$result['transportWarehouse'] = $model;
 		return $result;
 	}
 }
