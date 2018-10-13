@@ -285,10 +285,14 @@ Class ImportProductRepository
 
 			foreach ($importDetails as $key => $detail) {
 				if (!isset($detail->delete) || $detail->delete != true) {
-					$detailModel = ImportProductDetail::where("import_product_id", $model->id)
-					->where("color_id", $detail->color_code->id)
-					->where("size_id", $detail->size->id)
-					->first();
+					if (isset($detail->id)) {
+						$detailModel = ImportProductDetail::find($detail->id);
+					}else{
+						$detailModel = ImportProductDetail::where("import_product_id", $model->id)
+						->where("color_id", $detail->color_code->id)
+						->where("size_id", $detail->size->id)
+						->first();
+					}
 
 					if (!$detailModel) {
 						$detailModel = new ImportProductDetail([
@@ -300,6 +304,8 @@ Class ImportProductRepository
 						]);
 						$model->details()->save($detailModel);
 					}else{
+						$detailModel->color_id = (isset($detail->color_code)) ? $detail->color_code->id : 0;
+						$detailModel->size_id = (isset($detail->size)) ? $detail->size->id : 0;
 						$detailModel->quantity = $detail->quantity;
 						$detailModel->save();
 					}
