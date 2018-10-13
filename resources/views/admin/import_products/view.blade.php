@@ -128,7 +128,7 @@ span.select2.select2-container.select2-container--default {
         });
 
         var html = '<tr id="product_details_quantity"><td></td><td></td><td></td><td>Tổng số lượng: <span class="c-total-quantities">'+sum+'</span></td></tr>';
-        $('#i-product-info tfoot').html(html);
+        // $('#i-product-info tfoot').html(html);
         $('input[name="import_quantity"]').val(sum);
     }
 
@@ -657,7 +657,6 @@ span.select2.select2-container.select2-container--default {
                                                 <div class="row">
                                                     <div class="form-group">
                                                         <div class="col-md-3">
-                                                            <button type="button" class="btn btn-success pull-right c-add-info" id="add_details">Thêm</button>
                                                         </div>
                                                         <div class="col-md-9">
                                                             <div class="table-responsive">
@@ -673,6 +672,12 @@ span.select2.select2-container.select2-container--default {
                                                                     <tbody>
                                                                     </tbody>
                                                                     <tfoot>
+                                                                        <tr>
+                                                                            <th></th>
+                                                                            <th></th>
+                                                                            <th></th>
+                                                                            <th><button type="button" class="btn btn-success btn-ball c-add-info" id="add_details"><i class="fa fa-plus" aria-hidden="true"></i></button></th>
+                                                                        </tr>
                                                                     </tfoot>
                                                                 </table>
                                                             </div>

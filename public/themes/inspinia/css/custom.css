@@ -825,3 +825,8 @@ input.quantity-editable.number-input {
 .c-quantity input.detail_quantity{
   width: 60px;
 }
+
+.btn-ball {
+    border-radius: 50%;
+    padding: 1px 6px;
+}
