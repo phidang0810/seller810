@@ -22,6 +22,7 @@
     <link href="{{asset('themes/inspinia/css/plugins/toastr/toastr.min.css')}}" rel="stylesheet">
 
     <link href="{{asset('/themes/inspinia/css/plugins/switchery/switchery.css')}}" rel="stylesheet" />
+    <link href="{{asset('/themes/inspinia/css/plugins/fancybox/jquery.fancybox.css')}}" rel="stylesheet" />
     <link href="{{asset('themes/inspinia/css/animate.css')}}" rel="stylesheet">
     <link href="{{asset('themes/inspinia/css/plugins/summernote/summernote.css')}}" rel="stylesheet">
     <link href="{{asset('themes/inspinia/css/style.css')}}" rel="stylesheet">
@@ -132,6 +133,7 @@
     <script src="{{asset('themes/inspinia/js/plugins/cleave/cleave-phone.i18n.js')}}"></script>
 
     <script src="{{asset('themes/inspinia/js/plugins/switchery/switchery.js')}}"></script>
+    <script src="{{asset('themes/inspinia/js/plugins/fancybox/jquery.fancybox.js')}}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
     <script src="{{asset('themes/inspinia/js/plugins/money-format/simple.money.format.js')}}"></script>
     <script src="{{asset('themes/inspinia/js/plugins/print-this/printThis.js')}}"></script>

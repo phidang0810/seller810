@@ -34,6 +34,10 @@
                     d.category = $('#s-category').val();
                 },
                 complete: function(){
+                    $('.fancybox').fancybox({
+                        openEffect  : 'elastic',
+                        closeEffect : 'elastic'
+                    });
                     formar_money();
                     var inputStatus = document.querySelectorAll('.js-switch');
                     var elems = Array.prototype.slice.call(inputStatus);
@@ -151,6 +155,7 @@
                     }
 
                 });
+
 
 $('#fSearch').submit(function(){
     table.fnDraw();

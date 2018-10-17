@@ -86,7 +86,7 @@ Class ProductRepository
 	})
 	->addColumn('photo', function ($product) {
 		if ($product->photo) {
-			$html = '<img style="width: 80px; height: 60px;" class="img-thumbnail" src="' . asset('storage/' . $product->photo). '" />';
+			$html = '<a class="fancybox" href="' . asset('storage/' . $product->photo). '" title="'.$product->name.'"><img style="width: 80px; height: 60px;" class="img-thumbnail" src="' . asset('storage/' . $product->photo). '" /></a>';
 		} else {
 			$html = ' <img alt="No Photo" style="width: 80px; height: 60px;" class="img-thumbnail" src="'.asset(NO_PHOTO).'" >';
 		}

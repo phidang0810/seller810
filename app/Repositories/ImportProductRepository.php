@@ -77,8 +77,12 @@ Class ImportProductRepository
 			$html = '<span class="label label-'.IMPORT_LABEL[$importProduct->status].'">'.IMPORT_TEXT[$importProduct->status].'</span>';
 			return $html;
 		})
+		->addColumn('code', function ($importProduct) {
+			$html = '<a href="' . route('admin.import_products.view', ['id' => $importProduct->id]) . '" style="margin-right: 5px"> '.$importProduct->code.'</a>';
+			return $html;
+		})
 		->addColumn('product_name', function ($importProduct) {
-			$html = '<a href="' . route('admin.import_products.view', ['id' => $importProduct->id]) . '" style="margin-right: 5px"> '.$importProduct->name.'</a>';
+			$html = $importProduct->name;
 			return $html;
 		})
 		->addColumn('supplier_name', function ($importProduct) {
@@ -151,8 +155,12 @@ Class ImportProductRepository
 			$html = '<span class="label label-'.IMPORT_LABEL[$importProduct->status].'">'.IMPORT_TEXT[$importProduct->status].'</span>';
 			return $html;
 		})
+		->addColumn('code', function ($importProduct) {
+			$html = '<a href="' . route('admin.import_products.view', ['id' => $importProduct->id]) . '" style="margin-right: 5px"> '.$importProduct->code.'</a>';
+			return $html;
+		})
 		->addColumn('product_name', function ($importProduct) {
-			$html = '<a href="' . route('admin.import_products.check', ['id' => $importProduct->id]) . '" style="margin-right: 5px"> '.$importProduct->name.'</a>';
+			$html = $importProduct->name;
 			return $html;
 		})
 		->addColumn('supplier_name', function ($importProduct) {
@@ -166,7 +174,7 @@ Class ImportProductRepository
 			$category =  $this->lowestLevelCategory($importProduct->id);
 			return ($category) ? $category->name : "";
 		})
-		->rawColumns(['action', 'product_name', 'supplier_name', 'product_category', 'status'])
+		->rawColumns(['action', 'code', 'supplier_name', 'product_category', 'status'])
 		->toJson();
 
 		return $dataTable;
