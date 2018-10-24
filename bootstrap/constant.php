@@ -119,3 +119,7 @@ define('RETURN_LABEL', [
 define('RETURN_ACTION_TEXT', [
     1   =>  'Đã trả',
 ]);
+
+define('CREDITOR_PAID',3);
+define('CREDITOR_NOT_PAID',1);
+define('CREDITOR_PAYING',2);

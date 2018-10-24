@@ -115,4 +115,10 @@ class SupplierRepository
         $model->active = $status;
         return $model->save();
     }
+
+    public function getList()
+    {
+        $data = Supplier::where('active', TRUE)->get();
+        return $data;
+    }
 }

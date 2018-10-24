@@ -35,6 +35,12 @@ Route::prefix('cong-tac-vien')
 
 Route::prefix('nha-cung-cap')
 ->middleware('permission:supplier_manager')->group(function () {
+    Route::get ('/danh-sach-no', 'CreditorController@index')->name('admin.creditors.index');
+    Route::post ('/danh-sach-no/tra-no', 'CreditorController@store')->name('admin.creditors.store');
+    Route::get ('/danh-sach-no/view', 'CreditorController@view')->name('admin.creditors.view');
+
+    Route::get ('/', 'SupplierController@index')->name('admin.suppliers.index');
+
     Route::get ('/', 'SupplierController@index')->name('admin.suppliers.index');
     Route::get ('/chi-tiet', 'SupplierController@view')->name('admin.suppliers.view');
     Route::get ('/them', 'SupplierController@view')->name('admin.suppliers.create');

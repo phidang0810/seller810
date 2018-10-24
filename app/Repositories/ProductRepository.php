@@ -100,7 +100,7 @@ Class ProductRepository
 		return number_format($product->quantity_available);
 	})
 	->addColumn('sell_price', function ($product) {
-		return number_format($product->sell_price) . ' VND';
+		return format_price($product->sell_price);
 	})
 	->addColumn('name', function($product){
 		$html = '';
