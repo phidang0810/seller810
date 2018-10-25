@@ -1,3 +1,4 @@
+@include('admin._partials._print_header')
 <!--  BEGIN: Print transport warehourse receive -->
 <div id="print-section">
     <div class="row" >

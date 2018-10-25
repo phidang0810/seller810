@@ -156,7 +156,7 @@ Class ImportProductRepository
 			return $html;
 		})
 		->addColumn('code', function ($importProduct) {
-			$html = '<a href="' . route('admin.import_products.view', ['id' => $importProduct->id]) . '" style="margin-right: 5px"> '.$importProduct->code.'</a>';
+			$html = '<a href="' . route('admin.import_products.import', ['id' => $importProduct->id]) . '" style="margin-right: 5px"> '.$importProduct->code.'</a>';
 			return $html;
 		})
 		->addColumn('product_name', function ($importProduct) {

@@ -58,7 +58,7 @@
                     var print_el = $("#print-section");
                     print_el.removeClass("hidden");
                     print_el.printThis({
-                        header: null,
+                        header: $('#print_header'),
 
                     });
                 } else {

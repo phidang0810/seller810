@@ -483,13 +483,19 @@ span.input-group-addon.input-readonly {
 table.table-hover tbody tr td:hover{
   cursor: pointer;
 }
-#print-section{
+#print-section, #print_footer, #print_header{
   display: none;
 }
+
+.transform-bold{
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
 /* Print styling */
 
 @media print {
-  #print-section{
+  #print-section, #print_footer, #print_header{
     display: block;
   }
 
