@@ -26,4 +26,14 @@ class WarehouseProduct extends BaseModel
 
         return $this->hasOne('App\Models\ProductDetail', 'id', 'product_detail_id');
     }
+
+    /**
+     * A product detail can have many colors.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function warehouse() {
+
+        return $this->hasOne('App\Models\warehouse', 'id', 'warehouse_id');
+    }
 }

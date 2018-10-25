@@ -32,6 +32,16 @@ class CartDetail extends BaseModel
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
+    public function warehouseProduct() {
+
+        return $this->hasOne('App\Models\WarehouseProduct', 'id', 'warehouse_product_id');
+    }
+
+    /**
+     * A product detail can have many sizes.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
     public function product() {
 
         return $this->hasOne('App\Models\Product', 'id', 'product_id');

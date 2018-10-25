@@ -60,6 +60,10 @@ class CartController extends AdminController
                 return $customer->getCustomer($this->_request);
             }
 
+            if (isset($this->_request['customer_name'])) {
+                return $customer->getCustomerName($this->_request);
+            }
+
             if (isset($this->_request['partner_id'])) {
                 return $partner->getPartnerDiscountAmount($this->_request);
             }
@@ -75,6 +79,7 @@ class CartController extends AdminController
 
             // Get all customers
             $this->_data['customer_options'] = $customer->getPhoneOptions($this->_data['data']->customer->id);
+            $this->_data['customer_name_options'] = $customer->getNameOptions($this->_data['data']->customer->id);
 
             // Get all transports
             $this->_data['transport_options'] = $cart->getTransportOptions($this->_data['data']->transport_id);
@@ -96,6 +101,7 @@ class CartController extends AdminController
         }else{
             // Get all customers
             $this->_data['customer_options'] = $customer->getPhoneOptions();
+            $this->_data['customer_name_options'] = $customer->getNameOptions();
 
             // Get all transports
             $this->_data['transport_options'] = $cart->getTransportOptions();
@@ -253,6 +259,15 @@ class CartController extends AdminController
         $message = 'Không có số điện thoại nào';
         if (count($data)) {
             $message = 'Số điện thoại được lấy thành công.';
+        }
+        return response()->json($data);
+    }
+
+    public function getNameAjax(CustomerRepository $customer){
+        $data = $customer->getCustomerNames($this->_request);
+        $message = 'Không có khách hàng nào';
+        if (count($data)) {
+            $message = 'Danh sách khách hàng được lấy thành công.';
         }
         return response()->json($data);
     }

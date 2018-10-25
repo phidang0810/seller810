@@ -187,6 +187,7 @@ Route::prefix('don-hang')
     Route::put ('/update-status', 'CartController@updateStatus')->name('admin.carts.updateStatus');
     Route::get ('/danh-sach-san-pham', 'CartController@getProductAjax')->name('admin.carts.getProductAjax');
     Route::get ('/danh-sach-so-dien-thoai', 'CartController@getPhoneAjax')->name('admin.carts.getPhoneAjax');
+    Route::get ('/danh-sach-ten-khach-hang', 'CartController@getNameAjax')->name('admin.carts.getNameAjax');
 });
 
 Route::prefix('thong-ke')

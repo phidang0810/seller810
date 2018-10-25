@@ -415,6 +415,55 @@ span.select2.select2-container.select2-container--default {
         // print_table_photos(photos);
         synchronize_child_and_parent_category($);
 
+        $('button[value="save"]').click(function(event){
+            if (!validateImportProductDetailEmpty()) {
+                return false;
+            }
+        });
+
+        $('button[value="save_quit"]').click(function(event){
+            if (!validateImportProductDetailEmpty()) {
+                return false;
+            }
+        });
+
+        $('button[value="save_complete"]').click(function(event){
+            if (!validateImportProductDetailEmpty()) {
+                return false;
+            }
+        });
+
+        var navigationFn = {
+            goToSection: function(id) {
+                $('html, body').animate({
+                    scrollTop: $(id).offset().top
+                }, 100);
+            }
+        }
+
+        function validateDetailData(){
+            
+        }
+
+        function validateImportProductDetailEmpty(){
+            var status = true;
+            if (jQuery.isEmptyObject(importDetails)) {status = false;}
+
+            if (status == false) {
+                if ($("#cart-details-empty-error").hasClass("hidden")) {
+                    $("#cart-details-empty-error").removeClass("hidden");
+                    $("#cart-details-empty-error").css("display","inline-block!important");
+                    navigationFn.goToSection('#cart-details-empty-error');
+                }
+            }else{
+                if (!$("#cart-details-empty-error").hasClass("hidden")) {
+                    $("#cart-details-empty-error").addClass("hidden");
+                    $("#cart-details-empty-error").css("display","none!important");
+                }
+            }
+            return status;
+        }
+
 
         //---> Handling checkbox for categories list
         $('.list-tree input[type=checkbox]').click(function () {
@@ -659,6 +708,7 @@ span.select2.select2-container.select2-container--default {
                                                         <div class="col-md-3">
                                                         </div>
                                                         <div class="col-md-9">
+                                                            <label id="cart-details-empty-error" class="error hidden" for="warehouse_product_id">Phải có ít nhất 1 sản phẩm</label>
                                                             <div class="table-responsive">
                                                                 <table id="i-product-info" class="table">
                                                                     <thead>

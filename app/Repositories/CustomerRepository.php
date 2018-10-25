@@ -168,6 +168,43 @@ class CustomerRepository
         return make_option($this->getCustomers(), $select, 'phone');
     }
 
+    public function getNameOptions($select = 0){
+        return make_option($this->getCustomers(), $select, 'name');
+    }
+
+    public function getCustomerName($request){
+        $customer_id = $request->get('customer_name');
+        $new_customer = ($request->get('new_customer')) ? $request->get('new_customer') : 'false';
+
+        $return = [
+            'status'    =>  'true',
+            'customer_id' => $customer_id,
+            'message'   =>  'Lấy datas cho khách hàng thành công',
+        ];
+
+        if ($new_customer == 'false') {
+            if ($customer_id) {
+                $customer = Customer::find($customer_id);
+                $customer->city;
+                $customer->group;
+                $return['customer'] = $customer;
+            }else{
+                $return['status'] = 'false';
+            }
+        }else{
+            $customer = Customer::where('name', '=' ,$customer_name)->first();
+            if ($customer) {
+                $customer->city;
+                $customer->group;
+                $return['customer'] = $customer;
+            }else{
+                $return['status'] = 'false';
+            }
+        }
+
+        return Response::json($return);
+    }
+
     public function getCustomer($request){
         $customer_id = $request->get('customer_phone');
         $new_customer = ($request->get('new_customer')) ? $request->get('new_customer') : 'false';
@@ -200,6 +237,19 @@ class CustomerRepository
         }
 
         return Response::json($return);
+    }
+
+    public function getCustomerNames($request)
+    {
+        $formatted_customers = [];
+        $term = trim($request->q);
+
+        $customers_list = Customer::where('name','LIKE', '%'.$term.'%')->get();
+        foreach ($customers_list as $customer) {
+            $formatted_customers[] = ['id' => $customer->id, 'text' => $customer->name];
+        }
+
+        return $formatted_customers;
     }
 
     public function getCustomersV2($request)

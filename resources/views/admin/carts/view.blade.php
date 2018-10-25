@@ -50,7 +50,7 @@
         var html_detail_input_count_price = '<input type="text" value="' + data.total_price + '" id="detail_count_price_'+key+'" class="thousand-number detail_count_price form-control" readonly="readonly">';
 
         //---> Warehouse
-        var html_detail_warehouse = '<label>' + data.product_warehouse + '</label>';
+        var html_detail_warehouse = '<label>' + data.warehouse_product_name + '</label>';
 
         // Row html
         var html = '<td>'+html_detail_photo+'</td>\
@@ -204,9 +204,34 @@
             }
         });
 
+        //---> Init select2 for customer name number
+        var url_get_name = '{{route("admin.carts.getNameAjax")}}';
+        $('select[name="customer_name"]').select2({
+            tags:true,
+            placeholder: '-- Chọn tên khách hàng --',
+            ajax: {//---> Retrieve post data
+                url: url_get_name,
+                dataType: 'json',
+                delay: 250, //---> Delay in ms while typing when to perform a AJAX search
+                data: function (params) {
+                    return {
+                        q: params.term, //---> Search query
+                        action: 'mishagetposts', // AJAX action for admin-ajax.php
+                    };
+                },
+                processResults: function( data ) {
+                    return {
+                        results: data
+                    };
+                },
+                cache: true,
+            },
+            tags:true
+        });
+
         //---> Init select2 for customer phone number
         var url_get_phone = '{{route("admin.carts.getPhoneAjax")}}';
-        $('select[name="customer_phone"').select2({
+        $('select[name="customer_phone"]').select2({
             tags:true,
             placeholder: '-- Chọn số điện thoại --',
             ajax: {//---> Retrieve post data
@@ -270,8 +295,6 @@
                         }
                     });
                 }
-            }).fail(function(jqXHR, textStatus){
-                alert('Có lỗi xảy ra, xin hãy làm mới trình duyệt');
             })
         });
 
@@ -308,8 +331,6 @@
                     $('input[name="warehouse_product_id"]').val(0);
 
                 }
-            }).fail(function(jqXHR, textStatus){
-                alert('Có lỗi xảy ra, xin hãy làm mới trình duyệt');
             })
         });
 
@@ -336,8 +357,6 @@
                     $('input[name="warehouse_product_id"]').val(0);
 
                 }
-            }).fail(function(jqXHR, textStatus){
-                alert('Có lỗi xảy ra, xin hãy làm mới trình duyệt');
             })
         });
 
@@ -365,8 +384,6 @@
                     $('input[name="warehouse_product_id"]').val(0);
 
                 }
-            }).fail(function(jqXHR, textStatus){
-                alert('Có lỗi xảy ra, xin hãy làm mới trình duyệt');
             })
 
         });
@@ -503,8 +520,6 @@
                     });
                 }else{
                 }
-            }).fail(function(jqXHR, textStatus){
-                alert('Có lỗi xảy ra, xin hãy làm mới trình duyệt');
             });
         });
 
@@ -567,6 +582,44 @@
     });
 
         // Load customer data when customer phone select is changed
+        $('select[name="customer_name"]').on('change', function(){
+            var new_customer = ($(this).find('option[value="'+$(this).val()+'"]').attr('data-select2-tag')) ? $(this).find('option[value="'+$(this).val()+'"]').attr('data-select2-tag') : 'false';
+            $.ajax({
+                url: "{{route('admin.carts.view')}}",
+                data:{
+                    customer_name:$(this).val(),
+                    new_customer:new_customer
+                },
+                dataType:'json'
+            }).done(function(data) {
+                if (!$.isEmptyObject(data)) {
+                    if (data.status == 'true') {
+                        $('select[name="customer_phone"]').val(data.customer.id).trigger('change');
+                        $('input[name="customer_email"]').val(data.customer.email);
+                        $('input[name="customer_address"]').val(data.customer.address);
+
+                        if (!$.isEmptyObject(data.customer.city)) {
+                            $('select[name="customer_city"]').val(data.customer.city.id);
+                        }
+                        if (!$.isEmptyObject(data.customer.group)) {
+                            $('input[name="customer_discount_amount"]').val(-data.customer.group.discount_amount);
+                        }else{
+                            $('input[name="customer_discount_amount"]').val(0);
+                        }
+                        updateCartTotalInfo();
+                    }else{
+                        $('select[name="customer_phone"]').val("");
+                        $('input[name="customer_email"]').val("");
+                        $('input[name="customer_address"]').val("");
+                        $('select[name="customer_city"]').val("");
+                        $('input[name="customer_discount_amount"]').val(0);
+                    }
+                }else{
+                }
+            })
+        });
+
+        // Load customer data when customer phone select is changed
         $('select[name="customer_phone"]').on('change', function(){
             var new_customer = ($(this).find('option[value="'+$(this).val()+'"]').attr('data-select2-tag')) ? $(this).find('option[value="'+$(this).val()+'"]').attr('data-select2-tag') : 'false';
             $.ajax({
@@ -579,7 +632,7 @@
             }).done(function(data) {
                 if (!$.isEmptyObject(data)) {
                     if (data.status == 'true') {
-                        $('input[name="customer_name"]').val(data.customer.name);
+                        $('select[name="customer_name"]').val(data.customer.id).trigger('change');
                         $('input[name="customer_email"]').val(data.customer.email);
                         $('input[name="customer_address"]').val(data.customer.address);
 
@@ -601,8 +654,6 @@
                     }
                 }else{
                 }
-            }).fail(function(jqXHR, textStatus){
-                alert('Có lỗi xảy ra, xin hãy làm mới trình duyệt');
             })
         });
 
@@ -621,8 +672,6 @@
                     updateCartTotalInfo();
                 }else{
                 }
-            }).fail(function(jqXHR, textStatus){
-                alert('Có lỗi xảy ra, xin hãy làm mới trình duyệt');
             })
         });
 
@@ -812,11 +861,13 @@ function getDataToPrint(data){
                             </div>
 
                             <div class="row">
-                                <div class="form-group">
+                                <div class="form-group clearfix">
                                     <label class="col-md-4 control-label">Tên khách hàng (<span class="text-danger">*</span>)</label>
                                     <div class="col-md-8">
-                                        <input type="text" name="customer_name" placeholder="" class="form-control required m-b"
-                                        value="@if(isset($data->customer) && isset($data->customer->name)){{$data->customer->name}}@else{{old('customer_name')}}@endif"/>
+                                        <select name="customer_name" class="form-control required m-b">
+                                            <option value="" selected>-- Chọn tên khách hàng --</option>
+                                            {!! $customer_name_options !!}
+                                        </select>
                                     </div>
                                 </div>
                             </div>

@@ -96,7 +96,7 @@ Class ImportProductRepository
 			$category =  $this->lowestLevelCategory($importProduct->id);
 			return ($category) ? $category->name : "";
 		})
-		->rawColumns(['action', 'product_name', 'supplier_name', 'product_category', 'status'])
+		->rawColumns(['action', 'code', 'product_name', 'supplier_name', 'product_category', 'status'])
 		->toJson();
 
 		return $dataTable;

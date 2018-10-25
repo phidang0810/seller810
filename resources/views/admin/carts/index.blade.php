@@ -88,8 +88,8 @@
             $('.tbl-list-product > tbody').html(parseProductTable(data.result['cart_details']));
             parseSummaryProduct(data.result['cart']);
             setTimeout(function(){
-                $('.thousand-number').simpleMoneyFormat();
-                $('.thousand-number').append(" VNĐ");
+                $('#print-section .thousand-number').simpleMoneyFormat();
+                $('#print-section .thousand-number').append(" VNĐ");
             },300);
         }
 

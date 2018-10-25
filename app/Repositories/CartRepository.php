@@ -296,7 +296,14 @@ Class CartRepository
         // Excute customer
         if ($customer = Customer::find($data['customer_phone'])) {
             $customer->city_id = $data['customer_city'];
-            $customer->name = $data['customer_name'];
+            // $customer->name = $data['customer_name'];
+            $customer->email = $data['customer_email'];
+            $customer->address = $data['customer_address'];
+
+            $customer->save();
+        }elseif($customer = Customer::where('name', $data['customer_name'])->first()){
+            $customer->city_id = $data['customer_city'];
+            // $customer->name = $data['customer_name'];
             $customer->email = $data['customer_email'];
             $customer->address = $data['customer_address'];
 
@@ -477,6 +484,8 @@ Class CartRepository
             $detail->productDetail;
             $detail->productDetail->size;
             $detail->productDetail->color;
+            $detail->warehouseProduct;
+            $detail->warehouseProduct->warehouse;
         }
         $return = [];
         foreach ($model->details as $key => $value) {
@@ -510,7 +519,8 @@ Class CartRepository
                     'name' => ($value->size) ? $value->size->name : ""
                 ],
                 'quantity' => ($value->quantity) ? $value->quantity : 0,
-                'warehouse_product_id' => ($value->warehouse_product_id) ? $value->warehouse_product_id : 0
+                'warehouse_product_id' => ($value->warehouse_product_id) ? $value->warehouse_product_id : 0,
+                'warehouse_product_name' => ($value->warehouseProduct) ? $value->warehouseProduct->warehouse->name : ""
             ];
         }
         return $return;
