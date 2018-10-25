@@ -167,7 +167,7 @@
                         <th>SDT</th>
                         <th>Tổng Nợ</th>
                         <th>Đã Trả</th>
-                        <th>Ngày Nợ¶•</th>
+                        <th>Ngày Nợ</th>
                         <th>Trạng Thái</th>
                         <th></th>
                     </tr>

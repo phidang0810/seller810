@@ -6,17 +6,6 @@
     <script></script>
     <!-- Page-Level Scripts -->
     <script>
-        function readURL(input) {
-            if (input.files && input.files[0]) {
-                var reader = new FileReader();
-
-                reader.onload = function(e) {
-                    $('#preview').attr('src', e.target.result);
-                };
-
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
 
         $(document).ready(function() {
 
@@ -24,18 +13,38 @@
                 $("#mainForm")[0].reset();
             });
 
-            $("#mainForm").validate({
-                rules: {
-                    code:{
-                        maxlength:20
-                    }
-                }
-            });
+            $("#mainForm").validate();
 
             new Cleave('.input-phone', {
                 phone: true,
                 phoneRegionCode: 'VN'
             });
+
+            new Cleave('.input-price', {
+                numeral: true,
+                numeralThousandsGroupStyle: 'thousand'
+            });
+            new Cleave('.input-price2', {
+                numeral: true,
+                numeralThousandsGroupStyle: 'thousand'
+            });
+
+            $('.date_picker').datepicker({
+                keyboardNavigation: false,
+                forceParse: false,
+                autoclose: true,
+                format: 'dd/mm/yyyy'
+            });
+
+            $('select[name="supplier_id"]').change(function(){
+                $('input[name="supplier_code"]').val($(this).find('option:selected').attr('data-code'));
+                $('input[name="supplier_address"]').val($(this).find('option:selected').attr('data-address'));
+            });
+            $('input[name="supplier_code"]').val($('select[name="supplier_id"]').find('option:selected').attr('data-code'));
+            $('input[name="supplier_address"]').val($('select[name="supplier_id"]').find('option:selected').attr('data-address'));
+            $('#full_paid').click(function(){
+                $('input[name="paid"]').val($('input[name="total"]').val());
+            })
         });
     </script>
 @endsection
@@ -44,55 +53,60 @@
     <div class="col-lg-12">
         <div class="ibox float-e-margins pl-15 pr-15">
             @include('admin._partials._alert')
-            <form role="form" method="POST" id="mainForm" action="{{route('admin.suppliers.store')}}" enctype="multipart/form-data">
+            <form role="form" method="POST" id="mainForm" action="{{route('admin.creditors.store')}}" enctype="multipart/form-data">
                 {{ csrf_field() }}
                 @if (isset($data->id))
                     <input type="hidden" name="id" value="{{$data->id}}" />
                 @endif
                 <div class="ibox-content" style="padding: 20px;">
-                    <div class="row m-b">
-                        <div class="form-group">
-                            <label class="col-md-2 control-label">Tên Nhà Cung Cấp (<span class="text-danger">*</span>)</label>
-                            <div class="col-md-5">
-                                <input type="text" name="name" placeholder="Nhập tên nhà cung cấp" class="form-control required" value="@if(isset($data->name)){{$data->name}}@else{{old('name')}}@endif"/>
-                            </div>
-                        </div>
-                    </div>
-
                     @if(isset($data))
-                    <div class="row m-b">
-                        <div class="form-group">
-                            <label class="col-md-2 control-label">Mã Nhà Cung Cấp (<span class="text-danger">*</span>)</label>
-                            <div class="col-md-5">
-                                <input type="text" name="code" readonly class="form-control" value="@if(isset($data->code)){{$data->code}}@else{{old('code')}}@endif"/>
+                        <div class="row m-b">
+                            <div class="form-group">
+                                <label class="col-md-2 control-label">Mã Phiếu Nợ</label>
+                                <div class="col-md-5">
+                                    <input type="text" readonly name="code" class="form-control required" value="@if(isset($data->code)){{$data->code}}@else{{old('code')}}@endif"/>
+                                </div>
                             </div>
                         </div>
-                    </div>
                     @endif
 
                     <div class="row m-b">
                         <div class="form-group">
-                            <label class="col-md-2 control-label">Mã Số Thuế (<span class="text-danger">*</span>)</label>
+                            <label class="col-md-2 control-label">Nhà Cung Cấp (<span class="text-danger">*</span>)</label>
                             <div class="col-md-5">
-                                <input type="text" name="tax_code" placeholder="Nhập mã số thuế" class="form-control required" value="@if(isset($data->tax_code)){{$data->tax_code}}@else{{old('tax_code')}}@endif"/>
+                                <select class="form-control" name="supplier_id">
+                                    <option value="0">-- Chọn nhà khách hàng --</option>
+                                    @foreach($suppliers as $item)
+                                        <option value="{{$item->id}}" @if(isset($data->supplier_id) && $data->supplier_id === $item->id) selected @endif data-code="{{$item->code}}" data-address="{{$item->address}}">{{$item->name}}</option>
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
                     </div>
 
                     <div class="row m-b">
                         <div class="form-group">
-                            <label class="col-md-2 control-label">Tên Người Đại Diện (<span class="text-danger">*</span>)</label>
+                            <label class="col-md-2 control-label">Mã Số Thuế</label>
                             <div class="col-md-5">
-                                <input type="text" name="responsible_person" placeholder="Nhập tên người đại diện" class="form-control required" value="@if(isset($data->responsible_person)){{$data->responsible_person}}@else{{old('responsible_person')}}@endif"/>
+                                <input type="text" name="supplier_code" readonly class="form-control" value=""/>
                             </div>
                         </div>
                     </div>
 
                     <div class="row m-b">
                         <div class="form-group">
-                            <label class="col-md-2 control-label">Email (<span class="text-danger">*</span>)</label>
+                            <label class="col-md-2 control-label">Địa Chỉ</label>
                             <div class="col-md-5">
-                                <input type="text" name="email" placeholder="Nhập email của bạn" class="form-control required email" value="@if(isset($data->email)){{$data->email}}@else{{old('email')}}@endif"/>
+                                <input type="text" name="supplier_address" readonly class="form-control" value=""/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row m-b">
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">Tên Người Trả (<span class="text-danger">*</span>)</label>
+                            <div class="col-md-5">
+                                <input type="text" name="full_name" placeholder="Nhập tên người đại diện" class="form-control required" value="@if(isset($data->full_name)){{$data->full_name}}@else{{old('full_name')}}@endif"/>
                             </div>
                         </div>
                     </div>
@@ -106,30 +120,59 @@
                         </div>
                     </div>
 
-
                     <div class="row m-b">
                         <div class="form-group">
-                            <label class="col-md-2 control-label">Địa chỉ</label>
-                            <div class="col-md-5">
-                                <input type="text" name="address" placeholder="VD: 5 Lữ Gia, phường 15, quận 11" class="form-control" value="@if(isset($data->address)){{$data->address}}@else{{old('address')}}@endif"/>
+                            <label class="col-md-2 control-label">Tổng Nợ (VND) (<span class="text-danger">*</span>)</label>
+                            <div class="col-md-3">
+                                <input type="text" name="total" placeholder="VD: 10.000" @if(isset($data)) readonly @endif class="form-control input-price required" value="@if(isset($data->total)){{$data->total}}@else{{old('total')}}@endif"/>
                             </div>
                         </div>
                     </div>
 
                     <div class="row m-b">
                         <div class="form-group">
-                            <label class="col-md-2 control-label">Trạng Thái</label>
+                            <label class="col-md-2 control-label">Số Tiền Đã Trả (VND) (<span class="text-danger">*</span>)</label>
                             <div class="col-md-3">
-                                <select class="form-control" name="active">
-                                    <option @if(isset($data->active) && $data->active === ACTIVE || old('active') === ACTIVE) selected @endif value="{{ACTIVE}}">Đã kích hoạt</option>
-                                    <option @if(isset($data->active) && $data->active === INACTIVE || old('active') === INACTIVE) selected @endif value="{{INACTIVE}}">Chưa kích hoạt</option>
-                                </select>
+                                <div class="input-group">
+                                    <input type="text" name="paid" placeholder="VD: 10.000" class="form-control input-price2 required" value="@if(isset($data->paid)){{$data->paid}}@else{{old('paid')}}@endif"/>
+                                    <span class="input-group-btn">
+                                    <button id="full_paid" type="button" class="btn btn-default"><i class="fa fa-check" aria-hidden="true"></i> Trả đủ</button>
+                                  </span>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row m-b">
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">Ngày Nợ (<span class="text-danger">*</span>)</label>
+                            <div class="col-md-3">
+                                <input type="text" name="date" class="form-control date_picker required" @if(isset($data)) readonly @endif value="@if(isset($data->date)){{\Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $data->date)->format('d/m/Y')}}@else{{old('date')}}@endif"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row m-b">
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">Ngày Trả (<span class="text-danger">*</span>)</label>
+                            <div class="col-md-3">
+                                <input type="text" name="paid_date" class="form-control date_picker required" value="@if(isset($data->paid_date)){{\Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $data->paid_date)->format('d/m/Y')}}@else{{old('paid_date')}}@endif"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row m-b">
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">Ghi Chú</label>
+                            <div class="col-md-5">
+                                <textarea name="note" rows="5" class="form-control">@if(isset($data->note)){{$data->note}}@else{{old('note')}}@endif</textarea>
                             </div>
                         </div>
                     </div>
 
                     <div class="text-right">
-                        <a href="{{route('admin.suppliers.index')}}" class="btn btn-default"><i class="fa fa-arrow-circle-o-left"></i> Trở lại</a>
+                        <a href="{{route('admin.creditors.index')}}" class="btn btn-default"><i class="fa fa-arrow-circle-o-left"></i> Trở lại</a>
                         <button type="button" class="btn btn-default" id="bt-reset"><i class="fa fa-refresh"></i> Làm mới</button>
                         <button type="submit" name="action" class="btn btn-primary" value="save"><i class="fa fa-save"></i> Lưu</button>
                         <button type="submit" name="action" class="btn btn-warning" value="save_quit"><i class="fa fa-save"></i> Lưu &amp; Thoát</button>

@@ -85,7 +85,15 @@
 
             @if(key_exists('supplier_manager', Auth::user()->permissions))
                 <li class="{{ set_active(['quan-ly/nha-cung-cap*']) }} nav-item">
-                    <a href="{{route('admin.suppliers.index')}}"><i class="fa fa-university" aria-hidden="true"></i> <span class="nav-label">Nhà Cung Cấp</span></a>
+                    <a href="#"><i class="fa fa-university" aria-hidden="true"></i> <span class="nav-label">Nhà Cung Cấp</span><span class="fa arrow"></span></a>
+                    <ul class="nav nav-second-level">
+                        <li class="{{ set_active(['quan-ly/nha-cung-cap']) }}"><a href="{{route('admin.suppliers.index')}}">Nhà Cung Cấp</a></li>
+                        <li class="{{ set_active(['quan-ly/nha-cung-cap/danh-sach-no']) }}"><a href="{{route('admin.creditors.index')}}">Danh sách Nợ</a></li>
+                    </ul>
+                </li>
+
+                <li class="{{ set_active(['quan-ly/nha-cung-cap*']) }} nav-item">
+
                 </li>
             @endif
 
@@ -110,6 +118,7 @@
                     <ul class="nav nav-second-level">
                         <li class="{{ set_active(['quan-ly/thong-ke/doanh-thu']) }}"><a href="{{route('admin.statistics.revenueChart')}}">Doanh Thu</a></li>
                         <li class="{{ set_active(['quan-ly/thong-ke/don-hang']) }}"><a href="{{route('admin.statistics.cartChart')}}">Đơn Hàng</a></li>
+                        <li class="{{ set_active(['quan-ly/ke-toan/no']) }}"><a href="{{route('admin.statistics.creditorChart')}}">Nợ</a></li>
                     </ul>
                 </li>
             @endif

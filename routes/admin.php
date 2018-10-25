@@ -193,9 +193,11 @@ Route::prefix('thong-ke')
 ->middleware('permission:report_manager')->group(function () {
     Route::get ('/doanh-thu', 'StatisticsController@revenueChart')->name('admin.statistics.revenueChart');
     Route::get ('/don-hang', 'StatisticsController@cartChart')->name('admin.statistics.cartChart');
+    Route::get ('/no', 'StatisticsController@creditorChart')->name('admin.statistics.creditorChart');
 
     Route::get ('/data-payment', 'StatisticsController@getPaymentChart')->name('admin.statistics.getPaymentChart');
     Route::get ('/cart-barchart', 'StatisticsController@getCartBarChart')->name('admin.statistics.getCartBarChart');
+    Route::get ('/creditor', 'StatisticsController@getCreditorBarChart')->name('admin.statistics.getCreditorBarChart');
     Route::get ('/top-product', 'StatisticsController@getTopProductSell')->name('admin.statistics.getTopProductSell');
     Route::get ('/top-platform', 'StatisticsController@getTopPlatformSell')->name('admin.statistics.getTopPlatformSell');
     Route::get ('/top-category', 'StatisticsController@getTopCategorySell')->name('admin.statistics.getTopCategorySell');

@@ -11,6 +11,7 @@ namespace App\Repositories;
 use App\Models\Cart;
 use App\Models\CartDetail;
 use App\Models\Category;
+use App\Models\Creditor;
 use App\Models\Customer;
 use App\Models\Payment;
 use App\Models\PaymentDetail;
@@ -95,6 +96,31 @@ Class PaymentRepository
             case 'year':
                 $result['time'] = $this->_getYears();
                 $result['value'] = $this->_getPaymentYears($result['time'],['select' => $select]);
+                break;
+        }
+        return $result;
+    }
+
+
+    public function getCreditorBarChart($search)
+    {
+        $result = [
+            'time' => [],
+            'value' => []
+        ];
+        $group = $search['date_filter'] ?? 'year';
+        $select = $search['select'] ?? 'amount';
+        switch ($group) {
+
+            case 'month':
+                $result['time'] = $this->_getMonths();
+
+                $result['total'] = $this->_getCreditorMonthOfYear($result['time']);
+                break;
+
+            case 'year':
+                $result['time'] = $this->_getYears();
+                $result['total'] = $this->_getCreditorYears($result['time']);
                 break;
         }
         return $result;
@@ -258,6 +284,24 @@ Class PaymentRepository
         return $valueArr;
     }
 
+    private function _getCreditorMonthOfYear($time)
+    {
+        $query = Creditor::selectRaw('sum(total) as total, MONTH(date) as month');
+
+        $query->whereRaw('YEAR(date) = YEAR(CURDATE()) ')
+            ->orderBy('date','asc')
+            ->groupBy('month')
+            ->get();
+        $prices = $query->pluck('total','month')->toArray();
+        $valueArr = [];
+        foreach($time as $k => $value) {
+            $month = $k+1;
+            $valueArr[$k] = key_exists($month, $prices) ? $prices[$month]:0;
+        }
+
+        return $valueArr;
+    }
+
     private function _getPaymentMonthOfYear($time, array $option = [])
     {
         if ($option['select'] === 'number_cart') {
@@ -281,6 +325,24 @@ Class PaymentRepository
         }
 
         return $valueArr;
+    }
+
+    private function _getCreditorYears($time)
+    {
+        $result = [];
+        $query = Creditor::selectRaw('sum(total) as total, YEAR(date) as year');
+
+        $query->whereRaw('YEAR(date) >= ' . $time[0])
+            ->orderBy('date','asc')
+            ->groupBy('year')
+            ->get();
+        $data = $query->pluck('total','year')->toArray();
+        $index = 0;
+        foreach($time as $value) {
+            $result[$index] = key_exists($value, $data) ? $data[$value]:0;
+            $index++;
+        }
+        return $result;
     }
 
     private function _getPaymentYears($time, array $option = [])

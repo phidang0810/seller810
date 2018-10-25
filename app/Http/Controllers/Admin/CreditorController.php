@@ -47,9 +47,9 @@ class CreditorController extends AdminController
         $id = $input['id'] ?? null;
         $rules = [
             'full_name' => 'required|string|max:50',
+            'phone' => 'required|string|max:50',
             'total' => 'required',
-            'paid' => 'required',
-            'status' => 'required'
+            'paid' => 'required'
         ];
         $message = 'Ghi nợ thành công.';
 
