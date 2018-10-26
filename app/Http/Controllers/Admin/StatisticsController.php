@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Repositories\CartRepository;
 use App\Repositories\CategoryRepository;
+use App\Repositories\CreditorRepository;
 use App\Repositories\ImportProductRepository;
 use App\Repositories\PaymentRepository;
 use App\Repositories\PlatformRepository;
@@ -106,6 +107,15 @@ class StatisticsController extends AdminController
         return view('admin.statistics.revenue_chart', $this->_data);
     }
 
+    public function creditorChart(CreditorRepository $creditor)
+    {
+        $this->_data['title'] = 'Thống Kê Nợ';
+        $this->_data['total_not_paid'] = $creditor->getTotalNotPaid();
+        $this->_data['total'] = $creditor->getTotal();
+
+        return view('admin.statistics.creditor', $this->_data);
+    }
+
     public function cartChart(CartRepository $cart, CategoryRepository $category)
     {
         if ($this->_request->ajax()) {
@@ -143,6 +153,17 @@ class StatisticsController extends AdminController
     {
         $input = $this->_request;
         $data = $payment->getBarChartData($input);
+
+        return response()->json([
+            'success' => true,
+            'result' => $data
+        ]);
+    }
+
+    public function getCreditorBarChart(PaymentRepository $payment)
+    {
+        $input = $this->_request;
+        $data = $payment->getCreditorBarChart($input);
 
         return response()->json([
             'success' => true,

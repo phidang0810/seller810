@@ -6,6 +6,7 @@ use App\Models\Cart;
 use App\Models\Creditor;
 use App\Models\Product;
 use App\Models\Supplier;
+use Carbon\Carbon;
 use Yajra\DataTables\Facades\DataTables;
 
 class CreditorRepository
@@ -13,8 +14,9 @@ class CreditorRepository
 
     public function dataTable($request)
     {
-        $data = Creditor::selectRaw('suppliers.name as supplier_name, suppliers.code as supplier_code, creditors.phone, creditors.code, creditors.full_name, creditors.total, creditors.paid, creditors.status, creditors.date')
+        $data = Creditor::selectRaw('creditors.id, suppliers.name as supplier_name, suppliers.code as supplier_code, creditors.phone, creditors.code, creditors.full_name, creditors.total, creditors.paid, creditors.status, creditors.date')
         ->join('suppliers', 'suppliers.id', '=', 'creditors.supplier_id');
+
         $dataTable = DataTables::eloquent($data)
             ->filter(function ($query) use ($request) {
                 if (trim($request->get('status')) !== "") {
@@ -77,6 +79,16 @@ class CreditorRepository
 
         return $dataTable;
     }
+
+    public function getTotalNotPaid()
+    {
+        return Creditor::selectRaw('SUM(total-paid) as total')->first();
+    }
+    public function getTotal()
+    {
+        return Creditor::selectRaw('SUM(total) as total')->first();
+    }
+
     public function getData($id)
     {
         $data = Creditor::find($id);
@@ -92,13 +104,16 @@ class CreditorRepository
             $model = new Creditor;
         }
         $model->supplier_id = $data['supplier_id'];
-        $model->full_name = $data['name'];
-        $model->total = $data['email'];
-        $model->paid = $data['tax_code'];
+        $model->full_name = $data['full_name'];
+        $model->phone = $data['phone'];
+        $model->date = Carbon::createFromFormat('d/m/Y H:i:s', $data['date'] . ' 00:00:00')->toDateTimeString();
+        $model->paid_date = Carbon::createFromFormat('d/m/Y H:i:s', $data['paid_date'] . ' 00:00:00')->toDateTimeString();
+        $model->total = preg_replace('/[^0-9]/', '', $data['total']);
+        $model->paid = preg_replace('/[^0-9]/', '', $data['paid']);
 
-        if($data['paid'] == 0) {
+        if($model->paid_date == 0) {
             $model->status = CREDITOR_NOT_PAID;
-        } else if($data['paid'] < $data['total']) {
+        } else if($model->paid < $model->total) {
             $model->status = CREDITOR_PAYING;
         } else {
             $model->status = CREDITOR_PAID;

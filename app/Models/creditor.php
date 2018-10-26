@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class Creditor extends BaseModel
@@ -14,4 +15,5 @@ class Creditor extends BaseModel
     protected $fillable = [
         'supplier_id', 'code','full_name', 'note', 'total', 'paid', 'date', 'paid_date','phone', 'note', 'status'
     ];
+
 }
