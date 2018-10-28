@@ -218,6 +218,35 @@ Class CartRepository
         return $model;
     }
 
+    public function pay($request)
+    {
+        $id = $request->get('id');
+        $pay_amount = ($request->get('pay_amount') !== null) ? $request->get('pay_amount') : 0;
+        $model = Cart::find($id);
+        $model->paid_amount = ($model->paid_amount) ? $model->paid_amount : 0;
+        $model->paid_amount += $pay_amount;
+        $model->needed_paid -= $pay_amount;
+
+        //---> excute payment_status
+        if ($model->paid_amount && $model->paid_amount > 0) {
+            $model->payment_status = PAYING_NOT_ENOUGH;
+            if ($model->paid_amount >= $model->price) {
+                if ($model->platform_id && $model->platform_id != 0) {
+                    $model->payment_status = PAYING_OFF;
+                } else {
+                    $model->payment_status = RECEIVED_PAYMENT;
+                }
+
+            }
+        } else {
+            $model->payment_status = NOT_PAYING;
+        }
+
+        $model->save();
+
+        return $model;
+    }
+
     public function deleteDetails($id)
     {
         $modelDetail = CartDetail::find($id);

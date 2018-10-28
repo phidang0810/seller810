@@ -59,6 +59,9 @@ Route::prefix('khach-hang')
     Route::delete ('/', 'CustomerController@delete')->name('admin.customers.delete');
     Route::put ('/change-status', 'CustomerController@changeStatus')->name('admin.customers.changeStatus');
 
+    Route::get ('/no', 'CustomerController@dept')->name('admin.customers.dept');
+    Route::put ('/tra', 'CustomerController@pay')->name('admin.customers.pay');
+
     Route::get ('/nhom/', 'GroupCustomerController@index')->name('admin.groupCustomer.index');
     Route::get ('/nhom/chi-tiet', 'GroupCustomerController@view')->name('admin.groupCustomer.view');
     Route::get ('/nhom/them', 'GroupCustomerController@view')->name('admin.groupCustomer.create');

@@ -12,48 +12,58 @@ class CustomerRepository
     public function getObjDataTable($request)
     {
         $data = Customer::selectRaw('customers.id, customers.name, code, group_customers.name as group_name, email, phone, address, customers.active, customers.group_customer_id, customers.created_at')
-            ->leftJoin('group_customers', 'group_customers.id', '=', 'customers.group_customer_id');
+        ->leftJoin('group_customers', 'group_customers.id', '=', 'customers.group_customer_id');
         $dataTable = DataTables::eloquent($data)
-            ->filter(function ($query) use ($request) {
-                if (trim($request->get('status')) !== "") {
-                    $query->where('customers.active', $request->get('status'));
-                }
-                if (trim($request->get('group_customer_id')) !== "") {
-                    $query->where('customers.group_customer_id', $request->get('group_customer_id'));
-                }
-                if (trim($request->get('keyword')) !== "") {
-                    $query->where(function ($sub) use ($request) {
-                        $sub->where('customers.name', 'like', '%' . $request->get('keyword') . '%')
-                            ->orWhere('customers.email', 'like', '%' . $request->get('keyword') . '%')
-                            ->orWhere('customers.phone', 'like', '%' . $request->get('keyword') . '%')
-                            ->orWhere('customers.code', 'like', '%' . $request->get('keyword') . '%');
-                    });
+        ->filter(function ($query) use ($request) {
+            if (trim($request->get('status')) !== "") {
+                $query->where('customers.active', $request->get('status'));
+            }
+            if (trim($request->get('group_customer_id')) !== "") {
+                $query->where('customers.group_customer_id', $request->get('group_customer_id'));
+            }
+            if (trim($request->get('keyword')) !== "") {
+                $query->where(function ($sub) use ($request) {
+                    $sub->where('customers.name', 'like', '%' . $request->get('keyword') . '%')
+                    ->orWhere('customers.email', 'like', '%' . $request->get('keyword') . '%')
+                    ->orWhere('customers.phone', 'like', '%' . $request->get('keyword') . '%')
+                    ->orWhere('customers.code', 'like', '%' . $request->get('keyword') . '%');
+                });
 
-                }
-            }, true)
-            ->addColumn('action', function ($data) {
-                $html = '<a href="' . route('admin.customers.history', [$data->id]) . '" class="btn btn-xs btn-warning" style="margin-right: 5px"><i class="fa fa-history" aria-hidden="true"></i> Lịch sử</a>';
-                $html .= '<a href="' . route('admin.customers.view', ['id' => $data->id]) . '" class="btn btn-xs btn-primary" style="margin-right: 5px"><i class="glyphicon glyphicon-edit"></i> Sửa</a>';
-                $html .= '<a href="#" class="bt-delete btn btn-xs btn-danger" data-id="' . $data->id . '" data-name="' . $data->name . '">';
-                $html .= '<i class="fa fa-trash-o" aria-hidden="true"></i> Xóa</a>';
+            }
+        }, true)
+        ->addColumn('action', function ($data) {
+            $html = '<a href="' . route('admin.customers.history', [$data->id]) . '" class="btn btn-xs btn-warning" style="margin-right: 5px"><i class="fa fa-history" aria-hidden="true"></i> Lịch sử</a>';
+            $html .= '<a href="' . route('admin.customers.view', ['id' => $data->id]) . '" class="btn btn-xs btn-primary" style="margin-right: 5px"><i class="glyphicon glyphicon-edit"></i> Sửa</a>';
+            $html .= '<a href="#" class="bt-delete btn btn-xs btn-danger" data-id="' . $data->id . '" data-name="' . $data->name . '">';
+            $html .= '<i class="fa fa-trash-o" aria-hidden="true"></i> Xóa</a>';
 
-                return $html;
-            })
-            ->addColumn('status', function ($data) {
-                $active = '';
-                if ($data->active === ACTIVE) {
-                    $active  = 'checked';
+            return $html;
+        })
+        ->addColumn('status', function ($data) {
+            $active = '';
+            if ($data->active === ACTIVE) {
+                $active  = 'checked';
+            }
+            $html = '<input type="checkbox" data-name="'.$data->name.'" data-id="'.$data->id.'" name="social' . $data->active . '" class="js-switch" value="' . $data->active . '" ' . $active . ' ./>';
+            return $html;
+        })
+        ->addColumn('total_dept', function ($data){
+            $total_dept = 0;
+            $carts = Cart::select(['needed_paid'])->where('customer_id', $data->id)->where('needed_paid', '>', 0)->get();
+            if(count($carts) > 0){
+                foreach ($carts as $cart) {
+                    $total_dept += $cart->needed_paid;
                 }
-                $html = '<input type="checkbox" data-name="'.$data->name.'" data-id="'.$data->id.'" name="social' . $data->active . '" class="js-switch" value="' . $data->active . '" ' . $active . ' ./>';
-                return $html;
-            });
+            }
+            return format_price($total_dept);
+        });
         return $dataTable;
     }
 
     public function dataTable($request)
     {
         $data = $this->getObjDataTable($request)
-        ->rawColumns(['status', 'action'])
+        ->rawColumns(['status', 'action', 'total_dept'])
         ->toJson();
 
         return $data;
@@ -85,10 +95,10 @@ class CustomerRepository
 
             return $html;
         })
-            ->addColumn('code', function ($cart) {
-                $html = '<a href="'.route('admin.carts.index', ['cart_code' => $cart->code]) . '">' . $cart->code .'</a>';
-                return $html;
-            })
+        ->addColumn('code', function ($cart) {
+            $html = '<a href="'.route('admin.carts.index', ['cart_code' => $cart->code]) . '">' . $cart->code .'</a>';
+            return $html;
+        })
         ->rawColumns(['code', 'status'])
         ->toJson();
 
@@ -269,14 +279,43 @@ class CustomerRepository
     public function getTotalNeededPaid($customerID)
     {
         $data = Cart::where('customer_id', $customerID)
-            ->where('payment_status', PAYING_NOT_ENOUGH)
-            ->selectRaw('SUM(needed_paid) as total')
-            ->groupBy('customer_id')
-            ->first();
+        ->where('payment_status', PAYING_NOT_ENOUGH)
+        ->selectRaw('SUM(needed_paid) as total')
+        ->groupBy('customer_id')
+        ->first();
         if ($data) {
             return $data->total;
         }
 
         return 0;
+    }
+
+    public function dataTableForDept($request){
+        $customer_id = ($request->get('customer_id') !== null) ? $request->get('customer_id') : 0;
+        $cart = Cart::select(['id', 'code', 'quantity', 'needed_paid', 'status', 'payment_status', 'created_at'])
+        ->where('customer_id', $customer_id)->where('needed_paid', '>', 0);
+
+        $dataTable = DataTables::eloquent($cart)
+        ->addColumn('status', function ($cart) {
+            $html = '<span class="label label-'.CART_LABEL[$cart->status].'">'.CART_TEXT[$cart->status].'</span>';
+            return $html;
+        })
+        ->addColumn('payment_status', function ($cart) {
+            $html = '<span class="label label-'.CART_PAYMENT_LABEL[$cart->payment_status].'">'.CART_PAYMENT_TEXT[$cart->payment_status].'</span>';
+            return $html;
+        })
+        ->addColumn('pay', function($cart){
+            $html = '';
+            $html .= '<input type="text" class="form-control" name="pay-'.$cart->id.'">';
+            return $html;
+        })
+        ->addColumn('action', function($cart){
+            $html = '<a href="#" class="bt-pay btn btn-primary btn-xs" data-id="' . $cart->id . '" data-name="' . $cart->code . '">Trả</a>';
+            return $html;
+        })
+        ->rawColumns(['status', 'payment_status', 'action', 'pay'])
+        ->toJson();
+
+        return $dataTable;
     }
 }

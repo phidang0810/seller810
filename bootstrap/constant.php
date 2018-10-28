@@ -26,6 +26,12 @@ define('CART_PAYMENT_TEXT', [
     3	=>	'Đã thanh toán',
     4	=>	'Đã nhận tiền'
 ]);
+define('CART_PAYMENT_LABEL', [
+    1   =>  'Warning',
+    2   =>  'info',
+    3   =>  'primary',
+    4   =>  'success'
+]);
 
 // cart status: chưa giao, đang giao, đã giao, đã hoàn tất, đã hủy
 define('CART_NEW', 1);
@@ -40,7 +46,15 @@ define('CART_TEXT', [
 	3	=>	'Đang giao',
 	4	=>	'Đã giao',
 	5	=>	'Đã hoàn tất',
-	6	=>	'Đã hủy',
+	6	=>	'Đã hủy'
+]);
+define('CART_LABEL', [
+    1   =>  'default',
+    2   =>  'info',
+    3   =>  'info',
+    5   =>  'success',
+    4   =>  'primary',
+    6   =>  'Warning'
 ]);
 
 define('PAYSLIP_PENDING', 1);

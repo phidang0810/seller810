@@ -107,13 +107,14 @@
                     {data: 'email'},
                     {data: 'phone'},
                     {data: 'address'},
+                    {data: 'total_dept'},
                     {data: 'status'},
                     {data: 'action'}
                 ],
                 "aoColumnDefs": [
                     // Column index begins at 0
-                    { "sClass": "text-center", "aTargets": [ 7 ] },
-                    { "sClass": "text-right", "aTargets": [ 8 ] }
+                    { "sClass": "text-center", "aTargets": [ 8 ] },
+                    { "sClass": "text-right", "aTargets": [ 9 ] }
                 ],
                 "language": {
                     "decimal": "",
@@ -275,6 +276,7 @@
                         <th>Email</th>
                         <th>Điện Thoại</th>
                         <th>Địa Chỉ</th>
+                        <th>Chưa thanh toán</th>
                         <th>Trạng Thái</th>
                         <th></th>
                     </tr>

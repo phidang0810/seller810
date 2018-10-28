@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Repositories\GroupCustomerRepository;
 use App\Repositories\RoleRepository;
 use App\Repositories\CustomerRepository;
+use App\Repositories\CartRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Excel;
@@ -151,5 +152,23 @@ class CustomerController extends AdminController
             });
 
         })->export('xls');
+    }
+
+    public function dept(CustomerRepository $model){
+        return $model->dataTableForDept($this->_request);
+    }
+
+    public function pay(CustomerRepository $model, CartRepository $cart){
+        $result = [];
+        $result['success'] = true;
+        $result['data'] = $cart->pay($this->_request);
+        $result['message'] = 'Tình trạng đơn hàng đã được cập nhật.';
+
+        if ($result['data'] == false) {
+            $result['success'] = false;
+            $result['message'] = 'Khách hàng còn nợ không thể chuyển sang hoàn tất';
+        }
+
+        return response()->json($result);
     }
 }
