@@ -82,6 +82,7 @@
             $('label.lbl-total-quantity').text(addCommas(cart['quantity']));
             $('label.lbl-discount-amount').text(addCommas(cart['total_discount_amount']));
             $('label.lbl-shipping-fee').text(addCommas(cart['shipping_fee']));
+            $('h4.lbl-price').text(addCommas(cart['price']));
         }
 
         function parseProductTable(arrProducts){
@@ -107,7 +108,7 @@
             $('.lbl-customer-address').text(data.result['cart']['customer_address']);
             $('.lbl-customer-created').text(data.result['cart']['created_at']);
             $('.lbl-customer-code').text(data.result['cart']['code']);
-            $('.tbl-list-product > tbody').html(parseProductTable(data.result['cart_details']));
+            $('.tbl-list-product > tbody').prepend(parseProductTable(data.result['cart_details']));
             parseSummaryProduct(data.result['cart']);
             setTimeout(function(){
                 $('#print-section .thousand-number').simpleMoneyFormat();
@@ -120,9 +121,7 @@
             getDataToPrint(data_to_print);
             print_el.removeClass("hidden");
             print_el.printThis({
-                header: $('#print_header'),
-                footer: $('#print_footer'),
-
+                header: null,
             });
         }
 

@@ -516,7 +516,6 @@
                     print_el.removeClass("hidden");
                     print_el.printThis({
                         header: null,
-
                     });
                 }else{
                 }

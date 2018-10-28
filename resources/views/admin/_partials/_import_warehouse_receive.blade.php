@@ -1,6 +1,12 @@
 @include('admin._partials._print_header')
 <!--  BEGIN: Print transport warehourse receive -->
 <div id="print-section">
+    <hr class="horizontal-line" size="5">
+    <div class="row">
+        <div class="col-sm-12">
+            <h2 class="text-center font-bold text-uppercase" style="font-size: 30px;">Phiếu nhập hàng</h2>
+        </div>
+    </div>
     <div style="margin-top: 20px;">
         <div class="row">
             <div class="col-sm-6" >

@@ -130,7 +130,7 @@ Class CartRepository
     {
         $cart = Cart::select(['carts.id', 'carts.city_id', 'carts.partner_id', 'carts.customer_id',
             'carts.code', 'carts.quantity', 'carts.status', 'carts.active', 'carts.created_at',
-            'carts.transport_id as transport_id', 'carts.total_price', 'carts.shipping_fee',
+            'carts.transport_id as transport_id', 'carts.price', 'carts.total_price', 'carts.shipping_fee',
             'carts.vat_amount', 'carts.total_discount_amount', 'carts.price', 'carts.needed_paid', 'carts.paid_amount',
             'customers.name as customer_name', 'customers.phone as customer_phone', 'customers.email as customer_email',
             'customers.address as customer_address', 'cart_detail.product_id', 'carts.platform_id', 'platforms.name as platform_name',
