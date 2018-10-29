@@ -142,10 +142,12 @@ span.select2.select2-container.select2-container--default {
             photos = data.product.photos;
             printTablePhotos();
             // categories
-            var categories = data.product.category_ids.split(',');
-            $.each(categories, function(key, value){
-                $("input[type=checkbox][value="+value+"]").prop("checked",true);
-            });
+            if (data.product.category_ids != null) {
+                var categories = data.product.category_ids.split(',');
+                $.each(categories, function(key, value){
+                    $("input[type=checkbox][value="+value+"]").prop("checked",true);
+                });
+            }
         }
     }
 
