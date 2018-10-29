@@ -30,12 +30,15 @@ span.select2.select2-container.select2-container--default {
     // When detail quantity, color, size change will count total again
     $(document.body).delegate('.detail_quantity', 'change', function() {
         printDetailTotalQuantities();
+        validateImportProductDetail();
     });
     $(document.body).delegate('.select_detail_size', 'change', function() {
         updateDetailsData();
+        validateImportProductDetail();
     });
     $(document.body).delegate('.select_detail_color', 'change', function() {
         updateDetailsData();
+        validateImportProductDetail();
     });
 
     // When photo color, name, order change will update photos data
@@ -62,6 +65,32 @@ span.select2.select2-container.select2-container--default {
             loadProductDatas(data);
         })
     });
+
+    function validateImportProductDetail(){
+        var result = true;
+        $('#mainForm button[type="submit"]').removeAttr("disabled");
+        $.each(importDetails, function(key, value){
+            if (value.delete != true) {
+                $('#product_detail_'+key).removeClass('error');
+                var empty = false;
+                if ($('#select_detail_color_'+key).val() == 0 || $('#select_detail_size_'+key).val() == 0 || $('#detail_quantity_'+key).val() <= 0 ) {
+                    $('#product_detail_'+key).addClass('error');
+                    $('#mainForm button[type="submit"]').prop('disabled', true);
+                    empty = true;
+                    result = false;
+                }
+            }
+
+            if (empty == false) {
+                importDetails[key].color_code = {id:$('#select_detail_color_'+key).val(), name:$('#select_detail_color_'+key+' option[value="'+$('#select_detail_color_'+key).val()+'"]').text()};
+                importDetails[key].size = {id:$('#select_detail_size_'+key).val(), name:$('#select_detail_size_'+key+' option[value="'+$('#select_detail_size_'+key).val()+'"]').text()};
+                importDetails[key].quantity = parseInt($('#detail_quantity_'+key).val());
+            }
+        });
+
+        $('input[name="importDetails"]').val(JSON.stringify(importDetails));
+        return result;
+    }
 
     function loadProductDatas(data = null){
         if (data == null) {
@@ -439,32 +468,6 @@ span.select2.select2-container.select2-container--default {
                     scrollTop: $(id).offset().top
                 }, 100);
             }
-        }
-
-        function validateImportProductDetail(){
-            var result = true;
-            $('#mainForm button[type="submit"]').removeAttr("disabled");
-            $.each(importDetails, function(key, value){
-                if (value.delete != true) {
-                    $('#product_detail_'+key).removeClass('error');
-                    var empty = false;
-                    if ($('#select_detail_color_'+key).val() == 0 || $('#select_detail_size_'+key).val() == 0 || $('#detail_quantity_'+key).val() == 0 ) {
-                        $('#product_detail_'+key).addClass('error');
-                        $('#mainForm button[type="submit"]').prop('disabled', true);
-                        empty = true;
-                        result = false;
-                    }
-                }
-
-                if (empty == false) {
-                    importDetails[key].color_code = {id:$('#select_detail_color_'+key).val(), name:$('#select_detail_color_'+key+' option[value="'+$('#select_detail_color_'+key).val()+'"]').text()};
-                    importDetails[key].size = {id:$('#select_detail_size_'+key).val(), name:$('#select_detail_size_'+key+' option[value="'+$('#select_detail_size_'+key).val()+'"]').text()};
-                    importDetails[key].quantity = parseInt($('#detail_quantity_'+key).val());
-                }
-            });
-
-            $('input[name="importDetails"]').val(JSON.stringify(importDetails));
-            return result;
         }
 
         function validateImportProductDetailEmpty(){
