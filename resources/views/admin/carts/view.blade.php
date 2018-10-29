@@ -27,6 +27,7 @@
 <script>
     var cart_details = ($('input[name="cart_details"]').val()) ? jQuery.parseJSON($('input[name="cart_details"]').val()) : [];
     var default_image = '{{asset(NO_PHOTO)}}';
+    var isSelectPhone = true;
 
     // Function to add row with form edit/create to table details
     function htmlEditCreateRowProductDetail(data, key){
@@ -567,93 +568,105 @@
                         }else{
 
                         }
-                }).fail(function(jqXHR, textStatus){
-                    alert('Có lỗi xảy ra, xin hãy làm mới trình duyệt');
-                });
+                    }).fail(function(jqXHR, textStatus){
+                        alert('Có lỗi xảy ra, xin hãy làm mới trình duyệt');
+                    });
+                }
+
+            }else{
+                $('#add_cart_details').prop('disabled', true);
+                $('button[value="save"]').prop('disabled', true);
+                $('button[value="save_print"]').prop('disabled', true);
             }
 
-        }else{
-            $('#add_cart_details').prop('disabled', true);
-            $('button[value="save"]').prop('disabled', true);
-            $('button[value="save_print"]').prop('disabled', true);
-        }
-
-    });
-
-        // Load customer data when customer phone select is changed
-        $('select[name="customer_name"]').on('change', function(){
-            var new_customer = ($(this).find('option[value="'+$(this).val()+'"]').attr('data-select2-tag')) ? $(this).find('option[value="'+$(this).val()+'"]').attr('data-select2-tag') : 'false';
-            $.ajax({
-                url: "{{route('admin.carts.view')}}",
-                data:{
-                    customer_name:$(this).val(),
-                    new_customer:new_customer
-                },
-                dataType:'json'
-            }).done(function(data) {
-                if (!$.isEmptyObject(data)) {
-                    if (data.status == 'true') {
-                        $('select[name="customer_phone"]').val(data.customer.id).trigger('change');
-                        $('input[name="customer_email"]').val(data.customer.email);
-                        $('input[name="customer_address"]').val(data.customer.address);
-
-                        if (!$.isEmptyObject(data.customer.city)) {
-                            $('select[name="customer_city"]').val(data.customer.city.id);
-                        }
-                        if (!$.isEmptyObject(data.customer.group)) {
-                            $('input[name="customer_discount_amount"]').val(-data.customer.group.discount_amount);
-                        }else{
-                            $('input[name="customer_discount_amount"]').val(0);
-                        }
-                        updateCartTotalInfo();
-                    }else{
-                        $('select[name="customer_phone"]').val("");
-                        $('input[name="customer_email"]').val("");
-                        $('input[name="customer_address"]').val("");
-                        $('select[name="customer_city"]').val("");
-                        $('input[name="customer_discount_amount"]').val(0);
-                    }
-                }else{
-                }
-            })
         });
 
         // Load customer data when customer phone select is changed
-        $('select[name="customer_phone"]').on('change', function(){
-            var new_customer = ($(this).find('option[value="'+$(this).val()+'"]').attr('data-select2-tag')) ? $(this).find('option[value="'+$(this).val()+'"]').attr('data-select2-tag') : 'false';
-            $.ajax({
-                url: "{{route('admin.carts.view')}}",
-                data:{
-                    customer_phone:$(this).val(),
-                    new_customer:new_customer
-                },
-                dataType:'json'
-            }).done(function(data) {
-                if (!$.isEmptyObject(data)) {
-                    if (data.status == 'true') {
-                        $('select[name="customer_name"]').val(data.customer.id).trigger('change');
-                        $('input[name="customer_email"]').val(data.customer.email);
-                        $('input[name="customer_address"]').val(data.customer.address);
+        $('select[name="customer_name"]').on('change', function(){
+            if (!isSelectPhone) {
+                var new_customer = ($(this).find('option[value="'+$(this).val()+'"]').attr('data-select2-tag')) ? $(this).find('option[value="'+$(this).val()+'"]').attr('data-select2-tag') : 'false';
+                $.ajax({
+                    url: "{{route('admin.carts.view')}}",
+                    data:{
+                        customer_name:$(this).val(),
+                        new_customer:new_customer
+                    },
+                    dataType:'json'
+                }).done(function(data) {
+                    if (!$.isEmptyObject(data)) {
+                        if (data.status == 'true') {
+                            $('select[name="customer_phone"]').val(data.customer.id).trigger('change');
+                            $('input[name="customer_email"]').val(data.customer.email);
+                            $('input[name="customer_address"]').val(data.customer.address);
 
-                        if (!$.isEmptyObject(data.customer.city)) {
-                            $('select[name="customer_city"]').val(data.customer.city.id);
-                        }
-                        if (!$.isEmptyObject(data.customer.group)) {
-                            $('input[name="customer_discount_amount"]').val(-data.customer.group.discount_amount);
+                            if (!$.isEmptyObject(data.customer.city)) {
+                                $('select[name="customer_city"]').val(data.customer.city.id);
+                            }
+                            if (!$.isEmptyObject(data.customer.group)) {
+                                $('input[name="customer_discount_amount"]').val(-data.customer.group.discount_amount);
+                            }else{
+                                $('input[name="customer_discount_amount"]').val(0);
+                            }
+                            updateCartTotalInfo();
                         }else{
+                            $('select[name="customer_phone"]').val("");
+                            $('input[name="customer_email"]').val("");
+                            $('input[name="customer_address"]').val("");
+                            $('select[name="customer_city"]').val("");
                             $('input[name="customer_discount_amount"]').val(0);
                         }
-                        updateCartTotalInfo();
                     }else{
-                        $('input[name="customer_name"]').val("");
-                        $('input[name="customer_email"]').val("");
-                        $('input[name="customer_address"]').val("");
-                        $('select[name="customer_city"]').val("");
-                        $('input[name="customer_discount_amount"]').val(0);
                     }
-                }else{
-                }
-            })
+                })
+            }
+        });
+
+        $('select[name="customer_phone"]').on('select2:selecting', function() { 
+           isSelectPhone = true;
+       });
+
+        $('select[name="customer_name"]').on('select2:selecting', function() { 
+           isSelectPhone = false;
+       });
+
+        // Load customer data when customer phone select is changed
+        $('select[name="customer_phone"]').on('change', function(){
+            if(isSelectPhone){
+                var new_customer = ($(this).find('option[value="'+$(this).val()+'"]').attr('data-select2-tag')) ? $(this).find('option[value="'+$(this).val()+'"]').attr('data-select2-tag') : 'false';
+                $.ajax({
+                    url: "{{route('admin.carts.view')}}",
+                    data:{
+                        customer_phone:$(this).val(),
+                        new_customer:new_customer
+                    },
+                    dataType:'json'
+                }).done(function(data) {
+                    if (!$.isEmptyObject(data)) {
+                        if (data.status == 'true') {
+                            $('select[name="customer_name"]').val(data.customer.id).trigger('change');
+                            $('input[name="customer_email"]').val(data.customer.email);
+                            $('input[name="customer_address"]').val(data.customer.address);
+
+                            if (!$.isEmptyObject(data.customer.city)) {
+                                $('select[name="customer_city"]').val(data.customer.city.id);
+                            }
+                            if (!$.isEmptyObject(data.customer.group)) {
+                                $('input[name="customer_discount_amount"]').val(-data.customer.group.discount_amount);
+                            }else{
+                                $('input[name="customer_discount_amount"]').val(0);
+                            }
+                            updateCartTotalInfo();
+                        }else{
+                            $('input[name="customer_name"]').val("");
+                            $('input[name="customer_email"]').val("");
+                            $('input[name="customer_address"]').val("");
+                            $('select[name="customer_city"]').val("");
+                            $('input[name="customer_discount_amount"]').val(0);
+                        }
+                    }else{
+                    }
+                })
+            }
         });
 
         // Load discount amount for partner
