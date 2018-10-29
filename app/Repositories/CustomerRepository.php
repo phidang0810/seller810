@@ -313,7 +313,10 @@ class CustomerRepository
             $html = '<a href="#" class="bt-pay btn btn-primary btn-xs" data-id="' . $cart->id . '" data-name="' . $cart->code . '">Trả</a>';
             return $html;
         })
-        ->rawColumns(['status', 'payment_status', 'action', 'pay'])
+        ->addColumn('needed_paid', function ($data){
+            return format_price($data->needed_paid);
+        })
+        ->rawColumns(['status', 'payment_status', 'action', 'pay', 'needed_paid'])
         ->toJson();
 
         return $dataTable;
