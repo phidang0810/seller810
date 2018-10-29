@@ -416,19 +416,19 @@ span.select2.select2-container.select2-container--default {
         synchronize_child_and_parent_category($);
 
         $('button[value="save"]').click(function(event){
-            if (!validateImportProductDetailEmpty()) {
+            if (!validateImportProductDetailEmpty() || !validateImportProductDetail()) {
                 return false;
             }
         });
 
         $('button[value="save_quit"]').click(function(event){
-            if (!validateImportProductDetailEmpty()) {
+            if (!validateImportProductDetailEmpty() || !validateImportProductDetail()) {
                 return false;
             }
         });
 
         $('button[value="save_complete"]').click(function(event){
-            if (!validateImportProductDetailEmpty()) {
+            if (!validateImportProductDetailEmpty() || !validateImportProductDetail()) {
                 return false;
             }
         });
@@ -441,8 +441,30 @@ span.select2.select2-container.select2-container--default {
             }
         }
 
-        function validateDetailData(){
-            
+        function validateImportProductDetail(){
+            var result = true;
+            $('#mainForm button[type="submit"]').removeAttr("disabled");
+            $.each(importDetails, function(key, value){
+                if (value.delete != true) {
+                    $('#product_detail_'+key).removeClass('error');
+                    var empty = false;
+                    if ($('#select_detail_color_'+key).val() == 0 || $('#select_detail_size_'+key).val() == 0 || $('#detail_quantity_'+key).val() == 0 ) {
+                        $('#product_detail_'+key).addClass('error');
+                        $('#mainForm button[type="submit"]').prop('disabled', true);
+                        empty = true;
+                        result = false;
+                    }
+                }
+
+                if (empty == false) {
+                    importDetails[key].color_code = {id:$('#select_detail_color_'+key).val(), name:$('#select_detail_color_'+key+' option[value="'+$('#select_detail_color_'+key).val()+'"]').text()};
+                    importDetails[key].size = {id:$('#select_detail_size_'+key).val(), name:$('#select_detail_size_'+key+' option[value="'+$('#select_detail_size_'+key).val()+'"]').text()};
+                    importDetails[key].quantity = parseInt($('#detail_quantity_'+key).val());
+                }
+            });
+
+            $('input[name="importDetails"]').val(JSON.stringify(importDetails));
+            return result;
         }
 
         function validateImportProductDetailEmpty(){
