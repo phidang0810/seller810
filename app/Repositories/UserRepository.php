@@ -57,8 +57,8 @@ class UserRepository
             $html = '';
             if ($user->id != Auth::id()) {
                 $html .= '<a href="' . route('admin.users.view', ['id' => $user->id]) . '" class="btn btn-xs btn-primary" style="margin-right: 5px"><i class="glyphicon glyphicon-edit"></i> Sửa</a>';
-                $html .= '<a href="#" class="bt-delete btn btn-xs btn-danger" data-id="' . $user->id . '" data-email="' . $user->email . '">';
-                $html .= '<i class="fa fa-trash-o" aria-hidden="true"></i> Xóa</a>';
+                //$html .= '<a href="#" class="bt-delete btn btn-xs btn-danger" data-id="' . $user->id . '" data-email="' . $user->email . '">';
+                //$html .= '<i class="fa fa-trash-o" aria-hidden="true"></i> Xóa</a>';
             }
             return $html;
         })
