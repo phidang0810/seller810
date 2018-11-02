@@ -170,6 +170,9 @@ Class CartRepository
         $model->needed_paid = $needed_paid;
         $model->transport_id = $transport_id;
 
+        // total import price
+        $model->total_import_price = $this->calculateTotalImportProductPrice($model->id);
+
         //---> excute payment_status
         if ($model->paid_amount && $model->paid_amount > 0) {
             $model->payment_status = PAYING_NOT_ENOUGH;
@@ -370,6 +373,9 @@ Class CartRepository
         $model->descritption = $data['descritption'];
         $model->platform_id = $data['platform_id'];
 
+        // total import price
+        $model->total_import_price = $this->calculateTotalImportProductPrice($model->id);
+
         // excute payment_status
         if ($data['paid_amount'] && $data['paid_amount'] > 0) {
             $model->payment_status = PAYING_NOT_ENOUGH;
@@ -422,6 +428,23 @@ Class CartRepository
         }
 
         return $model;
+    }
+
+    public function calculateTotalImportProductPrice($cart_id){
+        $total = 0;
+
+        if ($cart_id) {
+            $model = Cart::find($cart_id);
+            if ($model->details) {
+                foreach ($model->details as $cartDetail) {
+                    if ($cartDetail->product) {
+                        $total += $cartDetail->quantity * $cartDetail->product->price;
+                    }
+                }
+            }
+        }
+
+        return $total;
     }
 
     public function addDetails($id, $details)

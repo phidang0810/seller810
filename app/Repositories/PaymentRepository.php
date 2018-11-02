@@ -528,6 +528,7 @@ Class PaymentRepository
         $model->customer_discount_amount = $data->customer_discount_amount; 
         $model->total_discount_amount = $data->total_discount_amount; 
         $model->total_price = $data->total_price; 
+        $model->total_import_price = $data->total_import_price; 
         $model->price = $data->price; 
         $model->shipping_fee = $data->shipping_fee; 
         $model->vat_percent = $data->vat_percent; 
