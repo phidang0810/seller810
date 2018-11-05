@@ -175,8 +175,14 @@
         }
 
         function validateReturnProductDetailEmpty(){
-            var status = true;
-            if (jQuery.isEmptyObject(return_details)) {status = false;}
+            var status = false;
+            if (!jQuery.isEmptyObject(return_details)) {
+                $.each(return_details, function(key, value){
+                    if (value.delete != true && value.product_quantity > 0) {
+                        status = true;
+                    }
+                });
+            }
 
             if (status == false) {
                 if ($("#cart-details-empty-error").hasClass("hidden")) {
