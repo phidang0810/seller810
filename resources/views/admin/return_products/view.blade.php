@@ -653,7 +653,7 @@
                                 <div class="col-md-12">
                                     <div class="text-right">
                                         <a href="{{route('admin.return_products.index')}}" class="btn btn-default"><i class="fa fa-arrow-circle-o-left"></i> Trở lại</a>
-                                        @if(isset($data->status) && $data->status == RETURN_RETURNING)
+                                        @if( !isset($data->status) || ( isset($data->status) && $data->status == RETURN_RETURNING ) )
                                         <button type="submit" name="action" class="btn btn-success" value="save"><i class="fa fa-save"></i> Lưu</button>
                                         @endif
                                     </div>
