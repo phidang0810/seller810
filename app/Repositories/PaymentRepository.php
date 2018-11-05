@@ -67,6 +67,40 @@ Class PaymentRepository
         return $result;
     }
 
+    public function getProfitChartData($search)
+    {
+        $result = [
+            'time' => [],
+            'value' => []
+        ];
+        $group = $search['date_filter'] ?? 'month';
+        switch ($group) {
+            case 'month':
+                $curMonth = date('m');
+                $result['time'] = [
+                    'Tháng ' . ($curMonth - 3),
+                    'Tháng ' . ($curMonth - 2),
+                    'Tháng ' . ($curMonth - 1),
+                    'Tháng ' . $curMonth
+                ];
+
+                $result['value'] = $this->_getProfitMonthOfYear($result['time']);
+                break;
+
+            case 'year':
+                $curYear = date('Y');
+                $result['time'] = [
+                    $curYear - 3,
+                    $curYear - 2,
+                    $curYear - 1,
+                    $curYear,
+                ];
+                $result['value'] = $this->_getProfitYears($result['time']);
+                break;
+        }
+        return $result;
+    }
+
     public function getLineChartData($search)
     {
         $result = [
@@ -109,18 +143,18 @@ Class PaymentRepository
             'value' => []
         ];
         $group = $search['date_filter'] ?? 'year';
-        $select = $search['select'] ?? 'amount';
+        $supplierID = empty($search['supplier_id']) ? null: $search['supplier_id'];
         switch ($group) {
 
             case 'month':
                 $result['time'] = $this->_getMonths();
 
-                $result['total'] = $this->_getCreditorMonthOfYear($result['time']);
+                $result['total'] = $this->_getCreditorMonthOfYear($result['time'], $supplierID);
                 break;
 
             case 'year':
                 $result['time'] = $this->_getYears();
-                $result['total'] = $this->_getCreditorYears($result['time']);
+                $result['total'] = $this->_getCreditorYears($result['time'], $supplierID);
                 break;
         }
         return $result;
@@ -284,12 +318,15 @@ Class PaymentRepository
         return $valueArr;
     }
 
-    private function _getCreditorMonthOfYear($time)
+    private function _getCreditorMonthOfYear($time, $supplierID = null)
     {
         $query = Creditor::selectRaw('sum(total) as total, MONTH(date) as month');
 
-        $query->whereRaw('YEAR(date) = YEAR(CURDATE()) ')
-            ->orderBy('date','asc')
+        $query->whereRaw('YEAR(date) = YEAR(CURDATE()) ');
+        if($supplierID) {
+            $query->where('supplier_id', $supplierID);
+        }
+        $query->orderBy('date','asc')
             ->groupBy('month')
             ->get();
         $prices = $query->pluck('total','month')->toArray();
@@ -298,7 +335,24 @@ Class PaymentRepository
             $month = $k+1;
             $valueArr[$k] = key_exists($month, $prices) ? $prices[$month]:0;
         }
+        return $valueArr;
+    }
 
+    private function _getProfitMonthOfYear($time)
+    {
+        $query = Payment::selectRaw('sum(total_price - total_import_price) as total, MONTH(created_at) as month');
+
+        $query->whereRaw('YEAR(created_at) = YEAR(CURDATE()) ')
+            ->orderBy('created_at','asc')
+            ->groupBy('month')
+            ->get();
+
+        $prices = $query->pluck('total','month')->toArray();
+        $valueArr = [];
+        foreach($time as $monthInString) {
+            $month = substr($monthInString,7);
+            $valueArr[] = key_exists($month, $prices) ? $prices[$month]:0;
+        }
         return $valueArr;
     }
 
@@ -327,13 +381,34 @@ Class PaymentRepository
         return $valueArr;
     }
 
-    private function _getCreditorYears($time)
+    private function _getCreditorYears($time, $supplierID)
     {
         $result = [];
         $query = Creditor::selectRaw('sum(total) as total, YEAR(date) as year');
 
-        $query->whereRaw('YEAR(date) >= ' . $time[0])
-            ->orderBy('date','asc')
+        $query->whereRaw('YEAR(date) >= ' . $time[0]);
+        if($supplierID) {
+            $query->where('supplier_id', $supplierID);
+        }
+        $query->orderBy('date','asc')
+            ->groupBy('year')
+            ->get();
+        $data = $query->pluck('total','year')->toArray();
+        $index = 0;
+        foreach($time as $value) {
+            $result[$index] = key_exists($value, $data) ? $data[$value]:0;
+            $index++;
+        }
+        return $result;
+    }
+
+    private function _getProfitYears($time)
+    {
+        $result = [];
+        $query = Payment::selectRaw('sum(total_price - total_import_price) as total, YEAR(created_at) as year');
+
+        $query->whereRaw('YEAR(created_at) >= ' . $time[0])
+            ->orderBy('created_at','asc')
             ->groupBy('year')
             ->get();
         $data = $query->pluck('total','year')->toArray();

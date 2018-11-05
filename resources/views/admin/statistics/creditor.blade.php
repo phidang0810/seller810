@@ -7,9 +7,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
     <!-- Page-Level Scripts -->
     <script>
-        var table;
         var lineChart = null;
-        var pieChart = null;
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -18,6 +16,7 @@
         function getDataLineChart(search)
         {
             search.select = 'number_cart';
+            search.supplier_id = $('#sl-supplier option:selected').val();
             $.ajax({
                 url: "{{route('admin.statistics.getCreditorBarChart')}}",
                 data:search,
@@ -99,6 +98,10 @@
                 var search = {date_filter: $(this).val()};
                 getDataLineChart(search);
             });
+            $('#sl-supplier').change(function(){
+                var search = {date_filter: $('input[name="date_filter"]').val()};
+                getDataLineChart(search);
+            })
         });
     </script>
 @endsection
@@ -109,6 +112,14 @@
             <div class="ibox-content">
                 <h2 class="tt-page">THỐNG KÊ NỢ</h2>
                 <div style="padding-left: 10px;">Tổng Nợ: <span style="font-weight:bold;font-size: 14px">{{format_price($total->total)}}</span> - Còn: <span style="color: red;font-size: 14px">{{format_price($total_not_paid->total)}}</span></div>
+                <div style="margin-top: 15px">
+                    <select class="form-control" id="sl-supplier" style="width: 250px">
+                        <option value="0"> -- Tất cả -- </option>
+                        @foreach($suppliers as $supplier)
+                            <option value="{{$supplier->id}}">{{$supplier->name}}</option>
+                        @endforeach
+                    </select>
+                </div>
                 <div class="row">
                     <div class="col-md-7">
                     </div>

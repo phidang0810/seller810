@@ -8,6 +8,7 @@ use App\Repositories\CreditorRepository;
 use App\Repositories\ImportProductRepository;
 use App\Repositories\PaymentRepository;
 use App\Repositories\PlatformRepository;
+use App\Repositories\SupplierRepository;
 use App\Repositories\WarehouseRepository;
 use Illuminate\Http\Request;
 
@@ -107,11 +108,12 @@ class StatisticsController extends AdminController
         return view('admin.statistics.revenue_chart', $this->_data);
     }
 
-    public function creditorChart(CreditorRepository $creditor)
+    public function creditorChart(CreditorRepository $creditor, SupplierRepository $supplier)
     {
         $this->_data['title'] = 'Thống Kê Nợ';
         $this->_data['total_not_paid'] = $creditor->getTotalNotPaid();
         $this->_data['total'] = $creditor->getTotal();
+        $this->_data['suppliers'] = $supplier->getList();
 
         return view('admin.statistics.creditor', $this->_data);
     }
@@ -142,6 +144,17 @@ class StatisticsController extends AdminController
     {
         $input = $this->_request;
         $data = $payment->getLineChartData($input);
+
+        return response()->json([
+            'success' => true,
+            'result' => $data
+        ]);
+    }
+
+    public function getProfitDataChart(PaymentRepository $payment)
+    {
+        $input = $this->_request;
+        $data = $payment->getProfitChartData($input);
 
         return response()->json([
             'success' => true,

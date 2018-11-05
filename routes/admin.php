@@ -199,6 +199,7 @@ Route::prefix('thong-ke')
     Route::get ('/don-hang', 'StatisticsController@cartChart')->name('admin.statistics.cartChart');
     Route::get ('/no', 'StatisticsController@creditorChart')->name('admin.statistics.creditorChart');
 
+    Route::get ('/data-profit', 'StatisticsController@getProfitDataChart')->name('admin.statistics.getProfitDataChart');
     Route::get ('/data-payment', 'StatisticsController@getPaymentChart')->name('admin.statistics.getPaymentChart');
     Route::get ('/cart-barchart', 'StatisticsController@getCartBarChart')->name('admin.statistics.getCartBarChart');
     Route::get ('/creditor', 'StatisticsController@getCreditorBarChart')->name('admin.statistics.getCreditorBarChart');

@@ -15,6 +15,56 @@
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
+        function getProfitDataLineChart(search)
+        {
+            $.ajax({
+                url: "/quan-ly/thong-ke/data-profit",
+                data:search,
+                success: function(res){
+                    if(lineChart) {
+                        lineChart.destroy();
+                    }
+                    lineChart = new Chart(document.getElementById("profitLineChart"), {
+                        "type": "line",
+                        "data": {
+                            "labels": res.result.time,
+                            "datasets": [{
+                                "label": "Doanh thu",
+                                "data": res.result.value,
+                                "fill": true,
+                                "borderColor": "rgb(75, 192, 192)",
+                                "backgroundColor": "rgba(75, 192, 192, 0.2)",
+                                "pointBackgroundColor":"rgba(75, 192, 192)",
+                                "borderWidth":2,
+                                "pointRadius":4,
+                                "lineTension": 0.1
+                            }]
+                        },
+                        "options": {
+                            scales: {
+                                yAxes: [{
+                                    ticks: {
+                                        beginAtZero:true,
+                                        callback: function(value, index, values) {
+                                            return number_format(value) + ' VND';
+                                        }
+                                    }
+                                }]
+                            },
+                            tooltips: {
+                                callbacks: {
+                                    label: function(tooltipItem, chart){
+                                        var datasetLabel = chart.datasets[tooltipItem.datasetIndex].label || '';
+                                        return datasetLabel + ': ' + number_format(tooltipItem.yLabel, 2) + ' VND';
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+            });
+        }
+
         function getDataLineChart(search)
         {
             $.ajax({
@@ -331,9 +381,19 @@
             getDataLineChart({
                 date_filter: $('input[name="date_filter"]:checked').val()
             });
+
             $('input[name="date_filter"]').change(function(){
                 var search = {date_filter: $(this).val()};
                 getDataLineChart(search);
+            });
+
+            getProfitDataLineChart({
+                date_filter: $('input[name="total_profit_date"]:checked').val()
+            });
+
+            $('input[name="total_profit_date"]').change(function(){
+                var search = {date_filter: $(this).val()};
+                getProfitDataLineChart(search);
             });
 
             $('select[name="pie_type"]').change(function(){
@@ -379,8 +439,8 @@
         </div>
     </div>
     <div class="col-sm-4">
-        <div class="ibox-content">
-            <h2 class="tt-page">THÔNG KÊ DOANH THU THEO TOP</h2>
+        <div class="ibox-content" style="margin-bottom: 20px">
+            <h2 class="tt-page">THỐNG KÊ DOANH THU THEO TOP</h2>
             <div class="row">
                 <div class="col-md-6">
                     <select name="pie_type" class="form-control">
@@ -406,6 +466,25 @@
                     <canvas id="pieChart"></canvas>
                 </div>
                 <div id="pie-legend" class="chart-legend"></div>
+            </div>
+        </div>
+
+        <div class="ibox-content" style="margin-bottom: 20px">
+            <h2 class="tt-page">TỔNG LỢI NHUẬN</h2>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="btn-group" data-toggle="buttons">
+                        <label class="btn btn-default btn-sm active">
+                            <input type="radio" name="total_profit_date" value="month"> Tháng
+                        </label>
+                        <label class="btn btn-default btn-sm">
+                            <input type="radio" name="total_profit_date" value="year"> Năm
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="" style="padding:20px">
+                <canvas id="profitLineChart"></canvas>
             </div>
         </div>
     </div>
