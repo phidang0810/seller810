@@ -24,6 +24,7 @@ class Cart extends BaseModel
         'total_discount_amount',
         'price',
         'total_price',
+        'total_import_price',
         'shipping_fee',
         'vat_percent',
         'vat_amount',
