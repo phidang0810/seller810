@@ -160,6 +160,39 @@
 
         $("#mainForm").validate();
 
+        $('button[value="save"]').click(function(event){
+            if (!validateReturnProductDetailEmpty()) {
+                return false;
+            }
+        });
+
+        var navigationFn = {
+            goToSection: function(id) {
+                $('html, body').animate({
+                    scrollTop: $(id).offset().top
+                }, 100);
+            }
+        }
+
+        function validateReturnProductDetailEmpty(){
+            var status = true;
+            if (jQuery.isEmptyObject(return_details)) {status = false;}
+
+            if (status == false) {
+                if ($("#cart-details-empty-error").hasClass("hidden")) {
+                    $("#cart-details-empty-error").removeClass("hidden");
+                    $("#cart-details-empty-error").css("display","inline-block!important");
+                    navigationFn.goToSection('#cart-details-empty-error');
+                }
+            }else{
+                if (!$("#cart-details-empty-error").hasClass("hidden")) {
+                    $("#cart-details-empty-error").addClass("hidden");
+                    $("#cart-details-empty-error").css("display","none!important");
+                }
+            }
+            return status;
+        }
+
         // Init select2
         var url_get_products = '{{route("admin.carts.getProductAjax")}}';
         $('select[name="product_name"]').select2({
