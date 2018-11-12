@@ -44,11 +44,11 @@
                 <li class="{{ set_active(['quan-ly/kho-hang', 'quan-ly/kho-hang/*']) }} nav-item">
                     <a href="#"><i class="fa fa-paint-brush"></i> <span class="nav-label">Quản Lý Kho Hàng</span><span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level">
-                        <li class="{{ set_active(['quan-ly/kho-hang']) }}"><a href="{{route('admin.warehouses.index')}}">Danh Sách Kho</a></li>
-                        <li class="{{ set_active(['quan-ly/kho-hang/nhap-hang']) }}"><a href="{{route('admin.import_products.index')}}">Nhập Hàng</a></li>
-                        <li class="{{ set_active(['quan-ly/kho-hang/nhap-hang/nhan-hang']) }}"><a href="{{route('admin.import_products.receive')}}">Nhận Hàng</a></li>
-                        <li class="{{ set_active(['quan-ly/kho-hang/chuyen-kho']) }}"><a href="{{route('admin.transport_warehouse.index')}}">Chuyển kho</a></li>
-                        <li class="{{ set_active(['quan-ly/kho-hang/tra-hang']) }}"><a href="{{route('admin.return_products.index')}}">Trả hàng</a></li>
+                        <li class="{{ set_active(['quan-ly/kho-hang', 'quan-ly/kho-hang/chi-tiet*']) }}"><a href="{{route('admin.warehouses.index')}}">Danh Sách Kho</a></li>
+                        <li class="{{ set_active(['quan-ly/kho-hang/nhap-hang', 'quan-ly/kho-hang/nhap-hang/chi-tiet*']) }}"><a href="{{route('admin.import_products.index')}}">Nhập Hàng</a></li>
+                        <li class="{{ set_active(['quan-ly/kho-hang/nhap-hang/nhan-hang', 'quan-ly/kho-hang/nhap-hang/nhap-kho*', 'quan-ly/kho-hang/nhap-hang/kiem-hang*']) }}"><a href="{{route('admin.import_products.receive')}}">Nhận Hàng</a></li>
+                        <li class="{{ set_active(['quan-ly/kho-hang/chuyen-kho', 'quan-ly/kho-hang/chuyen-kho/nhan-hang*']) }}"><a href="{{route('admin.transport_warehouse.index')}}">Chuyển kho</a></li>
+                        <li class="{{ set_active(['quan-ly/kho-hang/tra-hang', 'quan-ly/kho-hang/tra-hang/chi-tiet*']) }}"><a href="{{route('admin.return_products.index')}}">Trả hàng</a></li>
                     </ul>
                 </li>
             @endif

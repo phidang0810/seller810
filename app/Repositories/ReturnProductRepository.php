@@ -37,23 +37,23 @@ Class ReturnProductRepository
 				$query->where('status', $request->get('status'));
 			}
 
-            if (trim($request->get('code')) !== "") {
-                $query->where(function ($sub) use ($request) {
-                    $sub->where('code', 'like', '%' . $request->get('code') . '%');
-                });
-            }
+			if (trim($request->get('code')) !== "") {
+				$query->where(function ($sub) use ($request) {
+					$sub->where('code', 'like', '%' . $request->get('code') . '%');
+				});
+			}
 
-            if (trim($request->get('start_date')) !== "") {
-                $fromDate = Carbon::createFromFormat('d/m/Y H:i:s', $request->get('start_date') . ' 00:00:00')->toDateTimeString();
+			if (trim($request->get('start_date')) !== "") {
+				$fromDate = Carbon::createFromFormat('d/m/Y H:i:s', $request->get('start_date') . ' 00:00:00')->toDateTimeString();
 
-                if (trim($request->get('end_date')) !== "") {
+				if (trim($request->get('end_date')) !== "") {
 
-                    $toDate = Carbon::createFromFormat('d/m/Y H:i:s', $request->get('end_date') . ' 23:59:59')->toDateTimeString();
-                    $query->whereBetween('return_date', [$fromDate, $toDate]);
-                } else {
-                    $query->whereDate('return_date', '>=', $fromDate);
-                }
-            }
+					$toDate = Carbon::createFromFormat('d/m/Y H:i:s', $request->get('end_date') . ' 23:59:59')->toDateTimeString();
+					$query->whereBetween('return_date', [$fromDate, $toDate]);
+				} else {
+					$query->whereDate('return_date', '>=', $fromDate);
+				}
+			}
 		}, true)
 		->addColumn('action', function ($returnProduct) {
 			$html = '';
@@ -109,9 +109,9 @@ Class ReturnProductRepository
 		$model->reason = $data['reason'];
 		$model->return_date = date('Y-m-d H:i:s', strtotime($data['return_date']));
 		$model->status = RETURN_RETURNING;
-		$model->quantity = 0;
 
 		$model->save();
+
 		if (!$id) {
 			$model->code = general_code('Trả hàng', $model->id, 6);
 			$model->save();
