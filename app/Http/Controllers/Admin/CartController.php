@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Repositories\CartRepository;
 use App\Repositories\ProductRepository;
+use App\Repositories\WarehouseRepository;
 use App\Repositories\CustomerRepository;
 use App\Repositories\PartnerRepository;
 use App\Repositories\PlatformRepository;
@@ -214,10 +215,11 @@ class CartController extends AdminController
     public function getCartDetail(CartRepository $cart, PlatformRepository $platform){
         $cartCode = $this->_request->get('cart_code');
         $result = $cart->getCartDetail($cartCode);
+        $returnCartDetail = $cart->getReturnCartDetail($cartCode);
         $cart_status = make_cart_status_options($result['cart']->status);
         $payment_status = make_payment_status_options($result['cart']->payment_status);
         $platforms = $platform->getList();
-        $view = view("admin._partials._cart_details", compact(['result', 'cart_status', 'payment_status', 'platforms']))->render();
+        $view = view("admin._partials._cart_details", compact(['result', 'cart_status', 'payment_status', 'platforms', 'returnCartDetail']))->render();
         
         return response()->json([
             'success' => true,
@@ -270,5 +272,99 @@ class CartController extends AdminController
             $message = 'Danh sách khách hàng được lấy thành công.';
         }
         return response()->json($data);
+    }
+
+    public function returnIndex(CartRepository $cart, PlatformRepository $platform){
+        if ($this->_request->ajax()){
+            return $cart->returnDataTable($this->_request);
+        }
+
+        $this->_data['title'] = 'Trả hàng';
+        $this->_data['platforms'] = $platform->getList();
+
+        return view('admin.carts.returnIndex', $this->_data);
+    }
+
+    /**
+     * Show detail the application dashboard.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getReturnCartDetail(CartRepository $cart, PlatformRepository $platform){
+        $cartCode = $this->_request->get('cart_code');
+        $result = $cart->getReturnCartDetail($cartCode);
+        $view = view("admin._partials._return_cart_details", compact(['result']))->render();
+
+        return response()->json([
+            'success' => true,
+            'result' => $result,
+            'html' => $view,
+        ]);
+    }
+
+    public function returnView(CartRepository $cart, ProductRepository $product, WarehouseRepository $warehouse)
+    {
+        if ($this->_request->ajax()){
+            if (isset($this->_request['cart_id'])) {
+                if (isset($this->_request['product_id'])) {
+                    if (isset($this->_request['color_id'])) {
+                        if (isset($this->_request['size_id'])) {
+                            if (isset($this->_request['warehouse_id'])) {
+                                if ($this->_request['get_data'] == true) {
+                                    return $cart->getCartDetailDatas($this->_request);
+                                }
+                                return $cart->getProductDetailquantity($this->_request);
+                            }
+                            return $cart->getProductDetailWarehouseOptions($this->_request);
+                        }
+                        return $cart->getProductDetailSizeOptions($this->_request);
+                    }
+                    return $cart->getProductDetailColorOptions($this->_request);
+                }
+                return $cart->getDetailProductOptions($this->_request);
+            }
+        }
+        $id = $this->_request->get('id');
+        $this->_data['title'] = 'Tạo mới trả hàng';
+
+        $this->_pushBreadCrumbs($this->_data['title']);
+        return view('admin.carts.returnView', $this->_data);
+    }
+
+    public function getCartsAjax(CartRepository $cart){
+        $data = $cart->getCarts($this->_request);
+        $message = 'Không có sản phẩm';
+        if (count($data)) {
+            $message = 'Sản phẩm được lấy thành công.';
+        }
+        return response()->json($data);
+    }
+
+    /**
+     * @param CartRepository $cart
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function returnStore(CartRepository $cart)
+    {
+        $input = $this->_request->all();
+        $id = $input['id'] ?? null;
+
+        $rules = [
+            // 'name' => 'required|string|max:50|unique:carts,name',
+            // 'active' => 'required'
+        ];
+        $message = 'Đơn trả hàng đã được tạo.';
+
+        $validator = Validator::make($input, $rules);
+        if ($validator->fails()) {
+
+            return redirect()->back()
+            ->withErrors($validator)
+            ->withInput();
+        }
+
+        $data = $cart->createReturnCart($input);
+
+        return redirect()->route('admin.carts.returnIndex')->withSuccess($message);
     }
 }

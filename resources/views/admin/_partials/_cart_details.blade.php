@@ -168,6 +168,35 @@
                 </tbody>
             </table>
         </div>
+
+        <div class="text-left">
+            <h3 class="text-uppercase">thông tin trả hàng</h3>
+        </div>
+        <div class="hr-line-dashed"></div>
+        <div class="ibox-content m-b">
+            <table class="table table-borderless">
+                <thead>
+                    <tr>
+                        <th>Mã sản phẩm</th>
+                        <th>Kích thước</th>
+                        <th>Màu sắc</th>
+                        <th>Số lượng</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                </tfoot>
+                <tbody class="cart-detail-wrapper">
+                    @foreach ($returnCartDetail['cart']->returnDetails as $detail)
+                    <tr>
+                        <td colspan="1">{{$detail->product->barcode_text}}</td>
+                        <td class="thousand-number money text-right" colspan="1">{{$detail->productDetail->size->name}}</td>
+                        <td class="thousand-number text-right" colspan="1">{{$detail->productDetail->color->name}}</td>
+                        <td class="thousand-number money text-right" colspan="1">{{$detail->quantity}}</td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
         <div class="form-group">
             <div class="col-lg-offset-2 col-lg-10 text-right">
                 <button id="save-cart-info" class="btn btn-sm btn-primary" type="button" onclick="updateCartStatus();">Lưu</button>

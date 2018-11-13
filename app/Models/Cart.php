@@ -57,4 +57,14 @@ class Cart extends BaseModel
 
         return $this->hasMany('App\Models\CartDetail');
     }
+
+    /**
+     * A product can have many photos.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function returnDetails() {
+
+        return $this->hasMany('App\Models\ReturnCartDetail');
+    }
 }

@@ -191,6 +191,15 @@ Route::prefix('don-hang')
     Route::get ('/danh-sach-san-pham', 'CartController@getProductAjax')->name('admin.carts.getProductAjax');
     Route::get ('/danh-sach-so-dien-thoai', 'CartController@getPhoneAjax')->name('admin.carts.getPhoneAjax');
     Route::get ('/danh-sach-ten-khach-hang', 'CartController@getNameAjax')->name('admin.carts.getNameAjax');
+
+    Route::prefix('tra-hang')->group(function () {
+        Route::get ('/', 'CartController@returnIndex')->name('admin.carts.returnIndex');
+        Route::get ('/chi-tiet', 'CartController@returnView')->name('admin.carts.returnView');
+        Route::get ('/them', 'CartController@returnView')->name('admin.carts.returnCreate');
+        Route::post ('/them', 'CartController@returnStore')->name('admin.carts.returnStore');
+        Route::get ('/thong-tin-chi-tiet', 'CartController@getReturnCartDetail')->name('admin.carts.getReturnCartDetail');
+        Route::get ('/danh-sach-don-hang', 'CartController@getCartsAjax')->name('admin.carts.getCartsAjax');
+    });
 });
 
 Route::prefix('thong-ke')

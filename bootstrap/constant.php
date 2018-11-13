@@ -137,3 +137,6 @@ define('RETURN_ACTION_TEXT', [
 define('CREDITOR_PAID',3);
 define('CREDITOR_NOT_PAID',1);
 define('CREDITOR_PAYING',2);
+
+define('CART_NO_RETURN', 0);
+define('CART_RETURN', 1);

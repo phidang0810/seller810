@@ -10,20 +10,26 @@ namespace App\Repositories;
 
 use App\Models\Cart;
 use App\Models\CartDetail;
+use App\Models\ReturnCartDetail;
 use App\Models\Category;
 use App\Models\Customer;
 use App\Models\Supplier;
 use App\Models\Product;
 use App\Models\ProductDetail;
+use App\Models\Color;
+use App\Models\Size;
 use App\Models\Transport;
 use App\Models\City;
 use App\Models\Platform;
 use App\Models\Payment;
+use App\Models\PaymentDetail;
+use App\Models\Warehouse;
 use App\Models\WarehouseProduct;
 use App\Repositories\PaymentRepository;
 use Illuminate\Support\Facades\Cache;
 use Yajra\DataTables\Facades\DataTables;
 use Carbon\Carbon;
+use Response;
 
 Class CartRepository
 {
@@ -659,6 +665,460 @@ Class CartRepository
     {
         $data = Cart::where('status', $status)->count();
         return $data;
+    }
+
+    public function returnDataTable($request)
+    {
+        $carts = Cart::select(['carts.id', 'carts.city_id', 'carts.partner_id', 'carts.customer_id', 'carts.code', 'carts.quantity', 'carts.status', 'carts.active', 'carts.created_at', 'customers.name as customer_name', 'customers.phone as customer_phone', 'platforms.name as platform_name', 'carts.payment_status'])
+        ->join('customers', 'customers.id', '=', 'carts.customer_id')
+        ->leftJoin('platforms', 'platforms.id', '=', 'carts.platform_id')
+        ->where('carts.is_returned', '=', 1);
+
+        $dataTable = DataTables::eloquent($carts)
+        ->filter(function ($query) use ($request) {
+            if (trim($request->get('code')) !== "") {
+                $query->where(function ($sub) use ($request) {
+                    $sub->where('carts.code', 'like', '%' . $request->get('code') . '%');
+                });
+            }
+
+            if (trim($request->get('customer_name')) !== "") {
+                $query->where(function ($sub) use ($request) {
+                    $sub->where('customers.name', 'like', '%' . $request->get('customer_name') . '%');
+                });
+            }
+
+            if (trim($request->get('customer_phone')) !== "") {
+                $query->where(function ($sub) use ($request) {
+                    $sub->where('customers.phone', 'like', '%' . $request->get('customer_phone') . '%');
+                });
+            }
+
+            if (trim($request->get('platform_name')) !== "") {
+                $query->where(function ($sub) use ($request) {
+                    $sub->where('carts.platform_id', $request->get('platform_name'));
+                });
+            }
+
+            if (trim($request->get('start_date')) !== "") {
+                $fromDate = Carbon::createFromFormat('d/m/Y H:i:s', $request->get('start_date') . ' 00:00:00')->toDateTimeString();
+
+                if (trim($request->get('end_date')) !== "") {
+
+                    $toDate = Carbon::createFromFormat('d/m/Y H:i:s', $request->get('end_date') . ' 23:59:59')->toDateTimeString();
+                    $query->whereBetween('carts.created_at', [$fromDate, $toDate]);
+                } else {
+                    $query->whereDate('carts.created_at', '>=', $fromDate);
+                }
+            }
+
+            if (trim($request->get('status')) !== "") {
+                $query->where(function ($sub) use ($request) {
+                    $sub->where('carts.status', 'like', '%' . $request->get('status') . '%');
+                });
+            }
+
+            if (trim($request->get('payment_status')) !== "") {
+                $query->where(function ($sub) use ($request) {
+                    $sub->where('carts.payment_status', 'like', '%' . $request->get('payment_status') . '%');
+                });
+            }
+
+        }, true)
+        ->addColumn('created_at', function ($cart) {
+                $html = $cart->created_at;//date('d/m/Y', strtotime($cart->created_at));
+                return $html;
+            })
+        ->addColumn('status', function ($cart) {
+            $html = parse_status($cart->status);
+            return $html;
+        })
+        ->addColumn('payment_status', function ($cart) {
+            $html = parse_payment_status($cart->payment_status);
+            return $html;
+        })
+        ->addColumn('code', function ($cart) use ($request) {
+            if (trim($request->get('no_link')) !== "" && $request->get('no_link') == 'true') {
+                $html = '<span id="'.$cart->code.'">'.$cart->code.'</span>';
+            }else{
+                $html = '<a href="'.route('admin.carts.index', ['cart_code' => $cart->code]) . '">' . '<span id="'.$cart->code.'">'.$cart->code.'</span>' .'</a>';
+            }
+            
+            return $html;
+        })
+        ->rawColumns(['created_at', 'status', 'payment_status', 'code'])
+        ->order(function ($query) use ($request) {
+            if (trim($request->get('cart_code')) !== ""){
+                $query->orderByRaw("FIELD(`carts`.`code` , '".$request->get('cart_code')."') DESC");
+            }
+            $query->orderBy('carts.created_at', 'desc');
+            $query->orderBy('carts.code', 'desc');
+        })
+        ->toJson();
+        return $dataTable;
+    }
+
+    public function getReturnCartDetail($cartCode)
+    {
+        $cart = Cart::where('code', $cartCode)->firstOrFail();
+        if ($cart) {
+            $cart->returnDetails;
+            if ($cart->returnDetails) {
+                foreach ($cart->returnDetails as $detail) {
+                    $detail->product;
+                    $detail->productDetail;
+                    if ($detail->productDetail) {
+                        $detail->productDetail->size;
+                        $detail->productDetail->color;
+                    }
+                }
+            }
+        }
+
+        $result = array(
+            "cart" => $cart,
+        );
+
+        return $result;
+    }
+
+    public function getCarts($request){
+        $formatted_carts = [];
+        $term = trim($request->q);
+
+        $carts = Cart::where('code','LIKE', '%'.$term.'%')->where('quantity', '>', 0)->get();
+        foreach ($carts as $cart) {
+            $formatted_carts[] = ['id' => $cart->id, 'text' => $cart->code];
+        }
+
+        return $formatted_carts;
+    }
+
+    public function getDetailProductOptions($request){
+        $cart_id = $request->get('cart_id');
+
+        $return = [
+            'cart_id' => $cart_id,
+            'message'   =>  'Lấy product options cho return cart detail thành công',
+        ];
+
+        if ($cart_id) {
+            $cart_details = CartDetail::having('cart_id', '=', $cart_id)->having('quantity', '>', 0)
+            ->get();
+
+
+            $product_ids = [];
+            foreach ($cart_details as $key => $value) {
+                $product_ids[] = $value['product_id'];
+            }
+
+            $products = Product::whereIn('id', $product_ids)->get();
+
+            $return['products'] = $products;
+        }
+
+        return Response::json($return);
+    }
+
+    public function getProductDetailColorOptions($request){
+        $cart_id = $request->get('cart_id');
+        $product_id = $request->get('product_id');
+
+        $return = [
+            'product_id' => $product_id,
+            'message'   =>  'Lấy color options cho return cart detail thành công',
+        ];
+
+        if ($product_id && $cart_id) {
+            $details = CartDetail::having('cart_id', '=', $cart_id)
+            ->having('product_id', '=', $product_id)
+            ->having('quantity', '>', 0)
+            ->get();
+
+            $color_ids = [];
+            foreach ($details as $detail) {
+                if ($detail->productDetail) {
+                    if ($detail->productDetail->color_id) {
+                        $color_ids[] = $detail->productDetail->color_id;
+                    }
+                }
+            }
+
+            $colors = Color::whereIn('id', $color_ids)->get();
+
+            $return['colors'] = $colors;
+        }
+
+        return Response::json($return);
+    }
+
+    public function getProductDetailSizeOptions($request){
+        $cart_id = $request->get('cart_id');
+        $product_id = $request->get('product_id');
+        $color_id = $request->get('color_id');
+
+        $return = [
+            'product_id' => $product_id,
+            'message'   =>  'Lấy color options cho return cart detail thành công',
+        ];
+
+        if ($product_id && $cart_id) {
+            $details = CartDetail::having('cart_id', '=', $cart_id)
+            ->having('product_id', '=', $product_id)
+            ->having('quantity', '>', 0)
+            ->get();
+
+            $size_ids = [];
+            foreach ($details as $detail) {
+                if ($detail->productDetail) {
+                    if ($detail->productDetail->color_id && $detail->productDetail->color_id == $color_id) {
+                        $size_ids[] = $detail->productDetail->size_id;
+                    }
+                }
+            }
+
+            $sizes = Size::whereIn('id', $size_ids)->get();
+
+            $return['sizes'] = $sizes;
+        }
+
+        return Response::json($return);
+    }
+
+    public function getProductDetailWarehouseOptions($request){
+        $cart_id = $request->get('cart_id');
+        $product_id = $request->get('product_id');
+        $color_id = $request->get('color_id');
+        $size_id = $request->get('size_id');
+
+        $return = [
+            'product_id' => $product_id,
+            'color_id' => $color_id,
+            'size_id' => $size_id,
+            'message'   =>  'Lấy warehouses options cho product detail thành công',
+        ];
+
+        if ($product_id && $cart_id && $size_id) {
+            $details = CartDetail::having('cart_id', '=', $cart_id)
+            ->having('product_id', '=', $product_id)
+            ->having('quantity', '>', 0)
+            ->get();
+
+            $warehouse_ids = [];
+            foreach ($details as $detail) {
+                if ($detail->productDetail) {
+                    if ($detail->productDetail->color_id && $detail->productDetail->color_id == $color_id) {
+                        if ($detail->productDetail->size_id && $detail->productDetail->size_id == $size_id) {
+                            if ($detail->warehouseProduct) {
+                                $warehouse_ids[] = $detail->warehouseProduct->warehouse_id;
+                            }
+                        }
+                    }
+                }
+            }
+
+            $warehouses = Warehouse::whereIn('id', $warehouse_ids)->get();
+
+            $return['warehourses'] = $warehouses;
+        }
+
+        return Response::json($return);
+
+    }
+
+    function getProductDetailquantity($request){
+        $cart_id = $request->get('cart_id');
+        $product_id = $request->get('product_id');
+        $color_id = $request->get('color_id');
+        $size_id = $request->get('size_id');
+        $warehouse_id = $request->get('warehouse_id');
+
+        $return = [
+            'product_id' => $product_id,
+            'color_id' => $color_id,
+            'size_id' => $size_id,
+            'warehouse_id' => $warehouse_id,
+            'message'   =>  'Lấy quantity cho product detail thành công',
+        ];
+
+        if ($product_id && $color_id && $size_id && $warehouse_id) {
+            $product_detail = ProductDetail::having('product_id', '=', $product_id)
+            ->having('color_id', '=', $color_id)
+            ->having('size_id', '=', $size_id)
+            ->having('quantity', '>', 0)
+            ->first();
+
+            $warehouse_products = WarehouseProduct::having('product_detail_id', '=', $product_detail->id)
+            ->having('warehouse_id', '=', $warehouse_id)
+            ->having('quantity', '>', 0)
+            ->first();
+
+            $detail = CartDetail::having('product_detail_id', '=', $product_detail->id)
+            ->having('warehouse_product_id', '=', $warehouse_products->id)
+            ->having('cart_id', '=', $cart_id)
+            ->having('quantity', '>', 0)
+            ->first();
+
+            $return['quantity'] = $detail->quantity;
+            $return['cart_detail_id'] = $detail->id;
+        }
+
+        return Response::json($return);
+    }
+
+    public function createReturnCart($data){
+        $returnDetails = json_decode($data['return_details']);
+        $dd = [];
+
+        $modelCart = Cart::find($data['cart']);
+        if ($modelCart) {
+            foreach ($returnDetails as $returnCartDetail) {
+                $modelReturnCartDetail = new ReturnCartDetail;
+
+                $modelReturnCartDetail->cart_id = $data['cart'];
+                $modelReturnCartDetail->product_id = $returnCartDetail->product_name->id;
+                $modelReturnCartDetail->product_detail_id = $returnCartDetail->product_detail->id;
+                $modelReturnCartDetail->warehouse_product_id = $returnCartDetail->warehouse_product_id;
+                $modelReturnCartDetail->quantity = $returnCartDetail->product_quantity;
+
+                $modelReturnCartDetail->save();
+
+                // Update quantity cart, cart detail, payment, payment detail
+                $modelCart->quantity -= $modelReturnCartDetail->quantity;
+
+                $modelCartDetail = CartDetail::where('product_id', $returnCartDetail->product_name->id)
+                ->where('product_detail_id', $returnCartDetail->product_detail->id)
+                ->where('warehouse_product_id', $returnCartDetail->warehouse_product_id)
+                ->where('cart_id', $modelCart->id)
+                ->firstOrFail();
+
+                if ($modelCartDetail) {
+                    $modelCartDetail->quantity -= $modelReturnCartDetail->quantity;
+
+                    $modelProduct = Product::find($modelCartDetail->product_id);
+                    if ($modelProduct) {
+                        $modelProduct->quantity_available += $modelReturnCartDetail->quantity;
+                        $modelProduct->save();
+                    }
+
+                    $modelProductDetail = ProductDetail::find($modelCartDetail->product_detail_id);
+                    if ($modelProductDetail) {
+                        $modelProductDetail->quantity_available += $modelReturnCartDetail->quantity;
+                        $modelProductDetail->save();
+                    }
+
+                    $modelWarehouseProduct = WarehouseProduct::find($modelCartDetail->warehouse_product_id);
+                    if ($modelWarehouseProduct) {
+                        $modelWarehouseProduct->quantity_available += $modelReturnCartDetail->quantity;
+                        $modelWarehouseProduct->save();
+                    }
+
+                    // Calculate cart detail
+                    $modelCartDetail = $this->calculateCartDetail($modelCartDetail);
+
+                    $modelCartDetail->save();
+                }
+
+                if ($modelCart->status == CART_COMPLETED) {
+                    $modelPayment = Payment::where('cart_id', $modelReturnCartDetail->cart_id)->firstOrFail();
+                    if ($modelPayment) {
+
+                        $modelPaymentDetail = PaymentDetail::where('product_id', $returnCartDetail->product_name->id)
+                        ->where('product_detail_id', $returnCartDetail->product_detail->id)
+                        ->where('cart_detail_id', $modelCartDetail->id)
+                        ->where('cart_id', $modelCart->id)
+                        ->where('payment_id', $modelPayment->id)
+                        ->firstOrFail();
+
+                        if ($modelPaymentDetail) {
+                            $modelPaymentDetail->quantity -= $modelReturnCartDetail->quantity;
+                            $modelPaymentDetail = $this->calculateCartDetail($modelPaymentDetail);
+                            $modelPaymentDetail->save();
+                        }
+                        
+                        $modelPayment->quantity -= $modelReturnCartDetail->quantity;
+                        $modelPayment = $this->calculateCart($modelPayment);
+                        $modelPayment->save();
+                    }
+                }
+            }
+            // calculate cart
+            $modelCart = $this->calculateCart($modelCart);
+            $modelCart->is_returned = CART_RETURN;
+
+            $modelCart->save();
+        }
+        // update cart & payment
+    }
+
+    public function calculateCartDetail($model){
+        $price = ($model->fixed_price) ? $model->fixed_price : $model->price;
+        $model->total_price = $model->quantity * $price;
+        return $model;
+    }
+
+    public function calculateCart($model){
+        $model->price = 0;
+        if ($model->details) {
+            foreach ($model->details as $detail) {
+                $model->price += $detail->total_price;
+            }
+        }
+
+        $model->total_price = preg_replace('/[^0-9]/', '', $model->price + $model->shipping_fee + $model->vat_amount - $model->discount_amount);
+        $model->needed_paid = preg_replace('/[^0-9]/', '', $model->total_price - $model->paid_amount);
+        return $model;
+    }
+
+    public function getCartDetailDatas($request){
+        $cart_id = $request->get('cart_id');
+        $product_id = $request->get('product_id');
+        $color_id = $request->get('color_id');
+        $size_id = $request->get('size_id');
+        $warehouse_id = $request->get('warehouse_id');
+
+        $return = [
+            'product_id' => $product_id,
+            'message'   =>  'Lấy datas cho product thành công',
+        ];
+
+        if ($product_id) {
+            $product = Product::find($product_id);
+            $return['product'] = $product;
+        }
+
+        if ($warehouse_id) {
+            $warehouse = Warehouse::find($warehouse_id);
+            $return['warehouse'] = $warehouse;
+        }
+
+        if ($product_id && $color_id && $size_id && $warehouse_id) {
+            $product_detail = ProductDetail::having('product_id', '=', $product_id)
+            ->having('color_id', '=', $color_id)
+            ->having('size_id', '=', $size_id)
+            ->first();
+
+            $return['product_detail'] = $product_detail;
+
+            $warehouse_product = WarehouseProduct::where('warehouse_id', $warehouse->id)
+            ->where('product_detail_id', $product_detail->id)
+            ->first();
+
+            $return['warehouse_product_id'] = $warehouse_product->id;
+        }
+
+        $modelCartDetail = CartDetail::where('product_id', $product_id)
+        ->where('product_detail_id', $product_detail->id)
+        ->where('warehouse_product_id', $warehouse_product->id)
+        ->where('cart_id', $cart_id)
+        ->firstOrFail();
+
+        if ($modelCartDetail) {
+            $return['cart_detail_id'] = $modelCartDetail->id;
+        }
+
+        return Response::json($return);
+
     }
 
 }
