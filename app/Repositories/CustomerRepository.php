@@ -76,7 +76,7 @@ class CustomerRepository
 
     public function getHistoryByID($id, $request)
     {
-        $query = Cart::select('carts.code', 'carts.total_price', 'carts.created_at', 'carts.status', 'platforms.name as platform_name')
+        $query = Cart::select('carts.code', 'carts.price', 'carts.created_at', 'carts.status', 'platforms.name as platform_name')
         ->leftJoin('platforms', 'platforms.id', '=', 'carts.platform_id')
         ->where('customer_id', $id);
 
