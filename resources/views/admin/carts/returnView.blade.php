@@ -77,6 +77,7 @@
 
     // First time show details to table
     function printTableTransportDetails(){
+        $('#i-cart-info tbody').html("");
         $.each(return_details, function(key, value){
             var html = htmlEditCreateRowProductDetail(value, key);
 
@@ -515,7 +516,7 @@
                             </div>
 
                             <div class="row xs-12-mg-bt-mobile m-b">
-                                <div class="col-md-12 select-wrapper">
+                                <div class="col-md-4 col-centered select-wrapper select_cart">
                                     <select name="cart_id" class="form-control">
                                         <option value="0"> -- Chọn đơn hàng -- </option>
                                     </select>

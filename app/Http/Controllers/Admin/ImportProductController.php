@@ -195,12 +195,12 @@ class ImportProductController extends AdminController
         $this->_data['data'] = $importProduct->getCheckImport($id);
         $this->_data['all_imported'] = $importProduct->areAllDetailsImported($id);
         $this->_pushBreadCrumbs($this->_data['title']);
-        $result = $importProduct->importWarehouse($id);
-        if (!$result['success']) {
-            $message = "Đơn hàng nhập bị lỗi.";
+        // $result = $importProduct->importWarehouse($id);
+        // if (!$result['success']) {
+        //     $message = "Đơn hàng nhập bị lỗi.";
 
-            return redirect()->back()->withErrors($message);
-        }
+        //     return redirect()->back()->withErrors($message);
+        // }
         return view('admin.import_products.import', $this->_data);
     }
 
@@ -218,6 +218,12 @@ class ImportProductController extends AdminController
 
         if ($importProduct->checkImportCompleted($id)) {
             $message = "Đơn hàng nhập đã được nhập kho xong.";
+            $result = $importProduct->importWarehouse($id);
+            if (!$result['success']) {
+                $message = "Đơn hàng nhập bị lỗi.";
+
+                return redirect()->back()->withErrors($message);
+            }
             return redirect()->route('admin.import_products.receive')->withSuccess($message);
         }
 
