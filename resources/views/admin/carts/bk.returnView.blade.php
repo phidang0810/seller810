@@ -49,7 +49,7 @@
         var html_detail_label_color = '<label>' + data.product_color.name + '</label>';
 
         //---> Transport Warehouse
-        var html_detail_warehouse = '<label>' + data.warehouse_product_name + '</label>';
+        var html_detail_warehouse = '<label>' + data.warehouse.name + '</label>';
 
         // Row html
         var html = '<td>'+html_detail_photo+'</td>\
@@ -60,12 +60,6 @@
         <td>'+html_detail_warehouse+'</td>\
         <td><a href="javascript:;" onclick="deleteCartDetailItem('+key+');" class="bt-delete btn btn-xs btn-danger"><i class="fa fa-trash-o" aria-hidden="true"></i></a></td>';
         return html;
-    }
-
-    function initReturnCartDetail(){
-        $.each(return_details, function(key, value){
-            value.product_quantity = 1;
-        });
     }
 
     // When "Xóa" on row is clicked -> Remove current row, add delete:true to item on array details
@@ -82,7 +76,6 @@
 
             $('#i-cart-info tbody').append('<tr class="child" id="return_detail_'+key+'">'+html+'</tr>');
         });
-        $('input[name="return_details"]').val(JSON.stringify(return_details));
     }
 
     // When detail quantity, color, size change will count total again
@@ -252,12 +245,27 @@
                 },
                 dataType:'json'
             }).done(function(data) {
-                if (!$.isEmptyObject(data)) {
+                if (!$.isEmptyObject(data.products)) {
+                    html_product_options = '<option value="0"> -- Chọn sản phẩm -- </option>' + generate_options(data.products);
                     $('input[name="cart"]').val(cart_id);
-                    return_details = data;
-                    initReturnCartDetail();
-                    printTableTransportDetails();
+                    $('select[name="cart_id"]').select2({disabled: true});
+                }else{
+                    html_product_options = '<option value="0"> -- Chọn sản phẩm -- </option>';
                 }
+                $('select[name="product_name"]').html(html_product_options);
+                html_color_options = '<option value="0"> -- Chọn màu sắc -- </option>';
+                $('select[name="product_color"]').html(html_color_options);
+                html_sizes_options = '<option value="0"> -- Chọn kích thước -- </option>';
+                $('select[name="product_size"]').html(html_sizes_options);
+                $('input[name="product_quantity"]').removeAttr('max_avaiable');
+                $('input[name="product_quantity"]').val(0);
+                $('input[name="warehouse_product_id"]').val(0);
+
+                $('.col-md-8 .ibox-content .error').each(function(){
+                    if (!$(this).hasClass('hidden')) {
+                        $(this).addClass('hidden');
+                    }
+                });
             });
         });
 
@@ -515,11 +523,45 @@
                             </div>
 
                             <div class="row xs-12-mg-bt-mobile m-b">
-                                <div class="col-md-12 select-wrapper">
+                                <div class="col-md-3 col-sm-3 col-xs-12 select-wrapper">
                                     <select name="cart_id" class="form-control">
                                         <option value="0"> -- Chọn đơn hàng -- </option>
                                     </select>
                                     <label id="-product-cart-error" class="error hidden" for="cart_id1">Vui lòng chọn.</label>
+                                </div>
+                                <div class="col-md-3 col-sm-3 col-xs-12 select-wrapper">
+                                    <select name="product_name" class="form-control">
+                                        <option value="0"> -- Chọn sản phẩm -- </option>
+                                    </select>
+                                    <label id="product-name-error" class="error hidden" for="product_name1">Vui lòng chọn.</label>
+                                </div>
+                                <div class="col-md-3 col-sm-3 col-xs-12 select-wrapper">
+                                    <select name="product_color" class="form-control">
+                                        <option value="0"> -- Chọn màu sắc -- </option>
+                                    </select>
+                                    <label id="product-color-error" class="error hidden" for="product_color1">Vui lòng chọn.</label>
+                                </div>
+                                <div class="col-md-3 col-sm-3 col-xs-12 select-wrapper">
+                                    <select name="product_size" class="form-control">
+                                        <option value="0"> -- Chọn kích thước -- </option>
+                                    </select>
+                                    <label id="product-size-error" class="error hidden" for="product_size1">Vui lòng chọn.</label>
+                                </div>
+                                <!-- BEGIN: Select Warehouse -->
+                                <div class="col-md-3 col-sm-3 col-xs-12 select-wrapper">
+                                    <select name="warehouse_id" class="form-control">
+                                        <option value="0"> -- Chọn kho xuất -- </option>
+                                    </select>
+                                    <label id="product-warehouse-error" class="error hidden" for="product_warehouse1">Vui lòng chọn.</label>
+                                </div>
+                                <div class="col-md-3 col-sm-3 col-xs-12 select-wrapper">
+                                    <input name="product_quantity" type="text" placeholder="Nhập số lượng" class="form-control m-b"
+                                    value="0"/>
+                                    <label id="product-quantity-error" class="error hidden" for="product_quantity1">Vui lòng nhập vào số lượng.</label>
+                                </div>
+                                <!-- END: Select Warehouse -->
+                                <div class="col-md-3 col-sm-3 col-xs-12 select-wrapper">
+                                    <button type="button" class="btn btn-success pull-left c-add-info" id="add_details" disabled="true">Thêm</button>
                                 </div>
                                 
                                 <div class="col-md-12">

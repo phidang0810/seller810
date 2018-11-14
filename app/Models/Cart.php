@@ -67,4 +67,20 @@ class Cart extends BaseModel
 
         return $this->hasMany('App\Models\ReturnCartDetail');
     }
+
+    /**
+     * Get the customer that owns the cart.
+     */
+    public function platform()
+    {
+        return $this->belongsTo('App\Models\Platform');
+    }
+
+    /**
+     * Get the customer that owns the cart.
+     */
+    public function transport()
+    {
+        return $this->belongsTo('App\Models\Transport');
+    }
 }

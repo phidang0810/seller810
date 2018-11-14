@@ -306,22 +306,23 @@ class CartController extends AdminController
     {
         if ($this->_request->ajax()){
             if (isset($this->_request['cart_id'])) {
-                if (isset($this->_request['product_id'])) {
-                    if (isset($this->_request['color_id'])) {
-                        if (isset($this->_request['size_id'])) {
-                            if (isset($this->_request['warehouse_id'])) {
-                                if ($this->_request['get_data'] == true) {
-                                    return $cart->getCartDetailDatas($this->_request);
-                                }
-                                return $cart->getProductDetailquantity($this->_request);
-                            }
-                            return $cart->getProductDetailWarehouseOptions($this->_request);
-                        }
-                        return $cart->getProductDetailSizeOptions($this->_request);
-                    }
-                    return $cart->getProductDetailColorOptions($this->_request);
-                }
-                return $cart->getDetailProductOptions($this->_request);
+                // if (isset($this->_request['product_id'])) {
+                //     if (isset($this->_request['color_id'])) {
+                //         if (isset($this->_request['size_id'])) {
+                //             if (isset($this->_request['warehouse_id'])) {
+                //                 if ($this->_request['get_data'] == true) {
+                //                     return $cart->getCartDetailDatas($this->_request);
+                //                 }
+                //                 return $cart->getProductDetailquantity($this->_request);
+                //             }
+                //             return $cart->getProductDetailWarehouseOptions($this->_request);
+                //         }
+                //         return $cart->getProductDetailSizeOptions($this->_request);
+                //     }
+                //     return $cart->getProductDetailColorOptions($this->_request);
+                // }
+                // return $cart->getDetailProductOptions($this->_request);
+                return $cart->getCartDetails($this->_request['cart_id']);
             }
         }
         $id = $this->_request->get('id');

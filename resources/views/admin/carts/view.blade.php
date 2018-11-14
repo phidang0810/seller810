@@ -51,7 +51,7 @@
         var html_detail_input_count_price = '<input type="text" value="' + data.total_price + '" id="detail_count_price_'+key+'" class="thousand-number detail_count_price form-control" readonly="readonly">';
 
         //---> Warehouse
-        var html_detail_warehouse = '<label>' + data.warehouse_product_name + '</label>';
+        var html_detail_warehouse = '<label>' + data.product_warehouse + '</label>';
 
         // Row html
         var html = '<td>'+html_detail_photo+'</td>\

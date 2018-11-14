@@ -1,22 +1,22 @@
 <form class="form-horizontal">
     <div class="form-group">
         <label class="col-lg-5 control-label" style="text-align: left; padding-right: 0; width: 33.666667%;">Tên khách hàng:</label>
-        <label id="customer_name" class="col-lg-7 text-left control-label" style="padding-left: 0; text-align: left;">{{$result['cart']->customer_name}}</label>
+        <label id="customer_name" class="col-lg-7 text-left control-label" style="padding-left: 0; text-align: left;">{{$result['cart']->customer->name}}</label>
     </div>
 
     <div class="form-group">
         <label class="col-lg-5 control-label" style="text-align: left; padding-right: 0; width: 33.666667%;">Số điện thoại:</label>
-        <label id="customer_phone" class="col-lg-7 text-left control-label" style="padding-left: 0; text-align: left;">{{$result['cart']->customer_phone}}</label>
+        <label id="customer_phone" class="col-lg-7 text-left control-label" style="padding-left: 0; text-align: left;">{{$result['cart']->customer->phone}}</label>
     </div>
 
     <div class="form-group">
         <label class="col-lg-5 control-label" style="text-align: left; padding-right: 0; width: 33.666667%;">Email:</label>
-        <label id="customer_email" class="col-lg-7 text-left control-label" style="padding-left: 0; text-align: left;">{{$result['cart']->customer_email}}</label>
+        <label id="customer_email" class="col-lg-7 text-left control-label" style="padding-left: 0; text-align: left;">{{$result['cart']->customer->email}}</label>
     </div>
 
     <div class="form-group">
         <label class="col-lg-5 control-label" style="text-align: left; padding-right: 0; width: 33.666667%;">Địa chỉ:</label>
-        <label id="customer_address" class="col-lg-7 text-left control-label" style="padding-left: 0; text-align: left;">{{$result['cart']->customer_address}}</label>
+        <label id="customer_address" class="col-lg-7 text-left control-label" style="padding-left: 0; text-align: left;">{{$result['cart']->customer->address}}</label>
     </div>
 
     <div class="form-group">
@@ -26,18 +26,18 @@
 
     <div class="form-group">
         <label class="col-lg-5 control-label" style="text-align: left; padding-right: 0; width: 33.666667%;">Nguồn đơn:</label>
-        <label id="platform_name" class="col-lg-7 text-left control-label" style="padding-left: 0; text-align: left;">{{$result['cart']->platform_name}}</label>
+        <label id="platform_name" class="col-lg-7 text-left control-label" style="padding-left: 0; text-align: left;">@if($result['cart']->platform){{$result['cart']->platform->name}}@endif</label>
     </div>
 
     <div class="form-group">
         <label class="col-lg-5 control-label" style="text-align: left; padding-right: 0; width: 33.666667%;">Nhà vận chuyển:</label>
-        <label id="transport_name" class="col-lg-7 text-left control-label" style="padding-left: 0; text-align: left;">{{$result['cart']->transport_name}}</label>
+        <label id="transport_name" class="col-lg-7 text-left control-label" style="padding-left: 0; text-align: left;">@if($result['cart']->transport){{$result['cart']->transport->name}}@endif</label>
     </div>
 
     <div class="form-group">
         <label class="col-lg-5 control-label" style="text-align: left; padding-right: 0; width: 33.666667%;">Mã vận đơn:</label>
         <!-- <label id='transport_id' class="col-lg-7 text-left control-label" style="padding-left: 0; text-align: left;">{{$result['cart']->transport_id}}</label> -->
-        <input type="text" value="@if(isset($result['cart']->transport_id) && isset($result['cart']->transport_id)){{$result['cart']->transport_id}}@else{{old('transport_id')}}@endif"" name="transport_id">
+        <input type="text" value="@if(isset($result['cart']->transport_id) && isset($result['cart']->transport->id)){{$result['cart']->transport->id}}@else{{old('transport_id')}}@endif"" name="transport_id">
     </div>
 
     <div class="form-group">
@@ -157,9 +157,9 @@
                     </tr>
                 </tfoot>
                 <tbody class="cart-detail-wrapper">
-                    @foreach ($result['cart_details'] as $cart_detail)
+                    @foreach ($result['cart']->details as $cart_detail)
                     <tr>
-                        <td colspan="1">{{$cart_detail->product_code}}</td>
+                        <td colspan="1">{{$cart_detail->product->barcode_text}}</td>
                         <td class="thousand-number money text-right" colspan="1">{{$cart_detail->price}}</td>
                         <td class="thousand-number text-right" colspan="1">{{$cart_detail->quantity}}</td>
                         <td class="thousand-number money text-right" colspan="1">{{$cart_detail->total_price}}</td>
@@ -168,7 +168,8 @@
                 </tbody>
             </table>
         </div>
-
+        
+        @if( isset($returnCartDetail['cart']) && count($returnCartDetail['cart']->returnDetails) > 0 )
         <div class="text-left">
             <h3 class="text-uppercase">thông tin trả hàng</h3>
         </div>
@@ -189,14 +190,15 @@
                     @foreach ($returnCartDetail['cart']->returnDetails as $detail)
                     <tr>
                         <td colspan="1">{{$detail->product->barcode_text}}</td>
-                        <td class="thousand-number money text-right" colspan="1">{{$detail->productDetail->size->name}}</td>
-                        <td class="thousand-number text-right" colspan="1">{{$detail->productDetail->color->name}}</td>
-                        <td class="thousand-number money text-right" colspan="1">{{$detail->quantity}}</td>
+                        <td class="" colspan="1">{{$detail->productDetail->size->name}}</td>
+                        <td class="" colspan="1">{{$detail->productDetail->color->name}}</td>
+                        <td class="" colspan="1">{{$detail->quantity}}</td>
                     </tr>
                     @endforeach
                 </tbody>
             </table>
         </div>
+        @endif
         <div class="form-group">
             <div class="col-lg-offset-2 col-lg-10 text-right">
                 <button id="save-cart-info" class="btn btn-sm btn-primary" type="button" onclick="updateCartStatus();">Lưu</button>

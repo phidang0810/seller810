@@ -134,30 +134,46 @@ Class CartRepository
 
     public function getCartDetail($cartCode)
     {
-        $cart = Cart::select(['carts.id', 'carts.city_id', 'carts.partner_id', 'carts.customer_id',
-            'carts.code', 'carts.quantity', 'carts.status', 'carts.active', 'carts.created_at',
-            'carts.transport_id as transport_id', 'carts.price', 'carts.total_price', 'carts.shipping_fee',
-            'carts.vat_amount', 'carts.total_discount_amount', 'carts.price', 'carts.needed_paid', 'carts.paid_amount',
-            'customers.name as customer_name', 'customers.phone as customer_phone', 'customers.email as customer_email',
-            'customers.address as customer_address', 'cart_detail.product_id', 'carts.platform_id', 'platforms.name as platform_name',
-            'transports.name as transport_name', 'carts.payment_status'])
-        ->leftjoin('customers', 'customers.id', '=', 'carts.customer_id')
-        ->leftjoin('cart_detail', 'cart_detail.cart_id', '=', 'carts.id')
-        ->leftjoin('products', 'products.id', '=', 'cart_detail.product_id')
-        ->leftjoin('platforms', 'platforms.id', '=', 'carts.platform_id')
-        ->leftjoin('transports', 'transports.id', '=', 'carts.transport_id')
-        ->where('carts.code', '=', $cartCode)
-        ->first();
+        // $cart = Cart::select(['carts.id', 'carts.city_id', 'carts.partner_id', 'carts.customer_id',
+        //     'carts.code', 'carts.quantity', 'carts.status', 'carts.active', 'carts.created_at',
+        //     'carts.transport_id as transport_id', 'carts.price', 'carts.total_price', 'carts.shipping_fee',
+        //     'carts.vat_amount', 'carts.total_discount_amount', 'carts.price', 'carts.needed_paid', 'carts.paid_amount',
+        //     'customers.name as customer_name', 'customers.phone as customer_phone', 'customers.email as customer_email',
+        //     'customers.address as customer_address', 'cart_detail.product_id', 'carts.platform_id', 'platforms.name as platform_name',
+        //     'transports.name as transport_name', 'carts.payment_status'])
+        // ->leftjoin('customers', 'customers.id', '=', 'carts.customer_id')
+        // ->leftjoin('cart_detail', 'cart_detail.cart_id', '=', 'carts.id')
+        // ->leftjoin('products', 'products.id', '=', 'cart_detail.product_id')
+        // ->leftjoin('platforms', 'platforms.id', '=', 'carts.platform_id')
+        // ->leftjoin('transports', 'transports.id', '=', 'carts.transport_id')
+        // ->where('carts.code', '=', $cartCode)
+        // ->first();
+        $cart = Cart::where('carts.code', '=', $cartCode)->firstOrFail();
+        if ($cart) {
+            $cart->details;
+            if ($cart->details) {
+                foreach ($cart->details as $cart_detail) {
+                    $cart_detail->product;
+                    $cart_detail->productDetail;
+                    if ($cart_detail->productDetail) {
+                        $cart_detail->productDetail->color;
+                        $cart_detail->productDetail->size;
+                    }
+                }
+            }
+            $cart->customer;
+            $cart->platform;
+            $cart->transport;
+        }
 
-        $cartDetails = Cart::select(['carts.id', 'cart_detail.quantity as quantity', 'cart_detail.price as price', 'carts.total_price as total_price', 'carts.shipping_fee as shipping_fee', 'carts.code', 'products.barcode_text as product_code', 'products.name as product_name', 'products.photo as product_photo'])
-        ->leftjoin('cart_detail', 'cart_detail.cart_id', '=', 'carts.id')
-        ->leftjoin('products', 'products.id', '=', 'cart_detail.product_id')
-        ->where('carts.code', '=', $cartCode)
-        ->get();
+        // $cartDetails = Cart::select(['carts.id', 'cart_detail.quantity as quantity', 'cart_detail.price as price', 'cart_detail.total_price as total_price', 'carts.shipping_fee as shipping_fee', 'carts.code', 'products.barcode_text as product_code', 'products.name as product_name', 'products.photo as product_photo'])
+        // ->leftjoin('cart_detail', 'cart_detail.cart_id', '=', 'carts.id')
+        // ->leftjoin('products', 'products.id', '=', 'cart_detail.product_id')
+        // ->where('carts.code', '=', $cartCode)
+        // ->get();
 
         $cartResult = array(
             "cart" => $cart,
-            "cart_details" => $cartDetails,
         );
 
         return $cartResult;
@@ -966,12 +982,35 @@ Class CartRepository
         return Response::json($return);
     }
 
+    public function updateProductQuantity($cart_detail, $quantity){
+        $modelProduct = Product::find($cart_detail->product_id);
+        if ($modelProduct) {
+            $modelProduct->quantity_available += $quantity;
+            $modelProduct->save();
+        }
+
+        $modelProductDetail = ProductDetail::find($cart_detail->product_detail_id);
+        if ($modelProductDetail) {
+            $modelProductDetail->quantity_available += $quantity;
+            $modelProductDetail->save();
+        }
+
+        $modelWarehouseProduct = WarehouseProduct::find($cart_detail->warehouse_product_id);
+        if ($modelWarehouseProduct) {
+            $modelWarehouseProduct->quantity_available += $quantity;
+            $modelWarehouseProduct->save();
+        }
+    }
+
     public function createReturnCart($data){
         $returnDetails = json_decode($data['return_details']);
-        $dd = [];
 
         $modelCart = Cart::find($data['cart']);
         if ($modelCart) {
+            if ($modelCart->status == CART_COMPLETED) {
+                $modelPayment = Payment::where('cart_id', $data['cart'])->firstOrFail();
+            }
+
             foreach ($returnDetails as $returnCartDetail) {
                 $modelReturnCartDetail = new ReturnCartDetail;
 
@@ -995,23 +1034,7 @@ Class CartRepository
                 if ($modelCartDetail) {
                     $modelCartDetail->quantity -= $modelReturnCartDetail->quantity;
 
-                    $modelProduct = Product::find($modelCartDetail->product_id);
-                    if ($modelProduct) {
-                        $modelProduct->quantity_available += $modelReturnCartDetail->quantity;
-                        $modelProduct->save();
-                    }
-
-                    $modelProductDetail = ProductDetail::find($modelCartDetail->product_detail_id);
-                    if ($modelProductDetail) {
-                        $modelProductDetail->quantity_available += $modelReturnCartDetail->quantity;
-                        $modelProductDetail->save();
-                    }
-
-                    $modelWarehouseProduct = WarehouseProduct::find($modelCartDetail->warehouse_product_id);
-                    if ($modelWarehouseProduct) {
-                        $modelWarehouseProduct->quantity_available += $modelReturnCartDetail->quantity;
-                        $modelWarehouseProduct->save();
-                    }
+                    $this->updateProductQuantity($modelCartDetail, $modelReturnCartDetail->quantity);
 
                     // Calculate cart detail
                     $modelCartDetail = $this->calculateCartDetail($modelCartDetail);
@@ -1019,26 +1042,18 @@ Class CartRepository
                     $modelCartDetail->save();
                 }
 
-                if ($modelCart->status == CART_COMPLETED) {
-                    $modelPayment = Payment::where('cart_id', $modelReturnCartDetail->cart_id)->firstOrFail();
-                    if ($modelPayment) {
+                if (isset($modelPayment)) {
+                    $modelPaymentDetail = PaymentDetail::where('product_id', $returnCartDetail->product_name->id)
+                    ->where('product_detail_id', $returnCartDetail->product_detail->id)
+                    ->where('cart_detail_id', $modelCartDetail->id)
+                    ->where('cart_id', $modelCart->id)
+                    ->where('payment_id', $modelPayment->id)
+                    ->firstOrFail();
 
-                        $modelPaymentDetail = PaymentDetail::where('product_id', $returnCartDetail->product_name->id)
-                        ->where('product_detail_id', $returnCartDetail->product_detail->id)
-                        ->where('cart_detail_id', $modelCartDetail->id)
-                        ->where('cart_id', $modelCart->id)
-                        ->where('payment_id', $modelPayment->id)
-                        ->firstOrFail();
-
-                        if ($modelPaymentDetail) {
-                            $modelPaymentDetail->quantity -= $modelReturnCartDetail->quantity;
-                            $modelPaymentDetail = $this->calculateCartDetail($modelPaymentDetail);
-                            $modelPaymentDetail->save();
-                        }
-                        
-                        $modelPayment->quantity -= $modelReturnCartDetail->quantity;
-                        $modelPayment = $this->calculateCart($modelPayment);
-                        $modelPayment->save();
+                    if ($modelPaymentDetail) {
+                        $modelPaymentDetail->quantity -= $modelReturnCartDetail->quantity;
+                        $modelPaymentDetail = $this->calculateCartDetail($modelPaymentDetail);
+                        $modelPaymentDetail->save();
                     }
                 }
             }
@@ -1047,6 +1062,12 @@ Class CartRepository
             $modelCart->is_returned = CART_RETURN;
 
             $modelCart->save();
+
+            if (isset($modelPayment)) {
+                $modelPayment->quantity -= $modelReturnCartDetail->quantity;
+                $modelPayment = $this->calculateCart($modelPayment);
+                $modelPayment->save();
+            }
         }
         // update cart & payment
     }
@@ -1119,6 +1140,56 @@ Class CartRepository
 
         return Response::json($return);
 
+    }
+
+    public function getCartDetails($id)
+    {
+        $model = Cart::find($id);
+        foreach ($model->details as $detail) {
+            $detail->product;
+            $detail->productDetail;
+            $detail->productDetail->size;
+            $detail->productDetail->color;
+            $detail->warehouseProduct;
+            $detail->warehouseProduct->warehouse;
+        }
+        $return = [];
+        foreach ($model->details as $key => $value) {
+            $return[] = [
+                'id' => $value->id,
+                'product_image' => ($value->product->photo) ? asset('storage/' . $value->product->photo) : asset(NO_PHOTO),
+                'product_code' => ($value->product->barcode_text) ? $value->product->barcode_text : 0,
+                'product_price' => ($value->price) ? $value->price : 0,
+                'total_price' => ($value->total_price) ? $value->total_price : 0,
+                'product_quantity' => ($value->quantity) ? $value->quantity : 0,
+                'product_fixed_price' => ($value->fixed_price) ? $value->fixed_price : null,
+                'product_name' => [
+                    'id' => ($value->product->id) ? $value->product->id : 0,
+                    'name' => ($value->product->name) ? $value->product->name : ''
+                ],
+                'product_size' => [
+                    'id' => ($value->productDetail->size) ? $value->productDetail->size->id : 0,
+                    'name' => ($value->productDetail->size) ? $value->productDetail->size->name : ''
+                ],
+                'product_color' => [
+                    'id' => ($value->productDetail->color) ? $value->productDetail->color->id : 0,
+                    'name' => ($value->productDetail->color) ? $value->productDetail->color->name : ''
+                ],
+                'product_detail' => ($value->productDetail) ? $value->productDetail : [],
+                'color_code' => [
+                    'id' => ($value->color) ? $value->color->id : 0,
+                    'name' => ($value->color) ? $value->color->name : ""
+                ],
+                'size' => [
+                    'id' => ($value->size) ? $value->size->id : 0,
+                    'name' => ($value->size) ? $value->size->name : ""
+                ],
+                'quantity' => ($value->quantity) ? $value->quantity : 0,
+                'warehouse_product_id' => ($value->warehouse_product_id) ? $value->warehouse_product_id : 0,
+                'warehouse_product_name' => ($value->warehouseProduct) ? $value->warehouseProduct->warehouse->name : ""
+            ];
+        }
+        return Response::json($return);
     }
 
 }

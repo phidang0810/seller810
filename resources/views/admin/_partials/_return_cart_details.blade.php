@@ -28,9 +28,9 @@
         @foreach ($result['cart']->returnDetails as $detail)
         <tr>
             <td colspan="1">{{$detail->product->barcode_text}}</td>
-            <td class="thousand-number money text-right" colspan="1">{{$detail->productDetail->size->name}}</td>
-            <td class="thousand-number text-right" colspan="1">{{$detail->productDetail->color->name}}</td>
-            <td class="thousand-number money text-right" colspan="1">{{$detail->quantity}}</td>
+            <td class="" colspan="1">{{$detail->productDetail->size->name}}</td>
+            <td class="" colspan="1">{{$detail->productDetail->color->name}}</td>
+            <td class="" colspan="1">{{$detail->quantity}}</td>
         </tr>
         @endforeach
     </tbody>
