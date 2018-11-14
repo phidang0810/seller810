@@ -370,6 +370,7 @@ Class CartRepository
             $customer->email = $data['customer_email'];
             $customer->phone = $data['customer_phone'];
             $customer->address = $data['customer_address'];
+            $customer->group_customer_id = 1;
 
             $customer->save();
 
@@ -1012,48 +1013,50 @@ Class CartRepository
             }
 
             foreach ($returnDetails as $returnCartDetail) {
-                $modelReturnCartDetail = new ReturnCartDetail;
+                if ( !isset($returnCartDetail->delete) || $returnCartDetail->delete != true ) {
+                    $modelReturnCartDetail = new ReturnCartDetail;
 
-                $modelReturnCartDetail->cart_id = $data['cart'];
-                $modelReturnCartDetail->product_id = $returnCartDetail->product_name->id;
-                $modelReturnCartDetail->product_detail_id = $returnCartDetail->product_detail->id;
-                $modelReturnCartDetail->warehouse_product_id = $returnCartDetail->warehouse_product_id;
-                $modelReturnCartDetail->quantity = $returnCartDetail->product_quantity;
+                    $modelReturnCartDetail->cart_id = $data['cart'];
+                    $modelReturnCartDetail->product_id = $returnCartDetail->product_name->id;
+                    $modelReturnCartDetail->product_detail_id = $returnCartDetail->product_detail->id;
+                    $modelReturnCartDetail->warehouse_product_id = $returnCartDetail->warehouse_product_id;
+                    $modelReturnCartDetail->quantity = $returnCartDetail->product_quantity;
 
-                $modelReturnCartDetail->save();
+                    $modelReturnCartDetail->save();
 
                 // Update quantity cart, cart detail, payment, payment detail
-                $modelCart->quantity -= $modelReturnCartDetail->quantity;
+                    $modelCart->quantity -= $modelReturnCartDetail->quantity;
 
-                $modelCartDetail = CartDetail::where('product_id', $returnCartDetail->product_name->id)
-                ->where('product_detail_id', $returnCartDetail->product_detail->id)
-                ->where('warehouse_product_id', $returnCartDetail->warehouse_product_id)
-                ->where('cart_id', $modelCart->id)
-                ->firstOrFail();
-
-                if ($modelCartDetail) {
-                    $modelCartDetail->quantity -= $modelReturnCartDetail->quantity;
-
-                    $this->updateProductQuantity($modelCartDetail, $modelReturnCartDetail->quantity);
-
-                    // Calculate cart detail
-                    $modelCartDetail = $this->calculateCartDetail($modelCartDetail);
-
-                    $modelCartDetail->save();
-                }
-
-                if (isset($modelPayment)) {
-                    $modelPaymentDetail = PaymentDetail::where('product_id', $returnCartDetail->product_name->id)
+                    $modelCartDetail = CartDetail::where('product_id', $returnCartDetail->product_name->id)
                     ->where('product_detail_id', $returnCartDetail->product_detail->id)
-                    ->where('cart_detail_id', $modelCartDetail->id)
+                    ->where('warehouse_product_id', $returnCartDetail->warehouse_product_id)
                     ->where('cart_id', $modelCart->id)
-                    ->where('payment_id', $modelPayment->id)
                     ->firstOrFail();
 
-                    if ($modelPaymentDetail) {
-                        $modelPaymentDetail->quantity -= $modelReturnCartDetail->quantity;
-                        $modelPaymentDetail = $this->calculateCartDetail($modelPaymentDetail);
-                        $modelPaymentDetail->save();
+                    if ($modelCartDetail) {
+                        $modelCartDetail->quantity -= $modelReturnCartDetail->quantity;
+
+                        $this->updateProductQuantity($modelCartDetail, $modelReturnCartDetail->quantity);
+
+                    // Calculate cart detail
+                        $modelCartDetail = $this->calculateCartDetail($modelCartDetail);
+
+                        $modelCartDetail->save();
+                    }
+
+                    if (isset($modelPayment)) {
+                        $modelPaymentDetail = PaymentDetail::where('product_id', $returnCartDetail->product_name->id)
+                        ->where('product_detail_id', $returnCartDetail->product_detail->id)
+                        ->where('cart_detail_id', $modelCartDetail->id)
+                        ->where('cart_id', $modelCart->id)
+                        ->where('payment_id', $modelPayment->id)
+                        ->firstOrFail();
+
+                        if ($modelPaymentDetail) {
+                            $modelPaymentDetail->quantity -= $modelReturnCartDetail->quantity;
+                            $modelPaymentDetail = $this->calculateCartDetail($modelPaymentDetail);
+                            $modelPaymentDetail->save();
+                        }
                     }
                 }
             }
@@ -1079,15 +1082,15 @@ Class CartRepository
     }
 
     public function calculateCart($model){
-        $model->price = 0;
+        $model->total_price = 0;
         if ($model->details) {
             foreach ($model->details as $detail) {
-                $model->price += $detail->total_price;
+                $model->total_price += $detail->total_price;
             }
         }
 
-        $model->total_price = preg_replace('/[^0-9]/', '', $model->price + $model->shipping_fee + $model->vat_amount - $model->discount_amount);
-        $model->needed_paid = preg_replace('/[^0-9]/', '', $model->total_price - $model->paid_amount);
+        $model->price = preg_replace('/[^0-9]/', '', $model->total_price + $model->shipping_fee + $model->vat_amount - $model->total_discount_amount);
+        $model->needed_paid = preg_replace('/[^0-9]/', '', $model->price - $model->paid_amount);
         return $model;
     }
 

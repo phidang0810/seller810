@@ -34,6 +34,6 @@ class WarehouseProduct extends BaseModel
      */
     public function warehouse() {
 
-        return $this->hasOne('App\Models\warehouse', 'id', 'warehouse_id');
+        return $this->hasOne('App\Models\Warehouse', 'id', 'warehouse_id');
     }
 }
