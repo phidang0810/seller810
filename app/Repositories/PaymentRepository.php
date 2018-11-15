@@ -279,7 +279,7 @@ Class PaymentRepository
                 $query->where('carts.status', $option['status']);
             }
         } else {
-            $query = Payment::selectRaw('sum(total_price) as total, DAYOFWEEK(created_at) as day_of_week');
+            $query = Payment::selectRaw('sum(price) as total, DAYOFWEEK(created_at) as day_of_week');
         }
         $query->whereRaw('YEARWEEK(created_at) = YEARWEEK(NOW()) - 1')
             ->orderBy('created_at','asc')
@@ -302,7 +302,7 @@ Class PaymentRepository
                 $query->where('status', $option['status']);
             }
         } else {
-            $query = Payment::selectRaw('sum(total_price) as total, DAYOFWEEK(created_at) as day_of_week');
+            $query = Payment::selectRaw('sum(price) as total, DAYOFWEEK(created_at) as day_of_week');
         }
         $query->whereRaw('YEARWEEK(created_at) = YEARWEEK(NOW())')
             ->orderBy('created_at','asc')
@@ -340,9 +340,9 @@ Class PaymentRepository
 
     private function _getProfitMonthOfYear($time)
     {
-        $query = Payment::selectRaw('sum(total_price - total_import_price) as total, MONTH(created_at) as month');
+        $query = Payment::selectRaw('sum(price - total_import_price) as total, MONTH(created_at) as month');
 
-        $query->whereRaw('YEAR(created_at) = YEAR(CURDATE()) ')
+        $query->whereRaw('YEAR(created_at) = YEAR(CURDATE())')
             ->orderBy('created_at','asc')
             ->groupBy('month')
             ->get();
@@ -364,7 +364,7 @@ Class PaymentRepository
                 $query->where('carts.status', $option['status']);
             }
         } else {
-            $query = Payment::selectRaw('sum(total_price) as total, MONTH(created_at) as month');
+            $query = Payment::selectRaw('sum(price) as total, MONTH(created_at) as month');
         }
 
         $query->whereRaw('YEAR(created_at) = YEAR(CURDATE()) ')
@@ -405,7 +405,7 @@ Class PaymentRepository
     private function _getProfitYears($time)
     {
         $result = [];
-        $query = Payment::selectRaw('sum(total_price - total_import_price) as total, YEAR(created_at) as year');
+        $query = Payment::selectRaw('sum(price - total_import_price) as total, YEAR(created_at) as year');
 
         $query->whereRaw('YEAR(created_at) >= ' . $time[0])
             ->orderBy('created_at','asc')
@@ -429,7 +429,7 @@ Class PaymentRepository
                 $query->where('status', $option['status']);
             }
         } else {
-            $query = Payment::selectRaw('sum(total_price) as total, YEAR(created_at) as year');
+            $query = Payment::selectRaw('sum(price) as total, YEAR(created_at) as year');
         }
 
            $query->whereRaw('YEAR(created_at) >= ' . $time[0])
@@ -525,7 +525,7 @@ Class PaymentRepository
                 ->join('platforms', 'platforms.id','=','carts.platform_id');
             $table = 'carts';
         } else {
-            $data = Payment::selectRaw('platforms.name, SUM(payments.total_price) as total')
+            $data = Payment::selectRaw('platforms.name, SUM(payments.price) as total')
                 ->join('platforms', 'platforms.id','=','payments.platform_id');
             $table = 'payments';
         }
