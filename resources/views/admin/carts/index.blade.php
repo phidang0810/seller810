@@ -78,11 +78,11 @@
             // html += '<tr><td colspan="4" style="text-align:right">Tổng chiết khấu:</td><td class="thousand-number" style="text-align:right">-'+cart['total_discount_amount']+'</td></tr>';
             // html += '<tr><td colspan="4" style="text-align:right">Thành tiền:</td><td class="thousand-number" style="text-align:right">'+cart['price']+'</td></tr>';
             // $('.tbl-list-product > tfoot').html(html);
-            $('label.lbl-total-price').text(addCommas(cart['total_price']));
-            $('label.lbl-total-quantity').text(addCommas(cart['quantity']));
-            $('label.lbl-discount-amount').text(addCommas(cart['total_discount_amount']));
-            $('label.lbl-shipping-fee').text(addCommas(cart['shipping_fee']));
-            $('h4.lbl-price').text(addCommas(cart['price']));
+            $('label.lbl-total-price').text(addCommas(cart.total_price));
+            $('label.lbl-total-quantity').text(addCommas(cart.quantity));
+            $('label.lbl-discount-amount').text(addCommas(cart.total_discount_amount));
+            $('label.lbl-shipping-fee').text(addCommas(cart.shipping_fee));
+            $('h4.lbl-price').text(addCommas(cart.price));
         }
 
         function parseProductTable(arrProducts){
@@ -90,11 +90,11 @@
             if (arrProducts.length > 0) {
                 $.each(arrProducts, function( index, value ) {
                   html += '<tr>';
-                  html += '<td>'+value['product_name']+'</td>';
-                  html += '<td>'+value['product_code']+'</td>';
-                  html += '<td class="thousand-number" style="text-align:right;">'+value['price']+'</td>';
-                  html += '<td style="text-align:right;">'+value['quantity']+'</td>';
-                  html += '<td class="thousand-number" style="text-align:right;">'+value['total_price']+'</td>';
+                  html += '<td>'+value.product.name+'</td>';
+                  html += '<td>'+value.product.barcode_text+'</td>';
+                  html += '<td class="thousand-number" style="text-align:right;">'+value.price+'</td>';
+                  html += '<td style="text-align:right;">'+value.quantity+'</td>';
+                  html += '<td class="thousand-number" style="text-align:right;">'+value.total_price+'</td>';
                   html += '</tr>';
               });
             }
@@ -103,13 +103,13 @@
 
         function getDataToPrint(data){
             //---> Apply for print
-            $('.lbl-customer-name').text(data.result['cart']['customer_name']);
-            $('.lbl-customer-phone').text(data.result['cart']['customer_phone']);
-            $('.lbl-customer-address').text(data.result['cart']['customer_address']);
-            $('.lbl-customer-created').text(data.result['cart']['created_at']);
-            $('.lbl-customer-code').text(data.result['cart']['code']);
-            $('.tbl-list-product > tbody').prepend(parseProductTable(data.result['cart_details']));
-            parseSummaryProduct(data.result['cart']);
+            $('.lbl-customer-name').text(data.result.cart.customer.name);
+            $('.lbl-customer-phone').text(data.result.cart.customer.phone);
+            $('.lbl-customer-address').text(data.result.cart.customer.address);
+            $('.lbl-customer-created').text(data.result.cart.created_at);
+            $('.lbl-customer-code').text(data.result.cart.code);
+            $('.tbl-list-product > tbody').prepend(parseProductTable(data.result.cart.details));
+            parseSummaryProduct(data.result.cart);
             setTimeout(function(){
                 $('#print-section .thousand-number').simpleMoneyFormat();
                 $('#print-section .thousand-number').append(" VNĐ");
