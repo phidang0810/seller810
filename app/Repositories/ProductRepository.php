@@ -102,6 +102,9 @@ Class ProductRepository
 	->addColumn('sell_price', function ($product) {
 		return format_price($product->sell_price);
 	})
+	->addColumn('price', function ($product) {
+		return format_price($product->price);
+	})
 	->addColumn('name', function($product){
 		$html = '';
 		$html .= '<p>'.$product->name.'</p>';

@@ -125,7 +125,7 @@
             "aoColumnDefs": [
                     // Column index begins at 0
                     { "sClass": "thousand-number text-align", "aTargets": [ 5 ] },
-                    { "sClass": "thousand-number money text-align", "aTargets": [ 6,7 ] },
+                    // { "sClass": "thousand-number money text-align", "aTargets": [ 6 ] },
                     { "sClass": "text-center", "aTargets": [ 8 ] },
                     { "sClass": "text-right", "aTargets": [ 9 ] }
                     ],

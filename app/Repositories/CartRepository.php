@@ -1093,7 +1093,7 @@ Class CartRepository
         $model->price = preg_replace('/[^0-9]/', '', $model->total_price + $model->shipping_fee + $model->vat_amount - $model->total_discount_amount);
         $model->needed_paid = $model->price - $model->paid_amount;
         if ($model->needed_paid < 0) {
-            $model->paid_amount -= $model->needed_paid;
+            $model->paid_amount = $model->price;
             $model->needed_paid = 0;
         }
 
