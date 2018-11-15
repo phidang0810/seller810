@@ -160,7 +160,7 @@
                     @foreach ($result['cart']->details as $cart_detail)
                     <tr>
                         <td colspan="1">{{$cart_detail->product->barcode_text}}</td>
-                        <td class="thousand-number money text-right" colspan="1">{{$cart_detail->price}}</td>
+                        <td class="thousand-number money text-right" colspan="1">@if(isset($cart_detail->fixed_price)){{$cart_detail->fixed_price}}@else{{$cart_detail->price}}@endif</td>
                         <td class="thousand-number text-right" colspan="1">{{$cart_detail->quantity}}</td>
                         <td class="thousand-number money text-right" colspan="1">{{$cart_detail->total_price}}</td>
                     </tr>

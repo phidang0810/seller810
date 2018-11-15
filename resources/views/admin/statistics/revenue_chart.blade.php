@@ -9,7 +9,6 @@
     <script>
         var table;
         var lineChart = null;
-        var profitLineChart = null;
         var pieChart = null;
         $.ajaxSetup({
             headers: {
@@ -22,10 +21,10 @@
                 url: "/quan-ly/thong-ke/data-profit",
                 data:search,
                 success: function(res){
-                    if(profitLineChart) {
-                        profitLineChart.destroy();
+                    if(lineChart) {
+                        lineChart.destroy();
                     }
-                    profitLineChart = new Chart(document.getElementById("profitLineChart"), {
+                    lineChart = new Chart(document.getElementById("profitLineChart"), {
                         "type": "line",
                         "data": {
                             "labels": res.result.time,
