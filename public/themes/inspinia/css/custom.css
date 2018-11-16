@@ -638,6 +638,12 @@ table.table-hover tbody tr td:hover{
  }
 }
 
+@media print {
+  div#barcode_image{
+    padding: 70px 20px;
+  }
+}
+
 .barcode_wrapper{
   width: 250px;
   float: left;
