@@ -400,10 +400,13 @@
                                                     <div class="form-group clearfix">
                                                         <label class="col-md-3 control-label">Barcode</label>
                                                         <div class="col-md-9">
-                                                            <div id="barcode_image" class="pull-left">
-                                                                <img src="{{asset('storage/' .$data->barcode)}}" alt="barcode">
-                                                                <div>@if(isset($data->barcode_text)){{$data->barcode_text}}@else{{old('barcode_text')}}@endif</div>
+                                                            <div class="barcode_wrapper">
+                                                                <div id="barcode_image">
+                                                                    <img src="{{asset('storage/' .$data->barcode)}}" alt="barcode">
+                                                                    <div>@if(isset($data->barcode_text)){{$data->barcode_text}}@else{{old('barcode_text')}}@endif</div>
+                                                                </div>
                                                             </div>
+                                                            
                                                             <div class="pull-right">
                                                                 <a class="btn btn-primary" onclick="print_barcode();">In barcode</a>
                                                             </div>
@@ -499,7 +502,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                        
+
                                                 @if(isset($detailsByWarehouses))
                                                 <div class="tabs-container m-b">
                                                     <ul class="nav nav-tabs">
