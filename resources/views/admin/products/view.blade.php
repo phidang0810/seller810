@@ -403,7 +403,6 @@
                                                             <div class="barcode_wrapper">
                                                                 <div id="barcode_image">
                                                                     <img src="{{asset('storage/' .$data->barcode)}}" alt="barcode">
-                                                                    <div>@if(isset($data->barcode_text)){{$data->barcode_text}}@else{{old('barcode_text')}}@endif</div>
                                                                 </div>
                                                             </div>
                                                             
