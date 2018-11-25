@@ -252,7 +252,7 @@ Class ImportProductRepository
 					Storage::delete($model->barcode);
 				}
 			}
-			Storage::disk('public')->put('barcodes/'.$model->barcode_text.'.png', base64_decode(DNS1D::getBarcodePNG($model->barcode_text, 'C128',2,33, [0,0,0], true)));
+			Storage::disk('public')->put('barcodes/'.$model->barcode_text.'.png', base64_decode(DNS1D::getBarcodePNG($model->barcode_text, 'EAN13',1,33, [0,0,0], true)));
 			$model->barcode = 'public/barcodes/'.$model->barcode_text.'.png';
 			$model->save();
 		}else{
@@ -264,7 +264,7 @@ Class ImportProductRepository
 					Storage::delete($model->barcode);
 				}
 			}
-			Storage::disk('public')->put('barcodes/'.$model->barcode_text.'.png', base64_decode(DNS1D::getBarcodePNG($model->barcode_text, 'C128',2,33, [0,0,0], true)));
+			Storage::disk('public')->put('barcodes/'.$model->barcode_text.'.png', base64_decode(DNS1D::getBarcodePNG($model->barcode_text, 'EAN13',1,33, [0,0,0], true)));
 			$model->barcode = 'public/barcodes/'.$model->barcode_text.'.png';
 			
 			$model->save();
@@ -620,7 +620,7 @@ Class ImportProductRepository
 					Storage::delete($model->barcode);
 				}
 			}
-			Storage::disk('public')->put('barcodes/'.$model->barcode_text.'.png', base64_decode(DNS1D::getBarcodePNG($model->barcode_text, 'C128',2,33, [0,0,0], true)));
+			Storage::disk('public')->put('barcodes/'.$model->barcode_text.'.png', base64_decode(DNS1D::getBarcodePNG($model->barcode_text, 'EAN13',1,33, [0,0,0], true)));
 			$model->barcode = 'public/barcodes/'.$model->barcode_text.'.png';
 			
 			$model->save();
@@ -633,7 +633,7 @@ Class ImportProductRepository
 					Storage::delete($model->barcode);
 				}
 			}
-			Storage::disk('public')->put('barcodes/'.$model->barcode_text.'.png', base64_decode(DNS1D::getBarcodePNG($model->barcode_text, 'C128',2,33, [0,0,0], true)));
+			Storage::disk('public')->put('barcodes/'.$model->barcode_text.'.png', base64_decode(DNS1D::getBarcodePNG($model->barcode_text, 'EAN13',1,33, [0,0,0], true)));
 			$model->barcode = 'public/barcodes/'.$model->barcode_text.'.png';
 			
 			$model->save();
