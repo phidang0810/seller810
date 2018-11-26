@@ -245,7 +245,7 @@ Class ImportProductRepository
 			$category = $this->lowestLevelCategory($model->id, $data['categories']);
 			$model->main_cate = $category->id;
 			$old_barcode_text = $model->barcode_text;
-			$model->barcode_text = general_product_code($category->code, $model->id, 7);
+			$model->barcode_text = general_product_code($category->code, $model->id, 12);
 
 			if ($model->barcode) {
 				if ($old_barcode_text != $model->barcode_text) {
@@ -257,7 +257,7 @@ Class ImportProductRepository
 			$model->save();
 		}else{
 			$old_barcode_text = $model->barcode_text;
-			$model->barcode_text = general_product_code('SP', $model->id, 7);
+			$model->barcode_text = general_product_code('SP', $model->id, 12);
 
 			if ($model->barcode) {
 				if ($old_barcode_text != $model->barcode_text) {
@@ -613,7 +613,7 @@ Class ImportProductRepository
 			$category = $productRepository->lowestLevelCategory($model->id);
 			$model->main_cate = $category->id;
 			$old_barcode_text = $model->barcode_text;
-			$model->barcode_text = general_product_code($category->code, $model->id, 7);
+			$model->barcode_text = general_product_code($category->code, $model->id, 12);
 
 			if ($model->barcode) {
 				if ($old_barcode_text != $model->barcode_text) {
@@ -626,7 +626,7 @@ Class ImportProductRepository
 			$model->save();
 		}else{
 			$old_barcode_text = $model->barcode_text;
-			$model->barcode_text = general_product_code('SP', $model->id, 7);
+			$model->barcode_text = general_product_code('SP', $model->id, 12);
 
 			if ($model->barcode) {
 				if ($old_barcode_text != $model->barcode_text) {

@@ -187,7 +187,7 @@ public function createOrUpdate($data, $id = null)
 		$category = $this->lowestLevelCategory($model->id);
 		$model->main_cate = $category->id;
 		$old_barcode_text = $model->barcode_text;
-		$model->barcode_text = general_product_code($category->code, $model->id, 7);
+		$model->barcode_text = general_product_code($category->code, $model->id, 12);
 
 		if ($model->barcode) {
 			if ($old_barcode_text != $model->barcode_text) {
@@ -200,7 +200,7 @@ public function createOrUpdate($data, $id = null)
 		$model->save();
 	}else{
 		$old_barcode_text = $model->barcode_text;
-		$model->barcode_text = general_product_code('SP', $model->id, 7);
+		$model->barcode_text = general_product_code('SP', $model->id, 12);
 
 		if ($model->barcode) {
 			if ($old_barcode_text != $model->barcode_text) {
