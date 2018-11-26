@@ -738,13 +738,13 @@ function parseSummaryProduct(cart){
 
 function getDataToPrint(data){
     //---> Apply for print
-    $('.lbl-customer-name').text(data['data']['cart']['customer_name']);
-    $('.lbl-customer-phone').text(data['data']['cart']['customer_phone']);
-    $('.lbl-customer-address').text(data['data']['cart']['customer_address']);
-    $('.lbl-customer-created').text(data['data']['cart']['created_at']);
-    $('.lbl-customer-code').text(data['data']['cart']['code']);
-    $('.tbl-list-product > tbody').html(parseProductTable(data['data']['cart_details']));
-    parseSummaryProduct(data['data']['cart']);
+    $('.lbl-customer-name').text(data.data.cart.customer.name);
+    $('.lbl-customer-phone').text(data.data.cart.customer.phone);
+    $('.lbl-customer-address').text(data.data.cart.customer.address);
+    $('.lbl-customer-created').text(data.data.cart.created_at);
+    $('.lbl-customer-code').text(data.data.cart.code);
+    $('.tbl-list-product > tbody').html(parseProductTable(data.data.cart.details));
+    parseSummaryProduct(data.data.cart);
     setTimeout(function(){
         $('.thousand-number').simpleMoneyFormat();
         $('.thousand-number').append(" VNĐ");
