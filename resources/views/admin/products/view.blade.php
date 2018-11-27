@@ -402,6 +402,7 @@
                                                         <div class="col-md-9">
                                                             <div class="barcode_wrapper">
                                                                 <div id="barcode_image">
+                                                                    <div style="font-size: 8px;margin-bottom: 3px;">{{str_limit($data->name, 25)}}</div>
                                                                     <img src="{{asset('storage/' .$data->barcode)}}" alt="barcode">
                                                                 </div>
                                                             </div>

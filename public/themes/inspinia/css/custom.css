@@ -640,28 +640,26 @@ table.table-hover tbody tr td:hover{
 
 @media print {
   div#barcode_image{
-    padding: 70px 20px;
+    width:135px;
   }
-}
+    div#barcode_image {
+        text-align: center;
+        width: 100%;
+    }
 
-.barcode_wrapper{
-  width: 95px;
-  float: left;
+    div#barcode_image img {
+        width: 100%;
+        height: auto;
+    }
 }
-
 div#barcode_image {
   text-align: center;
-  width: 100%;
+  width: 135px;
 }
 
 div#barcode_image img {
   width: 100%;
   height: auto;
-}
-
-div#barcode_image div {
- font-size: 14px;
- width: 100%;
 }
 
 .pagination > li > a, .pagination > li > span{

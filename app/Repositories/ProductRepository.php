@@ -19,11 +19,13 @@ use App\Models\Warehouse;
 use App\Models\WarehouseProduct;
 use App\Models\Supplier;
 use Illuminate\Support\Facades\Cache;
+use JFilla\Barcode\BarcodeGeneratorPNG;
 use Yajra\DataTables\Facades\DataTables;
 use App\Libraries\Photo;
 use Illuminate\Support\Facades\Storage;
 use Response;
 use DNS1D;
+use Zend\Barcode\Barcode;
 
 Class ProductRepository
 {
@@ -186,32 +188,18 @@ public function createOrUpdate($data, $id = null)
 			// Generate product code based on category code
 		$category = $this->lowestLevelCategory($model->id);
 		$model->main_cate = $category->id;
-		$old_barcode_text = $model->barcode_text;
-		$model->barcode_text = general_product_code($category->code, $model->id, 12);
 
-		if ($model->barcode) {
-			if ($old_barcode_text != $model->barcode_text) {
-				Storage::delete($model->barcode);
-			}
-		}
-		Storage::disk('public')->put('barcodes/'.$model->barcode_text.'.png', base64_decode(DNS1D::getBarcodePNG($model->barcode_text, 'EAN13',1,33, [0,0,0], true)));
-		$model->barcode = 'public/barcodes/'.$model->barcode_text.'.png';
-
-		$model->save();
-	}else{
-		$old_barcode_text = $model->barcode_text;
-		$model->barcode_text = general_product_code('SP', $model->id, 12);
-
-		if ($model->barcode) {
-			if ($old_barcode_text != $model->barcode_text) {
-				Storage::delete($model->barcode);
-			}
-		}
-		Storage::disk('public')->put('barcodes/'.$model->barcode_text.'.png', base64_decode(DNS1D::getBarcodePNG($model->barcode_text, 'EAN13',1,33, [0,0,0], true)));
-		$model->barcode = 'public/barcodes/'.$model->barcode_text.'.png';
-
-		$model->save();
 	}
+	Storage::delete($model->barcode);
+
+    $barcode = general_product_code($model->id, 8);
+    $file = Barcode::draw('code39', 'image', array('text' => $barcode), array());
+    $barcodePath = 'public/barcodes/' . $barcode . '.png';
+    imagepng($file,storage_path('app/' . $barcodePath));
+
+    $model->barcode = $barcodePath;
+    $model->barcode_text = $barcode;
+    $model->save();
 
 	if (isset($data['details'])) {
 		$tmp_data = $this->addDetails($model->id, $data['details']);

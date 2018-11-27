@@ -25,6 +25,7 @@ use Illuminate\Support\Facades\Storage;
 use Response;
 use DNS1D;
 use Carbon\Carbon;
+use Zend\Barcode\Barcode;
 
 Class ImportProductRepository
 {
@@ -238,39 +239,24 @@ Class ImportProductRepository
 			$model->code = general_code('N H', $model->id, 6);
 		}
 
-		if (isset($data['categories'])) {
-			$model->category_ids = $data['categories'];
+        if (isset($data['categories'])) {
+            $this->addCategories($model->id, $data['categories']);
 
-			// Generate product code based on category code
-			$category = $this->lowestLevelCategory($model->id, $data['categories']);
-			$model->main_cate = $category->id;
-			$old_barcode_text = $model->barcode_text;
-			$model->barcode_text = general_product_code($category->code, $model->id, 12);
+            // Generate product code based on category code
+            $category = $this->lowestLevelCategory($model->id);
+            $model->main_cate = $category->id;
 
-			if ($model->barcode) {
-				if ($old_barcode_text != $model->barcode_text) {
-					Storage::delete($model->barcode);
-				}
-			}
-			Storage::disk('public')->put('barcodes/'.$model->barcode_text.'.png', base64_decode(DNS1D::getBarcodePNG($model->barcode_text, 'EAN13',1,33, [0,0,0], true)));
-			$model->barcode = 'public/barcodes/'.$model->barcode_text.'.png';
-			$model->save();
-		}else{
-			$old_barcode_text = $model->barcode_text;
-			$model->barcode_text = general_product_code('SP', $model->id, 12);
+        }
+        Storage::delete($model->barcode);
 
-			if ($model->barcode) {
-				if ($old_barcode_text != $model->barcode_text) {
-					Storage::delete($model->barcode);
-				}
-			}
-			Storage::disk('public')->put('barcodes/'.$model->barcode_text.'.png', base64_decode(DNS1D::getBarcodePNG($model->barcode_text, 'EAN13',1,33, [0,0,0], true)));
-			$model->barcode = 'public/barcodes/'.$model->barcode_text.'.png';
-			
-			$model->save();
-		}
+        $barcode = general_product_code($model->id, 8);
+        $file = Barcode::draw('code39', 'image', array('text' => $barcode), array());
+        $barcodePath = 'public/barcodes/' . $barcode . '.png';
+        imagepng($file,storage_path('app/' . $barcodePath));
 
-		$model->save();
+        $model->barcode = $barcodePath;
+        $model->barcode_text = $barcode;
+        $model->save();
 
 		if (isset($data['importDetails'])) {
 			$importDetails = json_decode($data['importDetails']);
@@ -606,38 +592,24 @@ Class ImportProductRepository
 		$model->save();
 		$data['categories'] = $importProduct->category_ids;
 
-		if (isset($data['categories'])) {
-			$productRepository->addCategories($model->id, $data['categories']);
+        if (isset($data['categories'])) {
+            $this->addCategories($model->id, $data['categories']);
 
-			// Generate product code based on category code
-			$category = $productRepository->lowestLevelCategory($model->id);
-			$model->main_cate = $category->id;
-			$old_barcode_text = $model->barcode_text;
-			$model->barcode_text = general_product_code($category->code, $model->id, 12);
+            // Generate product code based on category code
+            $category = $this->lowestLevelCategory($model->id);
+            $model->main_cate = $category->id;
 
-			if ($model->barcode) {
-				if ($old_barcode_text != $model->barcode_text) {
-					Storage::delete($model->barcode);
-				}
-			}
-			Storage::disk('public')->put('barcodes/'.$model->barcode_text.'.png', base64_decode(DNS1D::getBarcodePNG($model->barcode_text, 'EAN13',1,33, [0,0,0], true)));
-			$model->barcode = 'public/barcodes/'.$model->barcode_text.'.png';
-			
-			$model->save();
-		}else{
-			$old_barcode_text = $model->barcode_text;
-			$model->barcode_text = general_product_code('SP', $model->id, 12);
+        }
+        Storage::delete($model->barcode);
 
-			if ($model->barcode) {
-				if ($old_barcode_text != $model->barcode_text) {
-					Storage::delete($model->barcode);
-				}
-			}
-			Storage::disk('public')->put('barcodes/'.$model->barcode_text.'.png', base64_decode(DNS1D::getBarcodePNG($model->barcode_text, 'EAN13',1,33, [0,0,0], true)));
-			$model->barcode = 'public/barcodes/'.$model->barcode_text.'.png';
-			
-			$model->save();
-		}
+        $barcode = general_product_code($model->id, 8);
+        $file = Barcode::draw('code39', 'image', array('text' => $barcode), array());
+        $barcodePath = 'public/barcodes/' . $barcode . '.png';
+        imagepng($file,storage_path('app/' . $barcodePath));
+
+        $model->barcode = $barcodePath;
+        $model->barcode_text = $barcode;
+        $model->save();
 
 		// // Push details quantity to warehouse product detail & product detail, update product quantity
 		if ($importProduct->details) {

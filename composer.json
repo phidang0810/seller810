@@ -15,7 +15,8 @@
         "league/flysystem-aws-s3-v3": "^1.0",
         "aws/aws-sdk-php": "^3.54",
         "milon/barcode": "^5.3",
-        "maatwebsite/excel": "~2.1.0"
+        "maatwebsite/excel": "~2.1.0",
+        "zendframework/zend-barcode": "^2.7"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

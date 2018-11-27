@@ -7,6 +7,9 @@ use App\Repositories\CategoryRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
+use JFilla\Barcode\BarcodeGenerator;
+use JFilla\Barcode\BarcodeGeneratorPNG;
+use Zend\Barcode\Barcode;
 
 class ProductController extends AdminController
 {

@@ -398,6 +398,7 @@
                                                         <label class="col-md-3 control-label">Barcode</label>
                                                         <div class="col-md-9">
                                                             <div id="barcode_image" class="pull-left">
+                                                                <div style="font-size: 8px;margin-bottom: 3px;">{{str_limit($data->name, 25)}}</div>
                                                                 <img src="{{asset('storage/' .$data->barcode)}}" alt="barcode">
                                                             </div>
                                                             <div class="pull-right">

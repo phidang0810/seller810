@@ -130,14 +130,8 @@ function general_code($string, $id, $number)
     return $result;
 }
 
-function general_product_code($string, $id, $number)
+function general_product_code($id, $number)
 {
-    /*$arr = explode(' ', trim($string));
-    $code = '';
-    foreach($arr as $s)
-    {
-        $code .= strtoupper($s);
-    }*/
     return  sprintf('%0' . $number . 'd', $id);
 }
 
