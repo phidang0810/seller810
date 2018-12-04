@@ -594,6 +594,7 @@ Class ImportProductRepository
 
         if (isset($data['categories'])) {
             $model->category_ids = $data['categories'];
+            $productRepository->addCategories($model->id, $data['categories']);
 
             // Generate product code based on category code
             $category = $this->lowestLevelCategory($model->id, $data['categories']);

@@ -190,15 +190,7 @@ public function createOrUpdate($data, $id = null)
 		$model->main_cate = $category->id;
 
 	}
-	Storage::delete($model->barcode);
 
-    $barcode = general_product_code($model->id, 8);
-    $file = Barcode::draw('code39', 'image', array('text' => $barcode), array());
-    $barcodePath = 'public/barcodes/' . $barcode . '.png';
-    imagepng($file,storage_path('app/' . $barcodePath));
-
-    $model->barcode = $barcodePath;
-    $model->barcode_text = $barcode;
     $model->save();
 
 	if (isset($data['details'])) {

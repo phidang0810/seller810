@@ -334,6 +334,7 @@ input:checked + .slider:before {
 .list-tree-section {
   padding: 5px 0px;
   border: 1px solid #eee;
+  background: #eee;
 }
 
 .c-gallery-preview input[type="file"] {
@@ -642,15 +643,15 @@ table.table-hover tbody tr td:hover{
   div#barcode_image{
     width:135px;
   }
-    div#barcode_image {
-        text-align: center;
-        width: 100%;
-    }
+  div#barcode_image {
+    text-align: center;
+    width: 100%;
+  }
 
-    div#barcode_image img {
-        width: 100%;
-        height: auto;
-    }
+  div#barcode_image img {
+    width: 100%;
+    height: auto;
+  }
 }
 div#barcode_image {
   text-align: center;
