@@ -240,10 +240,10 @@ Class ImportProductRepository
 		}
 
         if (isset($data['categories'])) {
-            $this->addCategories($model->id, $data['categories']);
+            $model->category_ids = $data['categories'];
 
             // Generate product code based on category code
-            $category = $this->lowestLevelCategory($model->id);
+            $category = $this->lowestLevelCategory($model->id, $data['categories']);
             $model->main_cate = $category->id;
 
         }
@@ -593,10 +593,10 @@ Class ImportProductRepository
 		$data['categories'] = $importProduct->category_ids;
 
         if (isset($data['categories'])) {
-            $this->addCategories($model->id, $data['categories']);
+            $model->category_ids = $data['categories'];
 
             // Generate product code based on category code
-            $category = $this->lowestLevelCategory($model->id);
+            $category = $this->lowestLevelCategory($model->id, $data['categories']);
             $model->main_cate = $category->id;
 
         }

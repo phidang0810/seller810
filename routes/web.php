@@ -13,7 +13,7 @@
 
 
 Route::get ('/', function(){
-    return redirect()->route('admin.dashboard');
+    die('Coming soon!');
 })->name('home');
 
 Route::get ('/error/{code}', 'Controller@error')->name('error');
