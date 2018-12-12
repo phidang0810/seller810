@@ -652,6 +652,9 @@ table.table-hover tbody tr td:hover{
     width: 100%;
     height: auto;
   }
+  table td, table th{
+    color:green
+  }
 }
 div#barcode_image {
   text-align: center;
