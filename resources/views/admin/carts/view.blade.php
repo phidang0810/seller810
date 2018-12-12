@@ -711,15 +711,18 @@
     });
 
 function parseProductTable(arrProducts){
+    var path_img_folder = window.location.origin + '/storage/';
     var html = '';
     if (arrProducts.length > 0) {
         $.each(arrProducts, function( index, value ) {
-          html += '<tr>';
-          html += '<td>'+value['product_name']+'</td>';
-          html += '<td>'+value['product_code']+'</td>';
-          html += '<td class="thousand-number" style="text-align:right;">'+value['price']+'</td>';
-          html += '<td style="text-align:right;">'+value['quantity']+'</td>';
-          html += '<td class="thousand-number" style="text-align:right;">'+value['total_price']+'</td>';
+            product_image = (value.product.photo) ? path_img_folder + value.product.photo : default_image;
+            html += '<tr>';
+            html += '<td>'+value.product.name+'</td>';
+            html += '<td>'+value.product.barcode_text+'</td>';
+            html += '<td><span class="img-wrapper"><img class="img-thumbnail" style="width: 80px; height: 60px;" src="' + product_image + '"/></span></td>';
+            html += '<td class="thousand-number" style="text-align:right;">'+value['price']+'</td>';
+            html += '<td style="text-align:right;">'+value['quantity']+'</td>';
+            html += '<td class="thousand-number" style="text-align:right;">'+value['total_price']+'</td>';
               // html += '<td>'+value['total_price']+'</td>';
               html += '</tr>';
           });
@@ -728,11 +731,11 @@ function parseProductTable(arrProducts){
 }
 
 function parseSummaryProduct(cart){
-    var html = '<tr><td colspan="4" style="text-align:right" >Tổng cộng:</td><td class="thousand-number" style="text-align:right">'+cart['total_price']+'</td></tr>';
-    html += '<tr><td colspan="4" style="text-align:right">Thuế:</td><td class="thousand-number" style="text-align:right">'+cart['vat_amount']+'</td></tr>';
-    html += '<tr><td colspan="4" style="text-align:right">Phí vận chuyển:</td><td class="thousand-number" style="text-align:right">'+cart['shipping_fee']+'</td></tr>';
-    html += '<tr><td colspan="4" style="text-align:right">Tổng chiết khấu:</td><td class="thousand-number" style="text-align:right">-'+cart['total_discount_amount']+'</td></tr>';
-    html += '<tr><td colspan="4" style="text-align:right">Thành tiền:</td><td class="thousand-number" style="text-align:right">'+cart['price']+'</td></tr>';
+    var html = '<tr><td colspan="5" style="text-align:right" >Tổng cộng:</td><td class="thousand-number" style="text-align:right">'+cart['total_price']+'</td></tr>';
+    html += '<tr><td colspan="5" style="text-align:right">Thuế:</td><td class="thousand-number" style="text-align:right">'+cart['vat_amount']+'</td></tr>';
+    html += '<tr><td colspan="5" style="text-align:right">Phí vận chuyển:</td><td class="thousand-number" style="text-align:right">'+cart['shipping_fee']+'</td></tr>';
+    html += '<tr><td colspan="5" style="text-align:right">Tổng chiết khấu:</td><td class="thousand-number" style="text-align:right">-'+cart['total_discount_amount']+'</td></tr>';
+    html += '<tr><td colspan="5" style="text-align:right">Thành tiền:</td><td class="thousand-number" style="text-align:right">'+cart['price']+'</td></tr>';
     $('.tbl-list-product > tfoot').html(html);
 }
 

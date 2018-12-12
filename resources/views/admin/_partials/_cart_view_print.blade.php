@@ -4,7 +4,7 @@
             <table class="table bordered tbl-list-product table-borderless">
                 <thead>
                     <tr>
-                        <th colspan="5">
+                        <th colspan="6">
                             @include('admin._partials._print_header')
 
                             <div class="row" style="border-top: 2px solid #333; margin-top: 10px;">
@@ -48,9 +48,10 @@
                             </div>
                         </th>
                     </tr>
-                    <tr style="border: 3px solid #333">
+                    <tr style="border: 3px solid #333" class="table-body-head">
                         <th>Tên sản phẩm</th>
                         <th>Mã sản phẩm</th>
+                        <th>Hình ảnh</th>
                         <th style="text-align: right;">Đơn giá</th>
                         <th style="text-align: right;">Số lượng</th>
                         <th width="15%" style="text-align: right;">Thành tiền</th>
@@ -58,7 +59,6 @@
                     </tr>
                 </thead>
                 <tfoot>
-                    <tr><th colspan="5">@include('admin._partials._print_cart_footer')</th></tr>
                 </tfoot>
                 <tbody style="border: 3px solid #333; position: relative; margin-bottom: 50px;">
                     <tr style="border-top:3px solid #333;">
