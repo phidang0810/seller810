@@ -15,7 +15,7 @@
 </style>
 <table class="table table-borderless">
     <thead>
-        <tr>
+        <tr class="table-body-head">
             <th>Mã sản phẩm</th>
             <th>Kích thước</th>
             <th>Màu sắc</th>

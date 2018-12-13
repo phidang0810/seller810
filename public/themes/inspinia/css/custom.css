@@ -637,25 +637,20 @@ table.table-hover tbody tr td:hover{
   .table-borderless > tbody > tr:last-child{
    border-bottom: 1px solid #ccc;
  }
+
+ div#barcode_image{
+  width:135px;
+}
+div#barcode_image {
+  text-align: center;
+  width: 100%;
 }
 
-@media print {
-  div#barcode_image{
-    width:135px;
-  }
-  div#barcode_image {
-    text-align: center;
-    width: 100%;
-  }
-
-  div#barcode_image img {
-    width: 100%;
-    height: auto;
-  }
-  table td, table th{
-    color:green
-  }
+div#barcode_image img {
+  width: 100%;
+  height: auto;
 }
+
 div#barcode_image {
   text-align: center;
   width: 135px;
@@ -664,6 +659,7 @@ div#barcode_image {
 div#barcode_image img {
   width: 100%;
   height: auto;
+}
 }
 
 .pagination > li > a, .pagination > li > span{
@@ -877,4 +873,18 @@ input.quantity-editable.number-input {
 
 .select_cart .select2-container--default .select2-selection--single .select2-selection__arrow{
   height: 33px;
+}
+
+@media print {
+  body { 
+    -webkit-print-color-adjust: exact; 
+  }
+
+  #print-section .table-body-head{
+    color:#4286f4!important;
+  }
+}
+
+#print-section .table-body-head{
+  color:#4286f4!important;
 }

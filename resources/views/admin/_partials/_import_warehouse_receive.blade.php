@@ -55,7 +55,7 @@
         <div class="table-wrapper">
             <table class="table bordered tbl-list-product table-borderless">
                 <thead style="border-bottom: 3px solid #333;">
-                    <tr>
+                    <tr class="table-body-head">
                         <th>Tên sản phẩm</th>
                         <th>Mã sản phẩm</th>
                         <th style="text-align: right;">Số lượng</th>
