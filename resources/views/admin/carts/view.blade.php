@@ -169,6 +169,7 @@
         //---> Show menu on horizontal bar
         var url_create = "{{route('admin.carts.create')}}";
         var url_detail = "{{route('admin.carts.view')}}";
+        var barcode = '';
         if (location.href == url_detail || location.href == url_create) {
             // $(".cart-menu-wrapper").show();
             $(".cart-menu-wrapper .cart-detail").addClass("active");
@@ -181,6 +182,36 @@
         })
 
         $("#mainForm").validate();
+
+        // Scan barcode
+        $('input[name="scan_barcode"]').on('change', function (e) {
+            var barcode = e.currentTarget.value;
+
+            var path_img_folder = window.location.origin + '/storage/';
+            $.ajax({
+                url: "{{route('admin.carts.view')}}",
+                data:{
+                    barcode_text:barcode
+                },
+                dataType:'json'
+            }).done(function(data) {
+                if (!$.isEmptyObject(data)) {
+                            // $('#add_cart_details').prop('disabled', true);
+                            console.log(data);
+                            alert(data.message);
+
+                            // var key = cart_details.length-1;
+                            // var html = htmlEditCreateRowProductDetail(cart_details[key], key);
+
+                            // $('#i-cart-info tbody').append('<tr class="child" id="cart_detail_'+key+'">'+html+'</tr>');
+                            // updateCartTotalInfo();
+                        }else{
+
+                        }
+                    }).fail(function(jqXHR, textStatus){
+                        alert('Có lỗi xảy ra, xin hãy làm mới trình duyệt');
+                    });
+                });
 
         // Init select2
         var url_get_products = '{{route("admin.carts.getProductAjax")}}';
@@ -622,12 +653,12 @@
         });
 
         $('select[name="customer_phone"]').on('select2:selecting', function() { 
-           isSelectPhone = true;
-       });
+         isSelectPhone = true;
+     });
 
         $('select[name="customer_name"]').on('select2:selecting', function() { 
-           isSelectPhone = false;
-       });
+         isSelectPhone = false;
+     });
 
         // Load customer data when customer phone select is changed
         $('select[name="customer_phone"]').on('change', function(){
@@ -776,49 +807,67 @@ function getDataToPrint(data){
                                 </div>
                             </div>
 
-                            <div class="row xs-12-mg-bt-mobile m-b">
-                                <div class="col-md-4 col-sm-4 col-xs-12">
-                                    <select name="product_name" class="form-control">
-                                        <option value="0"> -- Chọn sản phẩm -- </option>
-                                        {!! $product_options !!}
-                                    </select>
-                                    <label id="product-name-error" class="error hidden" for="product_name1">Vui lòng chọn.</label>
+                            <ul class="nav nav-tabs" style="margin-bottom: 10px;">
+                                <li class="active"><a data-toggle="tab" href="#choose_product_tab">Chọn sản phẩm</a></li>
+                                <li><a data-toggle="tab" href="#scan_barcode_tab">Scan barcode</a></li>
+                            </ul>
+
+                            <div class="tab-content">
+                                <div id="choose_product_tab" class="tab-pane fade in active">
+                                    <div class="row xs-12-mg-bt-mobile m-b">
+                                        <div class="col-md-4 col-sm-4 col-xs-12">
+                                            <select name="product_name" class="form-control">
+                                                <option value="0"> -- Chọn sản phẩm -- </option>
+                                                {!! $product_options !!}
+                                            </select>
+                                            <label id="product-name-error" class="error hidden" for="product_name1">Vui lòng chọn.</label>
+                                        </div>
+                                        <div class="col-md-4 col-sm-4 col-xs-12">
+                                            <select name="product_color" class="form-control">
+                                                <option value="0"> -- Chọn màu sắc -- </option>
+                                            </select>
+                                            <label id="product-color-error" class="error hidden" for="product_color1">Vui lòng chọn.</label>
+                                        </div>
+                                        <div class="col-md-4 col-sm-4 col-xs-12">
+                                            <select name="product_size" class="form-control">
+                                                <option value="0"> -- Chọn kích thước -- </option>
+                                            </select>
+                                            <label id="product-size-error" class="error hidden" for="product_size1">Vui lòng chọn.</label>
+                                        </div>
+
+                                        <div class="col-md-12">
+                                            <input type="hidden" name="warehouse_product_id">
+                                            <label id="product-detail-id-error" class="error hidden" for="warehouse_product_id">Sản phẩm giống nhau không thể thêm nhiều lần</label>
+                                            <label id="cart-details-empty-error" class="error hidden" for="warehouse_product_id">Phải có ít nhất 1 sản phẩm</label>
+                                        </div>
+                                    </div>
+                                    <div class="row xs-12-mg-bt-mobile">
+                                        <!-- BEGIN: Select Warehouse -->
+                                        <div class="col-md-4 col-sm-4 col-xs-12">
+                                            <select name="product_warehouse" class="form-control">
+                                                <option value="0"> -- Chọn kho hàng -- </option>
+                                            </select>
+                                            <label id="product-warehouse-error" class="error hidden" for="product_warehouse1">Vui lòng chọn.</label>
+                                        </div>
+                                        <!-- END: Select Warehouse -->
+                                        <div class="col-md-4 col-sm-4 col-xs-12">
+                                            <input name="product_quantity" type="text" placeholder="Nhập số lượng" class="form-control m-b"
+                                            value="0"/>
+                                            <label id="product-quantity-error" class="error hidden" for="product_quantity1">Vui lòng nhập vào số lượng.</label>
+                                        </div>
+                                        <div class="col-md-2 col-sm-2 col-xs-12">
+                                            <button type="button" class="btn btn-success pull-left c-add-info" id="add_cart_details" disabled="true">Thêm</button>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="col-md-4 col-sm-4 col-xs-12">
-                                    <select name="product_color" class="form-control">
-                                        <option value="0"> -- Chọn màu sắc -- </option>
-                                    </select>
-                                    <label id="product-color-error" class="error hidden" for="product_color1">Vui lòng chọn.</label>
-                                </div>
-                                <div class="col-md-4 col-sm-4 col-xs-12">
-                                    <select name="product_size" class="form-control">
-                                        <option value="0"> -- Chọn kích thước -- </option>
-                                    </select>
-                                    <label id="product-size-error" class="error hidden" for="product_size1">Vui lòng chọn.</label>
-                                </div>
-                                
-                                <div class="col-md-12">
-                                    <input type="hidden" name="warehouse_product_id">
-                                    <label id="product-detail-id-error" class="error hidden" for="warehouse_product_id">Sản phẩm giống nhau không thể thêm nhiều lần</label>
-                                    <label id="cart-details-empty-error" class="error hidden" for="warehouse_product_id">Phải có ít nhất 1 sản phẩm</label>
-                                </div>
-                            </div>
-                            <div class="row xs-12-mg-bt-mobile">
-                                <!-- BEGIN: Select Warehouse -->
-                                <div class="col-md-4 col-sm-4 col-xs-12">
-                                    <select name="product_warehouse" class="form-control">
-                                        <option value="0"> -- Chọn kho hàng -- </option>
-                                    </select>
-                                    <label id="product-warehouse-error" class="error hidden" for="product_warehouse1">Vui lòng chọn.</label>
-                                </div>
-                                <!-- END: Select Warehouse -->
-                                <div class="col-md-4 col-sm-4 col-xs-12">
-                                    <input name="product_quantity" type="text" placeholder="Nhập số lượng" class="form-control m-b"
-                                    value="0"/>
-                                    <label id="product-quantity-error" class="error hidden" for="product_quantity1">Vui lòng nhập vào số lượng.</label>
-                                </div>
-                                <div class="col-md-2 col-sm-2 col-xs-12">
-                                    <button type="button" class="btn btn-success pull-left c-add-info" id="add_cart_details" disabled="true">Thêm</button>
+                                <div id="scan_barcode_tab" class="tab-pane fade">
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-8">
+                                                <input type="text" name="scan_barcode" placeholder="" class="form-control m-b"/>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 

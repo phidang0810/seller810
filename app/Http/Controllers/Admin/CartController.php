@@ -57,6 +57,10 @@ class CartController extends AdminController
                 return $product->getProductDetailColorOptions($this->_request);
             }
 
+            if (isset($this->_request['barcode_text'])) {
+                return $product->getProductByBarcode($this->_request);
+            }
+
             if (isset($this->_request['customer_phone'])) {
                 return $customer->getCustomer($this->_request);
             }

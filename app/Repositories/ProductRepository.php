@@ -191,7 +191,7 @@ public function createOrUpdate($data, $id = null)
 
 	}
 
-    $model->save();
+	$model->save();
 
 	if (isset($data['details'])) {
 		$tmp_data = $this->addDetails($model->id, $data['details']);
@@ -500,6 +500,26 @@ public function getProductDatas($request){
 
 	return Response::json($return);
 
+}
+
+public function getProductByBarcode($request){
+	$barcode_text = $request->get('barcode_text');
+
+	$return = [
+		'message'	=>	'Lấy datas cho product thành công',
+	];
+
+	if ($barcode_text) {
+		$product = Product::where('barcode_text', $barcode_text)->first();
+		$return['product'] = $product;
+		if (!$product) {
+			$return['message'] = 'Lấy datas cho product không thành công';
+		}
+	}
+
+
+
+	return Response::json($return);
 }
 
 public function getProductDetailColorOptions($request){
