@@ -888,3 +888,7 @@ input.quantity-editable.number-input {
 #print-section .table-body-head{
   color:#4286f4!important;
 }
+
+.mini-barcode{
+  max-width: 100px;
+}

@@ -510,14 +510,19 @@ public function getProductByBarcode($request){
 	];
 
 	if ($barcode_text) {
-		$product = Product::where('barcode_text', $barcode_text)->first();
-		$return['product'] = $product;
-		if (!$product) {
-			$return['message'] = 'Lấy datas cho product không thành công';
-		}
+		$warehouse_product = WarehouseProduct::where('barcode_text', $barcode_text)->first();
+		$return['warehouseProduct'] = $warehouse_product;
 	}
 
+	if (!$warehouse_product) {
+		$return['message'] = 'Lấy datas cho product không thành công';
+		return Response::json($return);
+	}
 
+	$return['product'] = $warehouse_product->product;
+	$return['warehouse'] = $warehouse_product->warehouse;
+	$return['product_detail'] = $warehouse_product->productDetail;
+	$return['warehouse_product_id'] = $warehouse_product->id;
 
 	return Response::json($return);
 }
@@ -821,7 +826,8 @@ public function getDetailsByWarehouse($id, $warehouse_id){
 				'name'	=>	($warehouseProduct->productDetail && $warehouseProduct->productDetail->size) ? $warehouseProduct->productDetail->size->name : ""
 			],
 			'quantity' => ($warehouseProduct->quantity) ? $warehouseProduct->quantity : 0,
-			'quantity_available' => ($warehouseProduct->quantity_available) ? $warehouseProduct->quantity_available : 0
+			'quantity_available' => ($warehouseProduct->quantity_available) ? $warehouseProduct->quantity_available : 0,
+			'barcode' => ($warehouseProduct->barcode) ? $warehouseProduct->barcode : ""
 		];
 	}
 	return $return;

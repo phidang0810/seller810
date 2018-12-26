@@ -196,15 +196,26 @@
                 dataType:'json'
             }).done(function(data) {
                 if (!$.isEmptyObject(data)) {
-                            // $('#add_cart_details').prop('disabled', true);
-                            console.log(data);
-                            alert(data.message);
+                            cart_details.push({
+                                'product_image':(data.product.photo) ? path_img_folder + data.product.photo : default_image,
+                                'product_code':data.product.barcode_text,
+                                'product_price':parseInt(data.product.sell_price),
+                                'product_fixed_price':null,
+                                'product_name':{id:$('select[name="product_name"]').val(), name:$('select[name="product_name"] option[value="'+$('select[name="product_name"]').val()+'"]').text()},
+                                'product_quantity':parseInt($('input[name="product_quantity"]').val()),
+                                'product_size':{id:$('select[name="product_size"]').val(), name:$('select[name="product_size"] option[value="'+$('select[name="product_size"]').val()+'"]').text()},
+                                'product_color':{id:$('select[name="product_color"]').val(), name:$('select[name="product_color"] option[value="'+$('select[name="product_color"]').val()+'"]').text()},
+                                'total_price':parseInt(data.product.sell_price)*parseInt($('input[name="product_quantity"]').val()),
+                                'product_detail':data.product_detail,
+                                'product_warehouse': data.warehouse.name,
+                                'warehouse_product_id': data.warehouse_product_id
+                            });
 
-                            // var key = cart_details.length-1;
-                            // var html = htmlEditCreateRowProductDetail(cart_details[key], key);
+                            var key = cart_details.length-1;
+                            var html = htmlEditCreateRowProductDetail(cart_details[key], key);
 
-                            // $('#i-cart-info tbody').append('<tr class="child" id="cart_detail_'+key+'">'+html+'</tr>');
-                            // updateCartTotalInfo();
+                            $('#i-cart-info tbody').append('<tr class="child" id="cart_detail_'+key+'">'+html+'</tr>');
+                            updateCartTotalInfo();
                         }else{
 
                         }

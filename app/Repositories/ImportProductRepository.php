@@ -239,24 +239,24 @@ Class ImportProductRepository
 			$model->code = general_code('N H', $model->id, 6);
 		}
 
-        if (isset($data['categories'])) {
-            $model->category_ids = $data['categories'];
+		if (isset($data['categories'])) {
+			$model->category_ids = $data['categories'];
 
             // Generate product code based on category code
-            $category = $this->lowestLevelCategory($model->id, $data['categories']);
-            $model->main_cate = $category->id;
+			$category = $this->lowestLevelCategory($model->id, $data['categories']);
+			$model->main_cate = $category->id;
 
-        }
-        Storage::delete($model->barcode);
+		}
+		Storage::delete($model->barcode);
 
-        $barcode = general_product_code($model->id, 8);
-        $file = Barcode::draw('code39', 'image', array('text' => $barcode), array());
-        $barcodePath = 'public/barcodes/' . $barcode . '.png';
-        imagepng($file,storage_path('app/' . $barcodePath));
+		$barcode = general_product_code($model->id, 8);
+		$file = Barcode::draw('code39', 'image', array('text' => $barcode), array());
+		$barcodePath = 'public/barcodes/' . $barcode . '.png';
+		imagepng($file,storage_path('app/' . $barcodePath));
 
-        $model->barcode = $barcodePath;
-        $model->barcode_text = $barcode;
-        $model->save();
+		$model->barcode = $barcodePath;
+		$model->barcode_text = $barcode;
+		$model->save();
 
 		if (isset($data['importDetails'])) {
 			$importDetails = json_decode($data['importDetails']);
@@ -592,25 +592,25 @@ Class ImportProductRepository
 		$model->save();
 		$data['categories'] = $importProduct->category_ids;
 
-        if (isset($data['categories'])) {
-            $model->category_ids = $data['categories'];
-            $productRepository->addCategories($model->id, $data['categories']);
+		if (isset($data['categories'])) {
+			$model->category_ids = $data['categories'];
+			$productRepository->addCategories($model->id, $data['categories']);
 
             // Generate product code based on category code
-            $category = $this->lowestLevelCategory($model->id, $data['categories']);
-            $model->main_cate = $category->id;
+			$category = $this->lowestLevelCategory($model->id, $data['categories']);
+			$model->main_cate = $category->id;
 
-        }
-        Storage::delete($model->barcode);
+		}
+		Storage::delete($model->barcode);
 
-        $barcode = general_product_code($model->id, 8);
-        $file = Barcode::draw('code39', 'image', array('text' => $barcode), array());
-        $barcodePath = 'public/barcodes/' . $barcode . '.png';
-        imagepng($file,storage_path('app/' . $barcodePath));
+		$barcode = general_product_code($model->id, 8);
+		$file = Barcode::draw('code39', 'image', array('text' => $barcode), array());
+		$barcodePath = 'public/barcodes/' . $barcode . '.png';
+		imagepng($file,storage_path('app/' . $barcodePath));
 
-        $model->barcode = $barcodePath;
-        $model->barcode_text = $barcode;
-        $model->save();
+		$model->barcode = $barcodePath;
+		$model->barcode_text = $barcode;
+		$model->save();
 
 		// // Push details quantity to warehouse product detail & product detail, update product quantity
 		if ($importProduct->details) {
@@ -647,6 +647,18 @@ Class ImportProductRepository
 					$warehouseProduct->quantity = $importProductDetail->quantity;
 					$warehouseProduct->quantity_available = $importProductDetail->quantity;
 				}
+				$warehouseProduct->save();
+
+				Storage::delete($warehouseProduct->barcode);
+
+				$barcodeWarehouseProduct = general_product_code($warehouseProduct->id, 8);
+				$fileWarehouseProduct = Barcode::draw('code39', 'image', array('text' => $barcodeWarehouseProduct), array());
+				$barcodePathWarehouseProduct = 'public/barcodes/' . $barcodeWarehouseProduct . '.png';
+				imagepng($fileWarehouseProduct,storage_path('app/' . $barcodePathWarehouseProduct));
+
+				$warehouseProduct->barcode = $barcodePathWarehouseProduct;
+				$warehouseProduct->barcode_text = $barcodeWarehouseProduct;
+				
 				$warehouseProduct->save();
 
 				$productDetail->quantity += $importProductDetail->quantity;

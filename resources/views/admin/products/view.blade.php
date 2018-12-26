@@ -281,6 +281,13 @@
         });
     }
 
+    function print_wh_barcode(id){
+        var print_el = $("#barcode-"+id);
+        print_el.printThis({
+            header: null,
+        });
+    }
+
     $(document).ready(function ($) {
         $( "#mainForm" ).submit(function( event ) {
             var searchIDs = $("#mainForm .list-tree-section input:checkbox:checked").map(function(){
@@ -395,7 +402,7 @@
                                                     </div>
                                                 </div>
 
-                                                @if(isset($data->barcode))
+                                                @if(isset($data->barcode) && false)
                                                 <div class="row">
                                                     <div class="form-group clearfix">
                                                         <label class="col-md-3 control-label">Barcode</label>
@@ -528,6 +535,7 @@
                                                                                             <th>Kích thước</th>
                                                                                             <th>Số lượng</th>
                                                                                             <th>Số lượng tồn</th>
+                                                                                            <th>Barcode</th>
                                                                                         </tr>
                                                                                     </thead>
                                                                                     <tbody>
@@ -537,6 +545,10 @@
                                                                                             <th>@if(isset($detail['size'])){{$detail['size']['name']}}@endif</th>
                                                                                             <th>{{$detail['quantity']}}</th>
                                                                                             <th>{{$detail['quantity_available']}}</th>
+                                                                                            <th>
+                                                                                                <img src="{{asset('storage/' .$detail['barcode'])}}" alt="barcode" class="mini-barcode" id="barcode-{{$detail['id']}}">
+                                                                                                <a class="btn btn-primary" onclick="print_wh_barcode({{$detail['id']}});">In barcode</a>
+                                                                                            </th>
                                                                                         </tr>
                                                                                         @endforeach
                                                                                     </tbody>
