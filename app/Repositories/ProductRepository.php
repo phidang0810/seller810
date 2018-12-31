@@ -506,22 +506,30 @@ public function getProductByBarcode($request){
 	$barcode_text = $request->get('barcode_text');
 
 	$return = [
+		'result' => 'success',
 		'message'	=>	'Lấy datas cho product thành công',
 	];
 
-	if ($barcode_text) {
-		$warehouse_product = WarehouseProduct::where('barcode_text', $barcode_text)->first();
-		$return['warehouseProduct'] = $warehouse_product;
-	}
-
-	if (!$warehouse_product) {
-		$return['message'] = 'Lấy datas cho product không thành công';
+	if (!$barcode_text) {
+		$return['message'] = 'Phải nhập vào barcode';
+		$return['result'] = 'fail';
 		return Response::json($return);
 	}
 
+	$warehouse_product = WarehouseProduct::where('barcode_text', $barcode_text)->first();
+
+	if (!$warehouse_product) {
+		$return['message'] = 'Sản phẩm có barcode '.$barcode_text.' không tồn tại';
+		$return['result'] = 'fail';
+		return Response::json($return);
+	}
+
+	$return['warehouseProduct'] = $warehouse_product;
 	$return['product'] = $warehouse_product->product;
 	$return['warehouse'] = $warehouse_product->warehouse;
 	$return['product_detail'] = $warehouse_product->productDetail;
+	$return['size'] = $warehouse_product->productDetail->size;
+	$return['color'] = $warehouse_product->productDetail->color;
 	$return['warehouse_product_id'] = $warehouse_product->id;
 
 	return Response::json($return);

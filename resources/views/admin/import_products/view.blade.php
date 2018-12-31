@@ -638,22 +638,6 @@ span.select2.select2-container.select2-container--default {
                                                     </div>
                                                 </div>
 
-                                                @if(isset($data->barcode))
-                                                <div class="row">
-                                                    <div class="form-group clearfix">
-                                                        <label class="col-md-3 control-label">Barcode</label>
-                                                        <div class="col-md-9">
-                                                            <div id="barcode_image" class="pull-left">
-                                                                <img src="{{asset('storage/' .$data->barcode)}}" alt="barcode">
-                                                            </div>
-                                                            <div class="pull-right">
-                                                                <a class="btn btn-primary" onclick="print_barcode();">In barcode</a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                @endif
-
                                                 <div class="row">
                                                     <div class="form-group">
                                                         <label class="col-md-3 control-label">Thương hiệu</label>

@@ -175,6 +175,18 @@
             $(".cart-menu-wrapper .cart-detail").addClass("active");
         }
 
+        // Set focus
+        // $('input[name="scan_barcode"]').focus();
+        $('#tab_scan_barcode').on('click', function () {
+            setTimeout(function(){ 
+                $('input[name="scan_barcode"]').focus();
+            }, 500);
+        });
+
+        $('input[name="scan_barcode"]').on("focus", function() {
+            $('input[name="scan_barcode"]').val("");
+        });
+
         printTableCartDetails();
 
         $("#bt-reset").click(function(){
@@ -196,16 +208,28 @@
                 dataType:'json'
             }).done(function(data) {
                 if (!$.isEmptyObject(data)) {
+                    if (data.result == 'success') {
+                        var item_added = false;
+
+                        $.each(cart_details, function(key, value){
+                            if (value.warehouse_product_id == data.warehouse_product_id) {
+                                cart_details[key].product_quantity++;
+                                cart_details[key].total_price = parseInt(data.product.sell_price) * parseInt(cart_details[key].product_quantity);
+                                item_added = true;
+                            }
+                        });
+
+                        if (!item_added) {
                             cart_details.push({
                                 'product_image':(data.product.photo) ? path_img_folder + data.product.photo : default_image,
                                 'product_code':data.product.barcode_text,
                                 'product_price':parseInt(data.product.sell_price),
                                 'product_fixed_price':null,
-                                'product_name':{id:$('select[name="product_name"]').val(), name:$('select[name="product_name"] option[value="'+$('select[name="product_name"]').val()+'"]').text()},
-                                'product_quantity':parseInt($('input[name="product_quantity"]').val()),
-                                'product_size':{id:$('select[name="product_size"]').val(), name:$('select[name="product_size"] option[value="'+$('select[name="product_size"]').val()+'"]').text()},
-                                'product_color':{id:$('select[name="product_color"]').val(), name:$('select[name="product_color"] option[value="'+$('select[name="product_color"]').val()+'"]').text()},
-                                'total_price':parseInt(data.product.sell_price)*parseInt($('input[name="product_quantity"]').val()),
+                                'product_name':{id:data.product.id, name:data.product.name},
+                                'product_quantity':1,
+                                'product_size':{id:data.size.id, name:data.size.name},
+                                'product_color':{id:data.color.id, name:data.color.name},
+                                'total_price':parseInt(data.product.sell_price),
                                 'product_detail':data.product_detail,
                                 'product_warehouse': data.warehouse.name,
                                 'warehouse_product_id': data.warehouse_product_id
@@ -215,14 +239,25 @@
                             var html = htmlEditCreateRowProductDetail(cart_details[key], key);
 
                             $('#i-cart-info tbody').append('<tr class="child" id="cart_detail_'+key+'">'+html+'</tr>');
-                            updateCartTotalInfo();
                         }else{
-
+                            $('#i-cart-info tbody').html('');
+                            printTableCartDetails();
                         }
-                    }).fail(function(jqXHR, textStatus){
-                        alert('Có lỗi xảy ra, xin hãy làm mới trình duyệt');
-                    });
-                });
+                        updateCartTotalInfo();
+                    }else{
+                        $('#scan_barcode_error').html(data.message);
+                        $('#scan_barcode_error').show();
+                    }
+                }else{
+
+                }
+                setTimeout(function(){ 
+                    $('input[name="scan_barcode"]').focus();
+                }, 500);
+            }).fail(function(jqXHR, textStatus){
+                alert('Có lỗi xảy ra, xin hãy làm mới trình duyệt');
+            });
+        });
 
         // Init select2
         var url_get_products = '{{route("admin.carts.getProductAjax")}}';
@@ -664,12 +699,12 @@
         });
 
         $('select[name="customer_phone"]').on('select2:selecting', function() { 
-         isSelectPhone = true;
-     });
+           isSelectPhone = true;
+       });
 
         $('select[name="customer_name"]').on('select2:selecting', function() { 
-         isSelectPhone = false;
-     });
+           isSelectPhone = false;
+       });
 
         // Load customer data when customer phone select is changed
         $('select[name="customer_phone"]').on('change', function(){
@@ -819,12 +854,12 @@ function getDataToPrint(data){
                             </div>
 
                             <ul class="nav nav-tabs" style="margin-bottom: 10px;">
-                                <li class="active"><a data-toggle="tab" href="#choose_product_tab">Chọn sản phẩm</a></li>
-                                <li><a data-toggle="tab" href="#scan_barcode_tab">Scan barcode</a></li>
+                                <li class="active"><a data-toggle="tab" href="#scan_barcode_tab" id="tab_scan_barcode">Scan barcode</a></li>
+                                <li><a data-toggle="tab" href="#choose_product_tab">Chọn sản phẩm</a></li>
                             </ul>
 
                             <div class="tab-content">
-                                <div id="choose_product_tab" class="tab-pane fade in active">
+                                <div id="choose_product_tab" class="tab-pane fade">
                                     <div class="row xs-12-mg-bt-mobile m-b">
                                         <div class="col-md-4 col-sm-4 col-xs-12">
                                             <select name="product_name" class="form-control">
@@ -871,11 +906,12 @@ function getDataToPrint(data){
                                         </div>
                                     </div>
                                 </div>
-                                <div id="scan_barcode_tab" class="tab-pane fade">
+                                <div id="scan_barcode_tab" class="tab-pane fade in active">
                                     <div class="row">
-                                        <div class="form-group">
-                                            <div class="col-md-8">
-                                                <input type="text" name="scan_barcode" placeholder="" class="form-control m-b"/>
+                                        <div class="form-group clearfix scan_barcode_wrapper">
+                                            <div class="scan_barcode_input">
+                                                <input type="text" id="scan_barcode" name="scan_barcode" placeholder="" class="form-control m-b" autofocus/>
+                                                <label id="scan_barcode_error" class="error" for="scan_barcode"></label>
                                             </div>
                                         </div>
                                     </div>

@@ -892,3 +892,12 @@ input.quantity-editable.number-input {
 .mini-barcode{
   max-width: 100px;
 }
+
+.scan_barcode_wrapper{
+  display: flex;
+  justify-content: center;
+}
+
+.scan_barcode_input{
+  width: 300px;
+}
