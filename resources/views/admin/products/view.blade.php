@@ -536,6 +536,7 @@
                                                                                             <th>Số lượng</th>
                                                                                             <th>Số lượng tồn</th>
                                                                                             <th>Barcode</th>
+                                                                                            <th></th>
                                                                                         </tr>
                                                                                     </thead>
                                                                                     <tbody>
@@ -546,9 +547,12 @@
                                                                                             <th>{{$detail['quantity']}}</th>
                                                                                             <th>{{$detail['quantity_available']}}</th>
                                                                                             <th>
-                                                                                                <img src="{{asset('storage/' .$detail['barcode'])}}" alt="barcode" class="mini-barcode" id="barcode-{{$detail['id']}}">
-                                                                                                <a class="btn btn-primary" onclick="print_wh_barcode({{$detail['id']}});">In barcode</a>
+                                                                                                <div class="barcode_image" id="barcode-{{$detail['id']}}">
+                                                                                                    <div class="barcode-product-name">{{str_limit($data->name, 25)}}</div>
+                                                                                                    <img src="{{asset('storage/' .$detail['barcode'])}}" alt="barcode" class="mini-barcode">
+                                                                                                </div>
                                                                                             </th>
+                                                                                            <th><a class="btn btn-primary" onclick="print_wh_barcode({{$detail['id']}});">In barcode</a></th>
                                                                                         </tr>
                                                                                         @endforeach
                                                                                     </tbody>

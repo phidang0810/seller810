@@ -901,3 +901,13 @@ input.quantity-editable.number-input {
 .scan_barcode_input{
   width: 300px;
 }
+
+.barcode-product-name{
+  font-size: 8px;
+  margin-bottom: 3px;
+  text-align: center;
+}
+
+.barcode_image {
+    max-width: 100px;
+}
