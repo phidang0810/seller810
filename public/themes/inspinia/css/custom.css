@@ -13,9 +13,10 @@
   left: 50%;
   min-width:600px;
   padding: 70px 20px 20px 20px;
+  box-shadow: 0 0 72px -20px black;
 }
 .nav > li > a{
-  color:#777777
+  color:#c5c8d0;
 }
 .login-row{
   position:relative;
@@ -42,9 +43,13 @@
 .ibox-content{
   position: relative;
 }
+.ibox-content h2{
+  font-weight: bold;
+}
 .form-control{
   height: 32px;
-  font-size:12px
+  font-size: 12px;
+  border-radius: 5px;
 }
 .hr-line-dashed {
   margin: 10px 0 20px 0;
@@ -54,11 +59,9 @@
 }
 .ibox-content{
   /*padding: 0;*/
-  padding: 10px;
-  box-shadow: 1px 2px 5px #cbcbd6;
-}
-.btn, .label{
-  border-radius:0;
+  padding: 20px;
+  box-shadow: 1px 2px 9px #cbcbd642;
+  border-radius: 5px;
 }
 /* Fixes for IE < 8 */
 @media screen\9 {
@@ -94,8 +97,8 @@ body{
 }
 
 .navbar-default .nav > li > a:hover, .navbar-default .nav > li > a:focus{
-  background-color: #adadad;
-  color: #ffffff;
+    background-color: #e8f3fd;
+    color: #353c4e;
 }
 
 .nav > li.active{
@@ -128,8 +131,9 @@ body{
   color: #293846;
 }
 .nav ul li.active a{
-  background-color: #1fb393;
-  color: #ffffff;
+  background-color: #428bca2b;
+    color: #000000;
+    border-left: 4px solid #428bca;
 }
 
 ul.nav-second-level{
@@ -456,9 +460,7 @@ padding-right: 5px;*/
 }
 
 .cart-menu-wrapper{
-  position: absolute;
-  left: 23%;
-  bottom: 0;
+
 }
 
 .cart-menu-wrapper .navbar-top-links li a{
@@ -719,9 +721,7 @@ div#barcode_image img {
 }
 
 .navbar-header{
-  position: absolute;
-  left: 17%;
-  top: 10px;
+
 }
 
 @media (max-width: 1199px){
@@ -890,7 +890,7 @@ input.quantity-editable.number-input {
 }
 
 .mini-barcode{
-  max-width: 100px;
+  width: 200px;
 }
 
 .scan_barcode_wrapper{
@@ -899,15 +899,16 @@ input.quantity-editable.number-input {
 }
 
 .scan_barcode_input{
-  width: 300px;
+  width: 400px;
 }
 
 .barcode-product-name{
-  font-size: 8px;
+  font-size: 12px;
   margin-bottom: 3px;
   text-align: center;
+  font-weight: bold;
 }
 
 .barcode_image {
-    max-width: 100px;
+    max-width: 200px;
 }
