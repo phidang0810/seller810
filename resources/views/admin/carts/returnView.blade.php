@@ -42,7 +42,7 @@
         // Name
         var html_detail_label_name = '<label>' + data.product_name.name + '</label>';
         // Quantity
-        var html_detail_input_quantity = '<input type="number" min="0" value="'+data['product_quantity']+'" id="detail_quantity_'+key+'" class="detail_quantity form-control" >';
+        var html_detail_input_quantity = '<input type="number" min="0" value="'+data['product_quantity']+'" max="'+data['quantity']+'" id="detail_quantity_'+key+'" class="detail_quantity form-control" >';
         // Size
         var html_detail_label_size = '<label>' + data.product_size.name + '</label>';
         // Color
