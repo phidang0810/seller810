@@ -642,6 +642,7 @@ Class PaymentRepository
                 'discount_amount' => ($detail->discount_amount) ? $detail->discount_amount : 0,
                 'price' => ($detail->price) ? $detail->price : 0,
                 'total_price' => ($detail->total_price) ? $detail->total_price : 0,
+                'import_price' => ($detail->import_price) ? $detail->import_price : 0,
             ]);
             $model->details()->save($modelDetail);
         }

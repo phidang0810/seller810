@@ -20,7 +20,8 @@ class PaymentDetail extends BaseModel
         'product_detail_id',
         'quantity',
         'discount_amount',
-        'price',
+        'price', 
+        'import_price',
         'total_price',
         'active'
     ];

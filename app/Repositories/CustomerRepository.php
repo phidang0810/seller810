@@ -202,7 +202,7 @@ class CustomerRepository
                 $return['status'] = 'false';
             }
         }else{
-            $customer = Customer::where('name', '=' ,$customer_name)->first();
+            $customer = Customer::where('name', '=' ,$customer_id)->first();
             if ($customer) {
                 $customer->city;
                 $customer->group;
