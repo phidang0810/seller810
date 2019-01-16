@@ -686,7 +686,7 @@
                             }
                             updateCartTotalInfo();
                         }else{
-                            $('select[name="customer_phone"]').val("");
+                            // $('select[name="customer_phone"]').val("");
                             $('input[name="customer_email"]').val("");
                             $('input[name="customer_address"]').val("");
                             $('select[name="customer_city"]').val("");
@@ -699,12 +699,12 @@
         });
 
         $('select[name="customer_phone"]').on('select2:selecting', function() { 
-           isSelectPhone = true;
-       });
+         isSelectPhone = true;
+     });
 
         $('select[name="customer_name"]').on('select2:selecting', function() { 
-           isSelectPhone = false;
-       });
+         isSelectPhone = false;
+     });
 
         // Load customer data when customer phone select is changed
         $('select[name="customer_phone"]').on('change', function(){
@@ -734,7 +734,7 @@
                             }
                             updateCartTotalInfo();
                         }else{
-                            $('input[name="customer_name"]').val("");
+                            // $('input[name="customer_name"]').val("");
                             $('input[name="customer_email"]').val("");
                             $('input[name="customer_address"]').val("");
                             $('select[name="customer_city"]').val("");
@@ -749,19 +749,23 @@
         // Load discount amount for partner
         $('select[name="partner"]').on('change', function(){
             $('input[name="partner_discount_amount"]').val(0);
-            $.ajax({
-                url: "{{route('admin.carts.view')}}",
-                data:{
-                    partner_id:$(this).val()
-                },
-                dataType:'json'
-            }).done(function(data) {
-                if (!$.isEmptyObject(data)) {
-                    $('input[name="partner_discount_amount"]').val(-data.partner.discount_amount);
-                    updateCartTotalInfo();
-                }else{
-                }
-            })
+            if ($(this).val() != "") {
+                $.ajax({
+                    url: "{{route('admin.carts.view')}}",
+                    data:{
+                        partner_id:$(this).val()
+                    },
+                    dataType:'json'
+                }).done(function(data) {
+                    if (!$.isEmptyObject(data)) {
+                        $('input[name="partner_discount_amount"]').val(-data.partner.discount_amount);
+                        updateCartTotalInfo();
+                    }else{
+                    }
+                })
+            }else{
+                updateCartTotalInfo();
+            }
         });
 
         // Update value for cart total info paid field when paid field update

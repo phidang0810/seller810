@@ -14,7 +14,7 @@ class CartDetail extends BaseModel
      * @var array
      */
     protected $fillable = [
-        'cart_id', 'product_id', 'product_detail_id', 'warehouse_product_id', 'discount_amount', 'quantity', 'price', 'fixed_price', 'total_price'
+        'cart_id', 'product_id', 'product_detail_id', 'warehouse_product_id', 'discount_amount', 'quantity', 'price', 'fixed_price', 'import_price', 'total_price'
     ];
 
     /**

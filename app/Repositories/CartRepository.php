@@ -480,6 +480,7 @@ Class CartRepository
                 $modelDetail = CartDetail::find($detail->id);
                 if ($modelDetail) {
                     if (!isset($detail->delete) || $detail->delete != true) {
+                        $modelProduct = Product::find($detail->product_detail->product_id);
                         $old_quantity = $modelDetail->quantity;
                         $modelDetail->product_id = (isset($detail->product_name)) ? $detail->product_name->id : 0;
                         $modelDetail->product_detail_id = (isset($detail->product_detail)) ? $detail->product_detail->id : 0;
@@ -489,6 +490,7 @@ Class CartRepository
                         $modelDetail->price = (isset($detail->product_price)) ? $detail->product_price : 0;
                         $modelDetail->fixed_price = (isset($detail->product_fixed_price)) ? $detail->product_fixed_price : null;
                         $modelDetail->total_price = (isset($detail->total_price)) ? $detail->total_price : 0;
+                        $modelDetail->import_price = (isset($modelProduct)) ? $modelProduct->price : 0;
                         $modelDetail->save();
                         if (isset($detail->product_detail)) {
                             if ($modelProductDetail = ProductDetail::find($detail->product_detail->id)) {
@@ -496,7 +498,7 @@ Class CartRepository
                                 $modelProductDetail->save();
                             }
 
-                            if ($modelProduct = Product::find($detail->product_detail->product_id)) {
+                            if ($modelProduct) {
                                 $modelProduct->quantity_available -= $detail->product_quantity - $old_quantity;
                                 $modelProduct->save();
                             }
@@ -512,6 +514,7 @@ Class CartRepository
                 }
             } else {
                 if (!isset($detail->delete) || $detail->delete != true) {
+                    $modelProduct = Product::find($detail->product_detail->product_id);
                     $modelDetail = new CartDetail([
                         'product_id' => (isset($detail->product_name)) ? $detail->product_name->id : 0,
                         'product_detail_id' => (isset($detail->product_detail)) ? $detail->product_detail->id : 0,
@@ -521,6 +524,7 @@ Class CartRepository
                         'price' => (isset($detail->product_price)) ? $detail->product_price : 0,
                         'fixed_price' => (isset($detail->product_fixed_price)) ? $detail->product_fixed_price : null,
                         'total_price' => (isset($detail->total_price)) ? $detail->total_price : 0,
+                        'import_price' => (isset($modelProduct)) ? $modelProduct->price : 0,
                     ]);
                     $model->details()->save($modelDetail);
                     if (isset($detail->product_detail)) {
@@ -529,7 +533,7 @@ Class CartRepository
                             $modelProductDetail->save();
                         }
 
-                        if ($modelProduct = Product::find($detail->product_detail->product_id)) {
+                        if ($modelProduct) {
                             $modelProduct->quantity_available -= $detail->product_quantity;
                             $modelProduct->save();
                         }
@@ -1064,6 +1068,10 @@ Class CartRepository
             $modelCart = $this->calculateCart($modelCart);
             $modelCart->is_returned = CART_RETURN;
 
+            if ($modelCart->quantity <= 0) {
+                $modelCart->status = CART_CANCELED;
+            }
+
             $modelCart->save();
 
             if (isset($modelPayment)) {
@@ -1090,6 +1098,7 @@ Class CartRepository
         }
 
         $model->vat_amount = $model->total_price * $model->vat_percent / 100;
+        $model->total_discount_amount = $model->quantity*$model->partner_discount_amount + $model->customer_discount_amount;
         $model->price = preg_replace('/[^0-9]/', '', $model->total_price + $model->shipping_fee + $model->vat_amount - $model->total_discount_amount);
         $model->needed_paid = $model->price - $model->paid_amount;
         if ($model->needed_paid < 0) {
