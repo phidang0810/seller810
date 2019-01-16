@@ -1070,6 +1070,9 @@ Class CartRepository
 
             if ($modelCart->quantity <= 0) {
                 $modelCart->status = CART_CANCELED;
+                $modelCart->total_discount_amount = 0;
+                $modelCart->paid_amount = 0;
+                $modelCart->price = 0;
             }
 
             $modelCart->save();

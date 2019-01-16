@@ -1094,7 +1094,7 @@ function getDataToPrint(data){
                                         <div class="input-group">
                                             <input type="text" name="partner_discount_amount" placeholder="" class="thousand-number text-right negative-number form-control m-b"
                                             value="@if(isset($data->partner_discount_amount)){{$data->partner_discount_amount}}@else{{0}}@endif" readonly="readonly" />
-                                            <span class="input-group-addon input-readonly">VND</span>
+                                            <span class="input-group-addon input-readonly">VND/sp</span>
                                         </div>
                                     </div>
                                 </div>
