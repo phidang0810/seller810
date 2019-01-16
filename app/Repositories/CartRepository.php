@@ -1083,7 +1083,6 @@ Class CartRepository
 
                 if ($modelPayment->quantity <= 0) {
                     $modelPayment->total_discount_amount = 0;
-                    $modelPayment->paid_amount = 0;
                     $modelPayment->price = 0;
                 }
                 $modelPayment->save();
