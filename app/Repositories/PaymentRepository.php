@@ -669,7 +669,7 @@ Class PaymentRepository
 
     public function getRevenueObjDataTable($request)
     {
-        $products = PaymentDetail::selectRaw('products.name, products.main_cate, products.barcode_text, products.photo, products.category_ids, payments.platform_id, SUM(payment_detail.quantity) as quantity, SUM(payment_detail.total_price) as total_price, SUM(payment_detail.total_price - (products.price*payment_detail.quantity)) as profit, DATE(payment_detail.created_at) as created_at, COUNT(payments.cart_id) total_cart')
+        $products = PaymentDetail::selectRaw('products.name, products.main_cate, products.barcode_text, products.photo, products.category_ids, payments.platform_id, SUM(payment_detail.quantity) as quantity, SUM(payment_detail.total_price) as total_price, SUM(payment_detail.total_price - (payment_detail.import_price*payment_detail.quantity)) as profit, DATE(payment_detail.created_at) as created_at, COUNT(payments.cart_id) total_cart')
             ->join('products' ,'products.id', '=', 'payment_detail.product_id')
             ->join('payments', 'payments.id', '=', 'payment_detail.payment_id')
             ->groupBy('payment_detail.product_id');
