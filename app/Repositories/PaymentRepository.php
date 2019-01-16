@@ -77,12 +77,30 @@ Class PaymentRepository
         switch ($group) {
             case 'month':
                 $curMonth = date('m');
-                $result['time'] = [
-                    'Tháng ' . ($curMonth - 3),
-                    'Tháng ' . ($curMonth - 2),
-                    'Tháng ' . ($curMonth - 1),
-                    'Tháng ' . $curMonth
-                ];
+                if ($curMonth === 4) {
+                    $result['time'] = [
+                        'Tháng ' . ($curMonth - 3),
+                        'Tháng ' . ($curMonth - 2),
+                        'Tháng ' . ($curMonth - 1),
+                        'Tháng ' . $curMonth
+                    ];
+                } else if ($curMonth === 3) {
+                    $result['time'] = [
+                        'Tháng ' . ($curMonth - 2),
+                        'Tháng ' . ($curMonth - 1),
+                        'Tháng ' . $curMonth
+                    ];
+                } else if ($curMonth === 2) {
+                    $result['time'] = [
+                        'Tháng ' . ($curMonth - 1),
+                        'Tháng ' . $curMonth
+                    ];
+                } else {
+                    $result['time'] = [
+                        'Tháng ' . $curMonth
+                    ];
+                }
+
 
                 $result['value'] = $this->_getProfitMonthOfYear($result['time']);
                 break;
@@ -351,6 +369,7 @@ Class PaymentRepository
         $valueArr = [];
         foreach($time as $monthInString) {
             $month = substr($monthInString,7);
+            $month = (int)$month;
             $valueArr[] = key_exists($month, $prices) ? $prices[$month]:0;
         }
         return $valueArr;
