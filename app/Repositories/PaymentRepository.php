@@ -77,12 +77,30 @@ Class PaymentRepository
         switch ($group) {
             case 'month':
                 $curMonth = date('m');
-                $result['time'] = [
-                    'Tháng ' . ($curMonth - 3),
-                    'Tháng ' . ($curMonth - 2),
-                    'Tháng ' . ($curMonth - 1),
-                    'Tháng ' . $curMonth
-                ];
+                if ($curMonth === 4) {
+                    $result['time'] = [
+                        'Tháng ' . ($curMonth - 3),
+                        'Tháng ' . ($curMonth - 2),
+                        'Tháng ' . ($curMonth - 1),
+                        'Tháng ' . $curMonth
+                    ];
+                } else if ($curMonth === 3) {
+                    $result['time'] = [
+                        'Tháng ' . ($curMonth - 2),
+                        'Tháng ' . ($curMonth - 1),
+                        'Tháng ' . $curMonth
+                    ];
+                } else if ($curMonth === 2) {
+                    $result['time'] = [
+                        'Tháng ' . ($curMonth - 1),
+                        'Tháng ' . $curMonth
+                    ];
+                } else {
+                    $result['time'] = [
+                        'Tháng ' . $curMonth
+                    ];
+                }
+
 
                 $result['value'] = $this->_getProfitMonthOfYear($result['time']);
                 break;
@@ -351,6 +369,7 @@ Class PaymentRepository
         $valueArr = [];
         foreach($time as $monthInString) {
             $month = substr($monthInString,7);
+            $month = (int)$month;
             $valueArr[] = key_exists($month, $prices) ? $prices[$month]:0;
         }
         return $valueArr;
@@ -650,9 +669,10 @@ Class PaymentRepository
 
     public function getRevenueObjDataTable($request)
     {
-        $products = PaymentDetail::selectRaw('products.name, products.main_cate, products.barcode_text, products.photo, products.category_ids, payments.platform_id, SUM(payment_detail.quantity) as quantity, SUM(payment_detail.total_price) as total_price, SUM(payment_detail.total_price - (products.price*payment_detail.quantity)) as profit, DATE(payment_detail.created_at) as created_at, COUNT(payments.cart_id) total_cart')
+        $products = PaymentDetail::selectRaw('products.name, products.main_cate, products.barcode_text, products.photo, products.category_ids, payments.platform_id, SUM(payment_detail.quantity) as quantity, SUM(payment_detail.total_price) as total_price, SUM(payment_detail.total_price - (payment_detail.import_price*payment_detail.quantity)) as profit, DATE(payment_detail.created_at) as created_at, COUNT(payments.cart_id) total_cart')
             ->join('products' ,'products.id', '=', 'payment_detail.product_id')
             ->join('payments', 'payments.id', '=', 'payment_detail.payment_id')
+            ->where('payments.quantity', '>', 0)
             ->groupBy('payment_detail.product_id');
         if ($request->has('date')) {
             $products->groupBy(DB::raw('DATE(payment_detail.created_at)'));
