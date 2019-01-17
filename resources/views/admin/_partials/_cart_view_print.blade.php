@@ -62,7 +62,7 @@
                 </tfoot>
                 <tbody style="border: 3px solid #333; position: relative; margin-bottom: 50px;">
                     <tr style="border-top:3px solid #333;">
-                        <th colspan="5" style="position: relative;">
+                        <th colspan="6" style="position: relative;">
                             <div class="row" style="margin-top: 20px;">
                                 <div class="col-sm-7">
                                 </div>

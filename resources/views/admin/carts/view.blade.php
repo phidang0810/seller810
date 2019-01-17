@@ -36,7 +36,7 @@
         // Name
         var html_detail_label_name = '<label>' + data.product_name.name + '</label>';
         // Quantity
-        var html_detail_input_quantity = '<input type="number" min="0" value="'+data['product_quantity']+'" id="detail_quantity_'+key+'" class="detail_quantity form-control" >';
+        var html_detail_input_quantity = '<input type="number" min="0" value="'+data['product_quantity']+'" max="'+data['max_quantity']+'" id="detail_quantity_'+key+'" class="detail_quantity form-control" >';
         // Code
         var html_detail_label_code = '<label>' + data.product_code + '</label>';
         // Size
@@ -232,7 +232,8 @@
                                 'total_price':parseInt(data.product.sell_price),
                                 'product_detail':data.product_detail,
                                 'product_warehouse': data.warehouse.name,
-                                'warehouse_product_id': data.warehouse_product_id
+                                'warehouse_product_id': data.warehouse_product_id,
+                                'max_quantity': data.max_quantity
                             });
 
                             var key = cart_details.length-1;
@@ -634,7 +635,8 @@
                                 'total_price':parseInt(data.product.sell_price)*parseInt($('input[name="product_quantity"]').val()),
                                 'product_detail':data.product_detail,
                                 'product_warehouse': data.warehouse.name,
-                                'warehouse_product_id': data.warehouse_product_id
+                                'warehouse_product_id': data.warehouse_product_id,
+                                'max_quantity': data.max_quantity
                             });
 
                             var key = cart_details.length-1;
@@ -811,13 +813,31 @@ function parseProductTable(arrProducts){
     return html;
 }
 
+function addCommas(nStr)
+{
+    nStr += '';
+    x = nStr.split('.');
+    x1 = x[0];
+    x2 = x.length > 1 ? '.' + x[1] : '';
+    var rgx = /(\d+)(\d{3})/;
+    while (rgx.test(x1)) {
+        x1 = x1.replace(rgx, '$1' + ',' + '$2');
+    }
+    return x1 + x2;
+}
+
 function parseSummaryProduct(cart){
-    var html = '<tr><td colspan="5" style="text-align:right" >Tổng cộng:</td><td class="thousand-number" style="text-align:right">'+cart['total_price']+'</td></tr>';
-    html += '<tr><td colspan="5" style="text-align:right">Thuế:</td><td class="thousand-number" style="text-align:right">'+cart['vat_amount']+'</td></tr>';
-    html += '<tr><td colspan="5" style="text-align:right">Phí vận chuyển:</td><td class="thousand-number" style="text-align:right">'+cart['shipping_fee']+'</td></tr>';
-    html += '<tr><td colspan="5" style="text-align:right">Tổng chiết khấu:</td><td class="thousand-number" style="text-align:right">-'+cart['total_discount_amount']+'</td></tr>';
-    html += '<tr><td colspan="5" style="text-align:right">Thành tiền:</td><td class="thousand-number" style="text-align:right">'+cart['price']+'</td></tr>';
-    $('.tbl-list-product > tfoot').html(html);
+    // var html = '<tr><td colspan="5" style="text-align:right" >Tổng cộng:</td><td class="thousand-number" style="text-align:right">'+cart['total_price']+'</td></tr>';
+    // html += '<tr><td colspan="5" style="text-align:right">Thuế:</td><td class="thousand-number" style="text-align:right">'+cart['vat_amount']+'</td></tr>';
+    // html += '<tr><td colspan="5" style="text-align:right">Phí vận chuyển:</td><td class="thousand-number" style="text-align:right">'+cart['shipping_fee']+'</td></tr>';
+    // html += '<tr><td colspan="5" style="text-align:right">Tổng chiết khấu:</td><td class="thousand-number" style="text-align:right">-'+cart['total_discount_amount']+'</td></tr>';
+    // html += '<tr><td colspan="5" style="text-align:right">Thành tiền:</td><td class="thousand-number" style="text-align:right">'+cart['price']+'</td></tr>';
+    // $('.tbl-list-product > tfoot').html(html);
+    $('label.lbl-total-price').text(addCommas(cart.total_price));
+    $('label.lbl-total-quantity').text(addCommas(cart.quantity));
+    $('label.lbl-discount-amount').text(addCommas(cart.total_discount_amount));
+    $('label.lbl-shipping-fee').text(addCommas(cart.shipping_fee));
+    $('h4.lbl-price').text(addCommas(cart.price));
 }
 
 function getDataToPrint(data){
@@ -827,7 +847,7 @@ function getDataToPrint(data){
     $('.lbl-customer-address').text(data.data.cart.customer.address);
     $('.lbl-customer-created').text(data.data.cart.created_at);
     $('.lbl-customer-code').text(data.data.cart.code);
-    $('.tbl-list-product > tbody').html(parseProductTable(data.data.cart.details));
+    $('.tbl-list-product > tbody').prepend(parseProductTable(data.data.cart.details));
     parseSummaryProduct(data.data.cart);
     setTimeout(function(){
         $('.thousand-number').simpleMoneyFormat();

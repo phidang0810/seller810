@@ -86,19 +86,76 @@
         }
 
         function parseProductTable(arrProducts){
+            var path_img_folder = window.location.origin + '/storage/';
             var html = '';
             if (arrProducts.length > 0) {
                 $.each(arrProducts, function( index, value ) {
-                  html += '<tr>';
-                  html += '<td>'+value.product.name+'</td>';
-                  html += '<td>'+value.product.barcode_text+'</td>';
-                  html += '<td class="thousand-number" style="text-align:right;">'+value.price+'</td>';
-                  html += '<td style="text-align:right;">'+value.quantity+'</td>';
-                  html += '<td class="thousand-number" style="text-align:right;">'+value.total_price+'</td>';
-                  html += '</tr>';
-              });
+                    product_image = (value.product.photo) ? path_img_folder + value.product.photo : default_image;
+                    html += '<tr>';
+                    html += '<td>'+value.product.name+'</td>';
+                    html += '<td>'+value.product.barcode_text+'</td>';
+                    html += '<td><span class="img-wrapper"><img class="img-thumbnail" style="width: 80px; height: 60px;" src="' + product_image + '"/></span></td>';
+                    html += '<td class="thousand-number" style="text-align:right;">'+value.price+'</td>';
+                    html += '<td style="text-align:right;">'+value.quantity+'</td>';
+                    html += '<td class="thousand-number" style="text-align:right;">'+value.total_price+'</td>';
+                    html += '</tr>';
+                });
             }
             return html;
+        }
+
+        function resetResultPrint(){
+            html = '<tr style="border-top:3px solid #333;">\
+                        <th colspan="6" style="position: relative;">\
+                            <div class="row" style="margin-top: 20px;">\
+                                <div class="col-sm-7">\
+                                </div>\
+                                <div class="col-sm-5">\
+                                    <div class="form-group">\
+                                        <label class="col-sm-8 control-label font-bold">Tổng cộng:</label>\
+                                        <label class="col-sm-4 control-label lbl-total-price" style="text-align: right;"></label>\
+                                    </div>\
+                                </div>\
+                            </div>\
+                            <div class="row">\
+                                <div class="col-sm-7">\
+                                </div>\
+                                <div class="col-sm-5">\
+                                    <div class="form-group">\
+                                        <label class="col-sm-8 control-label font-bold">Tổng số lượng:</label>\
+                                        <label class="col-sm-4 control-label lbl-total-quantity" style="text-align: right;"></label>\
+                                    </div>\
+                                </div>\
+                            </div>\
+                            <div class="row">\
+                                <div class="col-sm-7">\
+                                </div>\
+                                <div class="col-sm-5">\
+                                    <div class="form-group">\
+                                        <label class="col-sm-8 control-label font-bold">Chiết khấu:</label>\
+                                        <label class="col-sm-4 control-label lbl-discount-amount" style="text-align: right;"></label>\
+                                    </div>\
+                                </div>\
+                            </div>\
+                            <div class="row" style="margin-bottom: 70px;">\
+                                <div class="col-sm-7">\
+                                </div>\
+                                <div class="col-sm-5">\
+                                    <div class="form-group">\
+                                        <label class="col-sm-8 control-label font-bold">Phí vận chuyển:</label>\
+                                        <label class="col-sm-4 control-label lbl-shipping-fee" style="text-align: right;"></label>\
+                                    </div>\
+                                </div>\
+                            </div>\
+                            <div class="row" style="position: absolute; bottom: 0; right: 70px; width: 150px;">\
+                                <div class="form-group">\
+                                    <h4 class="col-sm-8 control-label font-bold">Thành tiền:</h4>\
+                                    <h4 class="col-sm-4 control-label lbl-price" style="text-align: right;"></h4>\
+                                </div>\
+                            </div>\
+                        </th>\
+                    </tr>';
+            $('.tbl-list-product > tbody').html(html);
         }
 
         function getDataToPrint(data){
@@ -108,6 +165,7 @@
             $('.lbl-customer-address').text(data.result.cart.customer.address);
             $('.lbl-customer-created').text(data.result.cart.created_at);
             $('.lbl-customer-code').text(data.result.cart.code);
+            resetResultPrint();
             $('.tbl-list-product > tbody').prepend(parseProductTable(data.result.cart.details));
             parseSummaryProduct(data.result.cart);
             setTimeout(function(){
@@ -195,14 +253,14 @@
         $.urlParam = function(name){
             var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
             if (results==null){
-               return null;
-           }
-           else{
-               return decodeURI(results[1]) || 0;
-           }
-       }
+             return null;
+         }
+         else{
+             return decodeURI(results[1]) || 0;
+         }
+     }
 
-       function activeRecoreByCartCode(){
+     function activeRecoreByCartCode(){
         var cart_code = $.urlParam("cart_code");
         if (cart_code !== null) {
             var elCartCode = $('#'+cart_code);

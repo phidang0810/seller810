@@ -496,6 +496,8 @@ public function getProductDatas($request){
 		->first();
 
 		$return['warehouse_product_id'] = $warehouse_product->id;
+
+		$return['max_quantity'] = $warehouse_product->quantity_available;
 	}
 
 	return Response::json($return);
@@ -531,6 +533,7 @@ public function getProductByBarcode($request){
 	$return['size'] = $warehouse_product->productDetail->size;
 	$return['color'] = $warehouse_product->productDetail->color;
 	$return['warehouse_product_id'] = $warehouse_product->id;
+	$return['max_quantity'] = $warehouse_product->quantity_available;
 
 	return Response::json($return);
 }
@@ -677,15 +680,15 @@ function getProductDetailquantity($request){
 		$product_detail = ProductDetail::having('product_id', '=', $product_id)
 		->having('color_id', '=', $color_id)
 		->having('size_id', '=', $size_id)
-		->having('quantity', '>', 0)
+		->having('quantity_available', '>', 0)
 		->first();
 
 		$warehouse_products = WarehouseProduct::having('product_detail_id', '=', $product_detail->id)
 		->having('warehouse_id', '=', $warehouse_id)
-		->having('quantity', '>', 0)
+		->having('quantity_available', '>', 0)
 		->first();
 
-		$return['quantity'] = $warehouse_products->quantity;
+		$return['quantity'] = $warehouse_products->quantity_available;
 		$return['warehouse_product_id'] = $warehouse_products->id;
 	}
 
