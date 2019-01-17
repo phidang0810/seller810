@@ -672,6 +672,7 @@ Class PaymentRepository
         $products = PaymentDetail::selectRaw('products.name, products.main_cate, products.barcode_text, products.photo, products.category_ids, payments.platform_id, SUM(payment_detail.quantity) as quantity, SUM(payment_detail.total_price) as total_price, SUM(payment_detail.total_price - (payment_detail.import_price*payment_detail.quantity)) as profit, DATE(payment_detail.created_at) as created_at, COUNT(payments.cart_id) total_cart')
             ->join('products' ,'products.id', '=', 'payment_detail.product_id')
             ->join('payments', 'payments.id', '=', 'payment_detail.payment_id')
+            ->where('payments.quantity', '>', 0)
             ->groupBy('payment_detail.product_id');
         if ($request->has('date')) {
             $products->groupBy(DB::raw('DATE(payment_detail.created_at)'));
