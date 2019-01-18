@@ -17,6 +17,7 @@
         //---> Get customer detail, cart detail
         var cart_complete = "{{CART_COMPLETED}}";
         var cart_canceled = "{{CART_CANCELED}}";
+        var default_image = '{{asset(NO_PHOTO)}}';
         var data_to_print;
 
         function getRecordDetail() {
@@ -106,55 +107,55 @@
 
         function resetResultPrint(){
             html = '<tr style="border-top:3px solid #333;">\
-                        <th colspan="6" style="position: relative;">\
-                            <div class="row" style="margin-top: 20px;">\
-                                <div class="col-sm-7">\
-                                </div>\
-                                <div class="col-sm-5">\
-                                    <div class="form-group">\
-                                        <label class="col-sm-8 control-label font-bold">Tổng cộng:</label>\
-                                        <label class="col-sm-4 control-label lbl-total-price" style="text-align: right;"></label>\
-                                    </div>\
-                                </div>\
-                            </div>\
-                            <div class="row">\
-                                <div class="col-sm-7">\
-                                </div>\
-                                <div class="col-sm-5">\
-                                    <div class="form-group">\
-                                        <label class="col-sm-8 control-label font-bold">Tổng số lượng:</label>\
-                                        <label class="col-sm-4 control-label lbl-total-quantity" style="text-align: right;"></label>\
-                                    </div>\
-                                </div>\
-                            </div>\
-                            <div class="row">\
-                                <div class="col-sm-7">\
-                                </div>\
-                                <div class="col-sm-5">\
-                                    <div class="form-group">\
-                                        <label class="col-sm-8 control-label font-bold">Chiết khấu:</label>\
-                                        <label class="col-sm-4 control-label lbl-discount-amount" style="text-align: right;"></label>\
-                                    </div>\
-                                </div>\
-                            </div>\
-                            <div class="row" style="margin-bottom: 70px;">\
-                                <div class="col-sm-7">\
-                                </div>\
-                                <div class="col-sm-5">\
-                                    <div class="form-group">\
-                                        <label class="col-sm-8 control-label font-bold">Phí vận chuyển:</label>\
-                                        <label class="col-sm-4 control-label lbl-shipping-fee" style="text-align: right;"></label>\
-                                    </div>\
-                                </div>\
-                            </div>\
-                            <div class="row" style="position: absolute; bottom: 0; right: 70px; width: 150px;">\
-                                <div class="form-group">\
-                                    <h4 class="col-sm-8 control-label font-bold">Thành tiền:</h4>\
-                                    <h4 class="col-sm-4 control-label lbl-price" style="text-align: right;"></h4>\
-                                </div>\
-                            </div>\
-                        </th>\
-                    </tr>';
+            <th colspan="6" style="position: relative;">\
+            <div class="row" style="margin-top: 20px;">\
+            <div class="col-sm-7">\
+            </div>\
+            <div class="col-sm-5">\
+            <div class="form-group">\
+            <label class="col-sm-8 control-label font-bold">Tổng cộng:</label>\
+            <label class="col-sm-4 control-label lbl-total-price" style="text-align: right;"></label>\
+            </div>\
+            </div>\
+            </div>\
+            <div class="row">\
+            <div class="col-sm-7">\
+            </div>\
+            <div class="col-sm-5">\
+            <div class="form-group">\
+            <label class="col-sm-8 control-label font-bold">Tổng số lượng:</label>\
+            <label class="col-sm-4 control-label lbl-total-quantity" style="text-align: right;"></label>\
+            </div>\
+            </div>\
+            </div>\
+            <div class="row">\
+            <div class="col-sm-7">\
+            </div>\
+            <div class="col-sm-5">\
+            <div class="form-group">\
+            <label class="col-sm-8 control-label font-bold">Chiết khấu:</label>\
+            <label class="col-sm-4 control-label lbl-discount-amount" style="text-align: right;"></label>\
+            </div>\
+            </div>\
+            </div>\
+            <div class="row" style="margin-bottom: 70px;">\
+            <div class="col-sm-7">\
+            </div>\
+            <div class="col-sm-5">\
+            <div class="form-group">\
+            <label class="col-sm-8 control-label font-bold">Phí vận chuyển:</label>\
+            <label class="col-sm-4 control-label lbl-shipping-fee" style="text-align: right;"></label>\
+            </div>\
+            </div>\
+            </div>\
+            <div class="row" style="position: absolute; bottom: 0; right: 70px; width: 150px;">\
+            <div class="form-group">\
+            <h4 class="col-sm-8 control-label font-bold">Thành tiền:</h4>\
+            <h4 class="col-sm-4 control-label lbl-price" style="text-align: right;"></h4>\
+            </div>\
+            </div>\
+            </th>\
+            </tr>';
             $('.tbl-list-product > tbody').html(html);
         }
 
@@ -253,14 +254,14 @@
         $.urlParam = function(name){
             var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
             if (results==null){
-             return null;
-         }
-         else{
-             return decodeURI(results[1]) || 0;
-         }
-     }
+               return null;
+           }
+           else{
+               return decodeURI(results[1]) || 0;
+           }
+       }
 
-     function activeRecoreByCartCode(){
+       function activeRecoreByCartCode(){
         var cart_code = $.urlParam("cart_code");
         if (cart_code !== null) {
             var elCartCode = $('#'+cart_code);
