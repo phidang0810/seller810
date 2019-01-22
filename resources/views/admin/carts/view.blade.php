@@ -686,7 +686,6 @@
                             }else{
                                 $('input[name="customer_discount_amount"]').val(0);
                             }
-                            updateCartTotalInfo();
                         }else{
                             // $('select[name="customer_phone"]').val("");
                             $('input[name="customer_email"]').val("");
@@ -694,6 +693,7 @@
                             $('select[name="customer_city"]').val("");
                             $('input[name="customer_discount_amount"]').val(0);
                         }
+                        updateCartTotalInfo();
                     }else{
                     }
                 })
@@ -734,7 +734,6 @@
                             }else{
                                 $('input[name="customer_discount_amount"]').val(0);
                             }
-                            updateCartTotalInfo();
                         }else{
                             // $('input[name="customer_name"]').val("");
                             $('input[name="customer_email"]').val("");
@@ -742,6 +741,7 @@
                             $('select[name="customer_city"]').val("");
                             $('input[name="customer_discount_amount"]').val(0);
                         }
+                        updateCartTotalInfo();
                     }else{
                     }
                 })
