@@ -148,4 +148,9 @@ Class ColorRepository
 		}
 		return Response::json($return);
 	}
+
+    public function getColors() {
+        $colors = Color::select(['colors.id', 'colors.name'])->get();
+        return $colors;
+    }
 }

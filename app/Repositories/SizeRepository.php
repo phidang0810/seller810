@@ -95,4 +95,9 @@ class SizeRepository
         return $model->save();
     }
 
+    public function getSizes() {
+        $sizes = Size::select(['sizes.id', 'sizes.name'])->get();
+        return $sizes;
+    }
+
 }

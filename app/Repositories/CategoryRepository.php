@@ -158,4 +158,9 @@ Class CategoryRepository
         return $result;
     }
 
+    public function getCategories() {
+        $categories = Category::select(['categories.id', 'categories.name'])->get();
+        return $categories;
+    }
+
 }

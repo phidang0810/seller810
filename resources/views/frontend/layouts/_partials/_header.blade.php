@@ -41,8 +41,8 @@
 							<a class="nav-link" href="#">Liên hệ</a>
 						</li>
 					</ul>
-					<form class="form-inline my-2 my-lg-0">
-						<input class="form-control mr-sm-2 custom-input" type="search" placeholder="Tìm sản phẩm" aria-label="Tìm sản phẩm">
+					<form class="form-inline my-2 my-lg-0" onsubmit="event.preventDefault();search_products();">
+						<input id="search-string" class="form-control mr-sm-2 custom-input" type="search" placeholder="Tìm sản phẩm" aria-label="Tìm sản phẩm">
 						<button class="btn my-2 icon-custom-grey" type="submit"><i class="fas fa-search"></i></button>
 					</form>
 					<a href="#" title="Giỏ hàng" class="btn icon-custom-grey"><i class="fas fa-shopping-basket"></i></a>

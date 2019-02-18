@@ -25,4 +25,4 @@ Route::get ('/test', function(\Illuminate\Http\Request $request){
 })->name('test');
 Auth::routes();
 
-Route::get ('/products', 'ProductController@index')->name('frontend.products.index');
+Route::get ('/san-pham', 'Frontend\ProductController@index')->name('frontend.products.index');

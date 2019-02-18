@@ -44,7 +44,7 @@
 	<script src="{{asset('themes/frontend/assets/plugins/jquery/jquery-3.3.1.min.js')}}" type="text/javascript" charset="utf-8"></script>
 	<script src="{{asset('themes/frontend/assets/plugins/bootstrap-4.2.1-dist/js/bootstrap.min.js')}}" type="text/javascript" charset="utf-8" async defer></script>
 	<!-- Main JS -->
-	<script src="{{asset('themes/frontend/assets/js/index.js')}}" type="text/javascript" charset="utf-8" async defer></script>
+	<script src="{{asset('themes/frontend/assets/js/main.js')}}" type="text/javascript" charset="utf-8" async defer></script>
 	<!-- END: Global JS -->
 	<!-- BEGIN: Web JS -->
     @yield('js')

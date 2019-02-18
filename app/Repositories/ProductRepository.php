@@ -843,4 +843,73 @@ public function getDetailsByWarehouse($id, $warehouse_id){
 	}
 	return $return;
 }
+
+public function getProductsByFilters($request) {
+	// Filter with search string
+	$data = Product::where('products.name', 'like', '%' . $request->get('search_string') . '%');
+
+	// Filter category
+	if ($request->get('category') != "") {
+		$data->join('product_category', 'products.id', '=', 'product_category.product_id')
+		->where('product_category.category_id', $request->get('category'));
+	}
+
+	// Filter size
+	if ($request->get('size') != "") {
+		$data->where('products.sizes', 'like', '%' . $request->get('size') . '%');
+	}
+
+	// Filter size
+	if ($request->get('color') != "") {
+		$data->where('products.colors', 'like', '%' . $request->get('color') . '%');
+	}
+
+	// Filter with price
+	if ($request->get('price') != "") {
+		$prices = explode("-", $request->get('price'));
+		if (count($prices) > 1) {
+			$data->where('products.sell_price', '>=', $prices[0])
+				->where('products.sell_price', '<', $prices[1]);
+		}else{
+			$data->where('products.sell_price', '>', $prices[0]);
+		}
+	}
+
+	// Sorting
+	if ($request->get('sort') != "") {
+		$data->orderBy('sell_price', $request->get('sort'));
+	}
+
+	// Get products with paginate
+	$data =	$data->paginate(2);
+
+	// Format price for all products got
+	foreach ($data as $key => $value) {
+		$data[$key]->sell_price = format_price($value->sell_price);
+	}
+
+	$return = [
+		'success' => true,
+		'data' => $data
+	];
+
+	return Response::json($return);
+}
+
+public function getProductPriceRanges() {
+	return [
+		"0" => [
+			"value" => "0-100000",
+			"label" => "Dưới 100.000 VND"
+		],
+		"1" => [
+			"value" => "100000-300000",
+			"label" => "Từ 100.000 VND đến 300.000 VND"
+		],
+		"3" => [
+			"value" => "300000",
+			"label" => "Hơn 300.000 VND"
+		]
+	];
+}
 }

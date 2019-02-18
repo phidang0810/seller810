@@ -3,6 +3,7 @@
 @section('title', $title)
 
 @section('js')
+<script src="{{asset('themes/frontend/assets/js/products.js')}}" type="text/javascript" charset="utf-8" async defer></script>
 @endsection
 
 @section('css')
@@ -15,8 +16,8 @@
 		<a href="#" class="color-tink"><i class="fas fa-sort-amount-down"></i></a>
 		<span class="color-grey">Sort by</span> <span class="color-tink font-weight-bold">Price:</span>
 		<select class="form-control form-custom" id="select-sorting">
-			<option>Low to High</option>
-			<option>High to Low</option>
+			<option value="asc">Low to High</option>
+			<option value="desc">High to Low</option>
 		</select>
 	</div>
 	<div class="col">
@@ -48,14 +49,12 @@
 			</div>
 			<div class="col-md-12 filter-content color-grey">
 				<div class="filters">
+					@foreach($categories as $category)
 					<div class="custom-control custom-radio">
-						<input type="radio" id="customRadio1" name="customRadio" class="custom-control-input">
-						<label class="custom-control-label" for="customRadio1">Áo bé trai</label>
+						<input type="radio" id="categoryRadio{{$category->id}}" name="categoryRadio" class="custom-control-input" value="{{$category->id}}">
+						<label class="custom-control-label" for="categoryRadio{{$category->id}}">{{$category->name}}</label>
 					</div>
-					<div class="custom-control custom-radio">
-						<input type="radio" id="customRadio2" name="customRadio" class="custom-control-input">
-						<label class="custom-control-label" for="customRadio2">Áo bé gái</label>
-					</div>
+					@endforeach
 				</div>
 			</div>
 		</div>
@@ -77,14 +76,12 @@
 			</div>
 			<div class="col-md-12 filter-content color-grey">
 				<div class="filters">
+					@foreach($sizes as $size)
 					<div class="custom-control custom-radio radio-red">
-						<input type="radio" id="customRadio1" name="customRadio" class="custom-control-input">
-						<label class="custom-control-label" for="customRadio1">1-8</label>
+						<input type="radio" id="sizeRadio{{$size->id}}" name="sizeRadio" class="custom-control-input" value="{{$size->name}}">
+						<label class="custom-control-label" for="sizeRadio{{$size->id}}">{{$size->name}}</label>
 					</div>
-					<div class="custom-control custom-radio">
-						<input type="radio" id="customRadio2" name="customRadio" class="custom-control-input">
-						<label class="custom-control-label" for="customRadio2">2-8</label>
-					</div>
+					@endforeach
 				</div>
 			</div>
 		</div>
@@ -106,14 +103,12 @@
 			</div>
 			<div class="col-md-12 filter-content color-grey">
 				<div class="filters">
+					@foreach($colors as $color)
 					<div class="custom-control custom-radio radio-red">
-						<input type="radio" id="customRadio1" name="customRadio" class="custom-control-input">
-						<label class="custom-control-label" for="customRadio1">Đỏ</label>
+						<input type="radio" id="colorRadio{{$color->id}}" name="colorRadio" class="custom-control-input" value="{{$color->name}}">
+						<label class="custom-control-label" for="colorRadio{{$color->id}}">{{$color->name}}</label>
 					</div>
-					<div class="custom-control custom-radio">
-						<input type="radio" id="customRadio2" name="customRadio" class="custom-control-input">
-						<label class="custom-control-label" for="customRadio2">Cam</label>
-					</div>
+					@endforeach
 				</div>
 			</div>
 		</div>
@@ -135,14 +130,12 @@
 			</div>
 			<div class="col-md-12 filter-content color-grey">
 				<div class="filters">
+					@foreach($product_prices as $product_price)
 					<div class="custom-control custom-radio radio-red">
-						<input type="radio" id="customRadio1" name="customRadio" class="custom-control-input">
-						<label class="custom-control-label" for="customRadio1">$25 - $100</label>
+						<input type="radio" id="productPriceRadio{{$product_price['value']}}" name="productPriceRadio" class="custom-control-input" value="{{$product_price['value']}}">
+						<label class="custom-control-label" for="productPriceRadio{{$product_price['value']}}">{{$product_price['label']}}</label>
 					</div>
-					<div class="custom-control custom-radio">
-						<input type="radio" id="customRadio2" name="customRadio" class="custom-control-input">
-						<label class="custom-control-label" for="customRadio2">$100 - $500</label>
-					</div>
+					@endforeach
 				</div>
 			</div>
 		</div>
@@ -153,23 +146,19 @@
 	<!-- BEGIN: Products -->
 	<div class="col-md-9" id="products-wrapper">
 		<div class="row" id="products-list">
-			<div class="col-md-4 col-sm-6 product">
+			<!-- <div class="col-md-4 col-sm-6 product">
 				<a href="#">
 					<img src="assets/images/portal/1.png" alt="">
 					<h6 class="product-name">Bộ áo quần trẻ em nam</h6>
 					<h6 class="product-price">200.000 VND</h6>
 				</a>
-			</div>
+			</div> -->
 		</div>
 		<div class="row" id="pagination">
 			<div class="col-md-12">
 				<nav aria-label="Products paginations">
 					<ul class="pagination justify-content-center custom-pagination">
-						<li class="page-item active">
-							<a class="page-link" href="#" tabindex="-1">1</a>
-						</li>
-						<li class="page-item"><a class="page-link" href="#">2</a></li>
-						<li class="page-item"><a class="page-link" href="#">3</a></li>
+						
 					</ul>
 				</nav>
 			</div>
