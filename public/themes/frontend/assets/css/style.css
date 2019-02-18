@@ -1,0 +1,188 @@
+body {
+	font-family: Arial;
+	font-size: .875rem;
+	line-height: 1.75rem;
+}
+
+a:hover {
+	text-decoration: none;
+}
+
+.lobster a, .lobster h6 {
+	font-family: Lobster;
+}
+
+.btn-group-sm-custom>.btn, .btn-sm-custom {
+	padding: .25rem .75rem;
+	font-size: 0.75rem;
+	line-height: 1.5;
+	border-radius: .2rem;
+}
+
+#top-bar {
+	padding-bottom: 0.5rem;
+	padding-top: 0.5rem;
+	font-size: 0.75rem;
+}
+
+#top-bar .tb-left {
+	float: left;
+	text-transform: uppercase;
+}
+
+#top-bar .tb-right {
+	float: right;
+}
+
+#top-bar .tb-right .sign-in {
+	margin-right: 1rem;z
+}
+
+.btn.icon-custom-grey {
+	font-size: 20px;
+	padding: 5px 10px;
+}
+
+.form-custom {
+	width: 130px;
+	display: initial;
+	border: 0px;
+	padding: 6px 0px;
+	font-weight: 600;
+}
+
+/* BEGIN: Top navigation */
+.navbar-custom {
+	padding: 16px 16px;
+}
+
+.navbar-custom .nav-item .nav-link {
+	font-size: 15px;
+	padding-left: 1.5rem;
+	padding-right: 1.5rem;
+}
+
+.form-inline .form-control.custom-input {
+	border: 0px;
+	border-radius: 0px;
+	border-left: 1px solid;
+}
+/* END: Top Navigation */
+
+/* BEGIN: Banner*/
+section#banner img {
+	width: 100%;
+}
+/* END: Banner; */
+
+/* BEGIN: Content Top Actions */
+div#top-content-actions {
+	font-size: 14px;
+	border: 1px solid;
+	border-radius: 5px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+#top-content-actions a {
+	margin-right: 15px;
+	font-size: 16px;
+}
+
+#display-actions {
+	line-height: 35px;
+}
+/* END: Content Top Actions */
+
+/* BEGIN: Filters & Products; */
+div#filters-products {
+	margin-top: 30px;
+}
+
+.filter-wrapper .header-title h6 {
+	font-size: 18px;
+}
+
+.filter-content ul {
+	list-style-type: none;
+	padding-left: 0;
+}
+
+.filters {
+	margin-left: -15px;
+}
+
+div.filter-wrapper {
+	margin-bottom: 20px;
+}
+
+.product {
+	text-align: center;
+}
+
+.product .product-name {
+	font-weight: 600;
+	font-size: 15px;
+}
+
+.product .product-price {
+	font-weight: 600;
+	font-size: 15px;
+}
+
+div#pagination {
+    margin-top: 40px;
+}
+
+.custom-pagination .page-item .page-link {
+	border-radius: 50%;
+	margin-right: 15px;
+}
+/* END: Filters & Products; */
+
+/* BEGIN: Footer; */
+footer ul.links-list {
+    list-style-type: none;
+    padding-left: 0px;
+    font-size: 15px;
+}
+
+footer {
+    background: #F9F9F9;
+}
+
+footer h6.links-title {
+    color: #657181;
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+footer ul.links-list a {
+    color: #8A939F;
+}
+
+div#links-wrapper {
+    padding-top: 60px;
+}
+
+div#contact-wrapper {
+    background: #71C4BD;
+    padding: 60px 40px 30px 40px;
+    color: #fff;
+}
+
+#contact-wrapper p {
+    line-height: 15px;
+}
+
+#contact-wrapper h6 {
+	margin-bottom: 25px;
+}
+
+#contact-wrapper i {
+    font-size: 20px;
+    margin-right: 20px;
+    margin-top: -5px;
+}
+/* END: Footer; */

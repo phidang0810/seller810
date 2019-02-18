@@ -24,3 +24,5 @@ Route::get ('/test', function(\Illuminate\Http\Request $request){
     return view('auth.test');
 })->name('test');
 Auth::routes();
+
+Route::get ('/products', 'ProductController@index')->name('frontend.products.index');
