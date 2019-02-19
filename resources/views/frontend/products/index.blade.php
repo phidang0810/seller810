@@ -22,8 +22,8 @@
 	</div>
 	<div class="col">
 		<div class="float-right" id="display-actions">
-			<a href="#" class="active"><i class="fas fa-th-large"></i></a>
-			<a href="#"><i class="fas fa-list-ul"></i></a>
+			<a href="javascript:;" class="active" onclick="set_display_type('grid');"><i class="fas fa-th-large"></i></a>
+			<a href="javascript:;" onclick="set_display_type('list');"><i class="fas fa-list-ul"></i></a>
 		</div>
 	</div>
 </div>
@@ -153,6 +153,20 @@
 					<h6 class="product-price">200.000 VND</h6>
 				</a>
 			</div> -->
+			{{-- <div class="col-md-12 product product-list">
+				<div class="row">
+					<div class="col-md-3 col-sm-6 text-center">
+						<a href="#"><img src="themes/frontend/assets/images/portal/1.png" alt=""></a>
+					</div>
+					<div class="col-md-9 col-sm-6 contents">
+						<h6 class="product-name">Bộ áo quần trẻ em nam</h6>
+						<h6 class="product-price">200.000 VND</h6>
+						<p class="size">S,M,L</p>
+						<p class="color">Xanh,Đỏ</p>
+						<a name="Bộ áo quần trẻ em nam" class="btn btn-success" href="#" role="button">Xem Chi Tiết</a>
+					</div>
+				</div>
+			</div> --}}
 		</div>
 		<div class="row" id="pagination">
 			<div class="col-md-12">

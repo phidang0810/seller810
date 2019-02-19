@@ -1,5 +1,7 @@
 // Define vars
 var urlAjaxGetProducts = getDomain() + '/san-pham';
+var productsList;
+var display_type = 'grid';
 $.ajaxSetup({
 	headers: {
 		'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -31,6 +33,13 @@ $('select#select-sorting').change(function() {
     getProducts();
 });
 
+// Set display style
+function set_display_type(type) {
+	display_type = type;
+	printProducts(productsList);
+}
+
+// Load products from server
 function getProducts (page = 1) {
 	var data = {
 		page: page,
@@ -48,7 +57,8 @@ function getProducts (page = 1) {
 		dataType:'json',
 		success: function(response) {
 			if (response.success) {
-				printProducts(response.data);
+				productsList = response.data;
+				printProducts(productsList);
 				updatePageState(data);
 			} else {
 				alert("failed");
@@ -57,6 +67,7 @@ function getProducts (page = 1) {
 	});
 }
 
+// update page state: update url
 function updatePageState(data) {
 	var params = "";
 	$.each(data, function (key, value) {
@@ -72,23 +83,48 @@ function updatePageState(data) {
 	window.history.pushState("","", url);
 }
 
+// print products list
 function printProducts(data) {
 	$("#products-list").html(""); // clear products list
 	$.each(data.data, function (key, product) {
-		$("#products-list").append(generateProduct(product));
+		if(display_type == 'grid') {
+			$("#products-list").append(generateGridProduct(product));
+		} else {
+			$("#products-list").append(generateListProduct(product));
+		}
 	});
 	generatePagination(data);
 }
 
-// function generate layout for product
-function generateProduct(product) {
-	var html = '<div class="col-md-4 col-sm-6 product">\
+// function generate grid layout for product
+function generateGridProduct(product) {
+	var html = '<div class="col-md-4 col-sm-6 product product-grid">\
 	<a href="#">\
 	<img src="storage/' + product.photo + '" alt="" class="img-fluid">\
 	<h6 class="product-name">' + product.name + '</h6>\
 	<h6 class="product-price">' + product.sell_price + '</h6>\
 	</a>\
 	</div>';
+	return html;
+}
+
+// function generate list layout for product
+function generateListProduct(product) {
+	var html = '<div class="col-md-12 product product-list">\
+		<div class="row">\
+			<div class="col-md-3 col-sm-6 text-center">\
+				<a href="#"><img src="storage/' + product.photo + '" alt="" class="img-fluid"></a>\
+			</div>\
+			<div class="col-md-9 col-sm-6 contents">\
+				<h6 class="product-name">' + product.name + '</h6>\
+				<h6 class="product-price">' + product.sell_price + '</h6>\
+				<p class="size">' + product.sizes + '</p>\
+				<p class="color">' + product.colors + '</p>\
+				<a name="' + product.name + '" class="btn btn-success" href="#" role="button">Xem Chi Tiết</a>\
+			</div>\
+		</div>\
+	</div>';
+
 	return html;
 }
 

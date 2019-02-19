@@ -4,6 +4,10 @@ body {
 	line-height: 1.75rem;
 }
 
+p {
+	margin-bottom: 5px;
+}
+
 a:hover {
 	text-decoration: none;
 }
@@ -116,7 +120,7 @@ div.filter-wrapper {
 	margin-bottom: 20px;
 }
 
-.product {
+.product-grid {
 	text-align: center;
 }
 
@@ -128,6 +132,14 @@ div.filter-wrapper {
 .product .product-price {
 	font-weight: 600;
 	font-size: 15px;
+}
+
+.product.product-list {
+	margin-bottom: 10px;
+}
+
+.product-list .contents {
+	padding-top: 20px;
 }
 
 div#pagination {
