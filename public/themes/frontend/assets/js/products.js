@@ -89,8 +89,12 @@ function printProducts(data) {
 	$.each(data.data, function (key, product) {
 		if(display_type == 'grid') {
 			$("#products-list").append(generateGridProduct(product));
+			$('a.grid-icon').addClass('active');
+			$('a.list-icon').removeClass('active');
 		} else {
 			$("#products-list").append(generateListProduct(product));
+			$('a.list-icon').addClass('active');
+			$('a.grid-icon').removeClass('active');
 		}
 	});
 	generatePagination(data);

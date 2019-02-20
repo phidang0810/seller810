@@ -881,7 +881,7 @@ public function getProductsByFilters($request) {
 	}
 
 	// Get products with paginate
-	$data =	$data->paginate(2);
+	$data =	$data->paginate(9);
 
 	// Format price for all products got
 	foreach ($data as $key => $value) {

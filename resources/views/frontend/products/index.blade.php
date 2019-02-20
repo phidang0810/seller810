@@ -22,8 +22,8 @@
 	</div>
 	<div class="col">
 		<div class="float-right" id="display-actions">
-			<a href="javascript:;" class="active" onclick="set_display_type('grid');"><i class="fas fa-th-large"></i></a>
-			<a href="javascript:;" onclick="set_display_type('list');"><i class="fas fa-list-ul"></i></a>
+			<a href="javascript:;" class="grid-icon active" onclick="set_display_type('grid');"><i class="fas fa-th-large"></i></a>
+			<a href="javascript:;" class="list-icon" onclick="set_display_type('list');"><i class="fas fa-list-ul"></i></a>
 		</div>
 	</div>
 </div>
