@@ -581,7 +581,9 @@ Class ImportProductRepository
 		$model->sizes = $importProduct->sizes;
 		$model->price = $importProduct->price;
 		$model->sell_price = $importProduct->sell_price;
-		$model->photo = $importProduct->photo;
+		if (isset($importProduct->photo) && $importProduct->photo != "") {
+			$model->photo = $importProduct->photo;
+		}
 		$model->description = $importProduct->description;
 		$model->content = $importProduct->content;
 		$model->active = $importProduct->active;
