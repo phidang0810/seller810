@@ -200,10 +200,16 @@ span.select2.select2-container.select2-container--default {
 
     // When "Lưu", "Lưu và thoát" on form are clicked -> Update data for array photos
     // When "Lưu", "Lưu và thoát" on form are clicked -> Update data for array details
+    var submited = false;
     $( "#mainForm" ).submit(function( event ) {
-        updatePhotosData();
-        var boolValidateDetails = updateDetailsData();
-        if (boolValidateDetails == false) {
+        if(submited == false) {
+            updatePhotosData();
+            var boolValidateDetails = updateDetailsData();
+            if (boolValidateDetails == false) {
+                event.preventDefault();
+            }
+            submited = true;
+        }else{
             event.preventDefault();
         }
     });
