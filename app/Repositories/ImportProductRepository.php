@@ -413,6 +413,10 @@ Class ImportProductRepository
 
 	public function getCheckImport($id){
 		$data = ImportProduct::find($id);
+		if ($data->product_id != null && $data->photo == '' && isset($data->details)) {
+			$product = Product::find($data->product_id);
+			$data->photo = $product->photo;
+		}
 		return $data;
 	}
 
