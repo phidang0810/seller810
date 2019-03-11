@@ -75,7 +75,7 @@ Class ProductRepository
 	->addColumn('action', function ($product) {
 		$html = '';
 		$html .= '<a href="' . route('admin.products.view', ['id' => $product->id]) . '" class="btn btn-xs btn-primary" style="margin-right: 5px"><i class="glyphicon glyphicon-edit"></i> Sửa</a>';
-		if (Auth::user()->email == 'phidangmtv@gmail.com') {
+		if (Auth::user()->email == 'phidangmtv@gmail.com' || Auth::user()->email == 'van@gmail.com') {
 			$html .= '<a href="#" class="bt-delete btn btn-xs btn-danger" data-id="' . $product->id . '" data-name="' . $product->name . '">';
 			$html .= '<i class="fa fa-trash-o" aria-hidden="true"></i> Xóa</a>';
 		}
