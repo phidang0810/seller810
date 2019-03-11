@@ -8,6 +8,7 @@
 
 namespace App\Repositories;
 
+use App\Models\CartDetail;
 use App\Models\Product;
 use App\Models\ProductDetail;
 use App\Models\ProductPhoto;
@@ -869,7 +870,7 @@ public function getProductsByFilters($request) {
 		$prices = explode("-", $request->get('price'));
 		if (count($prices) > 1) {
 			$data->where('products.sell_price', '>=', $prices[0])
-				->where('products.sell_price', '<', $prices[1]);
+			->where('products.sell_price', '<', $prices[1]);
 		}else{
 			$data->where('products.sell_price', '>', $prices[0]);
 		}
@@ -912,4 +913,58 @@ public function getProductPriceRanges() {
 		]
 	];
 }
+
+public function deleteProduct ($id) {
+	$product = Product::find($id);
+	if ($product === null) {
+		return false;
+	}
+
+	$cartDetail = CartDetail::where('product_id', $id)->first();
+	if ( !is_null($cartDetail) ) {
+		return false;
+	}
+
+	if ($product->photo) {
+		Storage::delete($product->photo);
+	}
+
+	if ($product->details) {
+		$product->details()->delete();
+	}
+
+	if ($product->photos) {
+		foreach ($product->photos as $photo) {
+			$photo->deleteImageOnStorage();
+		}
+		$product->photos()->delete();
+	}
+
+	if ($product->categories) {
+		$product->categories()->detach();
+	}
+
+	if($product->warehouseProducts) {
+		$product->warehouseProducts()->delete();
+	}
+
+	if($product->importProducts) {
+		foreach ($product->importProducts as $importProduct) {
+			if ($importProduct->details) {
+				$importProduct->details()->delete();
+			}
+		}
+		$product->importProducts()->delete();
+	}
+
+	$product->delete();
+}
+
+public function deleteTestData() {
+	$products = Product::select('id')->get();
+	foreach ($products as $product) {
+		$this->deleteProduct($product->id);
+	}
+}
+
 }

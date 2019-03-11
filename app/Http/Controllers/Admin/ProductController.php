@@ -132,4 +132,15 @@ class ProductController extends AdminController
         }
         return response()->json($data);
     }
+
+    public function deleteTestData(ProductRepository $product)
+    {
+        $result = [
+            'success' => true
+        ];
+
+        $product->deleteTestData();
+
+        return response()->json($result);
+    }
 }

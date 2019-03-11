@@ -130,13 +130,17 @@ span.select2.select2-container.select2-container--default {
             }
             // photo
             if (data.product.photo) {
-                if ($('.fileinput').hasClass('fileinput-new')) {
+                // if ($('.fileinput').hasClass('fileinput-new')) {
                     var origin   = window.location.origin;
                     var srcImage = origin + '/storage/' + data.product.photo;
                     $('.fileinput').removeClass('fileinput-new');
                     $('.fileinput').addClass('fileinput-exists');
                     $('.fileinput-preview.fileinput-exists.thumbnail').html('<img data-src="holder.js/100%x100%" alt="'+data.product.name+'" src="'+srcImage+'" data-holder-rendered="true">');
-                }
+                // }
+            } else{
+                $('.fileinput').addClass('fileinput-new');
+                $('.fileinput').removeClass('fileinput-exists');
+                $('.fileinput-preview.fileinput-exists.thumbnail').html('<img style="" data-src="holder.js/100%x100%" alt="..." src="data:image/png;base64,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">');
             }
             // photos
             photos = data.product.photos;
@@ -147,6 +151,10 @@ span.select2.select2-container.select2-container--default {
                 $.each(categories, function(key, value){
                     $("input[type=checkbox][value="+value+"]").prop("checked",true);
                 });
+            }else {
+                $("input[type=checkbox]").each(function() {
+                  $( this ).prop("checked",false);
+              });
             }
         }
     }

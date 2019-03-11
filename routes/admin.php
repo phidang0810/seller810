@@ -176,6 +176,8 @@ Route::prefix('san-pham')
     Route::post ('/size/them', 'SizeController@store')->name('admin.size.store');
     Route::delete ('/size/', 'SizeController@delete')->name('admin.size.delete');
     Route::put ('/size/change-status', 'SizeController@changeStatus')->name('admin.size.changeStatus');
+
+    Route::delete ('/xoa-test-data', 'ProductController@deleteTestData')->name('admin.products.deleteTestData');
 });
 
 Route::prefix('don-hang')
