@@ -19,6 +19,7 @@ use App\Models\Brand;
 use App\Models\Warehouse;
 use App\Models\WarehouseProduct;
 use App\Models\Supplier;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use JFilla\Barcode\BarcodeGeneratorPNG;
 use Yajra\DataTables\Facades\DataTables;
@@ -74,8 +75,10 @@ Class ProductRepository
 	->addColumn('action', function ($product) {
 		$html = '';
 		$html .= '<a href="' . route('admin.products.view', ['id' => $product->id]) . '" class="btn btn-xs btn-primary" style="margin-right: 5px"><i class="glyphicon glyphicon-edit"></i> Sửa</a>';
-		// $html .= '<a href="#" class="bt-delete btn btn-xs btn-danger" data-id="' . $product->id . '" data-name="' . $product->name . '">';
-		// $html .= '<i class="fa fa-trash-o" aria-hidden="true"></i> Xóa</a>';
+		if (Auth::user()->email == 'phidangmtv@gmail.com') {
+			$html .= '<a href="#" class="bt-delete btn btn-xs btn-danger" data-id="' . $product->id . '" data-name="' . $product->name . '">';
+			$html .= '<i class="fa fa-trash-o" aria-hidden="true"></i> Xóa</a>';
+		}
 		return $html;
 	})
 	->addColumn('status', function ($product) {
@@ -915,14 +918,24 @@ public function getProductPriceRanges() {
 }
 
 public function deleteProduct ($id) {
+
+	$result = [
+		'success' => true,
+		'errors' => []
+	];
+
 	$product = Product::find($id);
 	if ($product === null) {
-		return false;
+		$result['success'] = false;
+		$result['errors'][] = 'ID của sản phẩm này không tồn tại';
+		return $result;
 	}
 
 	$cartDetail = CartDetail::where('product_id', $id)->first();
 	if ( !is_null($cartDetail) ) {
-		return false;
+		$result['success'] = false;
+		$result['errors'][] = 'Không thể xóa sản phẩm này vì đã có đơn hàng đặt sản phẩm này.';
+		return $result;
 	}
 
 	if ($product->photo) {
@@ -958,13 +971,8 @@ public function deleteProduct ($id) {
 	}
 
 	$product->delete();
-}
 
-public function deleteTestData() {
-	$products = Product::select('id')->get();
-	foreach ($products as $product) {
-		$this->deleteProduct($product->id);
-	}
+	return $result;
 }
 
 }

@@ -7,7 +7,6 @@
 <script>
     var url_delete = "{{route('admin.products.delete')}}";
     var url_change_status = "{{route('admin.products.changeStatus')}}";
-    var url_delete_test_data = "{{route('admin.products.deleteTestData')}}";
     var table;
     $.ajaxSetup({
         headers: {
@@ -169,45 +168,10 @@ $('#bt-reset').click(function(){
 });
 });
 
-$('#bt-delete-test-data').click(function() {
-    $.ajax({
-        url: url_delete_test_data,
-        type: 'DELETE',
-        data: {},
-        dataType: 'json',
-        success: function (response) {
-            if (response.success) {
-                swal({
-                    title: "Thành công!",
-                    text: "Bạn đã xóa dữ liệu test thành công.",
-                    html: true,
-                    type: "success",
-                    confirmButtonClass: "btn-primary",
-                    confirmButtonText: "Đóng lại."
-                });
-                table.fnDraw();
-            } else {
-                errorHtml = '<ul class="text-left">';
-                $.each(response.errors, function (key, error) {
-                    errorHtml += '<li>' + error + '</li>';
-                });
-                errorHtml += '</ul>';
-                swal({
-                    title: "Error! Refresh page and try again.",
-                    text: errorHtml,
-                    html: true,
-                    type: "error",
-                    confirmButtonClass: "btn-danger"
-                });
-            }
-        }
-    });
-});
-
 $("#dataTables").on("click", '.bt-delete', function(){
     var name = $(this).attr('data-name');
     var data = {
-        ids: [$(this).attr('data-id')]
+        id: $(this).attr('data-id')
     };
     swal({
         title: "Cảnh Báo!",
@@ -297,9 +261,6 @@ $("#dataTables").on("click", '.bt-delete', function(){
                     </button>
                     <button class="btn btn-sm btn-default" type="button" id="bt-reset" style="margin-bottom: 0;margin-top: 22px; margin-right:5px">
                         <i class="fa fa-refresh"></i> Làm mới
-                    </button>
-                    <button class="btn btn-sm btn-warning" type="button" id="bt-delete-test-data" style="margin-bottom: 0;margin-top: 22px; margin-right:5px">
-                        <i class="fa fa-refresh"></i> Xóa s/p test
                     </button>
                 </div>
 

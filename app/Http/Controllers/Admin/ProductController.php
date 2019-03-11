@@ -106,8 +106,8 @@ class ProductController extends AdminController
 
     public function delete(ProductRepository $product)
     {
-        $ids = $this->_request->get('ids');
-        $result = $product->delete($ids);
+        $id = $this->_request->get('id');
+        $result = $product->deleteProduct($id);
 
         return response()->json($result);
     }
@@ -131,16 +131,5 @@ class ProductController extends AdminController
             $message = 'Sản phẩm được lấy thành công.';
         }
         return response()->json($data);
-    }
-
-    public function deleteTestData(ProductRepository $product)
-    {
-        $result = [
-            'success' => true
-        ];
-
-        $product->deleteTestData();
-
-        return response()->json($result);
     }
 }
