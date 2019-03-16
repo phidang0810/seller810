@@ -40,13 +40,15 @@ define('CART_TRANSPORTING', 3);
 define('CART_TRANSPORTED', 4);
 define('CART_COMPLETED', 5);
 define('CART_CANCELED', 6);
+define('CART_IN_CART', 7);
 define('CART_TEXT', [
 	1	=>	'Mới tạo',
 	2	=>	'Đang xử lý',
 	3	=>	'Đang giao',
 	4	=>	'Đã giao',
 	5	=>	'Đã hoàn tất',
-	6	=>	'Đã hủy'
+	6	=>	'Đã hủy',
+    7   =>  'Trong giỏ hàng'
 ]);
 define('CART_LABEL', [
     1   =>  'default',

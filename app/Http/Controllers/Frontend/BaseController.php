@@ -27,4 +27,9 @@ class BaseController extends Controller
         if ($link) $data['link'] = $link;
         array_push($this->_data['breadcrumbs'], $data);
     }
+
+    public function home () {
+        $this->_data['title'] = 'Trang chủ';
+        return view('frontend.index', $this->_data);
+    }
 }

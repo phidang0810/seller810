@@ -19,7 +19,7 @@ class Product extends BaseModel
      * @var array
      */
     protected $fillable = [
-        'photo', 'barcode_text', 'name', 'active', 'order', 'category_ids', 'supplier_id', 'brand_id', 'barcode', 'colors', 'sizes', 'price', 'sell_price', 'quantity', 'quantity_available', 'description', 'content', 'meta_keyword', 'meta_description', 'meta_robot'
+        'photo', 'barcode_text', 'name', 'active', 'order', 'category_ids', 'supplier_id', 'brand_id', 'barcode', 'colors', 'sizes', 'price', 'sell_price', 'quantity', 'quantity_available', 'description', 'content', 'meta_keyword', 'meta_description', 'meta_robot', 'slug', 'min_quantity_sell'
     ];
 
     /**

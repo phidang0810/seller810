@@ -649,6 +649,11 @@ span.select2.select2-container.select2-container--default {
                                                             <input readonly type="text" name="import_quantity" placeholder="0" class="form-control m-b c-quatity-input"
                                                             value="@if(isset($data->quantity)){{$data->quantity}}@else{{old('quantity')}}@endif"/>
                                                         </div>
+                                                        
+                                                        <label class="col-md-2 control-label">Số lượng bán ít nhất</label>
+                                                        <div class="col-md-3">
+                                                            <input type="text" name="min_quantity_sell" placeholder="" class="form-control required m-b input-sell-price" value="@if(isset($data->min_quantity_sell)){{$data->min_quantity_sell}}@else{{old('min_quantity_sell')}}@endif"/>
+                                                        </div>
                                                     </div>
                                                 </div>
 

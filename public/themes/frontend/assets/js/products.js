@@ -14,23 +14,23 @@ $(document).ready(function(){
 
 // When radio change
 $('input[type=radio][name=categoryRadio]').change(function() {
-    getProducts();
+	getProducts();
 });
 
 $('input[type=radio][name=sizeRadio]').change(function() {
-    getProducts();
+	getProducts();
 });
 
 $('input[type=radio][name=colorRadio]').change(function() {
-    getProducts();
+	getProducts();
 });
 
 $('input[type=radio][name=productPriceRadio]').change(function() {
-    getProducts();
+	getProducts();
 });
 
 $('select#select-sorting').change(function() {
-    getProducts();
+	getProducts();
 });
 
 // Set display style
@@ -103,11 +103,13 @@ function printProducts(data) {
 // function generate grid layout for product
 function generateGridProduct(product) {
 	var html = '<div class="col-md-4 col-sm-6 product product-grid">\
-	<a href="#">\
+	<a href="/san-pham/' + product.id + '">\
 	<img src="storage/' + product.photo + '" alt="" class="img-fluid">\
-	<h6 class="product-name">' + product.name + '</h6>\
-	<h6 class="product-price">' + product.sell_price + '</h6>\
-	</a>\
+	<h6 class="product-name">' + product.name + '</h6>';
+	if (auth == 1) {
+		html += '<h6 class="product-price">' + product.sell_price + '</h6>';
+	}
+	html += '</a>\
 	</div>';
 	return html;
 }
@@ -115,18 +117,20 @@ function generateGridProduct(product) {
 // function generate list layout for product
 function generateListProduct(product) {
 	var html = '<div class="col-md-12 product product-list">\
-		<div class="row">\
-			<div class="col-md-3 col-sm-6 text-center">\
-				<a href="#"><img src="storage/' + product.photo + '" alt="" class="img-fluid"></a>\
-			</div>\
-			<div class="col-md-9 col-sm-6 contents">\
-				<h6 class="product-name">' + product.name + '</h6>\
-				<h6 class="product-price">' + product.sell_price + '</h6>\
-				<p class="size">' + product.sizes + '</p>\
-				<p class="color">' + product.colors + '</p>\
-				<a name="' + product.name + '" class="btn btn-success" href="#" role="button">Xem Chi Tiết</a>\
-			</div>\
-		</div>\
+	<div class="row">\
+	<div class="col-md-3 col-sm-6 text-center">\
+	<a href="#"><img src="storage/' + product.photo + '" alt="" class="img-fluid"></a>\
+	</div>\
+	<div class="col-md-9 col-sm-6 contents">\
+	<h6 class="product-name">' + product.name + '</h6>';
+	if (auth == 1) {
+		html += '<h6 class="product-price">' + product.sell_price + '</h6>';
+	}
+	html += '<p class="size">' + product.sizes + '</p>\
+	<p class="color">' + product.colors + '</p>\
+	<a name="' + product.name + '" class="btn btn-success" href="#" role="button">Xem Chi Tiết</a>\
+	</div>\
+	</div>\
 	</div>';
 
 	return html;

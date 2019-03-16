@@ -45,15 +45,13 @@
 						<input id="search-string" class="form-control mr-sm-2 custom-input" type="search" placeholder="Tìm sản phẩm" aria-label="Tìm sản phẩm">
 						<button class="btn my-2 icon-custom-grey" type="submit"><i class="fas fa-search"></i></button>
 					</form>
-					<a href="#" title="Giỏ hàng" class="btn icon-custom-grey"><i class="fas fa-shopping-basket"></i></a>
+					<a href="#" title="Giỏ hàng" class="btn icon-custom-grey" id="cart-icon">
+						<i class="fas fa-shopping-basket"></i>
+						<span class="number"></span>
+					</a>
 				</div>
 			</div>
 		</nav>
 	</section>
 	<!-- END: Top Navigation -->
-	<!-- BEGIN: Banner -->
-	<section id="banner">
-		<img src="{{asset('themes/frontend/assets/images/portal/banner.jpg')}}" alt="Banner" />
-	</section>
-	<!-- END: Banner -->
 </header>

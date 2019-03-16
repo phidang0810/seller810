@@ -233,6 +233,9 @@ Class ImportProductRepository
 			$model->photo = $upload->uploadTo('products');
 		}
 
+		$model->slug = str_slug($model->name, '-');
+		$model->min_quantity_sell = $data['min_quantity_sell'];
+
 		$model->save();
 
 		if (!$id) {
@@ -594,6 +597,9 @@ Class ImportProductRepository
 		$model->order = $importProduct->order;
 		$model->main_cate = $importProduct->main_cate;
 		$model->category_ids = $importProduct->category_ids;
+
+		$model->slug = $importProduct->slug;
+		$model->min_quantity_sell = $importProduct->min_quantity_sell;
 
 		$model->save();
 		$data['categories'] = $importProduct->category_ids;

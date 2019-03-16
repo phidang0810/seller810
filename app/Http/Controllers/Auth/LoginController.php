@@ -21,6 +21,7 @@ class LoginController extends Controller
 
     use AuthenticatesUsers {
         logout as performLogout;
+        login as performLogin;
     }
 
     /**
@@ -46,10 +47,10 @@ class LoginController extends Controller
             $this->logout($request);
 
             return redirect()->back()
-                ->withInput($request->only($this->username(), 'remember'))
-                ->withErrors([
-                    $this->username() => $message,
-                ]);
+            ->withInput($request->only($this->username(), 'remember'))
+            ->withErrors([
+                $this->username() => $message,
+            ]);
         }
     }
 
@@ -67,5 +68,19 @@ class LoginController extends Controller
     {
         $this->performLogout($request);
         return redirect()->route('login');
+    }
+
+    public function login(Request $request)
+    {
+        if ($request->get('redirectTo')) {
+            $to = $request->get('redirectTo');
+            unset($request['redirectTo']);
+        }else{
+            $to = $this->redirectTo;
+        }
+
+        $this->performLogin($request);
+        
+        return redirect()->to($to);
     }
 }

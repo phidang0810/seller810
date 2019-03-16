@@ -47,6 +47,7 @@
                             <i class="fa fa-key" aria-hidden="true"></i>
                         </span>
                     </div>
+                    @if(Request::get('to'))<input type="hidden" name="redirectTo" value="{{Request::get('to')}}">@endif
                     <button type="submit" class="btn btn-primary block full-width m-b">Đăng nhập</button>
                 </form>
             </div>

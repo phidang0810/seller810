@@ -14,7 +14,7 @@ class ImportProduct extends BaseModel
      * @var array
      */
     protected $fillable = [
-        'code', 'quantity', 'import_staff_id', 'product_id', 'warehouse_id', 'price', 'total_price', 'note', 'status', 'supplier_id', 'brand_id', 'barcode_text', 'barcode', 'name', 'colors', 'sizes', 'sell_price', 'photo', 'description', 'content', 'active', 'order'
+        'code', 'quantity', 'import_staff_id', 'product_id', 'warehouse_id', 'price', 'total_price', 'note', 'status', 'supplier_id', 'brand_id', 'barcode_text', 'barcode', 'name', 'colors', 'sizes', 'sell_price', 'photo', 'description', 'content', 'active', 'order', 'slug', 'min_quantity_sell'
     ];
 
     /**

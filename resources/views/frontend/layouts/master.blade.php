@@ -5,6 +5,8 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>@yield('title')</title>
+	<!-- CSRF Token -->
+	<meta name="csrf-token" content="{{ csrf_token() }}">
 
 	<!-- BEGIN: CSS -->
 	<!-- BEGIN: Global CSS -->
@@ -19,7 +21,7 @@
 	<link rel="stylesheet" type="text/css" href="{{asset('themes/frontend/assets/css/color.css')}}" media="all">
 	<!-- END: Global CSS -->
 	<!-- BEGIN: Page CSS -->
-    @yield('css')
+	@yield('css')
 	<!-- END: CSS -->
 </head>
 <body>
@@ -28,11 +30,15 @@
 	<!-- END: Header -->
 
 	<!-- BEGIN: Main Content -->
-	<section id="main-content">
+	<!-- BEGIN: Banner -->
+	<section id="banner">
+		<img src="{{asset('themes/frontend/assets/images/portal/banner.jpg')}}" alt="Banner" />
 		<div class="container">
-			@yield('content')
+			@include('frontend.layouts._partials._breadcrumbs')
 		</div>
 	</section>
+	<!-- END: Banner -->
+	@yield('content')
 	<!-- END: Main Content -->
 
 	<!-- BEGIN: Footer -->
@@ -45,9 +51,16 @@
 	<script src="{{asset('themes/frontend/assets/plugins/bootstrap-4.2.1-dist/js/bootstrap.min.js')}}" type="text/javascript" charset="utf-8" async defer></script>
 	<!-- Main JS -->
 	<script src="{{asset('themes/frontend/assets/js/main.js')}}" type="text/javascript" charset="utf-8" async defer></script>
+	<script type="text/javascript">
+		var auth = "{{Auth::check()}}";
+		@if(Auth::check())
+		var user_id = "{{Auth::user()->id}}";
+		@endif
+		var urlGetCartDetailsNumber = "{{route('frontend.carts.getNumberDetails')}}";
+	</script>
 	<!-- END: Global JS -->
 	<!-- BEGIN: Web JS -->
-    @yield('js')
+	@yield('js')
 	<!-- END: JS -->
 </body>
 </html>

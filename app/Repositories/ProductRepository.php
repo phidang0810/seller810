@@ -184,6 +184,10 @@ public function createOrUpdate($data, $id = null)
 	if (isset($data['categories'])) {
 		$model->category_ids = $data['categories'];
 	}
+
+	$model->slug = str_slug($model->name, '-');
+	$model->min_quantity_sell = $data['min_quantity_sell'];
+
 	$model->save();
 
 	if (isset($data['categories'])) {

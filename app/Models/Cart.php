@@ -16,6 +16,7 @@ class Cart extends BaseModel
         'city_id',
         'platform_id',
         'partner_id',
+        'customer_id',
         'transport_id',
         'quantity',
         'discount_amount',
