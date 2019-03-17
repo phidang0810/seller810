@@ -7,6 +7,7 @@ $.ajaxSetup({
 var color = 0, size = 0;
 
 function selectColor (id) {
+	$('.quantity-section .number-input').hide();
 	$('#colors a').removeClass('active');
 	$('#color-'+id).addClass('active');
 	color = id;
@@ -14,6 +15,7 @@ function selectColor (id) {
 }
 
 function selectSize (id) {
+	$('.quantity-section .number-input').hide();
 	$('#sizes a').removeClass('active');
 	$('#size-'+id).addClass('active');
 	size = id;
@@ -34,6 +36,10 @@ function getQuantityMinMax () {
 			dataType:'json',
 			success: function(response) {
 				$('input[name=quantity]').attr('max', response.quantity_available);
+				if ($('input[name=quantity]').val() > response.quantity_available) {
+					$('input[name=quantity]').val(response.quantity_available);
+				}
+				$('.quantity-section .number-input').css('display', 'inline-flex');
 			}
 		});
 	}else{

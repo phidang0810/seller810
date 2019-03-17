@@ -69,7 +69,7 @@
         <div class="row" id="add-to-cart-button">
           <div class="col-12">
             @if(!Auth::check())
-            <a href="{{ route( 'login', ["to" =>Request::url()] ) }}" class="btn btn-custom-add-to-cart">Mua</a>
+            <a href="{{ route( 'login', ['to' =>Request::url()] ) }}" class="btn btn-custom-add-to-cart">Mua</a>
             @else
             <a href="javascript:;" class="btn btn-custom-add-to-cart" onclick="addToCart();">Mua</a>
             @endif

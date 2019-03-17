@@ -24,7 +24,11 @@ function getCartDetailsNumber () {
 		dataType:'json',
 		success: function(response) {
 			if (response.success) {
-				$('#cart-icon span.number').html(response.number);
+				if (response.number >= 1) {
+					$('#cart-icon span.number').html(response.number);
+				}else{
+					$('#cart-icon span.number').html('');
+				}
 			}else{
 			}
 		}

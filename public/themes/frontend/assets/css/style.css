@@ -305,6 +305,10 @@ section#main-content {
 	display: inline-flex;
 }
 
+#product-info .quantity-section .number-input {
+	display: none;
+}
+
 .quantity-section .number-input,
 .quantity-section .number-input * {
 	box-sizing: border-box;

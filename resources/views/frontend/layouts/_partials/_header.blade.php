@@ -8,9 +8,17 @@
 						Hotline: 0962343534
 					</div>
 					<div class="tb-right">
-						<a href="#" title="Đăng nhập" class="sign-in">Đăng nhập</a>
+						@if(!Auth::check())
+						<a href="{{route('login')}}" title="Đăng nhập" class="sign-in">Đăng nhập</a>
 						<a href="#" title="Đăng ký"><button type="button" class="btn btn-custom-tink btn-sm-custom">Đăng ký</button></a>
 					</div>
+					@else
+					<a href="{{ route('logout') }}" onclick="event.preventDefault();document.getElementById('logout-form').submit();" title="Đăng xuất" class="sign-out">Đăng xuất</a>
+					@endif
+
+					<form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+						{{ csrf_field() }}
+					</form>
 				</div>
 			</div>
 		</div>
@@ -29,10 +37,10 @@
 				<div class="collapse navbar-collapse" id="navbarSupportedContent">
 					<ul class="navbar-nav mr-auto lobster">
 						<li class="nav-item active">
-							<a class="nav-link" href="#">Trang chủ <span class="sr-only">(current)</span></a>
+							<a class="nav-link" href="{{route('home')}}">Trang chủ <span class="sr-only">(current)</span></a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" href="#">Sản phẩm</a>
+							<a class="nav-link" href="{{route('frontend.products.index')}}">Sản phẩm</a>
 						</li>
 						<li class="nav-item">
 							<a class="nav-link" href="#">Tin tức</a>
@@ -45,13 +53,17 @@
 						<input id="search-string" class="form-control mr-sm-2 custom-input" type="search" placeholder="Tìm sản phẩm" aria-label="Tìm sản phẩm">
 						<button class="btn my-2 icon-custom-grey" type="submit"><i class="fas fa-search"></i></button>
 					</form>
-					<a href="{{route('frontend.carts.index')}}" title="Giỏ hàng" class="btn icon-custom-grey" id="cart-icon">
-						<i class="fas fa-shopping-basket"></i>
-						<span class="number"></span>
-					</a>
+					@if(!Auth::check())
+					<a href="{{ route( 'login', ['to' =>Request::url()] ) }}" class="btn icon-custom-grey" id="cart-icon">
+						@else
+						<a href="{{route('frontend.carts.index')}}" title="Giỏ hàng" class="btn icon-custom-grey" id="cart-icon">
+							@endif
+							<i class="fas fa-shopping-basket"></i>
+							<span class="number"></span>
+						</a>
+					</div>
 				</div>
-			</div>
-		</nav>
-	</section>
-	<!-- END: Top Navigation -->
-</header>
+			</nav>
+		</section>
+		<!-- END: Top Navigation -->
+	</header>

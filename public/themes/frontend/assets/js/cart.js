@@ -33,7 +33,8 @@ function printCart(cart) {
 	$.each(cart.details, function (key, detail) {
 		printCartDetail(detail);
 	});
-	
+	getCartDetailsNumber();
+
 	setTimeout(function(){ 
 		$('#loading-indicator').hide(); 
 	}, 1000);
@@ -74,6 +75,7 @@ function printCartInfo(cart) {
 }
 
 function deleteCartDetail(id) {
+	$('#loading-indicator').show();
 	updateCartDetail(id, 0);
 }
 
