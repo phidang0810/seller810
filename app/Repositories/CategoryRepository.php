@@ -21,42 +21,42 @@ Class CategoryRepository
         $categories = Category::select(['categories.id', 'categories.name', 'categories.level', 'categories.active', 'categories.created_at']);
 
         $dataTable = DataTables::eloquent($categories)
-        ->filter(function ($query) use ($request) {
-            if (trim($request->get('status')) !== "") {
-                $query->where('categories.active', $request->get('status'));
-            }
+            ->filter(function ($query) use ($request) {
+                if (trim($request->get('status')) !== "") {
+                    $query->where('categories.active', $request->get('status'));
+                }
 
-            if (trim($request->get('keyword')) !== "") {
-                $query->where(function ($sub) use ($request) {
-                    $sub->where('categories.name', 'like', '%' . $request->get('keyword') . '%');
-                });
-            }
-        }, true)
-        ->addColumn('numbers', function ($category) {
-            $categories = Category::withCount('products')->get();
-            $cat = Category::where('id', $category->id)->withCount('products')->first();
-            $html = '';
-            $html .= '<a href="' . route('admin.products.index', ['id' => $category->id]) . '">'.$cat->products_count.'</a>';
-            return $html;
-        })
-        ->addColumn('action', function ($category) {
-            $html = '';
-            $html .= '<a href="' . route('admin.categories.view', ['id' => $category->id]) . '" class="btn btn-xs btn-primary" style="margin-right: 5px"><i class="glyphicon glyphicon-edit"></i> Sửa</a>';
-            $html .= '<a href="#" class="bt-delete btn btn-xs btn-danger" data-id="' . $category->id . '" data-name="' . $category->name . '">';
-            $html .= '<i class="fa fa-trash-o" aria-hidden="true"></i> Xóa</a>';
-            return $html;
-        })
-        ->addColumn('status', function ($category) {
-            $active = '';
-            $disable = '';
-            if ($category->active === ACTIVE) {
-                $active  = 'checked';
-            }
-            $html = '<input type="checkbox" '.$disable.' data-name="'.$category->name.'" data-id="'.$category->id.'" name="social' . $category->active . '" class="js-switch" value="' . $category->active . '" ' . $active . ' ./>';
-            return $html;
-        })
-        ->rawColumns(['status', 'action', 'numbers'])
-        ->toJson();
+                if (trim($request->get('keyword')) !== "") {
+                    $query->where(function ($sub) use ($request) {
+                        $sub->where('categories.name', 'like', '%' . $request->get('keyword') . '%');
+                    });
+                }
+            }, true)
+            ->addColumn('numbers', function ($category) {
+                $categories = Category::withCount('products')->get();
+                $cat = Category::where('id', $category->id)->withCount('products')->first();
+                $html = '';
+                $html .= '<a href="' . route('admin.products.index', ['id' => $category->id]) . '">' . $cat->products_count . '</a>';
+                return $html;
+            })
+            ->addColumn('action', function ($category) {
+                $html = '';
+                $html .= '<a href="' . route('admin.categories.view', ['id' => $category->id]) . '" class="btn btn-xs btn-primary" style="margin-right: 5px"><i class="glyphicon glyphicon-edit"></i> Sửa</a>';
+                $html .= '<a href="#" class="bt-delete btn btn-xs btn-danger" data-id="' . $category->id . '" data-name="' . $category->name . '">';
+                $html .= '<i class="fa fa-trash-o" aria-hidden="true"></i> Xóa</a>';
+                return $html;
+            })
+            ->addColumn('status', function ($category) {
+                $active = '';
+                $disable = '';
+                if ($category->active === ACTIVE) {
+                    $active = 'checked';
+                }
+                $html = '<input type="checkbox" ' . $disable . ' data-name="' . $category->name . '" data-id="' . $category->id . '" name="social' . $category->active . '" class="js-switch" value="' . $category->active . '" ' . $active . ' ./>';
+                return $html;
+            })
+            ->rawColumns(['status', 'action', 'numbers'])
+            ->toJson();
 
         return $dataTable;
     }
@@ -122,7 +122,8 @@ Class CategoryRepository
         return $result;
     }
 
-    public function getCategoriesTree(){
+    public function getCategoriesTree()
+    {
         $categories = Category::select(['categories.id', 'categories.name', 'categories.level', 'categories.parent_id'])->get();
         $result = make_tree($categories);
 
@@ -136,7 +137,8 @@ Class CategoryRepository
         return $model->save();
     }
 
-    public static function resetHierarchy($id, $parent_id){
+    public static function resetHierarchy($id, $parent_id)
+    {
         $children = Category::select(['categories.id', 'categories.level', 'categories.active'])->where('categories.parent_id', $id)->get();
         if (count($children) > 0) {
             $parent = Category::find($parent_id);
@@ -151,16 +153,29 @@ Class CategoryRepository
         }
     }
 
-    public function getCategoryOptions($select = 0){
+    public function getCategoryOptions($select = 0)
+    {
         $categories = Category::select(['categories.id', 'categories.name'])->get();
         $result = make_option($categories, $select);
 
         return $result;
     }
 
-    public function getCategories() {
+    public function getCategories()
+    {
         $categories = Category::select(['categories.id', 'categories.name'])->get();
         return $categories;
+    }
+
+    public function getListCategories($search)
+    {
+        $categories = Category::select(['categories.id', 'categories.name']);
+        if (key_exists('is_home', $search)) {
+            $categories->where('is_home', $search['is_home']);
+        }
+        $result = $categories->get();
+
+        return $result;
     }
 
 }

@@ -142,3 +142,14 @@ define('CREDITOR_PAYING',2);
 
 define('CART_NO_RETURN', 0);
 define('CART_RETURN', 1);
+
+define('GIOI_THIEU', 1);
+define('TUYEN_DUNG', 2);
+define('HUONG_DAN_MUA_HANG', 3);
+define('CHINH_SACH_BAN_SI', 4);
+define('BAO_MAT', 5);
+define('DIEU_KHOAN', 6);
+define('CHINH_SACH_GIAO_HANG', 7);
+define('FAQ', 8);
+define('POST_CATEGORY_TIN_TUC', 1);
+define('POST_PRIVATE', [1,2,3,4,5,6,7,8]);

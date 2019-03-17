@@ -18,6 +18,11 @@
             <li class="{{ set_active(['quan-ly']) }} nav-item">
                 <a href="{{route('admin.dashboard')}}"><i class="fa fa-home"></i> <span class="nav-label">Dashboards</span></a>
             </li>
+
+            <li class="{{ set_active(['bai-viet', 'bai-viet/*']) }} nav-item">
+                <a href="{{route('admin.posts.index')}}"><i class="fa fa-home"></i> <span class="nav-label">Bài Viết</span></a>
+            </li>
+
             @if(key_exists('shop_manager', Auth::user()->permissions))
                 <li class="{{ set_active(['quan-ly/don-hang', 'quan-ly/don-hang/*']) }} nav-item">
                     <a href="#"><i class="fa fa-shopping-cart"></i> <span class="nav-label">Quản Lý Bán Hàng</span><span class="fa arrow"></span></a>

@@ -17,6 +17,7 @@ class Photo
     protected $file = NULL;
     protected $name = NULL;
     protected $extension = NULL;
+    protected $pathFile = NULL;
 
     public function __construct($file, array $options = [])
     {
@@ -39,22 +40,28 @@ class Photo
         if (is_null($asName)) {
             $asName = MD5(microtime()).'.'.$this->extension;
         }
-        return $this->file->storeAs('public/' . $folder, $asName);
+        $this->pathFile = $this->file->storeAs('public/' . $folder, $asName);
+        return $this->pathFile;
     }
 
-    public function resizeTo($folder, $width, $height, $asName = null)
+    public function resizeTo($width, $asName = null)
     {
-        $path = storage_path('app/public/' . $folder);
-
+        $pathFile = storage_path('app/' . $this->pathFile);
         if (is_null($asName)) {
-            $asName = str_replace($this->extension, '_'.$width. '.'. $this->extension, $this->name);
+            $asName = str_replace('.' . $this->extension, '_'.$width. '.'. $this->extension, $this->name);
         }
 
-        Image::make($path)
-            ->resize($width, $height, true)
-            ->save($path.'/'.$asName, 60);
+        $pathDirectory = dirname($pathFile);
 
-        return $path . '/' . $asName;
+        $exportTo = $pathDirectory.'/'.$asName;
+
+        Image::make($pathFile)
+            ->resize($width, null, function ($constraint) {
+                $constraint->aspectRatio();
+            })
+            ->save($exportTo, 60);
+
+        return dirname($this->pathFile) . '/' . $asName;
 
     }
 }

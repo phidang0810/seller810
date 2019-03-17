@@ -35,7 +35,7 @@ Class ProductRepository
 
 	public function dataTable($request)
 	{
-	$products = Product::select(['products.id', 'products.category_ids', 'products.photo', 'products.barcode_text','products.name', 'products.quantity_available', 'products.quantity', 'products.price', 'products.sell_price', 'products.sizes', 'products.active', 'products.created_at'/*, 'price*quantity as total_price'*/]);
+	$products = Product::select(['products.id', 'products.category_ids', 'products.photo','products.thumb', 'products.barcode_text','products.name', 'products.quantity_available', 'products.quantity', 'products.price', 'products.sell_price', 'products.sizes', 'products.active', 'products.created_at'/*, 'price*quantity as total_price'*/]);
 	$categories = Category::get()->pluck('name', 'id')->toArray();
 	$dataTable = DataTables::eloquent($products)
 	->filter(function ($query) use ($request) {
@@ -92,7 +92,7 @@ Class ProductRepository
 	})
 	->addColumn('photo', function ($product) {
 		if ($product->photo) {
-			$html = '<a class="fancybox" href="' . asset('storage/' . $product->photo). '" title="'.$product->name.'"><img style="width: 80px; height: 60px;" class="img-thumbnail" src="' . asset('storage/' . $product->photo). '" /></a>';
+			$html = '<a class="fancybox" href="' . asset('storage/' . $product->photo). '" title="'.$product->name.'"><img style="width: 80px; height: 60px;" class="img-thumbnail" src="' . asset('storage/' . $product->thumb). '" /></a>';
 		} else {
 			$html = ' <img alt="No Photo" style="width: 80px; height: 60px;" class="img-thumbnail" src="'.asset(NO_PHOTO).'" >';
 		}
@@ -171,8 +171,13 @@ public function createOrUpdate($data, $id = null)
 		if ($model->photo) {
 			Storage::delete($model->photo);
 		}
+
+        if ($model->thumb) {
+            Storage::delete($model->thumb);
+        }
 		$upload = new Photo($data['photo']);
 		$model->photo = $upload->uploadTo('products');
+		$model->thumb = $upload->resizeTo(300);
 	}
 
 	if(isset($data['delete_photo']) && $data['delete_photo'] == true) {
