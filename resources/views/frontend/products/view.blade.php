@@ -54,7 +54,7 @@
             @endforeach
           </div>
         </div>
-        <div class="row" id="quantity">
+        <div class="row quantity-section">
           <div class="col-3">
             <span class="attr-title">Số lượng</span>
           </div>

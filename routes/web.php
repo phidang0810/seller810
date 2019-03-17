@@ -30,3 +30,5 @@ Route::get ('/san-pham/{id}', 'Frontend\ProductController@view')->name('frontend
 Route::get ('/san-pham/so-luong', 'Frontend\ProductController@getMaxQuantity')->name('frontend.products.getMaxQuantity');
 Route::post ('/gio-hang/them', 'Frontend\CartController@addDetail')->name('frontend.carts.addDetail');
 Route::get ('/gio-hang/so-luong', 'Frontend\CartController@getNumberDetails')->name('frontend.carts.getNumberDetails');
+Route::get ('/gio-hang', 'Frontend\CartController@index')->name('frontend.carts.index');
+Route::get ('/dat-hang', 'Frontend\CartController@order')->name('frontend.carts.order');

@@ -23,7 +23,6 @@ function getCartDetailsNumber () {
 		data: data,
 		dataType:'json',
 		success: function(response) {
-			console.log(response);
 			if (response.success) {
 				$('#cart-icon span.number').html(response.number);
 			}else{

@@ -25,6 +25,14 @@
 	<!-- END: CSS -->
 </head>
 <body>
+	<div id="loading-indicator">
+		<div class="d-flex justify-content-center">
+			<div class="spinner-grow text-info" role="status">
+				<span class="sr-only">Loading...</span>
+			</div>
+		</div>
+	</div>
+	
 	<!-- BEGIN: Header -->
 	@include('frontend.layouts._partials._header')
 	<!-- END: Header -->

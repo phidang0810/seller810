@@ -45,7 +45,7 @@
 						<input id="search-string" class="form-control mr-sm-2 custom-input" type="search" placeholder="Tìm sản phẩm" aria-label="Tìm sản phẩm">
 						<button class="btn my-2 icon-custom-grey" type="submit"><i class="fas fa-search"></i></button>
 					</form>
-					<a href="#" title="Giỏ hàng" class="btn icon-custom-grey" id="cart-icon">
+					<a href="{{route('frontend.carts.index')}}" title="Giỏ hàng" class="btn icon-custom-grey" id="cart-icon">
 						<i class="fas fa-shopping-basket"></i>
 						<span class="number"></span>
 					</a>
