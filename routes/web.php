@@ -26,7 +26,7 @@ Route::get ('/test', function(\Illuminate\Http\Request $request){
 Auth::routes();
 
 Route::get ('/san-pham', 'Frontend\ProductController@index')->name('frontend.products.index');
-Route::get ('/san-pham/{id}', 'Frontend\ProductController@view')->name('frontend.products.view')->where('id', '[0-9]+');
+Route::get ('/san-pham/{slug}', 'Frontend\ProductController@view')->name('frontend.products.view');
 Route::get ('/san-pham/so-luong', 'Frontend\ProductController@getMaxQuantity')->name('frontend.products.getMaxQuantity');
 Route::post ('/gio-hang/them', 'Frontend\CartController@addDetail')->name('frontend.carts.addDetail');
 Route::get ('/gio-hang/so-luong', 'Frontend\CartController@getNumberDetails')->name('frontend.carts.getNumberDetails');

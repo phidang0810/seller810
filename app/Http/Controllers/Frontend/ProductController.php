@@ -42,8 +42,8 @@ class ProductController extends BaseController
      *
      * @return \Illuminate\Http\Response
      */
-    public function view($id, ProductRepository $product, CategoryRepository $category, SizeRepository $size, ColorRepository $color){
-        $this->_data['product'] = $product->getProduct($id);
+    public function view($slug, ProductRepository $product, CategoryRepository $category, SizeRepository $size, ColorRepository $color){
+        $this->_data['product'] = $product->getProductBySlug($slug);
 
         $this->_pushBreadCrumbs($this->_data['product']->name);
 

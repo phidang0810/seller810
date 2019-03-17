@@ -58,6 +58,31 @@ Class ProductRepository
 		return $data;
 	}
 
+	public function getProductBySlug($slug)
+	{
+		$data = Product::where('slug', $slug)->first();
+		$data->sell_price = format_price($data->sell_price);
+
+		// Get colors
+		$product_details = ProductDetail::having('product_id', '=', $data->id)->having('quantity', '>', 0)
+		->get();
+
+		$color_ids = [];
+		$size_ids = [];
+		foreach ($product_details as $key => $value) {
+			$color_ids[] = $value['color_id'];
+			$size_ids[] = $value['size_id'];
+		}
+
+		$data->colorObjects = Color::whereIn('id', $color_ids)->get();
+		$data->sizeObjects = Size::whereIn('id', $size_ids)->get();
+
+		$data->category = $this->lowestLevelCategory($data->id);
+		$data->relatedProducts = $this->getRelatedProducts($data->category->id);
+
+		return $data;
+	}
+
 	public function getRelatedProducts ($category_id, $limit = 4) {
 		return Product::having('category_ids', 'like',  "%$category_id%")->limit($limit)->get();
 	}

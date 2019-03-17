@@ -12,6 +12,7 @@ span.select2.select2-container.select2-container--default {
 
 @section('js')
 <!-- Page-Level Scripts -->
+    <script src="{{asset('fck/ckeditor/ckeditor.js')}}"></script>
 <script>
 
     $.ajaxSetup({
@@ -408,6 +409,46 @@ span.select2.select2-container.select2-container--default {
 
     $(document).ready(function ($) {
 
+        if($('#editor-content').length != 0) {
+            CKEDITOR.replace('editor-content', {
+                allowedContent: true,
+                toolbar: [
+                    {
+                        name: 'styles',
+                        items: ['Styles', 'Format', 'Font', 'FontSize', 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo']
+                    },
+                    { name: 'basicstyles', items : [ 'Bold','Italic','Underline','Strike','Subscript','Superscript','-','RemoveFormat' ] },
+                    {name: 'colors', items: ['TextColor', 'BGColor']},
+                    {
+                        name: 'paragraph',
+                        groups: ['list', 'indent', 'blocks', 'align', 'bidi'],
+                        items: ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', '-', 'Image', 'Flash', 'Table', 'Source']
+                    },
+
+                ]
+            });
+        }
+
+        if($('#editor-desc').length != 0) {
+            CKEDITOR.replace('editor-desc', {
+                allowedContent: true,
+                toolbar: [
+                    {
+                        name: 'styles',
+                        items: ['Styles', 'Format', 'Font', 'FontSize', 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo']
+                    },
+                    { name: 'basicstyles', items : [ 'Bold','Italic','Underline','Strike','Subscript','Superscript','-','RemoveFormat' ] },
+                    {name: 'colors', items: ['TextColor', 'BGColor']},
+                    {
+                        name: 'paragraph',
+                        groups: ['list', 'indent', 'blocks', 'align', 'bidi'],
+                        items: ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', '-', 'Image', 'Flash', 'Table', 'Source']
+                    },
+
+                ]
+            });
+        }
+
         // Init select2
         var url_get_products = '{{route("admin.products.getProductEmptiableAjax")}}';
         $('select[name="product_id"]').select2({
@@ -699,7 +740,7 @@ span.select2.select2-container.select2-container--default {
                                                     <div class="form-group">
                                                         <label class="col-md-3 control-label">Mô tả</label>
                                                         <div class="col-md-9">
-                                                            <textarea name="description" id="" cols="30" rows="10"  class="form-control m-b">@if(isset($data->description)){{$data->description}}@else{{old('description')}}@endif</textarea>
+                                                            <textarea name="description" id="editor-desc" cols="30" rows="10"  class="form-control m-b">@if(isset($data->description)){{$data->description}}@else{{old('description')}}@endif</textarea>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -708,7 +749,7 @@ span.select2.select2-container.select2-container--default {
                                                     <div class="form-group">
                                                         <label class="col-md-3 control-label">Nội dung</label>
                                                         <div class="col-md-9">
-                                                            <textarea name="content" id="" cols="30" rows="10"  class="summernote form-control m-b">@if(isset($data->content)){{$data->content}}@else{{old('content')}}@endif</textarea>
+                                                            <textarea name="content" id="editor-content" cols="30" rows="10"  class="summernote form-control m-b">@if(isset($data->content)){{$data->content}}@else{{old('content')}}@endif</textarea>
                                                         </div>
                                                     </div>
                                                 </div>

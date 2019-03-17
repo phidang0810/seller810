@@ -33,7 +33,7 @@
       <div class="col-md-6" id="product-info">
         <h3 class="name">{{$product->name}}</h3>
         @if(Auth::check())<h5 class="price">{{$product->sell_price}}</h5>@endif
-        <p class="description">{{$product->description}}</p>
+        <p class="description">{!!html_entity_decode($product->description)!!}</p>
         <div class="row" id="colors">
           <div class="col-3">
             <span class="attr-title">Màu</span>
@@ -96,7 +96,7 @@
         <h6 class="section-title">Mô tả</h6>
         <hr>
         <div class="content">
-          {{html_entity_decode($product->content)}}
+          {!!html_entity_decode($product->content)!!}
         </div>
       </div>
     </div>
@@ -108,7 +108,7 @@
         <div class="row" id="products-list">
           @foreach($product->relatedProducts as $relatedProduct)
           <div class="col-md-3 col-sm-4 col-xs-6 product product-grid">    
-            <a href="{{ route('frontend.products.view', ['id' => $relatedProduct->id]) }}">  
+            <a href="{{ route('frontend.products.view', ['slug' => $relatedProduct->slug]) }}">  
               <img src="{{asset('storage/' . $relatedProduct->photo)}}" alt="" class="img-fluid">   
               <h6 class="product-name">{{$relatedProduct->name}}</h6>
               @if(Auth::check())<h6 class="product-price">{{$relatedProduct->sell_price}}</h6>@endif
