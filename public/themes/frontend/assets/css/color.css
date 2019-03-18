@@ -151,10 +151,36 @@ div#product-content .content {
 #related-product h5.title {
     color: #464646;
 }
-/* BEGIN: Product Detail; */
+/* END: Product Detail; */
 
+/* BEGIN: Cart Detail; */
 .btn-custom-order {
     color: #FFFFFF;
     background-color: #DF296A;
     border-color: #e01f62;
 }
+/* END: Cart Detial; */
+
+/* BEGIN: Payment Detail; */
+h3.title-page {
+    color: #DF296A;
+}
+
+.btn-custom-discount-cart {
+    color: #FFFFFF;
+    background-color: #DF296A;
+    border-color: #e01f62;
+}
+
+.btn-custom-payment {
+    color: #FFFFFF;
+    background-color: #DF296A;
+    border-color: #e01f62;
+}
+
+.btn-custom-continue-shopping {
+    color: #FFFFFF;
+    background-color: #DF296A;
+    border-color: #e01f62;
+}
+/* END: Payment Detail; */

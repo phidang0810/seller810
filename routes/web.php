@@ -27,8 +27,10 @@ Auth::routes();
 
 Route::get ('/san-pham', 'Frontend\ProductController@index')->name('frontend.products.index');
 Route::get ('/san-pham/{slug}', 'Frontend\ProductController@view')->name('frontend.products.view');
-Route::get ('/san-pham/so-luong', 'Frontend\ProductController@getMaxQuantity')->name('frontend.products.getMaxQuantity');
+Route::get ('/san-pham/chi-tiet/so-luong', 'Frontend\ProductController@getMaxQuantity')->name('frontend.products.getMaxQuantity');
 Route::post ('/gio-hang/them', 'Frontend\CartController@addDetail')->name('frontend.carts.addDetail');
 Route::get ('/gio-hang/so-luong', 'Frontend\CartController@getNumberDetails')->name('frontend.carts.getNumberDetails');
 Route::get ('/gio-hang', 'Frontend\CartController@index')->name('frontend.carts.index');
-Route::get ('/dat-hang', 'Frontend\CartController@order')->name('frontend.carts.order');
+Route::get ('/thanh-toan', 'Frontend\CartController@payment')->name('frontend.carts.payment');
+Route::post ('/thanh-toan', 'Frontend\CartController@storePayment')->name('frontend.carts.storePayment');
+Route::get ('/thanh-toan/{cart_code}', 'Frontend\CartController@paymentBank')->name('frontend.carts.paymentBank');

@@ -34,4 +34,14 @@ class Customer extends BaseModel
 
         return $this->hasMany('App\Models\Cart');
     }
+
+    /**
+     * A customer can have many express.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function expresses() {
+
+        return $this->hasMany('App\Models\CustomerExpress');
+    }
 }

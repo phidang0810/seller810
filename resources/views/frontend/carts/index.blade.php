@@ -43,7 +43,7 @@
 			</div>
 			<div class="row" id="submit-cart">
 				<div class="col-12">
-					<a href="{{route('frontend.carts.order')}}" class="btn btn-custom-order">Tiến hành đặt hàng</a>
+					<a href="{{route('frontend.carts.payment')}}" class="btn btn-custom-order">Tiến hành đặt hàng</a>
 				</div>
 			</div>
 		</div>

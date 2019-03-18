@@ -153,3 +153,17 @@ define('CHINH_SACH_GIAO_HANG', 7);
 define('FAQ', 8);
 define('POST_CATEGORY_TIN_TUC', 1);
 define('POST_PRIVATE', [1,2,3,4,5,6,7,8]);
+
+define('PAYMENT_METHOD_BANK', 1);
+define('PAYMENT_METHOD_COD', 2);
+define('PAYMENT_METHOD_TEXT', [
+    1   =>  'Chuyển khoản',
+    2   =>  'COD'
+]);
+
+define('TRANSPORT_METHOD_POST_OFFICE', 1);
+define('TRANSPORT_METHOD_TRUNK', 2);
+define('TRANSPORT_METHOD_TEXT', [
+    1   =>  'Bưu điện',
+    2   =>  'Chành xe'
+]);

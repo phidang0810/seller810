@@ -34,4 +34,35 @@ class CartController extends BaseController
         return response()->json($cart->getNumberDetails($request));
     }
 
+    public function payment(CartRepository $cart) {
+        if ($this->_request->ajax()){
+            if (isset($this->_request['type'])) {
+                if ($this->_request['type'] == "get_customer") {
+                    return response()->json($cart->getCustomerInfo($this->_request));
+                }
+            }
+            return response()->json($cart->getCustomerInCartCart($this->_request));
+        }
+
+        $this->_data['title'] = 'Thanh toán';
+        $this->_pushBreadCrumbs($this->_data['title']);
+
+        $this->_data['city_options'] = $cart->getCityOptions();
+
+        return view('frontend.payments.index', $this->_data);
+    }
+
+    public function storePayment(CartRepository $cart) {
+        return response()->json($cart->paymentCart($this->_request));
+    }
+
+    public function paymentBank($cart_code, CartRepository $cart) {
+        $this->_data['title'] = 'Thanh toán';
+        $this->_pushBreadCrumbs($this->_data['title']);
+
+        $this->_data['cart_code'] = $cart_code;
+
+        return view('frontend.payments.complete', $this->_data);
+    }
+
 }

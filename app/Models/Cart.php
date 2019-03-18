@@ -30,7 +30,12 @@ class Cart extends BaseModel
         'vat_percent',
         'vat_amount',
         'status',
-        'active'
+        'active',
+        'payment_method',
+        'transport_method',
+        'transport_info_name',
+        'transport_info_phone',
+        'customer_express_id'
     ];
 
     /**
