@@ -200,7 +200,7 @@ Class CartRepository
                 $customer->default_payment = true;
             }
         }
-        
+
         $return['customer'] = $customer;
 
         return $return;
@@ -415,41 +415,41 @@ Class CartRepository
     $cart->transport_info_phone = $transport_info_phone;
 
     // create db transaction and update cart, product, product_warehouse, product_detail
-    // DB::transaction(function () use ($cart) {
-    //     $cart->quantity = 0;
-    //     $cart->total_price = 0;
-    //     $cart->total_import_price = 0;
-    //     foreach ($cart->details as $cart_detail) {
-    //         $product = Product::find($cart_detail->product_id);
-    //         $productDetail = ProductDetail::find($cart_detail->product_detail_id);
-    //         $warehouseProduct = WarehouseProduct::find($cart_detail->warehouse_product_id);
+    DB::transaction(function () use ($cart) {
+        $cart->quantity = 0;
+        $cart->total_price = 0;
+        $cart->total_import_price = 0;
+        foreach ($cart->details as $cart_detail) {
+            $product = Product::find($cart_detail->product_id);
+            $productDetail = ProductDetail::find($cart_detail->product_detail_id);
+            $warehouseProduct = WarehouseProduct::find($cart_detail->warehouse_product_id);
 
-    //         // minus quantity_avaiable in product, product detail, warehouse detail
-    //         $product->quantity_available -= $cart_detail->quantity;
-    //         $product->save();
+            // minus quantity_avaiable in product, product detail, warehouse detail
+            $product->quantity_available -= $cart_detail->quantity;
+            $product->save();
 
-    //         $productDetail->quantity_available -= $cart_detail->quantity;
-    //         $productDetail->save();
+            $productDetail->quantity_available -= $cart_detail->quantity;
+            $productDetail->save();
 
-    //         $warehouseProduct->quantity_available -= $cart_detail->quantity;
-    //         $warehouseProduct->save();
+            $warehouseProduct->quantity_available -= $cart_detail->quantity;
+            $warehouseProduct->save();
 
-    //         $cart_detail->total_price = $cart_detail->price * $cart_detail->quantity;
-    //         $cart_detail->save();
+            $cart_detail->total_price = $cart_detail->price * $cart_detail->quantity;
+            $cart_detail->save();
 
-    //         $cart->quantity += $cart_detail->quantity;
-    //         $cart->total_price += $cart_detail->total_price;
-    //         $cart->total_import_price += $cart_detail->import_price * $cart_detail->quantity;
-    //     }
+            $cart->quantity += $cart_detail->quantity;
+            $cart->total_price += $cart_detail->total_price;
+            $cart->total_import_price += $cart_detail->import_price * $cart_detail->quantity;
+        }
 
-    //     $cart->total_discount_amount = ($cart->quantity*$cart->partner_discount_amount) + $cart->customer_discount_amount;
-    //     $cart->vat_amount = $cart->total_price*$cart->vat_percent;
-    //     $cart->price = $cart->total_price+$cart->vat_amount-$cart->total_discount_amount;
+        $cart->total_discount_amount = ($cart->quantity*$cart->partner_discount_amount) + $cart->customer_discount_amount;
+        $cart->vat_amount = $cart->total_price*$cart->vat_percent;
+        $cart->price = $cart->total_price+$cart->vat_amount-$cart->total_discount_amount;
 
-    //     $cart->status = CART_NEW;
+        $cart->status = CART_NEW;
 
-    //     $cart->save();
-    // });
+        $cart->save();
+    });
 
         // send response
     if ($cart->payment_method == PAYMENT_METHOD_BANK) {
@@ -457,5 +457,14 @@ Class CartRepository
     }
 
     return $return;
+}
+
+function getPaymentMethodByCartCode($cart_code) {
+    $cart = Cart::where('code', $cart_code)->first();
+    if (!$cart) {
+        return false;
+    }
+
+    return $cart->payment_method;
 }
 }

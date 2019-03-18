@@ -32,6 +32,7 @@
 			<p>Bạn vui lòng chuyển khoản theo cú pháp <span class="forced">[Mã đơn hàng - Số điện thoại]</span></p>
 		</div>
 	</div>
+	@if($payment_method == 1)
 	<div class="row">
 		<div class="col text-center">
 			<div class="bank-info">
@@ -42,6 +43,7 @@
 			</div>
 		</div>
 	</div>
+	@endif
 	<div class="row">
 		<div class="col text-center continue-shopping">
 			<a href="{{route('frontend.products.index')}}" class="btn btn-custom-continue-shopping">Tiếp tục mua hàng</a>

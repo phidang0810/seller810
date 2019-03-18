@@ -635,6 +635,11 @@ Class PaymentRepository
         $model->status = $data->status; 
         $model->code = $data->code; 
         $model->platform_id = $data->platform_id; 
+        $model->payment_method = $data->payment_method; 
+        $model->transport_method = $data->transport_method; 
+        $model->transport_info_name = $data->transport_info_name; 
+        $model->transport_info_phone = $data->transport_info_phone; 
+        $model->customer_express_id = $data->customer_express_id; 
 
         $model->save();
 

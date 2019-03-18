@@ -61,6 +61,7 @@ class CartController extends BaseController
         $this->_pushBreadCrumbs($this->_data['title']);
 
         $this->_data['cart_code'] = $cart_code;
+        $this->_data['payment_method'] = $cart->getPaymentMethodByCartCode($cart_code);
 
         return view('frontend.payments.complete', $this->_data);
     }

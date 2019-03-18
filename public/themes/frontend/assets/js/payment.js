@@ -129,6 +129,7 @@ function showHideSections() {
 }
 
 function storePayment() {
+	$('#loading-indicator').show();
 	var data = {
 		user_id: user_id,
 		cart_id: cart_id,
@@ -151,7 +152,9 @@ function storePayment() {
 		dataType:'json',
 		success: function(response) {
 			if (response.redirect_to) {
-				window.location.href = response.redirect_to;
+				setTimeout(function(){ 
+					window.location.href = response.redirect_to;
+				}, 1000);
 			}
 		}
 	});
