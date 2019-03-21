@@ -691,9 +691,9 @@ span.select2.select2-container.select2-container--default {
                                                             value="@if(isset($data->quantity)){{$data->quantity}}@else{{old('quantity')}}@endif"/>
                                                         </div>
                                                         
-                                                        <label class="col-md-2 control-label">Số lượng bán ít nhất</label>
+                                                        <label class="col-md-2 control-label">Số lượng bán ít nhất (<span class="text-danger">*</span>)</label>
                                                         <div class="col-md-3">
-                                                            <input type="text" name="min_quantity_sell" placeholder="" class="form-control required m-b input-sell-price" value="@if(isset($data->min_quantity_sell)){{$data->min_quantity_sell}}@else{{old('min_quantity_sell')}}@endif"/>
+                                                            <input type="text" name="min_quantity_sell" placeholder="" class="form-control required m-b input-sell-price" value="@if(isset($data->min_quantity_sell)){{$data->min_quantity_sell}}@else{{1}}@endif"/>
                                                         </div>
                                                     </div>
                                                 </div>
