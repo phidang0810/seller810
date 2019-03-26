@@ -130,7 +130,7 @@ Class ProductRepository
 		return $product_details;
 	}
 
-	public function getProductsByFilters($request) {
+	public function getProductsByFilters($request, $category = null) {
 	// Filter with search string
 		$data = Product::where('products.name', 'like', '%' . $request->get('search_string') . '%');
 

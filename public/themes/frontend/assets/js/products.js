@@ -1,5 +1,6 @@
 // Define vars
-var urlAjaxGetProducts = getDomain() + '/san-pham';
+// var urlAjaxGetProducts = getDomain() + '/san-pham';
+var urlAjaxGetProducts = getCurrentUrl();
 var productsList;
 var display_type = 'grid';
 var color;
@@ -11,11 +12,6 @@ $.ajaxSetup({
 
 $(document).ready(function(){
 	getProducts();	
-});
-
-// When radio change
-$('input[type=radio][name=categoryRadio]').change(function() {
-	getProducts();
 });
 
 $('input[type=radio][name=sizeRadio]').change(function() {
@@ -53,13 +49,13 @@ function getProducts (page = 1) {
 	var data = {
 		page: page,
 		search_string: $("#search-string").val(),
-		category: $('input[type=radio][name=categoryRadio]:checked').val(),
+		category: category,
 		size: $('input[type=radio][name=sizeRadio]:checked').val(),
 		color: color,
 		price: $('input[type=radio][name=productPriceRadio]:checked').val(),
 		sort: $('select#select-sorting').val()
 	};
-	
+
 	$.ajax({
 		url: urlAjaxGetProducts,
 		type: 'GET',
@@ -81,7 +77,7 @@ function getProducts (page = 1) {
 function updatePageState(data) {
 	var params = "";
 	$.each(data, function (key, value) {
-		if (value != null && value != "") {
+		if (value != null && value != "" && key != 'category') {
 			if (params == "") {
 				params += key + "=" + value;
 			}else{
@@ -114,7 +110,7 @@ function printProducts(data) {
 function generateGridProduct(product) {
 	var html = '<div class="col-md-4 col-sm-6 product product-grid">\
 	<a href="/san-pham/' + product.slug + '">\
-	<img src="storage/' + product.thumb + '" alt="" class="img-fluid">\
+	<img src="/storage/' + product.thumb + '" alt="" class="img-fluid">\
 	<h6 class="product-name">' + product.name + '</h6>';
 	if (auth == 1) {
 		html += '<h6 class="product-price">' + product.sell_price + '</h6>';
@@ -129,7 +125,7 @@ function generateListProduct(product) {
 	var html = '<div class="col-md-12 product product-list">\
 	<div class="row">\
 	<div class="col-md-3 col-sm-6 text-center">\
-	<a href="/san-pham/' + product.slug + '"><img src="storage/' + product.thumb + '" alt="" class="img-fluid"></a>\
+	<a href="/san-pham/' + product.slug + '"><img src="/storage/' + product.thumb + '" alt="" class="img-fluid"></a>\
 	</div>\
 	<div class="col-md-9 col-sm-6 contents">\
 	<h6 class="product-name">' + product.name + '</h6>';

@@ -213,6 +213,19 @@ div#pagination {
 #color-filters .active span i {
 	display: block;
 }
+
+ul.category-list {
+    padding-left: 20px;
+}
+
+ul.category-list span {
+    color: #333;
+    font-weight: 600;
+}
+
+ul.category-list li ul.child-list {
+    padding-left: 20px;
+}
 /* END: Filters & Products; */
 
 /* BEGIN: Footer; */
