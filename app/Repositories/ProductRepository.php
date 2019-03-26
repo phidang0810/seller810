@@ -172,9 +172,9 @@ public function createOrUpdate($data, $id = null)
 			Storage::delete($model->photo);
 		}
 
-        if ($model->thumb) {
-            Storage::delete($model->thumb);
-        }
+		if ($model->thumb) {
+			Storage::delete($model->thumb);
+		}
 		$upload = new Photo($data['photo']);
 		$model->photo = $upload->uploadTo('products');
 		$model->thumb = $upload->resizeTo(300);
@@ -360,6 +360,10 @@ public function addPhotos($id, $files = null, $photos){
 					if ($modelPhoto->origin) {
 						Storage::delete($modelPhoto->origin);
 					}
+
+					if ($modelPhoto->thumb) {
+						Storage::delete($modelPhoto->thumb);
+					}
 		                // Storage::delete($modelPhoto->large);
 		                // Storage::delete($modelPhoto->thumb);
 					$modelPhoto->delete();
@@ -382,7 +386,7 @@ public function addPhotos($id, $files = null, $photos){
 								'order' => ($photo->order) ? $photo->order : 0,
 								'origin' => $upload->uploadTo('product_photos'),
 									// 'large' => $upload->resizeTo('product_photos', Product::LARGE_WIDTH, Product::LARGE_HEIGHT),
-									// 'thumb' => $upload->resizeTo('product_photos', Product::THUMB_WIDTH, Product::THUMB_HEIGHT)
+								'thumb' => $upload->resizeTo(300)
 							]);
 							$model->photos()->save($modelPhoto);
 						}

@@ -150,7 +150,7 @@ Class ColorRepository
 	}
 
     public function getColors() {
-        $colors = Color::select(['colors.id', 'colors.name'])->get();
+        $colors = Color::select(['colors.id', 'colors.name', 'colors.code'])->get();
         return $colors;
     }
 }

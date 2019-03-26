@@ -2,6 +2,7 @@
 var urlAjaxGetProducts = getDomain() + '/san-pham';
 var productsList;
 var display_type = 'grid';
+var color;
 $.ajaxSetup({
 	headers: {
 		'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -9,7 +10,7 @@ $.ajaxSetup({
 });
 
 $(document).ready(function(){
-	getProducts();
+	getProducts();	
 });
 
 // When radio change
@@ -21,7 +22,15 @@ $('input[type=radio][name=sizeRadio]').change(function() {
 	getProducts();
 });
 
-$('input[type=radio][name=colorRadio]').change(function() {
+$('.color-choice').click(function() {
+	if($(this).hasClass('active')) {
+		$(this).removeClass('active');
+		color = null;
+	}else{
+		$('.color-choice').removeClass('active');
+		color = $(this).attr('data-id');
+		$(this).addClass('active');
+	}
 	getProducts();
 });
 
@@ -46,10 +55,11 @@ function getProducts (page = 1) {
 		search_string: $("#search-string").val(),
 		category: $('input[type=radio][name=categoryRadio]:checked').val(),
 		size: $('input[type=radio][name=sizeRadio]:checked').val(),
-		color: $('input[type=radio][name=colorRadio]:checked').val(),
+		color: color,
 		price: $('input[type=radio][name=productPriceRadio]:checked').val(),
 		sort: $('select#select-sorting').val()
 	};
+	
 	$.ajax({
 		url: urlAjaxGetProducts,
 		type: 'GET',
@@ -104,7 +114,7 @@ function printProducts(data) {
 function generateGridProduct(product) {
 	var html = '<div class="col-md-4 col-sm-6 product product-grid">\
 	<a href="/san-pham/' + product.slug + '">\
-	<img src="storage/' + product.photo + '" alt="" class="img-fluid">\
+	<img src="storage/' + product.thumb + '" alt="" class="img-fluid">\
 	<h6 class="product-name">' + product.name + '</h6>';
 	if (auth == 1) {
 		html += '<h6 class="product-price">' + product.sell_price + '</h6>';
@@ -119,7 +129,7 @@ function generateListProduct(product) {
 	var html = '<div class="col-md-12 product product-list">\
 	<div class="row">\
 	<div class="col-md-3 col-sm-6 text-center">\
-	<a href="/san-pham/' + product.slug + '"><img src="storage/' + product.photo + '" alt="" class="img-fluid"></a>\
+	<a href="/san-pham/' + product.slug + '"><img src="storage/' + product.thumb + '" alt="" class="img-fluid"></a>\
 	</div>\
 	<div class="col-md-9 col-sm-6 contents">\
 	<h6 class="product-name">' + product.name + '</h6>';

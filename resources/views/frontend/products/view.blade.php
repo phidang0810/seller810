@@ -24,8 +24,9 @@
       <div class="col-md-6" id="product-images">
         <div class="slide-cont">
           <div class="owl-carousel">
+            <div><img src="{{asset('storage/' . $product->thumb)}}"></div>
             @foreach($product->photos as $photo)
-            <div><img src="{{asset('storage/' . $photo->origin)}}"></div>
+            <div><img src="{{asset('storage/' . $photo->thumb)}}"></div>
             @endforeach
           </div>
         </div>
@@ -40,7 +41,7 @@
           </div>
           <div class="col-9">
             @foreach($product->colorObjects as $color)
-            <a href="javascript:;" id="color-{{$color->id}}" title="{{$color->name}}" onclick="selectColor({{$color->id}})"><i class="fas fa-circle" style="color: {{$color->code}}"></i></a>
+            <a href="javascript:;" title="{{$color->name}}" class="color-choice" data-id="{{$color->id}}"><i class="fas fa-circle" style="color: {{$color->code}}"></i><span><i class="fas fa-check"></i></span></a>
             @endforeach
           </div>
         </div>
@@ -50,7 +51,7 @@
           </div>
           <div class="col-9">
             @foreach($product->sizeObjects as $size)
-            <a href="javascript:;" id="size-{{$size->id}}" title="{{$size->name}}" onclick="selectSize({{$size->id}})">{{$size->name}}</a>
+            <a href="javascript:;" title="{{$size->name}}" class="size-choice" data-id="{{$size->id}}">{{$size->name}}<span><i class="fas fa-check"></i></span></a>
             @endforeach
           </div>
         </div>
