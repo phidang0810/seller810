@@ -52,6 +52,12 @@ class LoginController extends Controller
                 $this->username() => $message,
             ]);
         }
+
+        if ($request->has('redirectTo')) {
+            return redirect()->to($request->get('redirectTo'));
+        }
+
+        return redirect($this->redirectTo);
     }
 
     /**
@@ -68,19 +74,5 @@ class LoginController extends Controller
     {
         $this->performLogout($request);
         return redirect()->route('login');
-    }
-
-    public function login(Request $request)
-    {
-        if ($request->get('redirectTo')) {
-            $to = $request->get('redirectTo');
-            unset($request['redirectTo']);
-        }else{
-            $to = $this->redirectTo;
-        }
-
-        $this->performLogin($request);
-        
-        return redirect()->to($to);
     }
 }

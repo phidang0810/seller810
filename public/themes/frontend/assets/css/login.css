@@ -1,0 +1,95 @@
+#login-page {
+    background: url(../images/bg-login.png);
+    padding:80px 0;
+    font-size: 14px;
+    color:#ccc
+}
+.error {
+    color:red
+}
+.wrap-login {
+    background-color: #fff;
+    padding:20px 60px;
+}
+.wrap-login h1 {
+    font-style: normal;
+    font-weight: bold;
+    font-size: 20px;
+    line-height: normal;
+    text-transform: uppercase;
+    color: #DF296A;
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+.wrap-login input {
+    border: none;
+    border-bottom: 1px solid #ccc;
+    border-radius: 0;
+    font-size: 14px;
+}
+.wrap-login input:focus {
+    box-shadow: none;
+}
+.wrap-login button {
+    width:100%;
+    border-radius: 2px;
+}
+.wrap-login .line {
+    display: block;
+    width: 40px;
+    height: 1px;
+    background: #ccc;
+    margin-right: 10px;
+}
+.bt-login {
+    background-color: #71C4BD;
+    margin:10px 0;
+    color:#fff !important;
+}
+.bt-gg {
+    border:1px solid #ccc;
+    background: url(../images/icon-gg.png) no-repeat center;
+    text-align: center;
+    width:125px;
+    height: 38px;
+    line-height: 38px;
+    display: block;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+}
+
+.bt-fb {
+    border:1px solid #ccc;
+    background: url(../images/icon-fb.png) no-repeat center;
+    text-align: center;
+    width:125px;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+    height: 38px;
+    line-height: 38px;
+    display: block;
+}
+
+
+.bt-register {
+    background: #DF296A;
+    color:#fff !important;
+    text-align: center;
+    width:100%;
+    display: block;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+}
+
+.login-social {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.col-right {
+    background: url(../images/bg-login2.png) center right;
+}

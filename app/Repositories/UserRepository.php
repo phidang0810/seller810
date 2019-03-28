@@ -10,6 +10,7 @@ namespace App\Repositories;
 
 
 use App\Libraries\Photo;
+use App\Models\Customer;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -181,5 +182,48 @@ class UserRepository
         }
 
         return Response::json($return);
+    }
+
+    public function createCustomer($data)
+    {
+        $model = new User;
+        $model->email = $data['email'];
+        $model->role_id = 2; // customer
+        $model->active = true;
+        $model->password = Hash::make($data['password']);
+        $model->full_name = $data['name'];
+
+        if(isset($data['phone'])) {
+            $model->phone = $data['phone'];
+        }
+
+        if(isset($data['address'])) {
+            $model->address = $data['address'];
+        }
+
+        $model->save();
+
+
+        // create customer
+        $customer = new Customer;
+        $customer->name = $data['name'];
+        $customer->email = $data['email'];
+        $customer->user_id = $model->id;
+        $customer->active = true;
+        $customer->group_customer_id = 1;
+
+        if(isset($data['phone'])) {
+            $customer->phone = $data['phone'];
+        }
+
+        if(isset($data['address'])) {
+            $customer->address = $data['address'];
+        }
+
+        $customer->save();
+        $customer->code = general_code($data['name'], $customer->id, 5);
+        $customer->save();
+
+        return $model;
     }
 }
