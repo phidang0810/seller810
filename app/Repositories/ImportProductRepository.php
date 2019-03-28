@@ -229,8 +229,14 @@ Class ImportProductRepository
 			if ($model->photo) {
 				Storage::delete($model->photo);
 			}
+
+			if ($model->thumb) {
+				Storage::delete($model->thumb);
+			}
+
 			$upload = new Photo($data['photo']);
 			$model->photo = $upload->uploadTo('products');
+			$model->thumb = $upload->resizeTo(300);
 		}
 
 		$model->slug = str_slug($model->name, '-');
@@ -590,6 +596,9 @@ Class ImportProductRepository
 		$model->sell_price = $importProduct->sell_price;
 		if (isset($importProduct->photo) && $importProduct->photo != "") {
 			$model->photo = $importProduct->photo;
+		}
+		if (isset($importProduct->thumb) && $importProduct->thumb != "") {
+			$model->thumb = $importProduct->thumb;
 		}
 		$model->description = $importProduct->description;
 		$model->content = $importProduct->content;

@@ -13,6 +13,10 @@ function getDomain () {
 	return location.protocol + "//" + location.host;
 }
 
+function getCurrentUrl () {
+	return location.origin + location.pathname;
+}
+
 function getCartDetailsNumber () {
 	var data = {
 		user_id: user_id

@@ -98,6 +98,10 @@ div#top-content-actions {
     background-color: #E3447C;
     border-color: #E3447C;
 }
+
+ul.category-list a:hover {
+    color: #E3447C;
+}
 /* END: Filters & Products; */
 
 /* BEGIN: Footer; */
@@ -125,12 +129,6 @@ div#contact-wrapper {
 }
 
 .btn-custom-add-to-cart {
-	color: #FFFFFF;
-    background-color: #DF296A;
-    border-color: #e01f62;
-}
-
-#sizes a.active {
 	color: #FFFFFF;
     background-color: #DF296A;
     border-color: #e01f62;

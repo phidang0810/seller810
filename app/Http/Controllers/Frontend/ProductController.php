@@ -56,4 +56,25 @@ class ProductController extends BaseController
         return response()->json($result);
     }
 
+    /**
+     * Show the category detail page.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function category($slug, ProductRepository $product, CategoryRepository $category, SizeRepository $size, ColorRepository $color){
+        if ($this->_request->ajax()){
+            return $product->getProductsByFilters($this->_request);
+        }
+
+        $cat = $category->getCategoryBySlug($slug);
+        $this->_data['category'] = $cat; 
+        $this->_data['title'] = 'Danh sách sản phẩm';
+        $this->_data['categories'] = $category->getCategories($cat->id);
+        $this->_data['sizes'] = $size->getSizes();
+        $this->_data['colors'] = $color->getColors();
+        $this->_data['product_prices'] = $product->getProductPriceRanges();
+
+        return view('frontend.products.index', $this->_data);
+    }
+
 }

@@ -12,7 +12,7 @@ span.select2.select2-container.select2-container--default {
 
 @section('js')
 <!-- Page-Level Scripts -->
-    <script src="{{asset('fck/ckeditor/ckeditor.js')}}"></script>
+<script src="{{asset('fck/ckeditor/ckeditor.js')}}"></script>
 <script>
 
     $.ajaxSetup({
@@ -209,18 +209,18 @@ span.select2.select2-container.select2-container--default {
 
     // When "Lưu", "Lưu và thoát" on form are clicked -> Update data for array photos
     // When "Lưu", "Lưu và thoát" on form are clicked -> Update data for array details
-    var submited = false;
     $( "#mainForm" ).submit(function( event ) {
-        if(submited == false) {
-            updatePhotosData();
-            var boolValidateDetails = updateDetailsData();
-            if (boolValidateDetails == false) {
-                event.preventDefault();
-            }
-            submited = true;
-        }else{
+        updatePhotosData();
+        var boolValidateDetails = updateDetailsData();
+        if (boolValidateDetails == false) {
             event.preventDefault();
+        }else{
+            $('#mainForm button[type="submit"]').prop('disabled', true);
+            setTimeout(function(){
+                $('#mainForm button[type="submit"]').prop('disabled', false);
+            }, 1000);
         }
+
     });
 
     // Function update details data
@@ -413,17 +413,17 @@ span.select2.select2-container.select2-container--default {
             CKEDITOR.replace('editor-content', {
                 allowedContent: true,
                 toolbar: [
-                    {
-                        name: 'styles',
-                        items: ['Styles', 'Format', 'Font', 'FontSize', 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo']
-                    },
-                    { name: 'basicstyles', items : [ 'Bold','Italic','Underline','Strike','Subscript','Superscript','-','RemoveFormat' ] },
-                    {name: 'colors', items: ['TextColor', 'BGColor']},
-                    {
-                        name: 'paragraph',
-                        groups: ['list', 'indent', 'blocks', 'align', 'bidi'],
-                        items: ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', '-', 'Image', 'Flash', 'Table', 'Source']
-                    },
+                {
+                    name: 'styles',
+                    items: ['Styles', 'Format', 'Font', 'FontSize', 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo']
+                },
+                { name: 'basicstyles', items : [ 'Bold','Italic','Underline','Strike','Subscript','Superscript','-','RemoveFormat' ] },
+                {name: 'colors', items: ['TextColor', 'BGColor']},
+                {
+                    name: 'paragraph',
+                    groups: ['list', 'indent', 'blocks', 'align', 'bidi'],
+                    items: ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', '-', 'Image', 'Flash', 'Table', 'Source']
+                },
 
                 ]
             });
@@ -433,17 +433,17 @@ span.select2.select2-container.select2-container--default {
             CKEDITOR.replace('editor-desc', {
                 allowedContent: true,
                 toolbar: [
-                    {
-                        name: 'styles',
-                        items: ['Styles', 'Format', 'Font', 'FontSize', 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo']
-                    },
-                    { name: 'basicstyles', items : [ 'Bold','Italic','Underline','Strike','Subscript','Superscript','-','RemoveFormat' ] },
-                    {name: 'colors', items: ['TextColor', 'BGColor']},
-                    {
-                        name: 'paragraph',
-                        groups: ['list', 'indent', 'blocks', 'align', 'bidi'],
-                        items: ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', '-', 'Image', 'Flash', 'Table', 'Source']
-                    },
+                {
+                    name: 'styles',
+                    items: ['Styles', 'Format', 'Font', 'FontSize', 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo']
+                },
+                { name: 'basicstyles', items : [ 'Bold','Italic','Underline','Strike','Subscript','Superscript','-','RemoveFormat' ] },
+                {name: 'colors', items: ['TextColor', 'BGColor']},
+                {
+                    name: 'paragraph',
+                    groups: ['list', 'indent', 'blocks', 'align', 'bidi'],
+                    items: ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', '-', 'Image', 'Flash', 'Table', 'Source']
+                },
 
                 ]
             });
@@ -502,18 +502,21 @@ span.select2.select2-container.select2-container--default {
         synchronize_child_and_parent_category($);
 
         $('button[value="save"]').click(function(event){
+            $('input[name=action]').val($('button[value="save"]').val());
             if (!validateImportProductDetailEmpty() || !validateImportProductDetail()) {
                 return false;
             }
         });
 
         $('button[value="save_quit"]').click(function(event){
+            $('input[name=action]').val($('button[value="save_quit"]').val());
             if (!validateImportProductDetailEmpty() || !validateImportProductDetail()) {
                 return false;
             }
         });
 
         $('button[value="save_complete"]').click(function(event){
+            $('input[name=action]').val($('button[value="save_complete"]').val());
             if (!validateImportProductDetailEmpty() || !validateImportProductDetail()) {
                 return false;
             }
@@ -850,6 +853,7 @@ span.select2.select2-container.select2-container--default {
                 <div class="row">
                     <div class="col-md-12">
                         <div class="text-right">
+                            <input type="hidden" name="action" value="">
                             <a href="{{route('admin.import_products.index')}}" class="btn btn-default"><i class="fa fa-arrow-circle-o-left"></i> Trở lại</a>
                             <button type="button" class="btn btn-default" id="bt-reset"><i class="fa fa-refresh"></i>
                                 Làm mới
