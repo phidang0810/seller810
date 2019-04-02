@@ -561,6 +561,22 @@
                                                     </div>
                                                 </div>
 
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <label class="col-md-3 control-label">Tin nóng</label>
+                                                        <div class="col-md-3">
+                                                            <select class="form-control m-b" name="active">
+                                                                <option @if(isset($data->is_hot) && $data->is_hot === ACTIVE || old('is_hot') === ACTIVE) selected
+                                                                    @endif value="{{ACTIVE}}">Đã kích hoạt
+                                                                </option>
+                                                                <option @if(isset($data->is_hot) && $data->is_hot === INACTIVE || old('is_hot') === INACTIVE) selected
+                                                                    @endif value="{{INACTIVE}}">Chưa kích hoạt
+                                                                </option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
                                                 @if(isset($detailsByWarehouses))
                                                 <div class="tabs-container m-b">
                                                     <ul class="nav nav-tabs">

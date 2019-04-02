@@ -79,11 +79,16 @@ Class ProductRepository
 
 		$data->category = $this->lowestLevelCategory($data->id);
 		$data->relatedProducts = $this->getRelatedProducts($data->category->id);
+		$data->hotProducts = $this->getHotProducts();
 
 		return $data;
 	}
 
-	public function getRelatedProducts ($category_id, $limit = 4) {
+	public function getHotProducts ($limit = 4) {
+		return Product::having('is_hot', ACTIVE)->limit($limit)->get();
+	}
+
+	public function getRelatedProducts ($category_id, $limit = 3) {
 		return Product::having('category_ids', 'like',  "%$category_id%")->limit($limit)->get();
 	}
 
