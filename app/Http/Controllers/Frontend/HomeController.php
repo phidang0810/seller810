@@ -18,19 +18,16 @@ class HomeController extends BaseController
         $this->_pushBreadCrumbs('Danh Sách sản phẩm', route('frontend.products.index'));
     }
 
-    public function index(ProductRepository $product, CategoryRepository $category, SizeRepository $size, ColorRepository $color){
-        if ($this->_request->ajax()){
-            return $product->getProductsByFilters($this->_request);
-        }
-        
+    public function index(ProductRepository $product, CategoryRepository $category){
+
         $this->_data['title'] = 'Danh sách sản phẩm';
+
         $this->_data['categories'] = $category->getListCategories([
             'is_home' => 1
         ]);
 
-        $this->_data['product_prices'] = $product->getProductPriceRanges();
 
-        return view('frontend.products.index', $this->_data);
+        return view('frontend.home', $this->_data);
     }
 
 }

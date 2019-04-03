@@ -101,6 +101,16 @@ class UserRepository
         return $data;
     }
 
+    public function checkAccountExist($user, $social)
+    {
+        $model =  SocialUser::where('social_alias', $social);
+        if($user->getEmail()) {
+            $model->where('email', $user->getEmail());
+        }
+
+        return $model->first();
+    }
+
     public function createOrUpdate($data, $id = null)
     {
         if ($id) {
@@ -121,6 +131,26 @@ class UserRepository
             $upload = new Photo($data['avatar']);
             $model->avatar = $upload->uploadTo('users');
         }
+        $model->save();
+
+        return $model;
+    }
+
+    public function createOrUpdateSocialUser($social, $user, $id = null)
+    {
+        if($id) {
+            $model = User::find($id);
+        } else {
+            $model = new User;
+        }
+
+        $model->full_name = $user->getName();
+        $model->email = $user->getEmail();
+        $model->avatar = $user->getAvatar();
+        $model->data = json_encode($user);
+
+        $model->social_alias = $social;
+
         $model->save();
 
         return $model;

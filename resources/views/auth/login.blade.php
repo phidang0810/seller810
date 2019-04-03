@@ -6,6 +6,16 @@
     <link rel="stylesheet" type="text/css" href="{{asset('themes/frontend/assets/css/login.css')}}">
 @endsection
 
+@section('js')
+    <script>
+        $('.social-login').click(function(){
+            var url = $(this).attr('href');
+            window.open(url, 'Login', 'width=400,height=400');
+            return false;
+        });
+    </script>
+@endsection
+
 @section('content')
     <section id="login-page">
         <div class="container">
@@ -56,8 +66,8 @@
                                         <span class="line"></span><span>Hoặc</span><span class="line"></span>
                                     </div>
                                     <div class="login-social">
-                                        <a href="" class="bt-gg"></a>
-                                        <a href="" class="bt-fb"></a>
+                                        <a href="/login/google" class="bt-gg"></a>
+                                        <a href="/login/facebook" class="bt-fb"></a>
                                     </div>
 
                                 </form>

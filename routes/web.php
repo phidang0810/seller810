@@ -12,9 +12,7 @@
 */
 
 
-Route::get ('/', function(){
-    die('Coming soon!');
-})->name('home');
+Route::get ('/', 'Frontend\HomeController@index')->name('home');
 
 Route::get ('/error/{code}', 'Controller@error')->name('error');
 Route::get ('/test', function(\Illuminate\Http\Request $request){
@@ -24,6 +22,13 @@ Route::get ('/test', function(\Illuminate\Http\Request $request){
     return view('auth.test');
 })->name('test');
 Auth::routes();
+
+Route::get ('redirect', function(){
+    return view('frontend.panorama.redirect');
+})->name('panorama.redirect');
+
+Route::get('/login/{social}', 'Auth\SocialLoginController@login')->name('social_login')->where('social','facebook|google');
+Route::get('/login/{social}/callback','Auth\SocialLoginController@handleProviderCallback')->name('social_callback')->where('social','twitter|facebook|linkedin|google|github|bitbucket');
 
 Route::get ('/san-pham', 'Frontend\ProductController@index')->name('frontend.products.index');
 Route::get ('/san-pham/{slug}', 'Frontend\ProductController@view')->name('frontend.products.view');
