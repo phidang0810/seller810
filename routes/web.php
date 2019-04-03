@@ -13,6 +13,8 @@
 
 
 Route::get ('/', 'Frontend\HomeController@index')->name('home');
+Route::get ('/lien-he', 'Frontend\HomeController@contact')->name('contact');
+Route::post ('/lien-he', 'Frontend\HomeController@postContact')->name('postContact');
 
 Route::get ('/error/{code}', 'Controller@error')->name('error');
 Route::get ('/test', function(\Illuminate\Http\Request $request){

@@ -43,10 +43,10 @@
 							<a class="nav-link" href="{{route('frontend.products.index')}}">Sản phẩm</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" href="#">Tin tức</a>
+							<a class="nav-link" href="/tin-tuc">Tin tức</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" href="#">Liên hệ</a>
+							<a class="nav-link" href="/lien-he">Liên hệ</a>
 						</li>
 					</ul>
 					<form class="form-inline my-2 my-lg-0" onsubmit="event.preventDefault();search_products();">

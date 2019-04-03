@@ -30,4 +30,14 @@ class HomeController extends BaseController
         return view('frontend.home', $this->_data);
     }
 
+    public function contact()
+    {
+        return view('frontend.contact', $this->_data);
+    }
+
+    public function postContact()
+    {
+
+    }
+
 }

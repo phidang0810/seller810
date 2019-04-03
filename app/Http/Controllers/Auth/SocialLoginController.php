@@ -14,10 +14,10 @@ class SocialLoginController extends Controller
      * @param $social
      * @return mixed
      */
-    public function login($url, $social)
+    public function login($social)
     {
         $redirect = config('services.'.$social . '.redirect');
-        config(['services.'.$social . '.redirect' => $redirect . '?url=' . $url]);
+        config(['services.'.$social . '.redirect' => $redirect]);
 
         $driver = Socialite::driver($social);
         if($social === 'facebook') {
