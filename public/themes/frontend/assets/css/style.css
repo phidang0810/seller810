@@ -317,9 +317,9 @@ section#main-content {
 
 #colors span i {
 	position: absolute;
-	top: -30px;
-	left: 5px;
-	font-size: 35px;
+	top: -20px;
+	left: 10px;
+	font-size: 25px;
 	color: #E3447C;
 	display: none;
 }
@@ -335,18 +335,18 @@ section#main-content {
 	border-radius: 50px;
 }
 
-#sizes span i {
+/*#sizes span i {
 	position: absolute;
 	top: -10px;
 	right: -3px;
 	font-size: 35px;
 	color: #E3447C;
 	display: none;
-}
+}*/
 
-#sizes .active span i {
+/*#sizes .active span i {
 	display: block;
-}
+}*/
 
 .quantity-section input[type="number"] {
 	-webkit-appearance: textfield;
@@ -437,13 +437,15 @@ div#related-product {
 	margin-top: 30px;
 }
 
-#related-product h5.title {
+#related-product h5.title,
+.left-related h5.title {
 	text-align: center;
 	font-style: italic;
 	font-weight: 600;
 }
 
-#related-product h5.title:after {
+#related-product h5.title:after,
+.left-related h5.title:after {
 	content: "";
 	position: absolute;
 	bottom: 0px;

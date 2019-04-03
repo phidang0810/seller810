@@ -11,6 +11,8 @@ namespace App\Repositories;
 use App\Models\Category;
 use Illuminate\Support\Facades\Cache;
 use Yajra\DataTables\Facades\DataTables;
+use App\Libraries\Photo;
+use Illuminate\Support\Facades\Storage;
 
 Class CategoryRepository
 {
@@ -88,6 +90,19 @@ Class CategoryRepository
         $model->order = $data['order'];
 
         $model->slug = str_slug($model->name, '-');
+
+        if(isset($data['photo'])) {
+            if ($model->photo) {
+                Storage::delete($model->photo);
+            }
+
+            if ($model->thumb) {
+                Storage::delete($model->thumb);
+            }
+            $upload = new Photo($data['photo']);
+            $model->photo = $upload->uploadTo('categories');
+            $model->thumb = $upload->resizeTo(300);
+        }
 
         $model->save();
 
