@@ -29,7 +29,11 @@ function getCartDetailsNumber () {
 		success: function(response) {
 			if (response.success) {
 				if (response.number >= 1) {
-					$('#cart-icon span.number').html(response.number);
+					if (response.number > 9) {
+						$('#cart-icon span.number').html('9+');
+					}else{
+						$('#cart-icon span.number').html(response.number);
+					}
 				}else{
 					$('#cart-icon span.number').html('');
 				}

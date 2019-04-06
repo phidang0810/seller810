@@ -21,7 +21,7 @@
 <section id="main-content">
   <div class="container">
     <div class="row">
-      <div class="col-9">
+      <div class="col-md-9">
         <div class="row">
           <div class="col-md-6" id="product-images">
             <div class="slide-cont">
@@ -95,7 +95,7 @@
           </div>
         </div>
       </div>
-      <div class="col-3">
+      <div class="col-md-3">
         <div class="row">
           <div class="col-12 left-related">
             <h5 class="title">Sản phẩm liên quan</h5>

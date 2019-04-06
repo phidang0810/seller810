@@ -60,10 +60,13 @@ a:hover {
 }
 
 #cart-icon span.number {
-	position: absolute;
-	top: 2px;
-	right: 7px;
-	font-size: 12px;
+	position: absolute;    
+	top: 0px;
+    right: 0px;
+    font-size: 10px;
+    line-height: 16px;
+    border-radius: 50%;
+    padding: 0px 5px;
 }
 
 /* BEGIN: Top navigation */
@@ -712,3 +715,15 @@ h6.total-price-label {
 	text-transform: uppercase;
 }
 /* END: Cart complete; */
+
+#cart-details .cart-detail {
+    margin-bottom: 15px;
+}
+
+@media (max-width: 769px) {
+	.navbar-custom .cart-wrapper {
+	    position: absolute;
+	    top: 30px;
+	    right: 90px;;
+	}
+}

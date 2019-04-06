@@ -27,6 +27,7 @@ class ProductController extends BaseController
         if ($this->_request->ajax()){
             return $product->getProductsByFilters($this->_request);
         }
+        $this->_data['show_breadcrumbs'] = true;
         
         $this->_data['title'] = 'Danh sách sản phẩm';
         $this->_data['categories'] = $category->getCategories();
@@ -46,6 +47,7 @@ class ProductController extends BaseController
         $this->_data['product'] = $product->getProductBySlug($slug);
 
         $this->_pushBreadCrumbs($this->_data['product']->name);
+        $this->_data['show_breadcrumbs'] = true;
 
         return view('frontend.products.view', $this->_data);
     }
@@ -65,6 +67,7 @@ class ProductController extends BaseController
         if ($this->_request->ajax()){
             return $product->getProductsByFilters($this->_request);
         }
+        $this->_data['show_breadcrumbs'] = true;
 
         $cat = $category->getCategoryBySlug($slug);
         $this->_data['category'] = $cat; 

@@ -37,7 +37,8 @@
 }
 
 #cart-icon span.number {
-    color: #DF296A;
+    color: #fff;
+    background: #DF296A;
 }
 
 /* BEGIN: Top navigation */
@@ -187,4 +188,12 @@ h3.title-page {
     background-color: #DF296A;
     border-color: #e01f62;
     color: #fff;
+}
+
+.payment-method:hover {
+    background: #bbb;
+}
+
+.payment-method.active {
+    background: #ccc;
 }

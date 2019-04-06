@@ -19,6 +19,7 @@ class BaseController extends Controller
     {
         $this->_data['breadcrumbs'] = [];
         $this->_request = $request;
+        $this->_data['show_breadcrumbs'] = false;
     }
 
     protected function _pushBreadCrumbs($name, $link = null)

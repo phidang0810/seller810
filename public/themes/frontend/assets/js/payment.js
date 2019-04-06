@@ -98,10 +98,14 @@ function printCartDetail(detail) {
 
 function bankPayment() {
 	payment_method = 1;
+	$('.payment-method').removeClass('active');
+	$('#payment-bank .payment-method').addClass('active');
 }
 
 function codPayment() {
 	payment_method = 2;
+	$('.payment-method').removeClass('active');
+	$('#payment-cod .payment-method').addClass('active');
 }
 
 function truckTransport() {

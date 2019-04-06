@@ -18,8 +18,12 @@ class HomeController extends BaseController
         $this->_pushBreadCrumbs('Danh Sách sản phẩm', route('frontend.products.index'));
     }
 
-    public function index(ProductRepository $product, CategoryRepository $category){
-
+    public function index(ProductRepository $product, CategoryRepository $category, SizeRepository $size, ColorRepository $color){
+        if ($this->_request->ajax()){
+            return $product->getProductsByFilters($this->_request);
+        }
+        $this->_data['show_breadcrumbs'] = true;
+        
         $this->_data['title'] = 'Danh sách sản phẩm';
 
         $this->_data['categories'] = $category->getListCategories([

@@ -1,4 +1,4 @@
-@if(isset($breadcrumbs))
+@if(isset($breadcrumbs) && $show_breadcrumbs == true)
     <ol class="breadcrumb">
         <li>
             <a href="javascript:;">Trang Chủ</a>

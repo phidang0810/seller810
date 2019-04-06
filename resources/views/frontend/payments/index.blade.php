@@ -22,7 +22,7 @@
 	</div>
 	<form action="POST" target="{{route('frontend.carts.storePayment')}}" id="form-payment">
 		<div class="row">
-			<div class="col-6">
+			<div class="col-md-6">
 				<div class="row">
 					<div class="col">
 						<h6 class="color-tink wrapper-title">Địa chỉ giao hàng</h6>
@@ -89,7 +89,7 @@
 						<h6 class="color-tink wrapper-title">Phương thức thanh toán</h6>
 					</div>
 				</div>
-				<div class="row">
+				<div class="row" id="payment-bank">
 					<div class="col">
 						<div class="payment-method">
 							<a href="javascript:;" onclick="bankPayment();">
@@ -178,7 +178,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="col-6">
+			<div class="col-md-6">
 				<div class="row cart-info">
 					<div class="col">
 						<div class="row">
