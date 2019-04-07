@@ -6,6 +6,9 @@
  *   version 2.7.1
  *
 */
+.fileinput .thumbnail>img {
+  height: auto !important;
+}
 h1,
 h2,
 h3,

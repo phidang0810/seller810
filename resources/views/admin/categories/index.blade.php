@@ -103,6 +103,7 @@
             {data: 'numbers'},
             {data: 'level'},
             {data: 'created_at'},
+            {data: 'is_home'},
             {data: 'status'},
             {data: 'action'}
             ],
@@ -262,6 +263,7 @@
                             <th>Số sản phẩm</th>
                             <th>Cấp</th>
                             <th>Ngày Tạo</th>
+                            <th>Show trang chủ</th>
                             <th>Trạng Thái</th>
                             <th></th>
                         </tr>

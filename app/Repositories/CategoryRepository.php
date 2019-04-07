@@ -20,7 +20,7 @@ Class CategoryRepository
 
     public function dataTable($request)
     {
-        $categories = Category::select(['categories.id', 'categories.name', 'categories.level', 'categories.active', 'categories.created_at']);
+        $categories = Category::select(['categories.id', 'categories.name', 'categories.level', 'categories.active', 'categories.is_home', 'categories.created_at']);
 
         $dataTable = DataTables::eloquent($categories)
         ->filter(function ($query) use ($request) {
@@ -57,7 +57,15 @@ Class CategoryRepository
             $html = '<input type="checkbox" ' . $disable . ' data-name="' . $category->name . '" data-id="' . $category->id . '" name="social' . $category->active . '" class="js-switch" value="' . $category->active . '" ' . $active . ' ./>';
             return $html;
         })
-        ->rawColumns(['status', 'action', 'numbers'])
+        ->addColumn('is_home', function ($category) {
+            if ($category->is_home === ACTIVE) {
+                $html = '<label class="label label-success">Có</label>';
+            } else {
+                $html = '<label class="label label-default">Không</label>';
+            }
+            return $html;
+        })
+        ->rawColumns(['status', 'action', 'is_home', 'numbers'])
         ->toJson();
 
         return $dataTable;
@@ -87,6 +95,7 @@ Class CategoryRepository
         $model->level = ($data['parent_id']) ? $parent->level + 1 : 1;
         $model->description = $data['description'];
         $model->active = $data['active'];
+        $model->is_home = $data['is_home'];
         $model->order = $data['order'];
 
         $model->slug = str_slug($model->name, '-');

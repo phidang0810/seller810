@@ -10,7 +10,7 @@ class Post extends BaseModel
      * @var array
      */
     protected $fillable = [
-        'category_id', 'description', 'title', 'slug', 'content', 'active', 'order'
+        'category_id', 'photo', 'thumb', 'description', 'title', 'slug', 'content', 'active', 'order'
     ];
 
     public function category()

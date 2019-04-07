@@ -16,3 +16,6 @@
 .page-contact input, .page-contact textarea {
     font-size: 14px;
 }
+.error{
+    color:red
+}

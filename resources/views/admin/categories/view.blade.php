@@ -78,6 +78,18 @@
 
                             <div class="row">
                                 <div class="form-group">
+                                    <label class="col-md-2 control-label">Hiển Thị Trang Chủ</label>
+                                    <div class="col-md-3">
+                                        <select class="form-control m-b" name="is_home">
+                                            <option @if(isset($data->is_home) && $data->is_home === ACTIVE || old('is_home') === ACTIVE) selected @endif value="{{ACTIVE}}">Có</option>
+                                            <option @if(isset($data->is_home) && $data->is_home === INACTIVE || old('is_home') === INACTIVE) selected @endif value="{{INACTIVE}}">Không</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group">
                                     <label class="col-md-2 control-label">Trạng thái</label>
                                     <div class="col-md-3">
                                         <select class="form-control" name="active">

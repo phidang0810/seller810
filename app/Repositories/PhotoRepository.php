@@ -1,25 +1,25 @@
 <?php
 namespace App\Repositories;
 
-use App\Libraries\Photo;
-use App\Models\Post;
+use App\Libraries\Photo as Upload;
+use App\Models\Photo;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 
-class PostRepository
+class PhotoRepository
 {
     public function getObjDataTable($request)
     {
-        $data = Post::selectRaw('posts.id, posts.title, photo, active, thumb, created_at');
+        $data = Photo::selectRaw('photos.id, photos.type, photo, active, thumb, created_at');
         $dataTable = DataTables::eloquent($data)
             ->filter(function ($query) use ($request) {
                 if (trim($request->get('status')) !== "") {
-                    $query->where('posts.active', $request->get('status'));
+                    $query->where('photos.active', $request->get('status'));
                 }
 
                 if (trim($request->get('keyword')) !== "") {
                     $query->where(function ($sub) use ($request) {
-                        $sub->where('posts.name', 'like', '%' . $request->get('keyword') . '%');
+                        $sub->where('photos.name', 'like', '%' . $request->get('keyword') . '%');
                     });
 
                 }
@@ -33,10 +33,20 @@ class PostRepository
                 return $html;
             })
             ->addColumn('action', function ($data) {
-                $html = '<a href="' . route('admin.posts.view', ['id' => $data->id]) . '" class="btn btn-xs btn-primary" style="margin-right: 5px"><i class="glyphicon glyphicon-edit"></i> Sửa</a>';
+                $html = '<a href="' . route('admin.photos.view', ['id' => $data->id]) . '" class="btn btn-xs btn-primary" style="margin-right: 5px"><i class="glyphicon glyphicon-edit"></i> Sửa</a>';
                 $html .= '<a href="#" class="bt-delete btn btn-xs btn-danger" data-id="' . $data->id . '" data-title="' . $data->title . '">';
                 $html .= '<i class="fa fa-trash-o" aria-hidden="true"></i> Xóa</a>';
 
+                return $html;
+            })
+            ->addColumn('type', function ($data) {
+                $html= '';
+                if ($data->type === PHOTO_AD) {
+                    $html = '<label class="label label-default">Quảng Cáo</label>';
+                }
+                if ($data->type === PHOTO_BANNER) {
+                    $html = '<label class="label label-primary">Slides</label>';
+                }
                 return $html;
             })
             ->addColumn('status', function ($data) {
@@ -53,7 +63,7 @@ class PostRepository
     public function dataTable($request)
     {
         $data = $this->getObjDataTable($request)
-            ->rawColumns(['status', 'action', 'photo'])
+            ->rawColumns(['status', 'action', 'photo', 'type'])
             ->toJson();
 
         return $data;
@@ -61,38 +71,28 @@ class PostRepository
 
     public function getData($id)
     {
-        $data = Post::find($id);
+        $data = Photo::find($id);
         return $data;
     }
 
     public function createOrUpdate($data, $id = null)
     {
         if ($id) {
-            $model = Post::find($id);
+            $model = Photo::find($id);
 
         } else {
-            $model = new Post;
-            $model->category_id = POST_CATEGORY_TIN_TUC;
+            $model = new Photo;
         }
-
-        $model->title = $data['title'];
-        $model->slug = str_slug($data['title']);
         $model->active = $data['active'];
-        if (isset($data['content'])) {
-            $model->content = $data['content'];
-        }
-
-        if (isset($data['description'])) {
-            $model->description = $data['description'];
-        }
+        $model->type = $data['type'];
 
         if(isset($data['photo'])) {
 
             if ($model->photo) {
                 Storage::delete($model->photo);
             }
-            $upload = new Photo($data['photo']);
-            $model->photo = $upload->uploadTo('posts');
+            $upload = new Upload($data['photo']);
+            $model->photo = $upload->uploadTo('photos');
             $model->thumb = $upload->resizeTo(300);
         }
 
@@ -103,12 +103,11 @@ class PostRepository
     public function delete($ids)
     {
         foreach ($ids as $id) {
-            $model = Post::find($id);
-            Storage::delete($model->photo);
+            $model = Photo::find($id);
             Storage::delete($model->thumb);
-
+            Storage::delete($model->photo);
         }
-        Post::destroy($ids);
+        Photo::destroy($ids);
 
         return [
             'success' => true
@@ -117,14 +116,14 @@ class PostRepository
 
     public function changeStatus($id, $status)
     {
-        $model = Post::find($id);
+        $model = Photo::find($id);
         $model->active = $status;
         return $model->save();
     }
 
-    public function getPosts()
+    public function getPhotos()
     {
-        $data = Post::get();
+        $data = Photo::get();
         return $data;
     }
 }

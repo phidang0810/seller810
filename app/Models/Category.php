@@ -12,7 +12,7 @@ class Category extends BaseModel
      * @var array
      */
     protected $fillable = [
-        'name', 'code', 'parent_id', 'level', 'description', 'photo', 'thumb', 'active', 'order', 'slug'
+        'name', 'code', 'parent_id', 'level', 'is_home', 'description', 'photo', 'thumb', 'active', 'order', 'slug'
     ];
 
     /**

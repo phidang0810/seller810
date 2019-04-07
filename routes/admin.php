@@ -82,6 +82,16 @@ Route::prefix('bai-viet')
         Route::put ('/change-status', 'PostController@changeStatus')->name('admin.posts.changeStatus');
     });
 
+Route::prefix('anh')
+    ->group(function () {
+        Route::get ('/', 'PhotoController@index')->name('admin.photos.index');
+        Route::get ('/chi-tiet', 'PhotoController@view')->name('admin.photos.view');
+        Route::get ('/them', 'PhotoController@view')->name('admin.photos.create');
+        Route::post ('/them', 'PhotoController@store')->name('admin.photos.store');
+        Route::delete ('/', 'PhotoController@delete')->name('admin.photos.delete');
+        Route::put ('/change-status', 'PhotoController@changeStatus')->name('admin.photos.changeStatus');
+    });
+
 Route::prefix('thuong-hieu')
 ->middleware('permission:product_manager')->group(function () {
     Route::get ('/', 'BrandController@index')->name('admin.brands.index');

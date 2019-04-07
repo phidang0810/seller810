@@ -1,5 +1,8 @@
 <?php
 
+define('PHOTO_BANNER', 1);
+define('PHOTO_AD', 2);
+
 define('ROLE_ADMIN', 'admin');
 define('ROLE_MANAGER', 'manager');
 define('ROLE_CUSTOMER', 'customer');

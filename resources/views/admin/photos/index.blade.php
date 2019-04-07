@@ -6,8 +6,8 @@
 @section('js')
     <!-- Page-Level Scripts -->
     <script>
-        var url_delete = "{{route('admin.posts.delete')}}";
-        var url_change_status = "{{route('admin.posts.changeStatus')}}";
+        var url_delete = "{{route('admin.photos.delete')}}";
+        var url_change_status = "{{route('admin.photos.changeStatus')}}";
         var table;
         $.ajaxSetup({
             headers: {
@@ -21,7 +21,7 @@
                 serverSide: true,
                 "dom": 'rt<"#pagination"flp>',
                 ajax: {
-                    "url": "{{route('admin.posts.index')}}",
+                    "url": "{{route('admin.photos.index')}}",
                     "data": function ( d ) {
                         d.keyword = $('#s-keyword').val();
                         d.status = $('#s-status').val();
@@ -39,7 +39,7 @@
 
                             elem.onchange = function() {
                                 var id = $(elem).attr('data-id');
-                                var name = $(elem).attr('data-title');
+                                var name = $(elem).attr('data-id');
                                 if (elem.checked) {
                                     var status = 'kích hoạt';
                                 } else {
@@ -105,7 +105,7 @@
                 columns: [
                     {data: 'id'},
                     {data: 'photo'},
-                    {data: 'title'},
+                    {data: 'type'},
                     {data: 'created_at'},
                     {data: 'status'},
                     {data: 'action'}
@@ -210,12 +210,6 @@
         <!-- Search form -->
         <form role="form" id="fSearch">
             <div class="row ">
-                <div class="col-sm-3">
-                    <div class="form-group">
-                        <label>Tìm kiếm</label>
-                        <input type="text" placeholder="Nhập tiêu đề" name="keyword" id="s-keyword" class="form-control" value="{{app('request')->input('keyword')}}">
-                    </div>
-                </div>
 
                 <div class="col-sm-3">
                     <div class="form-group">
@@ -246,7 +240,7 @@
             @include('admin._partials._alert')
             <div class="ibox-content">
                 <div class="text-right" style="padding: 10px 10px 0px 10px;">
-                    <a href="{{route('admin.posts.create')}}" class="btn btn-sm btn-primary"><i class="fa fa-plus"></i> Thêm Bài Viết</a>
+                    <a href="{{route('admin.photos.create')}}" class="btn btn-sm btn-primary"><i class="fa fa-plus"></i> Thêm Ảnh</a>
                 </div>
                 <div class="hr-line-dashed"></div>
                 <!-- Account list -->
@@ -255,7 +249,7 @@
                     <tr>
                         <th>ID</th>
                         <th>Ảnh</th>
-                        <th>Tiêu Đề</th>
+                        <th>Loại</th>
                         <th>Ngày Tạo</th>
                         <th>Trạng Thái</th>
                         <th></th>
