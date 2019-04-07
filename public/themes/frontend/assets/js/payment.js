@@ -98,10 +98,14 @@ function printCartDetail(detail) {
 
 function bankPayment() {
 	payment_method = 1;
+	$('.payment-method').removeClass('active');
+	$('#payment-bank .payment-method').addClass('active');
 }
 
 function codPayment() {
 	payment_method = 2;
+	$('.payment-method').removeClass('active');
+	$('#payment-cod .payment-method').addClass('active');
 }
 
 function truckTransport() {
@@ -129,33 +133,53 @@ function showHideSections() {
 }
 
 function storePayment() {
-	$('#loading-indicator').show();
-	var data = {
-		user_id: user_id,
-		cart_id: cart_id,
-		payment_method: payment_method,
-		transport_method: transport_method,
-		customer_name: $('input[name=name]').val(),
-		customer_email: $('input[name=email]').val(),
-		customer_phone: $('input[name=phone]').val(),
-		customer_address: $('input[name=address]').val(),
-		customer_city: $('select[name=city]').val(),
-		is_payment_default: $('#is_payment_default').prop('checked'),
-		transport_info_name: $('input[name=garage-name]').val(),
-		transport_info_phone: $('input[name=garage-phone]').val()
-	};
+	if(!isNaN(payment_method)){
+		$('#loading-indicator').show();
+		$([document.documentElement, document.body]).animate({
+	        scrollTop: $("body").offset().top
+	    }, 500);
+		var data = {
+			user_id: user_id,
+			cart_id: cart_id,
+			payment_method: payment_method,
+			transport_method: transport_method,
+			customer_name: $('input[name=name]').val(),
+			customer_email: $('input[name=email]').val(),
+			customer_phone: $('input[name=phone]').val(),
+			customer_address: $('input[name=address]').val(),
+			customer_city: $('select[name=city]').val(),
+			is_payment_default: $('#is_payment_default').prop('checked'),
+			transport_info_name: $('input[name=garage-name]').val(),
+			transport_info_phone: $('input[name=garage-phone]').val()
+		};
 
-	$.ajax({
-		url: urlPostStorePayment,
-		type: 'POST',
-		data: data,
-		dataType:'json',
-		success: function(response) {
-			if (response.redirect_to) {
-				setTimeout(function(){ 
-					window.location.href = response.redirect_to;
-				}, 1000);
+		$.ajax({
+			url: urlPostStorePayment,
+			type: 'POST',
+			data: data,
+			dataType:'json',
+			success: function(response) {
+				if (response.redirect_to) {
+					setTimeout(function(){ 
+						window.location.href = response.redirect_to;
+					}, 1000);
+				}
 			}
-		}
-	});
+		});
+	}else{
+		showAlert('danger', 'Xin chọn phương thức thanh toán.');
+	}
+}
+
+function showAlert(type, message) {
+	var html = '<div class="col"><div class="alert alert-'+type+'" role="alert">\
+			'+message+'\
+		</div></div>';
+	$('#alert-section').html(html);
+	$([document.documentElement, document.body]).animate({
+        scrollTop: $("#alert-section").offset().top - 50
+    }, 500);
+	setTimeout(function () {
+		$('#alert-section').html('');
+	}, 3000);
 }

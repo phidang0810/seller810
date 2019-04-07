@@ -21,6 +21,7 @@ class CartController extends BaseController
             return response()->json($cart->getCustomerInCartCart($this->_request));
         }
 
+        $this->_data['show_breadcrumbs'] = true;
         $this->_data['title'] = 'Giỏ hàng';
         $this->_pushBreadCrumbs($this->_data['title']);
         return view('frontend.carts.index', $this->_data);
@@ -44,6 +45,7 @@ class CartController extends BaseController
             return response()->json($cart->getCustomerInCartCart($this->_request));
         }
 
+        $this->_data['show_breadcrumbs'] = true;
         $this->_data['title'] = 'Thanh toán';
         $this->_pushBreadCrumbs($this->_data['title']);
 
@@ -57,6 +59,7 @@ class CartController extends BaseController
     }
 
     public function paymentBank($cart_code, CartRepository $cart) {
+        $this->_data['show_breadcrumbs'] = true;
         $this->_data['title'] = 'Thanh toán';
         $this->_pushBreadCrumbs($this->_data['title']);
 

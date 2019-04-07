@@ -53,17 +53,19 @@
 						<input id="search-string" class="form-control mr-sm-2 custom-input" type="search" placeholder="Tìm sản phẩm" aria-label="Tìm sản phẩm">
 						<button class="btn my-2 icon-custom-grey" type="submit"><i class="fas fa-search"></i></button>
 					</form>
+				</div>
+				<div class="cart-wrapper">
 					@if(!Auth::check())
 					<a href="{{ route( 'login', ['to' =>Request::url()] ) }}" class="btn icon-custom-grey" id="cart-icon">
-						@else
-						<a href="{{route('frontend.carts.index')}}" title="Giỏ hàng" class="btn icon-custom-grey" id="cart-icon">
-							@endif
-							<i class="fas fa-shopping-basket"></i>
-							<span class="number"></span>
-						</a>
-					</div>
+					@else
+					<a href="{{route('frontend.carts.index')}}" title="Giỏ hàng" class="btn icon-custom-grey" id="cart-icon">
+					@endif
+						<i class="fas fa-shopping-basket"></i>
+						<span class="number"></span>
+					</a>
 				</div>
-			</nav>
-		</section>
-		<!-- END: Top Navigation -->
-	</header>
+			</div>
+		</nav>
+	</section>
+	<!-- END: Top Navigation -->
+</header>

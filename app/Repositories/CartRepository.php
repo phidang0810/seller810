@@ -164,6 +164,13 @@ Class CartRepository
             $cart->customer;
             $cart->platform;
             $cart->transport;
+
+            // receiver
+            if ($cart->customer_express_id != null) {
+                $cart->receiver = $cart->customer;
+            }else{
+                $cart->receiver = $cart->customerExpress;
+            }
         }
 
         // $cartDetails = Cart::select(['carts.id', 'cart_detail.quantity as quantity', 'cart_detail.price as price', 'cart_detail.total_price as total_price', 'carts.shipping_fee as shipping_fee', 'carts.code', 'products.barcode_text as product_code', 'products.name as product_name', 'products.photo as product_photo'])
