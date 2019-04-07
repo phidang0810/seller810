@@ -30,7 +30,7 @@
 					</div>
 				</div>
 				<div class="row">
-					<div class="col-6 group-input">
+					<div class="col-lg-6 group-input">
 						<div class="row">
 							<div class="col">Họ tên</div>
 						</div>
@@ -38,7 +38,7 @@
 							<div class="col"><input type="text" class="form-control" placeholder="Nhập họ và tên" name="name"></div>
 						</div>
 					</div>
-					<div class="col-6 group-input">
+					<div class="col-lg-6 group-input">
 						<div class="row">
 							<div class="col">Email</div>
 						</div>
@@ -46,7 +46,7 @@
 							<div class="col"><input type="text" class="form-control" placeholder="Nhập email" name="email"></div>
 						</div>
 					</div>
-					<div class="col-6 group-input">
+					<div class="col-lg-6 group-input">
 						<div class="row">
 							<div class="col">Số điện thoại</div>
 						</div>
@@ -54,7 +54,7 @@
 							<div class="col"><input type="text" class="form-control" placeholder="Nhập số điện thoại" name="phone"></div>
 						</div>
 					</div>
-					<div class="col-6 group-input">
+					<div class="col-lg-6 group-input">
 						<div class="row">
 							<div class="col">Địa chỉ</div>
 						</div>
@@ -62,7 +62,7 @@
 							<div class="col"><input type="text" class="form-control" placeholder="Nhập địa chỉ" name="address"></div>
 						</div>
 					</div>
-					<div class="col-6 group-input">
+					<div class="col-lg-6 group-input">
 						<div class="row">
 							<div class="col">Thành phố</div>
 						</div>
@@ -77,7 +77,7 @@
 					</div>
 				</div>
 				<div class="row">
-					<div class="col-6 group-input">
+					<div class="col-12 group-input">
 						<div class="custom-control custom-checkbox mr-sm-2">
 							<input type="checkbox" class="custom-control-input" id="is_payment_default" name="is_payment_default" value="true">
 							<label class="custom-control-label" for="is_payment_default">Đặt làm thanh toán mặc định</label>
@@ -94,18 +94,12 @@
 					<div class="col">
 						<div class="payment-method">
 							<a href="javascript:;" onclick="bankPayment();">
-								<div class="row">
-									<div class="col-2">
-										<i class="fas fa-university"></i>
-									</div>
-									<div class="col-10">
-										<div class="row">
-											<div class="col title">Chuyển khoản</div>
-										</div>
-										<div class="row">
-											<div class="col">Ngân hàng Vietcombank</div>
-										</div>
-									</div>
+								<div class="icon">
+									<i class="fas fa-university"></i>
+								</div>
+								<div class="content">
+									<div class="col title">Chuyển khoản</div>
+									<div class="col">Ngân hàng Vietcombank</div>
 								</div>
 							</a>
 						</div>
@@ -115,18 +109,12 @@
 					<div class="col">
 						<div class="payment-method">
 							<a href="javascript:;" onclick="codPayment();">
-								<div class="row">
-									<div class="col-2">
-										<i class="fas fa-motorcycle"></i>
-									</div>
-									<div class="col-10">
-										<div class="row">
-											<div class="col title">COD</div>
-										</div>
-										<div class="row">
-											<div class="col">Thanh toán khi nhận hàng</div>
-										</div>
-									</div>
+								<div class="icon">
+									<i class="fas fa-motorcycle"></i>
+								</div>
+								<div class="content">
+									<div class="col title">COD</div>
+									<div class="col">Thanh toán khi nhận hàng</div>
 								</div>
 							</a>
 						</div>
@@ -197,14 +185,14 @@
 							<div class="col-9">Phí ship</div>
 							<div class="col-3 text-right" id="shipping-fee"></div>
 						</div>
-						<div class="row">
+						<!-- <div class="row">
 							<div class="col-9">
 								<input type="text" name="discount-code" placeholder="Mã giảm giá" class="form-control">
 							</div>
 							<div class="col-3">
 								<a href="javascript:;" class="btn btn-custom-discount-cart">Xác nhận</a>
 							</div>
-						</div>
+						</div> -->
 						<hr>
 						<div class="row">
 							<div class="col-6"><h6 class="total-price-label">Thành tiền</h6></div>

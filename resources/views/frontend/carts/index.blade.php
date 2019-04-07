@@ -16,17 +16,17 @@
 @section('content')
 <div class="container" id="cart-detail-wrapper">
 	<div class="row">
-		<div class="col-9" id="cart-details">
+		<div class="col-lg-9" id="cart-details">
 			
 		</div>
-		<div class="col-3" id="cart-infor">
+		<div class="col-lg-3" id="cart-infor">
 			<div class="row" id="cart-price">
 				<div class="col-12">
 					<div class="row">
 						<div class="col-5">
 							Tạm tính:
 						</div>
-						<div class="col-7">
+						<div class="col-7 text-right">
 							<p id="pre-cal"></p>
 						</div>
 					</div>
@@ -35,7 +35,7 @@
 						<div class="col-5">
 							Thành tiền:
 						</div>
-						<div class="col-7">
+						<div class="col-7 text-right">
 							<p id="total-price"></p>
 						</div>
 					</div>

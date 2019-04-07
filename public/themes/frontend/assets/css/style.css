@@ -727,3 +727,29 @@ h6.total-price-label {
 	    right: 90px;;
 	}
 }
+
+
+@media (max-width: 767px) {
+	.container > .row {
+	    margin-left: 5px;
+	    margin-right: 5px;
+	}
+}
+
+#filters-products .color-choice span {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+    border-radius: 50%;
+}
+
+#filters-products .color-choice.active span {
+    box-shadow: 0 0 5px #000;
+    border: 1px solid #7b7b7b;
+}
+
+.payment-method .icon {
+    float: left;
+    margin-right: 20px;
+}

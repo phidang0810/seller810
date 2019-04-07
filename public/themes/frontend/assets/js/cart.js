@@ -45,18 +45,18 @@ function printCartDetail(detail) {
 	html = '<div class="row detail">\
 	<div class="col-12">\
 	<div class="row">\
-	<div class="col-2 image">\
+	<div class="col-md-2 image">\
 	<img src="storage/'+detail.photo+'" alt="'+detail.name+'" class="img-fluid">\
 	</div>\
-	<div class="col-6 info">\
+	<div class="col-md-6 info">\
 	<h6 class="title">'+detail.name+'</h6>\
 	<p>Cung cấp bởi: '+detail.supplier.name+'</p>\
 	<a href="javascript:;" title="delete" onclick="deleteCartDetail('+detail.id+');">Xóa</a>\
 	</div>\
-	<div class="col-2">\
+	<div class="col-md-2">\
 	<p class="price">'+detail.total_price+'</p>\
 	</div>\
-	<div class="col-2 quantity-section">\
+	<div class="col-md-2 quantity-section">\
 	<div class="number-input">\
 	<button onclick="down(this)" ></button>\
 	<input data-id="'+detail.id+'" class="quantity" min="'+detail.min_quantity_sell+'" max="'+detail.product_detail.quantity_available+'" name="quantity-'+detail.id+'" value="'+detail.quantity+'" type="number">\

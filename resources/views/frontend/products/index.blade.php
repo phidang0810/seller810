@@ -52,7 +52,7 @@
 							</div>
 							<div class="col">
 								<div class="float-right header-right color-grey">
-									<i class="fas fa-minus"></i>
+									<i class="fas fa-minus" onclick="clearFilter('cat');"></i>
 								</div>
 							</div>
 						</div>
@@ -85,7 +85,7 @@
 								</div>
 								<div class="col">
 									<div class="float-right header-right color-grey">
-										<i class="fas fa-minus"></i>
+										<i class="fas fa-minus" onclick="clearFilter('size');"></i>
 									</div>
 								</div>
 							</div>
@@ -112,7 +112,7 @@
 								</div>
 								<div class="col">
 									<div class="float-right header-right color-grey">
-										<i class="fas fa-minus"></i>
+										<i class="fas fa-minus" onclick="clearFilter('color');"></i>
 									</div>
 								</div>
 							</div>
@@ -120,10 +120,9 @@
 						<div class="col-md-12 filter-content color-grey" id="color-filters">
 							<div class="filters">
 								@foreach($colors as $color)
-								<div class="group-colors">
-									<a href="javascript:;" title="{{$color->name}}" class="color-choice" data-id="{{$color->name}}"><i class="fas fa-circle" style="color: {{$color->code}}"></i><span><i class="fas fa-check"></i></span></a>
-									<label>{{$color->name}}</label>
-								</div>
+									<a href="javascript:;" title="{{$color->name}}" class="color-choice" data-id="{{$color->name}}">
+										<span style="background-color: {{$color->code}}"></span>
+									</a>
 								@endforeach
 							</div>
 						</div>
@@ -139,7 +138,7 @@
 								</div>
 								<div class="col">
 									<div class="float-right header-right color-grey">
-										<i class="fas fa-minus"></i>
+										<i class="fas fa-minus" onclick="clearFilter('price');"></i>
 									</div>
 								</div>
 							</div>

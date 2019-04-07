@@ -83,14 +83,14 @@ function printCart(cart) {
 function printCartDetail(detail) {
 	html = '<div class="col-12 cart-detail">\
 	<div class="row">\
-	<div class="col-3 image"><img src="storage/'+detail.photo+'" alt="'+detail.name+'" class="img-fluid"></div>\
-	<div class="col-4 content">\
+	<div class="col-lg-3 col-md-4 image"><img src="storage/'+detail.photo+'" alt="'+detail.name+'" class="img-fluid"></div>\
+	<div class="col-lg-4 col-md-6 content">\
 	<h6 class="title">'+detail.name+'</h6>\
 	<p>Size: <span>'+detail.size.name+'</span></p>\
 	<p>Màu: <span>'+detail.color.name+'</span></p>\
 	</div>\
-	<div class="col-1 quantity">'+detail.quantity+'</div>\
-	<div class="col-4 price text-right">'+detail.total_price+'</div>\
+	<div class="col-lg-1 col-md-2 quantity">'+detail.quantity+'</div>\
+	<div class="col-lg-4 col-md-12 price text-right">'+detail.total_price+'</div>\
 	</div>\
 	</div>';
 	$('#cart-details').append(html);

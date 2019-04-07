@@ -14,6 +14,25 @@ $(document).ready(function(){
 	getProducts();	
 });
 
+function clearFilter(type) {
+	switch (type) {
+		case 'color':
+			$('.color-choice').removeClass('active');
+			color = null;
+			break;
+		case 'size':
+			$('input[type=radio][name=sizeRadio]').prop("checked", false)
+			break;
+		case 'price':
+			$('input[type=radio][name=productPriceRadio]').prop("checked", false)
+			break;
+		default:
+			// statements_def
+			break;
+	}
+	getProducts();
+}
+
 $('input[type=radio][name=sizeRadio]').change(function() {
 	getProducts();
 });
