@@ -138,9 +138,22 @@ Class CategoryRepository
             }
 
             // Check category has products or not
+            if (count($category->products) > 0) {
+                $result['errors'][] = 'Danh mục: ' . $id . ' đã có sản phẩm';
+                $result['success'] = false;
+                continue;
+            }
 
             // Reset level and parent for children categories
             CategoryRepository::resetHierarchy($id, $category->parent_id);
+
+            if ($category->photo) {
+                Storage::delete($category->photo);
+            }
+
+            if ($category->thumb) {
+                Storage::delete($category->thumb);
+            }
 
             $category->delete();
         }

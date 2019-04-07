@@ -22,7 +22,12 @@ function getInCartCart() {
 		data: data,
 		dataType:'json',
 		success: function(response) {
-			printCart(response.cart);
+			if (response.success) {
+				printCart(response.cart);
+			}else{
+				$('#submit-cart').hide();
+				showAlert('warning', response.error);
+			}
 		}
 	});
 }
@@ -114,4 +119,11 @@ function updateCartDetail(id, quantity) {
 			printCart(response.cart);
 		}
 	});
+}
+
+function showAlert(type, message) {
+	var html = '<div class="col"><div class="alert alert-'+type+'" role="alert">\
+	'+message+'\
+	</div></div>';
+	$('#cart-details').html(html);
 }

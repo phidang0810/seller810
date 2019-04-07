@@ -148,6 +148,13 @@ Class CartRepository
 
         // Get customer's cart with status CART_IN_CART
         $cart = $this->getIncartCart($customer->id);
+        if(!$cart){
+            $return['success'] = false;
+            $return['error'] = 'Giỏ hàng không có sản phẩm';
+            $return['redirect_to'] = route('frontend.carts.index');
+
+            return $return;
+        }
         $cart->total_price = format_price($cart->total_price);
         $cart->price = format_price($cart->price);
         $cart->shipping_fee_text = format_price($cart->shipping_fee);
