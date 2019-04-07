@@ -100,6 +100,7 @@
           <div class="col-12 left-related">
             <h5 class="title">Sản phẩm liên quan</h5>
           </div>
+          @if(isset($product->relatedProducts) && count($product->relatedProducts) > 0)
           @foreach($product->relatedProducts as $relatedProduct)
           <div class="col-12 product product-grid left-related">    
             <a href="{{ route('frontend.products.view', ['slug' => $relatedProduct->slug]) }}">  
@@ -109,6 +110,7 @@
             </a>    
           </div>
           @endforeach
+          @endif
         </div>
       </div>
     </div>
@@ -121,6 +123,7 @@
         </div>
       </div>
     </div>
+    @if( isset($product->hotProducts) && count($product->hotProducts) > 0 )
     <div class="row" id="related-product">
       <div class="col-12">
         <h5 class="title">Sản phẩm nổi bật</h5>
@@ -139,5 +142,6 @@
         </div>
       </div>
     </div>    
+    @endif
   </section>  
   @endsection

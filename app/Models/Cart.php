@@ -89,4 +89,12 @@ class Cart extends BaseModel
     {
         return $this->belongsTo('App\Models\Transport');
     }
+
+    /**
+     * Get the customer that owns the cart.
+     */
+    public function customerExpress()
+    {
+        return $this->belongsTo('App\Models\customerExpress');
+    }
 }

@@ -20,6 +20,7 @@
 			<h3 class="title-page text-center">Thông tin thanh toán</h3>
 		</div>
 	</div>
+	<div class="row" id="alert-section"></div>
 	<form action="POST" target="{{route('frontend.carts.storePayment')}}" id="form-payment">
 		<div class="row">
 			<div class="col-md-6">
