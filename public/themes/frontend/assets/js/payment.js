@@ -47,8 +47,16 @@ function getInCartCart() {
 		data: data,
 		dataType:'json',
 		success: function(response) {
-			cart_id = response.cart.id;
-			printCart(response.cart);
+			if (response.success) {
+				cart_id = response.cart.id;
+				printCart(response.cart);
+			}else{
+				if (response.redirect_to) {
+					setTimeout(function(){ 
+						window.location.href = response.redirect_to;
+					}, 1000);
+				}
+			}
 		}
 	});
 }
@@ -136,8 +144,8 @@ function storePayment() {
 	if(!isNaN(payment_method)){
 		$('#loading-indicator').show();
 		$([document.documentElement, document.body]).animate({
-	        scrollTop: $("body").offset().top
-	    }, 500);
+			scrollTop: $("body").offset().top
+		}, 500);
 		var data = {
 			user_id: user_id,
 			cart_id: cart_id,
@@ -173,12 +181,12 @@ function storePayment() {
 
 function showAlert(type, message) {
 	var html = '<div class="col"><div class="alert alert-'+type+'" role="alert">\
-			'+message+'\
-		</div></div>';
+	'+message+'\
+	</div></div>';
 	$('#alert-section').html(html);
 	$([document.documentElement, document.body]).animate({
-        scrollTop: $("#alert-section").offset().top - 50
-    }, 500);
+		scrollTop: $("#alert-section").offset().top - 50
+	}, 500);
 	setTimeout(function () {
 		$('#alert-section').html('');
 	}, 3000);

@@ -559,12 +559,12 @@ span.select2.select2-container.select2-container--default {
             $(this).parents('ul').prev().prop('checked', sibs);
         });
 
-        new Cleave('.input-price', {
+        new Cleave('.input-sell-price', {
             numeral: true,
             numeralThousandsGroupStyle: 'thousand'
         });
 
-        new Cleave('.input-sell-price', {
+        new Cleave('.input-price', {
             numeral: true,
             numeralThousandsGroupStyle: 'thousand'
         });
@@ -696,7 +696,7 @@ span.select2.select2-container.select2-container--default {
                                                         
                                                         <label class="col-md-2 control-label">Số lượng bán ít nhất (<span class="text-danger">*</span>)</label>
                                                         <div class="col-md-3">
-                                                            <input type="text" name="min_quantity_sell" placeholder="" class="form-control required m-b input-sell-price" value="@if(isset($data->min_quantity_sell)){{$data->min_quantity_sell}}@else{{1}}@endif"/>
+                                                            <input type="text" name="min_quantity_sell" placeholder="" class="form-control required m-b" value="@if(isset($data->min_quantity_sell)){{$data->min_quantity_sell}}@else{{1}}@endif"/>
                                                         </div>
                                                     </div>
                                                 </div>
