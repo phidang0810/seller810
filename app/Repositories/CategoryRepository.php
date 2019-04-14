@@ -204,7 +204,7 @@ Class CategoryRepository
 
     public function getListCategories($search)
     {
-        $categories = Category::select(['categories.id', 'categories.name']);
+        $categories = Category::select(['categories.id', 'categories.name', 'slug', 'thumb', 'photo']);
         if (key_exists('is_home', $search)) {
             $categories->where('is_home', $search['is_home']);
         }

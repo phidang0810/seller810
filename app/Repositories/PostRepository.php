@@ -127,4 +127,13 @@ class PostRepository
         $data = Post::get();
         return $data;
     }
+
+    public function getList()
+    {
+        $data = Post::select('id', 'title', 'photo', 'thumb', 'created_at')
+            ->orderBy('created_at', 'desc')
+            ->paginate(20);
+
+        return $data;
+    }
 }

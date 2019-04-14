@@ -92,6 +92,15 @@
                     </div>
                     <div class="row m-b">
                         <div class="form-group">
+                            <label class="col-md-2 control-label">Link</label>
+                            <div class="col-md-5">
+                                <input type="text" name="link" placeholder="http://google.com" class="form-control" value="@if(isset($data->link)){{$data->link}}@else{{old('link')}}@endif"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row m-b">
+                        <div class="form-group">
                             <label class="col-md-2 control-label">Trạng Thái</label>
                             <div class="col-md-3">
                                 <select class="form-control" name="active">

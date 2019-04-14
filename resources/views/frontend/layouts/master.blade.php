@@ -19,6 +19,7 @@
 	<!-- Main CSS -->
 	<link rel="stylesheet" type="text/css" href="{{asset('themes/frontend/assets/css/style.css')}}" media="all">
 	<link rel="stylesheet" type="text/css" href="{{asset('themes/frontend/assets/css/color.css')}}" media="all">
+	<link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet">
 	<!-- END: Global CSS -->
 	<!-- BEGIN: Page CSS -->
 	@yield('css')

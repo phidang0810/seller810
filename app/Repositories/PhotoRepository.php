@@ -85,7 +85,9 @@ class PhotoRepository
         }
         $model->active = $data['active'];
         $model->type = $data['type'];
-
+        if(isset($data['link'])) {
+            $model->link = $data['link'];
+        }
         if(isset($data['photo'])) {
 
             if ($model->photo) {
@@ -125,5 +127,19 @@ class PhotoRepository
     {
         $data = Photo::get();
         return $data;
+    }
+
+    public function getList($search)
+    {
+        $model = Photo::select('id', 'link', 'thumb', 'photo', 'type');
+        if (key_exists('type', $search)) {
+            $model->where('type', $search['type']);
+        }
+        if (key_exists('limit', $search)) {
+            $model->take($search['limit']);
+        }
+        $result = $model->get();
+
+        return $result;
     }
 }

@@ -40,5 +40,11 @@ return [
         'client_secret' => env('FACEBOOK_CLIENT_SECRET'), // Your GitHub Client Secret
         'redirect' => env('FACEBOOK_CALLBACK'),
     ],
+    'google' => [
+        'client_id' => env('GG_CLIENT_ID'),         // Your GitHub Client ID
+        'client_secret' => env('GG_CLIENT_SECRET'), // Your GitHub Client Secret
+        'redirect' => env('GG_CALLBACK'),
+    ],
+
 
 ];
