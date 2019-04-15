@@ -21,11 +21,11 @@
 						</ul>
 					</div>
 					<div class="col-md-4">
-						<h6 class="links-title">Giới thiệu</h6>
+						<h6 class="links-title">Liên kết</h6>
 						<ul class="links-list">
 							<li><a href="#">FAQ</a></li>
 							<li><a href="#">Sitemap</a></li>
-							<li><a href="#">Chính sách giao hang</a></li>
+							<li><a href="#">Chính sách giao hàng</a></li>
 						</ul>
 					</div>
 				</div>

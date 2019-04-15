@@ -11,6 +11,7 @@
 @endsection
 
 @section('css')
+	<link rel="stylesheet" type="text/css" href="{{asset('themes/frontend/assets/css/payment.css')}}" media="all">
 @endsection
 
 @section('content')

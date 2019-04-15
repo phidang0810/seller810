@@ -1,0 +1,25 @@
+m để mặc định là min_can_by
+
+nó k liên quan j tới sl sp het nhé
+
+khi bấm nút add thì ajax check thoi
+
+nếu sl đặt lớn hơn sl tồn
+
+thì show thong báo
+
+sp chỉ còn lại ....
+
+ok ?
+
+khi click vào color, size
+
+m cho dấu check vào
+
+dễ biết hơn
+
+nó là toggle nhé``
+
+click vào chọn
+
+click vào nữa là bỏ chọn

@@ -1,0 +1,3 @@
+products:
+ - Update color filter
+ - Update price filter

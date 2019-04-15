@@ -41,10 +41,7 @@
 	<!-- BEGIN: Main Content -->
 	<!-- BEGIN: Banner -->
 	<section id="banner">
-		<img src="{{asset('themes/frontend/assets/images/portal/banner.jpg')}}" alt="Banner" />
-		<div class="container">
 			@include('frontend.layouts._partials._breadcrumbs')
-		</div>
 	</section>
 	<!-- END: Banner -->
 	@yield('content')

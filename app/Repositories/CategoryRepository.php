@@ -200,7 +200,7 @@ Class CategoryRepository
         return $result;
     }
 
-    public function getCategories($parent = null)
+    public function getCategories($parent = null, $grand_parent = null)
     {
         $categories = Category::select(['categories.id', 'categories.name', 'categories.slug']);
 
@@ -211,6 +211,13 @@ Class CategoryRepository
         }
 
         $categories = $categories->get();
+
+        if ( count($categories) <= 0 ) {
+            $cats = Category::select(['categories.id', 'categories.name', 'categories.slug'])
+                            ->where('parent_id', $grand_parent)->where('id', '!=', $parent)->get();
+            $categories['cats'] = $cats;
+            $categories['lowest_level'] = true;
+        }
 
         return $categories;
     }
@@ -228,6 +235,10 @@ Class CategoryRepository
 
     public function getCategoryBySlug($slug) {
         return Category::where('slug', $slug)->first();
+    }
+
+    public function getCategoryByID($id) {
+        return Category::find($id);
     }
 
 }

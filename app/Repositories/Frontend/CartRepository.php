@@ -104,16 +104,26 @@ Class CartRepository
         }
         $return['warehouseProduct'] = $warehouseProduct;
 
-        $modelDetail = new CartDetail([
-            'product_id' => $request->get('id'),
-            'product_detail_id' => $productDetail->id,
-            'warehouse_product_id' => $warehouseProduct->id,
-            'quantity' => $request->get('quantity'),
-            // 'discount_amount' => ?,
-            'price' => $product->sell_price,
-            'total_price' => $product->sell_price * $request->get('quantity'),
-            'import_price' => $product->price,
-        ]);
+        $modelDetail = CartDetail::where('product_id', $request->get('id'))
+                    ->where('product_detail_id', $productDetail->id)
+                    ->where('warehouse_product_id', $warehouseProduct->id)
+                    ->first();
+
+        if (!$modelDetail) {
+            $modelDetail = new CartDetail([
+                'product_id' => $request->get('id'),
+                'product_detail_id' => $productDetail->id,
+                'warehouse_product_id' => $warehouseProduct->id,
+                'quantity' => $request->get('quantity'),
+                // 'discount_amount' => ?,
+                'price' => $product->sell_price,
+                'total_price' => $product->sell_price * $request->get('quantity'),
+                'import_price' => $product->price,
+            ]);
+        }else{
+            $modelDetail['quantity'] += $request->get('quantity');
+            $modelDetail['total_price'] = $product->sell_price * $modelDetail['quantity'];
+        }
 
         $cart->details()->save($modelDetail);
 

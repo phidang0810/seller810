@@ -736,7 +736,7 @@ h6.total-price-label {
 	}
 }
 
-#filters-products .color-choice span {
+#filters-products .color-choice span, #colors .color-choice span {
     display: inline-block;
     width: 30px;
     height: 30px;
@@ -744,7 +744,7 @@ h6.total-price-label {
     border-radius: 50%;
 }
 
-#filters-products .color-choice.active span {
+#filters-products .color-choice.active span, #colors .color-choice.active span {
     box-shadow: 0 0 5px #000;
     border: 1px solid #7b7b7b;
 }
@@ -820,6 +820,7 @@ h6.total-price-label {
 	left: 50%;
 	display: block;
 }
+
 .item-post {
 	margin-bottom: 20px;
 }
@@ -863,4 +864,8 @@ h6.total-price-label {
 }
 .pagination li:hover a{
 	color: #fff
+}
+
+.left-related {
+	margin-bottom: 30px;
 }

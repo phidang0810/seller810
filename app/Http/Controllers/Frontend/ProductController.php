@@ -43,8 +43,8 @@ class ProductController extends BaseController
      *
      * @return \Illuminate\Http\Response
      */
-    public function view($slug, ProductRepository $product, CategoryRepository $category, SizeRepository $size, ColorRepository $color){
-        $this->_data['product'] = $product->getProductBySlug($slug);
+    public function view($id, $slug = null, ProductRepository $product, CategoryRepository $category, SizeRepository $size, ColorRepository $color){
+        $this->_data['product'] = $product->getProductByID($id);
 
         $this->_pushBreadCrumbs($this->_data['product']->name);
         $this->_data['show_breadcrumbs'] = true;
@@ -63,16 +63,16 @@ class ProductController extends BaseController
      *
      * @return \Illuminate\Http\Response
      */
-    public function category($slug, ProductRepository $product, CategoryRepository $category, SizeRepository $size, ColorRepository $color){
+    public function category($id, $slug = null, ProductRepository $product, CategoryRepository $category, SizeRepository $size, ColorRepository $color){
         if ($this->_request->ajax()){
             return $product->getProductsByFilters($this->_request);
         }
         $this->_data['show_breadcrumbs'] = true;
 
-        $cat = $category->getCategoryBySlug($slug);
+        $cat = $category->getCategoryByID($id);
         $this->_data['category'] = $cat; 
         $this->_data['title'] = 'Danh sách sản phẩm';
-        $this->_data['categories'] = $category->getCategories($cat->id);
+        $this->_data['categories'] = $category->getCategories($cat->id, $cat->parent_id);
         $this->_data['sizes'] = $size->getSizes();
         $this->_data['colors'] = $color->getColors();
         $this->_data['product_prices'] = $product->getProductPriceRanges();

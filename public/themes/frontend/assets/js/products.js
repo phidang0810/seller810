@@ -128,7 +128,7 @@ function printProducts(data) {
 // function generate grid layout for product
 function generateGridProduct(product) {
 	var html = '<div class="col-md-4 col-sm-6 product product-grid">\
-	<a href="/san-pham/' + product.slug + '">\
+	<a href="/san-pham/' + product.id + '/' + product.slug + '">\
 	<img src="/storage/' + product.thumb + '" alt="" class="img-fluid">\
 	<h6 class="product-name">' + product.name + '</h6>';
 	if (auth == 1) {
@@ -144,7 +144,7 @@ function generateListProduct(product) {
 	var html = '<div class="col-md-12 product product-list">\
 	<div class="row">\
 	<div class="col-md-3 col-sm-6 text-center">\
-	<a href="/san-pham/' + product.slug + '"><img src="/storage/' + product.thumb + '" alt="" class="img-fluid"></a>\
+	<a href="/san-pham/' + product.id + '/' + product.slug + '"><img src="/storage/' + product.thumb + '" alt="" class="img-fluid"></a>\
 	</div>\
 	<div class="col-md-9 col-sm-6 contents">\
 	<h6 class="product-name">' + product.name + '</h6>';
@@ -153,7 +153,7 @@ function generateListProduct(product) {
 	}
 	html += '<p class="size">' + product.sizes + '</p>\
 	<p class="color">' + product.colors + '</p>\
-	<a name="' + product.name + '" class="btn btn-success" href="/san-pham/' + product.slug + '" role="button">Xem Chi Tiết</a>\
+	<a name="' + product.name + '" class="btn btn-success" href="/san-pham/' + product.id + '/' + product.slug + '" role="button">Xem Chi Tiết</a>\
 	</div>\
 	</div>\
 	</div>';

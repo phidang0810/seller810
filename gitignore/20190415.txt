@@ -1,0 +1,25 @@
+[import product - admin]
+	- thêm require vào category done
+
+ [products]
+ 	- translate option sort done
+ 	- remove clear option button in categories section	done
+ 	- update text in bottom	done
+ 	- update show categories done
+ 	- update filter flows done
+
+ [product]
+ 	- buy less than min product quantity to sell done
+ 	- update color like filter color on page products done
+
+ [add to cart]
+ 	- check if existed then plus done
+
+ [cart]
+ 	- update supplier name maybe null done
+
+[payment] 	
+ 	- update mobile 3 col: done
+ 		- tên sp, size, mau
+   		- sl
+    	- giá

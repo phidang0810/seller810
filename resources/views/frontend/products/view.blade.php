@@ -43,7 +43,9 @@
               </div>
               <div class="col-9">
                 @foreach($product->colorObjects as $color)
-                <a href="javascript:;" title="{{$color->name}}" class="color-choice" data-id="{{$color->id}}"><i class="fas fa-circle" style="color: {{$color->code}}"></i><span><i class="fas fa-check"></i></span></a>
+                <a href="javascript:;" title="{{$color->name}}" class="color-choice" data-id="{{$color->id}}">
+                  <span style="background-color: {{$color->code}}"></span>
+                </a>
                 @endforeach
               </div>
             </div>
@@ -103,7 +105,7 @@
           @if(isset($product->relatedProducts) && count($product->relatedProducts) > 0)
           @foreach($product->relatedProducts as $relatedProduct)
           <div class="col-12 product product-grid left-related">    
-            <a href="{{ route('frontend.products.view', ['slug' => $relatedProduct->slug]) }}">  
+            <a href="{{ route('frontend.products.view', ['slug' => $relatedProduct->slug, 'id' => $relatedProduct->id]) }}">  
               <img src="{{asset('storage/' . $relatedProduct->photo)}}" alt="" class="img-fluid">   
               <h6 class="product-name">{{$relatedProduct->name}}</h6>
               @if(Auth::check())<h6 class="product-price">{{$relatedProduct->sell_price}}</h6>@endif
@@ -132,7 +134,7 @@
         <div class="row" id="products-list">
           @foreach($product->hotProducts as $hotProduct)
           <div class="col-md-3 col-sm-4 col-xs-6 product product-grid">    
-            <a href="{{ route('frontend.products.view', ['slug' => $hotProduct->slug]) }}">  
+            <a href="{{ route('frontend.products.view', ['slug' => $hotProduct->slug, 'id' => $hotProduct->id]) }}">  
               <img src="{{asset('storage/' . $hotProduct->photo)}}" alt="" class="img-fluid">   
               <h6 class="product-name">{{$hotProduct->name}}</h6>
               @if(Auth::check())<h6 class="product-price">{{$hotProduct->sell_price}}</h6>@endif

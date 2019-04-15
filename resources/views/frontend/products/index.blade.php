@@ -24,10 +24,10 @@
 		<div class="row" id="top-content-actions">
 			<div class="col">
 				<a href="#" class="color-tink"><i class="fas fa-sort-amount-down"></i></a>
-				<span class="color-grey">Sort by</span> <span class="color-tink font-weight-bold">Price:</span>
+				<span class="color-grey">Sắp xếp</span> <span class="color-tink font-weight-bold">theo giá:</span>
 				<select class="form-control form-custom" id="select-sorting">
-					<option value="asc">Low to High</option>
-					<option value="desc">High to Low</option>
+					<option value="asc">Thấp đến cao</option>
+					<option value="desc">Cao đến thấp</option>
 				</select>
 			</div>
 			<div class="col">
@@ -50,27 +50,33 @@
 							<div class="col header-title color-tink">
 								<div class="row"><h6>Danh mục</h6></div>
 							</div>
-							<div class="col">
-								<div class="float-right header-right color-grey">
-									<i class="fas fa-minus" onclick="clearFilter('cat');"></i>
-								</div>
-							</div>
 						</div>
 					</div>
 					<div class="col-md-12 filter-content color-grey">
 						<div class="filters">
+								@if(isset($categories['lowest_level']) && $categories['lowest_level'] == true)
+								<ul class="category-list">
+									@if(isset($category))
+									<li><span>{{$category->name}}</span></li>
+									@endif
+									@foreach($categories['cats'] as $cat)
+									<li><a href="{{ route('frontend.products.category', ['slug' => $cat->slug, 'id' => $cat->id]) }}" class="color-grey">{{$cat->name}}</a></li>
+									@endforeach
+								</ul>
+								@else
 							<ul class="category-list">
 								@if(isset($category))
 								<li><span>{{$category->name}}</span>
 									<ul class="child-list">
 										@endif
-										@foreach($categories as $category)
-										<li><a href="{{ route('frontend.products.category', ['slug' => $category->slug]) }}" class="color-grey">{{$category->name}}</a></li>
+										@foreach($categories as $cat)
+										<li><a href="{{ route('frontend.products.category', ['slug' => $cat->slug, 'id' => $cat->id]) }}" class="color-grey">{{$cat->name}}</a></li>
 										@endforeach
 										@if(isset($category))
 									</ul></li>
 									@endif
 								</ul>
+								@endif
 							</div>
 						</div>
 					</div>

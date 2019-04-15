@@ -54,9 +54,11 @@ function printCartDetail(detail) {
 	<img src="storage/'+detail.photo+'" alt="'+detail.name+'" class="img-fluid">\
 	</div>\
 	<div class="col-md-6 info">\
-	<h6 class="title">'+detail.name+'</h6>\
-	<p>Cung cấp bởi: '+detail.supplier.name+'</p>\
-	<a href="javascript:;" title="delete" onclick="deleteCartDetail('+detail.id+');">Xóa</a>\
+	<h6 class="title">'+detail.name+'</h6>';
+	if (detail.supplier) {
+		html += '<p>Cung cấp bởi: '+detail.supplier.name+'</p>';
+	}
+	html += '<a href="javascript:;" title="delete" onclick="deleteCartDetail('+detail.id+');">Xóa</a>\
 	</div>\
 	<div class="col-md-2">\
 	<p class="price">'+detail.total_price+'</p>\

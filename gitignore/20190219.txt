@@ -1,0 +1,12 @@
+[commons]
+    - Phải đăng nhập mới thấy giá sản phẩm, vào trang giỏ hàng được.
+
+[products list]
+    - lấy data từ bảng products, không lấy từ product_detail
+
+[product detail]
+    - Thêm min_add_to_cart vào bảng products, trên FE chỗ số lượng phải cho chọn số lượng min = field này.
+    - Phải chọn màu sắc, kích thước và đã đăng nhập mới thêm vào giỏ hàng được
+
+[cart]
+    - Show theo product detail, 2 detail khác nhau là 2 dòng như trong admin.

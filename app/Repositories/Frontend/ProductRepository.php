@@ -187,4 +187,30 @@ Class ProductRepository
 		return Response::json($return);
 	}
 
+	public function getProductByID($id)
+	{
+		$data = Product::find($id);
+		$data->sell_price = format_price($data->sell_price);
+
+		// Get colors
+		$product_details = ProductDetail::having('product_id', '=', $data->id)->having('quantity', '>', 0)
+		->get();
+
+		$color_ids = [];
+		$size_ids = [];
+		foreach ($product_details as $key => $value) {
+			$color_ids[] = $value['color_id'];
+			$size_ids[] = $value['size_id'];
+		}
+
+		$data->colorObjects = Color::whereIn('id', $color_ids)->get();
+		$data->sizeObjects = Size::whereIn('id', $size_ids)->get();
+
+		$data->category = $this->lowestLevelCategory($data->id);
+		$data->relatedProducts = $this->getRelatedProducts($data->category->id);
+		$data->hotProducts = $this->getHotProducts();
+
+		return $data;
+	}
+
 }

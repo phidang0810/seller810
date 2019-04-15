@@ -97,8 +97,8 @@ body{
 }
 
 .navbar-default .nav > li > a:hover, .navbar-default .nav > li > a:focus{
-    background-color: #e8f3fd;
-    color: #353c4e;
+  background-color: #e8f3fd;
+  color: #353c4e;
 }
 
 .nav > li.active{
@@ -132,8 +132,8 @@ body{
 }
 .nav ul li.active a{
   background-color: #428bca2b;
-    color: #000000;
-    border-left: 4px solid #428bca;
+  color: #000000;
+  border-left: 4px solid #428bca;
 }
 
 ul.nav-second-level{
@@ -910,5 +910,11 @@ input.quantity-editable.number-input {
 }
 
 .barcode_image {
-    max-width: 200px;
+  max-width: 200px;
+}
+
+.custom-error {
+  color: #cc5965;
+  display: inline-block;
+  margin-left: 5px;
 }

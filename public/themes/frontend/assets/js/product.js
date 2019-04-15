@@ -55,7 +55,23 @@ function getQuantityMinMax () {
 }
 
 function addToCart() {
-	if (color != 0 && size != 0) {
+	var is_ok_quantity = true;
+	quantity = $('input[name="quantity"]').val();
+	min = $('input[name="quantity"]').attr('min');
+	max = $('input[name="quantity"]').attr('max');
+	if (quantity < min || quantity > max) {
+		if (quantity > max) {
+			showAlert('alert-warning', 'Số lượng sản phẩm nhập không đúng', 'Bạn cần phải mua tối đa là ' + max + ' sản phẩm');
+		}else{
+			showAlert('alert-warning', 'Số lượng sản phẩm nhập không đúng', 'Bạn cần phải mua lớn hơn ' + min + ' sản phẩm');
+		}
+		
+		is_ok_quantity = false;
+	}else{
+		is_ok_quantity = true;
+	}
+
+	if (color != 0 && size != 0 && is_ok_quantity) {
 		var quantity = $('input[name=quantity]').val();
 		var data = {
 			id: product_id,

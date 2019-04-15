@@ -207,53 +207,6 @@ span.select2.select2-container.select2-container--default {
         printDetailTotalQuantities();
     }
 
-    // When "Lưu", "Lưu và thoát" on form are clicked -> Update data for array photos
-    // When "Lưu", "Lưu và thoát" on form are clicked -> Update data for array details
-    $( "#mainForm" ).submit(function( event ) {
-        updatePhotosData();
-        var boolValidateDetails = updateDetailsData();
-        if (boolValidateDetails == false) {
-            event.preventDefault();
-        }else{
-            $('#mainForm button[type="submit"]').prop('disabled', true);
-            setTimeout(function(){
-                $('#mainForm button[type="submit"]').prop('disabled', false);
-            }, 1000);
-        }
-
-    });
-
-    // Function update details data
-    function updateDetailsData(){
-        var result = true;
-        $('#mainForm button[type="submit"]').removeAttr("disabled");
-        $.each(importDetails, function(key, value){
-            if (value.delete != true) {
-                $('#product_detail_'+key).removeClass('error');
-                var existed = false;
-                $.each(importDetails, function(key_detail, value_detail){
-                    if ($('product_detail_'+key) && value_detail.delete != true) {
-                        if (key_detail != key) {
-                            if ($('#select_detail_color_'+key_detail).val() == $('#select_detail_color_'+key).val() && $('#select_detail_size_'+key_detail).val() == $('#select_detail_size_'+key).val()) {
-                                $('#product_detail_'+key).addClass('error');
-                                $('#mainForm button[type="submit"]').prop('disabled', true);
-                                existed = true;
-                                result = false;
-                            }
-                        }
-                    }
-                });
-                if (existed == false) {
-                    importDetails[key].color_code = {id:$('#select_detail_color_'+key).val(), name:$('#select_detail_color_'+key+' option[value="'+$('#select_detail_color_'+key).val()+'"]').text()};
-                    importDetails[key].size = {id:$('#select_detail_size_'+key).val(), name:$('#select_detail_size_'+key+' option[value="'+$('#select_detail_size_'+key).val()+'"]').text()};
-                    importDetails[key].quantity = parseInt($('#detail_quantity_'+key).val());
-                }
-            }
-        });
-        $('input[name="importDetails"]').val(JSON.stringify(importDetails));
-        return result;
-    }
-
     // Function to add row with form edit/create to table details
     function htmlEditCreateRowDetail(data, key){
         var html_detail_color_option = '<select id="select_detail_color_'+key+'" class="select_detail_color form-control">';
@@ -407,6 +360,64 @@ span.select2.select2-container.select2-container--default {
         });
     }
 
+    // Function update details data
+    function updateDetailsData(){
+        var result = true;
+        $('#mainForm button[type="submit"]').removeAttr("disabled");
+        $.each(importDetails, function(key, value){
+            if (value.delete != true) {
+                $('#product_detail_'+key).removeClass('error');
+                var existed = false;
+                $.each(importDetails, function(key_detail, value_detail){
+                    if ($('product_detail_'+key) && value_detail.delete != true) {
+                        if (key_detail != key) {
+                            if ($('#select_detail_color_'+key_detail).val() == $('#select_detail_color_'+key).val() && $('#select_detail_size_'+key_detail).val() == $('#select_detail_size_'+key).val()) {
+                                $('#product_detail_'+key).addClass('error');
+                                $('#mainForm button[type="submit"]').prop('disabled', true);
+                                existed = true;
+                                result = false;
+                            }
+                        }
+                    }
+                });
+                if (existed == false) {
+                    importDetails[key].color_code = {id:$('#select_detail_color_'+key).val(), name:$('#select_detail_color_'+key+' option[value="'+$('#select_detail_color_'+key).val()+'"]').text()};
+                    importDetails[key].size = {id:$('#select_detail_size_'+key).val(), name:$('#select_detail_size_'+key+' option[value="'+$('#select_detail_size_'+key).val()+'"]').text()};
+                    importDetails[key].quantity = parseInt($('#detail_quantity_'+key).val());
+                }
+            }
+        });
+        $('input[name="importDetails"]').val(JSON.stringify(importDetails));
+        return result;
+    }
+
+    function validateCategories(searchIDs) {
+        var result = (searchIDs.length <= 0) ? false : true;
+
+        if (!result) {
+            if ($("#categories-empty-error").hasClass("hidden")) {
+                $("#categories-empty-error").removeClass("hidden");
+                $("#categories-empty-error").css("display","inline-block!important");
+                navigationFn.goToSection('#categories-empty-error');
+            }
+        }else{
+            if (!$("#categories-empty-error").hasClass("hidden")) {
+                $("#categories-empty-error").addClass("hidden");
+                $("#categories-empty-error").css("display","none!important");
+            }
+        }
+
+        return result;
+    }    
+
+    var navigationFn = {
+        goToSection: function(id) {
+            $('html, body').animate({
+                scrollTop: $(id).offset().top
+            }, 100);
+        }
+    } 
+
     $(document).ready(function ($) {
 
         if($('#editor-content').length != 0) {
@@ -449,6 +460,28 @@ span.select2.select2-container.select2-container--default {
             });
         }
 
+        // When "Lưu", "Lưu và thoát" on form are clicked -> Update data for array photos
+        // When "Lưu", "Lưu và thoát" on form are clicked -> Update data for array details
+        $( "#mainForm" ).submit(function( event ) {
+            updatePhotosData();
+            var searchIDs = $("#mainForm .list-tree-section input:checkbox:checked").map(function(){
+              return $(this).val();
+          }).get();
+            var boolValidateDetails = updateDetailsData();
+            var boolValidateCategories = validateCategories(searchIDs);
+            if (boolValidateDetails == false || boolValidateCategories == false) {
+                event.preventDefault();
+            }else{
+                $('input[name="categories"]').val(searchIDs);
+                $('#mainForm button[type="submit"]').prop('disabled', true);
+                setTimeout(function(){
+                    $('#mainForm button[type="submit"]').prop('disabled', false);
+                }, 1000);
+            }
+
+        });      
+
+
         // Init select2
         var url_get_products = '{{route("admin.products.getProductEmptiableAjax")}}';
         $('select[name="product_id"]').select2({
@@ -470,13 +503,6 @@ span.select2.select2-container.select2-container--default {
                 },
                 cache: true,
             }
-        });
-
-        $( "#mainForm" ).submit(function( event ) {
-            var searchIDs = $("#mainForm .list-tree-section input:checkbox:checked").map(function(){
-              return $(this).val();
-          }).get();
-            $('input[name="categories"]').val(searchIDs);
         });
 
         $("#bt-reset").click(function () {
@@ -521,14 +547,6 @@ span.select2.select2-container.select2-container--default {
                 return false;
             }
         });
-
-        var navigationFn = {
-            goToSection: function(id) {
-                $('html, body').animate({
-                    scrollTop: $(id).offset().top
-                }, 100);
-            }
-        }
 
         function validateImportProductDetailEmpty(){
             var status = true;
@@ -741,7 +759,7 @@ span.select2.select2-container.select2-container--default {
 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-3 control-label">Mô tả</label>
+                                                        <label class="col-md-3 control-label">Sơ lược</label>
                                                         <div class="col-md-9">
                                                             <textarea name="description" id="editor-desc" cols="30" rows="10"  class="form-control m-b">@if(isset($data->description)){{$data->description}}@else{{old('description')}}@endif</textarea>
                                                         </div>
@@ -750,7 +768,7 @@ span.select2.select2-container.select2-container--default {
 
                                                 <div class="row">
                                                     <div class="form-group">
-                                                        <label class="col-md-3 control-label">Nội dung</label>
+                                                        <label class="col-md-3 control-label">Mô tả</label>
                                                         <div class="col-md-9">
                                                             <textarea name="content" id="editor-content" cols="30" rows="10"  class="summernote form-control m-b">@if(isset($data->content)){{$data->content}}@else{{old('content')}}@endif</textarea>
                                                         </div>
@@ -839,6 +857,7 @@ span.select2.select2-container.select2-container--default {
                                                 </div>
                                                 <!-- END: Product photo -->
                                                 <h5>Danh mục sản phẩm</h5>
+                                                <label id="categories-empty-error" class="custom-error hidden">Phải có ít nhất 1 danh mục</label>
                                                 <div class="list-tree-section m-b">
                                                     {!! $categoriesTree !!}
                                                 </div>
