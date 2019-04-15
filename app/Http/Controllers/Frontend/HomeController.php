@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers\Frontend;
 
+use App\Models\Category;
+use App\Repositories\PhotoRepository;
+use App\Repositories\PostRepository;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Frontend\BaseController;
 use App\Repositories\ProductRepository;
@@ -14,22 +17,26 @@ class HomeController extends BaseController
     public function __construct(Request $request)
     {
         parent::__construct($request);
-
-        $this->_pushBreadCrumbs('Danh Sách sản phẩm', route('frontend.products.index'));
     }
 
-    public function index(ProductRepository $product, CategoryRepository $category, SizeRepository $size, ColorRepository $color){
-        if ($this->_request->ajax()){
-            return $product->getProductsByFilters($this->_request);
-        }
-        $this->_data['show_breadcrumbs'] = true;
+    public function index(ProductRepository $product, PhotoRepository $photo, CategoryRepository $category)
+    {
+
+        $this->_data['show_breadcrumbs'] = false;
         
-        $this->_data['title'] = 'Danh sách sản phẩm';
+        $this->_data['title'] = 'Trang Chủ';
+
+        $this->_data['slides'] = $photo->getList([
+            'type' => PHOTO_BANNER
+        ]);
 
         $this->_data['categories'] = $category->getListCategories([
             'is_home' => 1
         ]);
 
+        $this->_data['newProducts'] = $product->getList();
+
+        $this->_data['hotProducts'] = $product->getList();
 
         return view('frontend.home', $this->_data);
     }
@@ -42,6 +49,22 @@ class HomeController extends BaseController
     public function postContact()
     {
 
+    }
+
+    public function listPost(PostRepository $post)
+    {
+        $data = $post->getList();
+        return view('frontend.news_list', [
+            'posts' => $data
+        ]);
+    }
+
+    public function detailPost($name, $id, PostRepository $post)
+    {
+        $data = $post->getData($id);
+        return view('frontend.news_detail', [
+            'data' => $data
+        ]);
     }
 
 }

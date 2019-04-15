@@ -10,6 +10,6 @@ class Photo extends BaseModel
      * @var array
      */
     protected $fillable = [
-        'type', 'photo', 'thumb', 'active', 'order'
+        'type', 'link', 'photo', 'thumb', 'active', 'order'
     ];
 }
