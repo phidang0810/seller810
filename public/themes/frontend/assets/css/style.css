@@ -820,3 +820,47 @@ h6.total-price-label {
 	left: 50%;
 	display: block;
 }
+.item-post {
+	margin-bottom: 20px;
+}
+.item-post .social {
+	margin-top: 10px;
+}
+.item-post .social span {
+	color:#000;
+}
+.item-post .name {
+	font-weight: bold;
+	color: #000;
+	margin-bottom: 8px;
+}
+.item-post p {
+	color: #5a5a5a;
+	line-height: 20px;
+}
+.pagination {
+	display:block;
+}
+.pagination li {
+	width: 37px;
+	height: 37px;
+	line-height: 37px;
+	background: white;
+	border-radius: 50%;
+	border: 1px solid #ccc;
+	margin: 0 5px;
+	color: #989898;
+	text-align: center;
+	display: inline-block
+}
+.pagination li a{
+	color: #989898;
+}
+.pagination li.active, .pagination li:hover{
+	background-color: #DF296A;
+	color:#fff;
+	border: 1px solid #DF296A
+}
+.pagination li:hover a{
+	color: #fff
+}

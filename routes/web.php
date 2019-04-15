@@ -32,6 +32,10 @@ Route::get ('redirect', function(){
 Route::get('/login/{social}', 'Auth\SocialLoginController@login')->name('social_login')->where('social','facebook|google');
 Route::get('/login/{social}/callback','Auth\SocialLoginController@handleProviderCallback')->name('social_callback')->where('social','twitter|facebook|linkedin|google|github|bitbucket');
 
+Route::get ('/tin-tuc', 'Frontend\HomeController@listPost')->name('frontend.listPost');
+Route::get ('/khuyen-mai', 'Frontend\HomeController@listPostSale')->name('frontend.listPostSale');
+Route::get ('/bai-viet/{id}/{name}', 'Frontend\HomeController@detailPost')->name('frontend.detailPost');
+
 Route::get ('/san-pham', 'Frontend\ProductController@index')->name('frontend.products.index');
 Route::get ('/san-pham/{slug}', 'Frontend\ProductController@view')->name('frontend.products.view');
 Route::get ('/danh-muc/{slug}', 'Frontend\ProductController@category')->name('frontend.products.category');
