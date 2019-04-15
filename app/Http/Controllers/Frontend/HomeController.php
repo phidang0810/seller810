@@ -19,7 +19,7 @@ class HomeController extends BaseController
         parent::__construct($request);
     }
 
-    public function index(ProductRepository $product, PhotoRepository $photo, CategoryRepository $category)
+    public function index(ProductRepository $product, PhotoRepository $photo, CategoryRepository $category, PostRepository $post)
     {
 
         $this->_data['show_breadcrumbs'] = false;
@@ -30,6 +30,10 @@ class HomeController extends BaseController
             'type' => PHOTO_BANNER
         ]);
 
+        $this->_data['ads'] = $photo->getList([
+            'type' => PHOTO_AD
+        ]);
+
         $this->_data['categories'] = $category->getListCategories([
             'is_home' => 1
         ]);
@@ -37,6 +41,10 @@ class HomeController extends BaseController
         $this->_data['newProducts'] = $product->getList();
 
         $this->_data['hotProducts'] = $product->getList();
+
+        $this->_data['posts'] = $post->getList([
+            'category_id' => POST_CATEGORY_TIN_TUC
+        ]);
 
         return view('frontend.home', $this->_data);
     }
@@ -53,16 +61,30 @@ class HomeController extends BaseController
 
     public function listPost(PostRepository $post)
     {
-        $data = $post->getList();
-        return view('frontend.news_list', [
+        $data = $post->getList([
+            'category_id' => POST_CATEGORY_TIN_TUC
+        ]);
+        return view('frontend.post_list', [
+            'title' => 'Tin Tức',
+            'posts' => $data
+        ]);
+    }
+    public function listPostSale(PostRepository $post)
+    {
+        $data = $post->getList([
+            'category_id' => POST_CATEGORY_KHUYEN_MAI
+        ]);
+        return view('frontend.post_list', [
+            'title' => 'Khuyến Mãi',
             'posts' => $data
         ]);
     }
 
-    public function detailPost($name, $id, PostRepository $post)
+
+    public function detailPost($id, $name, PostRepository $post)
     {
         $data = $post->getData($id);
-        return view('frontend.news_detail', [
+        return view('frontend.post_detail', [
             'data' => $data
         ]);
     }

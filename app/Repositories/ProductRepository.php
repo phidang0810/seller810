@@ -1033,7 +1033,7 @@ Class ProductRepository
             $model->take($search['is_hot']);
         }
 
-        $result = $model->get();
+        $result = $model->orderBy('updated_at', 'desc')->get();
         return $result;
     }
 

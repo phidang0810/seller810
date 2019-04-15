@@ -1,47 +1,50 @@
-@extends('layouts.app')
+@extends('frontend.layouts.master')
+
+@section('title', 'login')
+
+@section('css')
+    <link rel="stylesheet" type="text/css" href="{{asset('themes/frontend/assets/css/login.css')}}">
+@endsection
 
 @section('content')
-<div class="container">
-    <div class="row">
-        <div class="col-md-8 col-md-offset-2">
-            <div class="panel panel-default">
-                <div class="panel-heading">Reset Password</div>
+    <section id="login-page">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-5">
+                    <div class="wrap-login">
+                        <h1>QUÊN MẬT KHẨU</h1>
+                        <div>
+                            @if(\Illuminate\Support\Facades\Session::has('success'))
+                                <span class="help-block text-success">
+                                <strong>{{ \Illuminate\Support\Facades\Session::get('success') }}</strong>
+                            </span>
+                            @endif
 
-                <div class="panel-body">
-                    @if (session('status'))
-                        <div class="alert alert-success">
-                            {{ session('status') }}
+                            @if ($errors->has('email'))
+                                <span class="help-block text-danger">
+                                    <strong>{{ $errors->first('email') }}</strong>
+                                </span>
+                            @endif
+                            @if ($errors->has('password'))
+                                <span class="help-block text-danger">
+                                    <strong>{{ $errors->first('password') }}</strong>
+                                </span>
+                            @endif
                         </div>
-                    @endif
-
-                    <form class="form-horizontal" method="POST" action="{{ route('password.email') }}">
-                        {{ csrf_field() }}
-
-                        <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
-                            <label for="email" class="col-md-4 control-label">E-Mail Address</label>
-
-                            <div class="col-md-6">
-                                <input id="email" type="email" class="form-control" name="email" value="{{ old('email') }}" required>
-
-                                @if ($errors->has('email'))
-                                    <span class="help-block">
-                                        <strong>{{ $errors->first('email') }}</strong>
-                                    </span>
-                                @endif
+                        <form class="form-horizontal" method="POST" action="{{ route('password.email') }}">
+                            {{ csrf_field() }}
+                            <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
+                                <input id="email" type="email" class="form-control" placeholder="Email" name="email"
+                                       value="{{ old('email') }}" required autofocus>
                             </div>
-                        </div>
+                            <button type="submit" class="btn bt-login block full-width m-b">Lây lại mật khẩu
+                            </button>
 
-                        <div class="form-group">
-                            <div class="col-md-6 col-md-offset-4">
-                                <button type="submit" class="btn btn-primary">
-                                    Send Password Reset Link
-                                </button>
-                            </div>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
+    </section>
+
 @endsection

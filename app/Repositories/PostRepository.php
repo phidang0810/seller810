@@ -128,12 +128,15 @@ class PostRepository
         return $data;
     }
 
-    public function getList()
+    public function getList($search)
     {
-        $data = Post::select('id', 'title', 'photo', 'thumb', 'created_at')
-            ->orderBy('created_at', 'desc')
-            ->paginate(20);
+        $data = Post::select('id', 'title', 'description', 'slug', 'category_id', 'photo', 'thumb', 'created_at')
+            ->orderBy('created_at', 'desc');
+        if(key_exists('category_id', $search)) {
+            $data->where('category_id', $search['category_id']);
+        }
+        $result = $data->paginate(3);
 
-        return $data;
+        return $result;
     }
 }

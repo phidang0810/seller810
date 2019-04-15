@@ -46,6 +46,9 @@
 							<a class="nav-link" href="/tin-tuc">Tin tức</a>
 						</li>
 						<li class="nav-item">
+							<a class="nav-link" href="/khuyen-mai">Khuyến Mãi</a>
+						</li>
+						<li class="nav-item">
 							<a class="nav-link" href="/lien-he">Liên hệ</a>
 						</li>
 					</ul>

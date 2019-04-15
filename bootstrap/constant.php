@@ -155,6 +155,7 @@ define('DIEU_KHOAN', 6);
 define('CHINH_SACH_GIAO_HANG', 7);
 define('FAQ', 8);
 define('POST_CATEGORY_TIN_TUC', 1);
+define('POST_CATEGORY_KHUYEN_MAI', 2);
 define('POST_PRIVATE', [1,2,3,4,5,6,7,8]);
 
 define('PAYMENT_METHOD_BANK', 1);
