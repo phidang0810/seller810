@@ -1030,7 +1030,7 @@ Class ProductRepository
         }
 
         if (key_exists('take', $search)) {
-            $model->take($search['is_hot']);
+            $model->take($search['take']);
         }
 
         $result = $model->orderBy('updated_at', 'desc')->get();

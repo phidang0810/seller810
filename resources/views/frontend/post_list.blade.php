@@ -37,7 +37,7 @@
 					</div>
 				@endforeach
 			</div>
-			<div class="text-center">
+			<div class="text-center m-pagi">
 				{{ $posts->links() }}
 			</div>
 		</div>

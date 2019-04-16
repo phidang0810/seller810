@@ -83,7 +83,7 @@
 					<!-- END: Filters section -->
 
 					<!-- BEGON: Filters section -->
-					<div class="row filter-wrapper" id="size">
+					{{--<div class="row filter-wrapper" id="size">
 						<div class="col-md-12 filter-header lobster">
 							<div class="row">
 								<div class="col header-title color-tink">
@@ -106,11 +106,11 @@
 								@endforeach
 							</div>
 						</div>
-					</div>
+					</div>--}}
 					<!-- END: Filters section -->
 
 					<!-- BEGON: Filters section -->
-					<div class="row filter-wrapper" id="color">
+					{{--<div class="row filter-wrapper" id="color">
 						<div class="col-md-12 filter-header lobster">
 							<div class="row">
 								<div class="col header-title color-tink">
@@ -132,7 +132,7 @@
 								@endforeach
 							</div>
 						</div>
-					</div>
+					</div>--}}
 					<!-- END: Filters section -->
 
 					<!-- BEGON: Filters section -->

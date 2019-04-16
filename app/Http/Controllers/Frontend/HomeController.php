@@ -21,7 +21,6 @@ class HomeController extends BaseController
 
     public function index(ProductRepository $product, PhotoRepository $photo, CategoryRepository $category, PostRepository $post)
     {
-
         $this->_data['show_breadcrumbs'] = false;
         
         $this->_data['title'] = 'Trang Chủ';
@@ -35,15 +34,21 @@ class HomeController extends BaseController
         ]);
 
         $this->_data['categories'] = $category->getListCategories([
-            'is_home' => 1
+            'is_home' => 1,
+            'take' => 3
         ]);
 
-        $this->_data['newProducts'] = $product->getList();
+        $this->_data['newProducts'] = $product->getList([
+            'take' => 6
+        ]);
 
-        $this->_data['hotProducts'] = $product->getList();
+        $this->_data['hotProducts'] = $product->getList([
+            'take' => 6
+        ]);
 
         $this->_data['posts'] = $post->getList([
-            'category_id' => POST_CATEGORY_TIN_TUC
+            'category_id' => POST_CATEGORY_TIN_TUC,
+            'take' => 3
         ]);
 
         return view('frontend.home', $this->_data);
