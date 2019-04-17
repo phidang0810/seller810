@@ -3,3 +3,5 @@ vendor/
 \.env
 
 *.log
+
+gitignore/20190417\.txt

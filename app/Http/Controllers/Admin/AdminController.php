@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Repositories\ProductRepository;
+use App\Repositories\CategoryRepository;
 
 
 class AdminController extends Controller
@@ -29,5 +31,11 @@ class AdminController extends Controller
         $data['name'] = $name;
         if ($link) $data['link'] = $link;
         array_push($this->_data['breadcrumbs'], $data);
+    }
+
+    public function updateDB(ProductRepository $product, CategoryRepository $category) {
+        $product->update_slug();
+        $category->update_slug();
+
     }
 }

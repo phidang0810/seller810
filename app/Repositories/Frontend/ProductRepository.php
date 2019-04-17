@@ -165,6 +165,7 @@ Class ProductRepository
 				$data->where('products.sell_price', '>', $prices[0]);
 			}
 		}
+		$data->where('products.active', ACTIVE);
 
 	// Sorting
 		if ($request->get('sort') != "") {

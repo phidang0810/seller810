@@ -1037,4 +1037,12 @@ Class ProductRepository
         return $result;
     }
 
+    public function update_slug() {
+        $products = Product::get();
+        foreach ($products as $product) {
+            $product->slug = str_slug($product->name, '-');
+            $product->save();
+        }
+    }
+
 }

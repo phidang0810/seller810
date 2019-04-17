@@ -241,4 +241,12 @@ Class CategoryRepository
         return Category::find($id);
     }
 
+    public function update_slug() {
+        $cats = Category::get();
+        foreach ($cats as $cat) {
+            $cat->slug = str_slug($cat->name, '-');
+            $cat->save();
+        }
+    }
+
 }

@@ -3,6 +3,8 @@ Route::get ('/', 'DashboardController@index')->name('admin.dashboard');
 Route::get ('roles', 'RoleController@index')->name('admin.roles.index');
 Route::get ('roles/create', 'RoleController@create')->name('admin.roles.create');
 
+Route::get ('/update-db', 'AdminController@updateDB')->name('admin.setings.updateDB');
+
 Route::prefix('cai-dat')
 ->middleware('permission:setting_manager')->group(function () {
     Route::get ('/phong-ban/', 'RoleController@index')->name('admin.roles.index');
