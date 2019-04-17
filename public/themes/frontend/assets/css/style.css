@@ -839,10 +839,10 @@ h6.total-price-label {
 	color: #5a5a5a;
 	line-height: 20px;
 }
-.pagination {
+.m-pagi .pagination {
 	display:block;
 }
-.pagination li {
+.m-pagi .pagination li {
 	width: 37px;
 	height: 37px;
 	line-height: 37px;
@@ -854,15 +854,15 @@ h6.total-price-label {
 	text-align: center;
 	display: inline-block
 }
-.pagination li a{
+.m-pagi .pagination li a{
 	color: #989898;
 }
-.pagination li.active, .pagination li:hover{
+.m-pagi .pagination li.active, .m-pagi .pagination li:hover{
 	background-color: #DF296A;
 	color:#fff;
 	border: 1px solid #DF296A
 }
-.pagination li:hover a{
+.m-pagi .pagination li:hover a{
 	color: #fff
 }
 

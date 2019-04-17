@@ -33,7 +33,9 @@
 				@foreach($categories as $category)
 					<div class="col-sm-6 col-md-3">
 						<div class="item-category">
+							<a href="{{$category->link}}">
 							<img class="img-responsive" src="{{asset('storage/' . $category->photo)}}" />
+							</a>
 							<div class="name">{{$category->name}}</div>
 						</div>
 					</div>
@@ -45,7 +47,7 @@
 				@foreach($newProducts as $product)
 					<div class="col-sm-6 col-md-3">
 						<div class="item-product">
-							<a href="">
+							<a href="{{route('frontend.products.view', [$product->id, $product->slug])}}">
 								<img class="img-responsive" src="{{asset('storage/' . $product->thumb)}}" />
 								<div class="name">{{$product->name}}</div>
 							</a>
@@ -58,12 +60,16 @@
 			<div class="row">
 				@if(isset($ads[0]))
 				<div class="col-xs-6">
+					<a href="{{$ads[0]->link}}">
 					<img style="max-width:100%" class="img-responsive" src="{{asset('storage/' . $ads[0]->thumb)}}" />
+					</a>
 				</div>
 				@endif
-				@if(isset($ads[0]))
+				@if(isset($ads[1]))
 					<div class="col-xs-6">
+						<a href="{{$ads[1]->link}}">
 						<img style="max-width:100%" class="img-responsive" src="{{asset('storage/' . $ads[1]->thumb)}}" />
+						</a>
 					</div>
 				@endif
 			</div>
@@ -74,7 +80,7 @@
 				@foreach($hotProducts as $product)
 					<div class="col-sm-6 col-md-3">
 						<div class="item-product">
-							<a href="">
+							<a href="{{route('frontend.products.view', [$product->id, $product->slug])}}">
 								<img class="img-responsive" src="{{asset('storage/' . $product->thumb)}}" />
 								<div class="name">{{$product->name}}</div>
 							</a>
