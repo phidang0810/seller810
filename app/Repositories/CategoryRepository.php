@@ -210,11 +210,26 @@ Class CategoryRepository
             $categories->where('level', 1);
         }
 
+        $categories->withCount(['products' => function ($query) {
+            $query->where('active', ACTIVE);
+        }]);
+
+        $categories->having('products_count', '>', 0);
+
         $categories = $categories->get();
 
         if ( count($categories) <= 0 ) {
             $cats = Category::select(['categories.id', 'categories.name', 'categories.slug'])
-                            ->where('parent_id', $grand_parent)->where('id', '!=', $parent)->get();
+            ->where('parent_id', $grand_parent)->where('id', '!=', $parent);
+
+            $cats->withCount(['products' => function ($query) {
+                $query->where('active', ACTIVE);
+            }]);
+
+            $cats->having('products_count', '>', 0);
+
+            $cats = $cats->get();
+
             $categories['cats'] = $cats;
             $categories['lowest_level'] = true;
         }
