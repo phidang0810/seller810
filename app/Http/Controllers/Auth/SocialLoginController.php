@@ -35,11 +35,11 @@ class SocialLoginController extends Controller
      */
     public function handleProviderCallback(Request $request, UserRepository $userRepo,  $social)
     {
-        $url = $request->get('url');
+        //$url = $request->get('url');
 
         try {
-            $redirect = config('services.'.$social . '.redirect');
-            config(['services.'.$social . '.redirect' => $redirect . '?url=' . $url]);
+           // $redirect = config('services.'.$social . '.redirect');
+            //config(['services.'.$social . '.redirect' => $redirect . '?url=' . $url]);
 
             $userSocial = Socialite::driver($social)->user();
 
@@ -50,10 +50,12 @@ class SocialLoginController extends Controller
             }
             $user = $userRepo->createOrUpdateSocialUser($social, $userSocial, $userID);
             Auth::guard('guest')->login($user);
+            die('xxx');
             return view('auth.redirect', [
                 'auth' => $user
             ]);
         } catch (\Exception $e) {
+            die($e->getMessage());
             return view('auth.redirect_cancel');
         }
     }

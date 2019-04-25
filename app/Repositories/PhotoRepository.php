@@ -135,6 +135,10 @@ class PhotoRepository
         if (key_exists('type', $search)) {
             $model->where('type', $search['type']);
         }
+        if (key_exists('active', $search)) {
+            $model->where('active', $search['active']);
+        }
+
         if (key_exists('limit', $search)) {
             $model->take($search['limit']);
         }

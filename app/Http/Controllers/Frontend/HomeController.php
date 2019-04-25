@@ -26,29 +26,35 @@ class HomeController extends BaseController
         $this->_data['title'] = 'Trang Chủ';
 
         $this->_data['slides'] = $photo->getList([
-            'type' => PHOTO_BANNER
+            'type' => PHOTO_BANNER,
+            'active' => 1
         ]);
 
         $this->_data['ads'] = $photo->getList([
-            'type' => PHOTO_AD
+            'type' => PHOTO_AD,
+            'active' => 1
         ]);
 
         $this->_data['categories'] = $category->getListCategories([
             'is_home' => 1,
-            'take' => 3
+            'take' => 3,
+            'active' => 1
         ]);
 
         $this->_data['newProducts'] = $product->getList([
-            'take' => 6
+            'take' => 6,
+            'active' => 1
         ]);
 
         $this->_data['hotProducts'] = $product->getList([
-            'take' => 6
+            'take' => 6,
+            'active' => 1
         ]);
 
         $this->_data['posts'] = $post->getList([
             'category_id' => POST_CATEGORY_TIN_TUC,
-            'take' => 3
+            'take' => 3,
+            'active' => 1
         ]);
 
         return view('frontend.home', $this->_data);

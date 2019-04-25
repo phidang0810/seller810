@@ -824,6 +824,9 @@ h6.total-price-label {
 .item-post {
 	margin-bottom: 20px;
 }
+.item-post img{
+	max-width: 100%;
+}
 .item-post .social {
 	margin-top: 10px;
 }

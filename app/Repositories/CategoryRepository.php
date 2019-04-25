@@ -228,6 +228,9 @@ Class CategoryRepository
         if (key_exists('is_home', $search)) {
             $categories->where('is_home', $search['is_home']);
         }
+        if (key_exists('active', $search)) {
+            $categories->where('active', $search['active']);
+        }
         $result = $categories->get();
 
         return $result;

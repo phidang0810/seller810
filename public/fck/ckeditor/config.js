@@ -16,15 +16,15 @@ CKEDITOR.editorConfig = function( config ) {
         config.entities_processNumerical = false;
         config.allowedContent = true;
         config.font_names = 'SF Pro Display;San Francisco Display';
-    config.filebrowserBrowseUrl = window.location.protocol + "//" + window.location.hostname + '/public/fck/ckfinder/ckfinder.html';
+    config.filebrowserBrowseUrl = window.location.protocol + "//" + window.location.hostname + '/fck/ckfinder/ckfinder.html';
 
-    config.filebrowserImageBrowseUrl = window.location.protocol + "//" + window.location.hostname + '/public/fck/ckfinder/ckfinder.html?type=Images';
+    config.filebrowserImageBrowseUrl = window.location.protocol + "//" + window.location.hostname + '/fck/ckfinder/ckfinder.html?type=Images';
 
-    config.filebrowserFlashBrowseUrl = window.location.protocol + "//" + window.location.hostname + '/public/fck/ckfinder/ckfinder.html?type=Flash';
+    config.filebrowserFlashBrowseUrl = window.location.protocol + "//" + window.location.hostname + '/fck/ckfinder/ckfinder.html?type=Flash';
 
-    config.filebrowserUploadUrl = window.location.protocol + "//" + window.location.hostname + '/public/fck/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Files';
+    config.filebrowserUploadUrl = window.location.protocol + "//" + window.location.hostname + '/fck/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Files';
 
-    config.filebrowserImageUploadUrl = window.location.protocol + "//" + window.location.hostname + '/public/fck/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Images';
+    config.filebrowserImageUploadUrl = window.location.protocol + "//" + window.location.hostname + '/fck/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Images';
 
-    config.filebrowserFlashUploadUrl = window.location.protocol + "//" + window.location.hostname + '/public/fck/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Flash';
+    config.filebrowserFlashUploadUrl = window.location.protocol + "//" + window.location.hostname + '/fck/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Flash';
 };
