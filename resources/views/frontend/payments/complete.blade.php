@@ -28,8 +28,10 @@
 	<div class="row">
 		<div class="col text-center description">
 			<p>Đơn hàng đã được mua thành công.</p>
+			@if($payment_method == 1)
 			<p>Để hoàn tất đơn hàng, bạn vui lòng chuyển khoản theo thông tin bên dưới.</p>
 			<p>Bạn vui lòng chuyển khoản theo cú pháp <span class="forced">[Mã đơn hàng - Số điện thoại]</span></p>
+			@endif
 		</div>
 	</div>
 	@if($payment_method == 1)

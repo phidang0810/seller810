@@ -57,6 +57,104 @@ Class CartRepository
 
             return $return;
         }
+
+        // Get customer's cart with status CART_IN_CART
+        $cart = $this->getIncartCart($customer->id);
+
+        // If cart with status CART_IN_CART not exists then create new cart
+        if(!$cart) {
+            $cart = $this->newCart($customer->id);
+        }
+
+        $product = Product::find($request->get('id'));
+
+        if (!$product) {
+            $return['success'] = false;
+            $return['error'] = 'Sản phẩm này không tồn tại';
+
+            return $return;
+        }
+
+        $productDetail = ProductDetail::where('product_id', $product->id)
+        ->where('size_id', $request->get('size'))
+        ->where('color_id', $request->get('color'))
+        ->first();
+
+        if (!$productDetail) {
+            $return['success'] = false;
+            $return['error'] = 'Sản phẩm này không tồn tại';
+
+            return $return;
+        }
+
+        if ($productDetail->quantity_available < $request->get('quantity')) {
+            $return['success'] = false;
+            $return['error'] = 'Sản phẩm này không đủ số lượng';
+
+            return $return;
+        }
+
+        $warehouseProduct = WarehouseProduct::where('product_id', $product->id)
+        ->where('product_detail_id', $productDetail->id)
+        ->orderBy('quantity_available', 'desc')
+        ->first();
+
+        if (!$warehouseProduct) {
+            $return['success'] = false;
+            $return['error'] = 'Sản phẩm này không đủ số lượng';
+
+            return $return;
+        }
+
+        $modelDetail = CartDetail::where('cart_id', $cart->id)
+                    ->where('product_id', $request->get('id'))
+                    ->where('product_detail_id', $productDetail->id)
+                    ->where('warehouse_product_id', $warehouseProduct->id)
+                    ->first();
+
+        if (!$modelDetail) {
+            $modelDetail = new CartDetail([
+                'product_id' => $request->get('id'),
+                'product_detail_id' => $productDetail->id,
+                'warehouse_product_id' => $warehouseProduct->id,
+                'quantity' => $request->get('quantity'),
+                // 'discount_amount' => ?,
+                'price' => $product->sell_price,
+                'total_price' => $product->sell_price * $request->get('quantity'),
+                'import_price' => $product->price,
+            ]);
+        }else{
+            $modelDetail['quantity'] += $request->get('quantity');
+            $modelDetail['total_price'] = $product->sell_price * $modelDetail['quantity'];
+        }
+
+        $cart->details()->save($modelDetail);
+
+        $adminCartRepository = new AdminCartRepository;
+        $cart = $adminCartRepository->calculateCart($cart);
+        $cart->save();        
+
+        return $return;
+    }
+
+    public function addDetail_bk($request) {
+        // define return data
+        $return = [
+            'success' => true,
+            'error' => "",
+            'message' => "Sản phẩm đã được đưa vào giỏ hàng thành công."
+        ];
+
+        // get customer
+        $customer = $this->getCustomer($request);
+
+        // validate user is customer
+        if(!$customer){
+            $return['success'] = false;
+            $return['error'] = 'Bạn không phải là khách hàng, không thể mua hàng.';
+
+            return $return;
+        }
         $return['customer'] = $customer;
 
         // Get customer's cart with status CART_IN_CART
@@ -352,6 +450,200 @@ Class CartRepository
     }
 
     public function paymentCart($request) {
+        // define return data
+        $return = [
+            'success' => true,
+            'error' => "",
+            'message' => "Đặt mua hàng thành công."
+        ];
+
+        // define requests variables
+        $customer_name = $request->get('customer_name');
+        $customer_email = $request->get('customer_email');
+        $customer_phone = $request->get('customer_phone');
+        $customer_address = $request->get('customer_address');
+        $customer_city = $request->get('customer_city');
+        $is_payment_default = $request->get('is_payment_default');
+        $payment_method = $request->get('payment_method');
+        $transport_method = $request->get('transport_method');
+        $transport_info_name = $request->get('transport_info_name');
+        $transport_info_phone = $request->get('transport_info_phone');
+        $user_id = $request->get('user_id');
+        $cart_id = $request->get('cart_id');
+
+
+        $cart = Cart::find($cart_id);
+        if (!$cart) {
+            $return['success'] = false;
+            $return['message'] = "Đơn hàng này không tồn tại.";
+            return $return;
+        }
+
+        // get customer data
+        $customer = $this->getCustomer($request);
+
+        // validate user is customer
+        if(!$customer){
+            $return['success'] = false;
+            $return['error'] = 'Bạn không phải là khách hàng, không thể mua hàng.';
+
+            return $return;
+        }
+
+        // compare customer data with request data
+        if ($customer->city_id != $customer_city || $customer->name != $customer_name ||
+            $customer->email != $customer_email || $customer->phone != $customer_phone || $customer->address != $customer_address) {
+            // if different then compare with data of current customer in customer_express
+            $customer_express = CustomerExpress::where('customer_id', $customer->id)
+            ->where('city_id', $customer_city)
+            ->where('phone', $customer_phone)
+            ->where('email', $customer_email)
+            ->where('name', $customer_name)
+            ->where('address', $customer_address)->first();
+
+            // if not exist then create new customer_express
+            if (!$customer_express) {
+             $customer_express = new CustomerExpress;
+             $customer_express->name = $customer_name;
+             $customer_express->phone = $customer_phone;
+             $customer_express->email = $customer_email;
+             $customer_express->address = $customer_address;
+             $customer_express->city_id = $customer_city;
+             $customer_express->customer_id = $customer->id;
+
+             $customer_express->save();
+         }
+
+        // if check payment default then update customer current field default_payment = customer_express id
+         if ($is_payment_default) {
+            $customer->default_payment = $customer_express->id;
+            $customer->save();
+        }
+
+        $cart->customer_express_id = $customer_express->id;
+    }
+
+        // update cart payment info
+    $cart->payment_method = $payment_method;
+    $cart->transport_method = $transport_method;
+    $cart->transport_info_name = $transport_info_name;
+    $cart->transport_info_phone = $transport_info_phone;
+
+    // create db transaction and update cart, product, product_warehouse, product_detail
+    DB::transaction(function () use ($cart) {
+        $cart->quantity = 0;
+        $cart->total_price = 0;
+        $cart->total_import_price = 0;
+        foreach ($cart->details as $cart_detail) {
+            $product = Product::find($cart_detail->product_id);
+            $productDetail = ProductDetail::find($cart_detail->product_detail_id);            
+            $warehouseProduct = WarehouseProduct::find($cart_detail->warehouse_product_id);
+
+            if ($cart_detail->quantity <= $warehouseProduct->quantity_available) {
+                     // minus quantity_avaiable in product, product detail, warehouse detail
+                $product->quantity_available -= $cart_detail->quantity;
+                $product->save();
+
+                $productDetail->quantity_available -= $cart_detail->quantity;
+                $productDetail->save();
+
+                $warehouseProduct->quantity_available -= $cart_detail->quantity;
+                $warehouseProduct->save();
+
+                $cart_detail->total_price = $cart_detail->price * $cart_detail->quantity;
+                $cart_detail->save();
+
+                $cart->quantity += $cart_detail->quantity;
+                $cart->total_price += $cart_detail->total_price;
+                $cart->total_import_price += $cart_detail->import_price * $cart_detail->quantity;
+            }else{
+                $total_sell_quantity = $cart_detail->quantity;
+                $cart_detail->quantity = $warehouseProduct->quantity_available;
+
+                // minus quantity_avaiable in product, product detail, warehouse detail
+                $product->quantity_available -= $cart_detail->quantity;
+                $product->save();
+
+                $productDetail->quantity_available -= $cart_detail->quantity;
+                $productDetail->save();
+
+                $warehouseProduct->quantity_available -= $cart_detail->quantity;
+                $warehouseProduct->save();
+
+                $cart_detail->total_price = $cart_detail->price * $cart_detail->quantity;
+                $cart_detail->save();
+
+                $cart->quantity += $cart_detail->quantity;
+                $cart->total_price += $cart_detail->total_price;
+                $cart->total_import_price += $cart_detail->import_price * $cart_detail->quantity;
+
+                $total_sell_quantity -= $cart_detail->quantity;
+                while ($total_sell_quantity > 0) {
+                    $sell_quantity = $total_sell_quantity;
+
+                    $otherWarehouseProduct = WarehouseProduct::where('product_id', $product->id)
+                    ->where('product_detail_id', $productDetail->id)
+                    ->orderBy('quantity_available', 'desc')
+                    ->first();
+
+                    if ($total_sell_quantity > $otherWarehouseProduct->quantity_available) {
+                        $sell_quantity = $otherWarehouseProduct->quantity_available;
+                    }
+
+                    $new_cart_detail = new CartDetail([
+                        'cart_id' => $cart->id,
+                        'product_id' => $product->id,
+                        'product_detail_id' => $productDetail->id,
+                        'warehouse_product_id' => $otherWarehouseProduct->id,
+                        'quantity' => $sell_quantity,
+                        // 'discount_amount' => ?,
+                        'price' => $product->sell_price,
+                        'total_price' => $product->sell_price * $sell_quantity,
+                        'import_price' => $product->price,
+                    ]);
+
+                    // minus quantity_avaiable in product, product detail, warehouse detail
+                    $product->quantity_available -= $new_cart_detail->quantity;
+                    $product->save();
+
+                    $productDetail->quantity_available -= $new_cart_detail->quantity;
+                    $productDetail->save();
+
+                    $otherWarehouseProduct->quantity_available -= $new_cart_detail->quantity;
+                    $otherWarehouseProduct->save();
+
+                    $new_cart_detail->total_price = $new_cart_detail->price * $new_cart_detail->quantity;
+                    $new_cart_detail->save();
+
+                    $cart->quantity += $new_cart_detail->quantity;
+                    $cart->total_price += $new_cart_detail->total_price;
+                    $cart->total_import_price += $new_cart_detail->import_price * $new_cart_detail->quantity;
+
+                    $total_sell_quantity -= $new_cart_detail->quantity;
+                }
+            }
+
+           
+        }
+
+        $cart->total_discount_amount = ($cart->quantity*$cart->partner_discount_amount) + $cart->customer_discount_amount;
+        $cart->vat_amount = $cart->total_price*$cart->vat_percent;
+        $cart->price = $cart->total_price+$cart->vat_amount-$cart->total_discount_amount;
+
+        $cart->status = CART_NEW;
+
+        $cart->save();
+    });
+
+        // send response
+    // if ($cart->payment_method == PAYMENT_METHOD_BANK) {
+        $return['redirect_to'] = route('frontend.carts.paymentBank', ['cart_code' => $cart->code]);
+    // }
+
+    return $return;
+}
+
+    public function paymentCart_bk($request) {
         // define return data
         $return = [
             'success' => true,

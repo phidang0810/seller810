@@ -158,6 +158,10 @@ function parse_status($status){
 			$status_parsed = '<span class="badge badge-danger">'.CART_TEXT[CART_CANCELED].'</span>';
 			break;
 
+		case CART_IN_CART:
+			$status_parsed = '<span class="badge badge-primary">'.CART_TEXT[CART_IN_CART].'</span>';
+			break;
+
 		default:
 			$status_parsed = '<span class="badge badge-primary">'.CART_TEXT[CART_EXCUTING].'</span>';
 			break;
@@ -200,6 +204,7 @@ function make_cart_status_options($selected = 0){
 		array('id' => CART_TRANSPORTED, 'name' => CART_TEXT[CART_TRANSPORTED]),
 		array('id' => CART_COMPLETED, 'name' => CART_TEXT[CART_COMPLETED]),
 		array('id' => CART_CANCELED, 'name' => CART_TEXT[CART_CANCELED]),
+		array('id' => CART_IN_CART, 'name' => CART_TEXT[CART_IN_CART]),
 	];
 
 	return make_option($array, $selected);

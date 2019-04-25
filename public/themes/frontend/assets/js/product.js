@@ -82,9 +82,9 @@ function addToCart() {
 	max = parseInt($('input[name="quantity"]').attr('max'));
 	if (quantity < min || quantity > max) {
 		if (quantity > max) {
-			showAlert('alert-warning', 'Số lượng sản phẩm nhập không đúng', 'Bạn cần phải mua tối đa là ' + max + ' sản phẩm');
+			showAlert('alert-warning', 'Số lượng sản phẩm nhập không đúng', 'Bạn có thể mua tối đa là ' + max + ' sản phẩm');
 		}else{
-			showAlert('alert-warning', 'Số lượng sản phẩm nhập không đúng', 'Bạn cần phải mua lớn hơn ' + min + ' sản phẩm');
+			showAlert('alert-warning', 'Số lượng sản phẩm nhập không đúng', 'Bạn phải mua lớn hơn ' + min + ' sản phẩm');
 		}
 		
 		is_ok_quantity = false;
@@ -116,7 +116,10 @@ function addToCart() {
 			}
 		});
 	}else{
-		showAlert('alert-warning', 'Đặt hàng không thành công', 'Bạn cần phải chọn size, color và nhập số lượng mới có thể đặt hàng');
+		if (color == 0 || size == 0) {
+			showAlert('alert-warning', 'Đặt hàng không thành công', 'Bạn cần phải chọn size, color và nhập số lượng mới có thể đặt hàng');
+		}
+		
 		return false;
 	}
 }

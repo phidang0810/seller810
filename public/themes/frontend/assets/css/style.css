@@ -407,7 +407,7 @@ section#main-content {
 
 	.quantity-section .number-input input[type=number] {
 		font-family: sans-serif;
-		max-width: 1rem;
+		max-width: 2rem;
 		border: solid #ddd;
 		border-width: 0px;
 		text-align: center;
