@@ -59,7 +59,8 @@ define('CART_LABEL', [
     3   =>  'info',
     5   =>  'success',
     4   =>  'primary',
-    6   =>  'Warning'
+    6   =>  'Warning',
+    7   =>  'primary'
 ]);
 
 define('PAYSLIP_PENDING', 1);

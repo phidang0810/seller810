@@ -39,7 +39,7 @@ Route::get ('/bai-viet/{id}/{name}', 'Frontend\HomeController@detailPost')->name
 Route::get ('/san-pham', 'Frontend\ProductController@index')->name('frontend.products.index');
 Route::get ('/san-pham/{id}/{slug?}', 'Frontend\ProductController@view')->name('frontend.products.view');
 Route::get ('/danh-muc/{id}/{slug?}', 'Frontend\ProductController@category')->name('frontend.products.category');
-Route::get ('/san-pham/chi-tiet/so-luong', 'Frontend\ProductController@getMaxQuantity')->name('frontend.products.getMaxQuantity');
+Route::get ('/so-luong-san-pham', 'Frontend\ProductController@getMaxQuantity')->name('frontend.products.getMaxQuantity');
 Route::post ('/gio-hang/them', 'Frontend\CartController@addDetail')->name('frontend.carts.addDetail');
 Route::get ('/gio-hang/so-luong', 'Frontend\CartController@getNumberDetails')->name('frontend.carts.getNumberDetails');
 Route::get ('/gio-hang', 'Frontend\CartController@index')->name('frontend.carts.index');

@@ -448,7 +448,7 @@
                                                     <div class="form-group">
                                                         <label class="col-md-3 control-label">Số lượng bán ít nhất</label>
                                                         <div class="col-md-3">
-                                                            <input type="text" name="min_quantity_sell" placeholder="" class="form-control required m-b input-sell-price" value="@if(isset($data->min_quantity_sell)){{$data->min_quantity_sell}}@else{{old('min_quantity_sell')}}@endif"/>
+                                                            <input type="text" name="min_quantity_sell" placeholder="" class="form-control required m-b" value="@if(isset($data->min_quantity_sell)){{$data->min_quantity_sell}}@else{{old('min_quantity_sell')}}@endif"/>
                                                         </div>
                                                     </div>
                                                 </div>
