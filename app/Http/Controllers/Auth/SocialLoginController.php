@@ -16,9 +16,6 @@ class SocialLoginController extends Controller
      */
     public function login($social)
     {
-        $redirect = config('services.'.$social . '.redirect');
-        config(['services.'.$social . '.redirect' => $redirect]);
-
         $driver = Socialite::driver($social);
         if($social === 'facebook') {
             $driver->scopes(['public_profile']);
