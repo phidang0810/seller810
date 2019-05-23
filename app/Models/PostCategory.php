@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-class GroupCustomer extends BaseModel
+class PostCategory extends BaseModel
 {
     /**
      * The attributes that are mass assignable.
