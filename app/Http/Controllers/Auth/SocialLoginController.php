@@ -17,9 +17,6 @@ class SocialLoginController extends Controller
     public function login($social)
     {
         $driver = Socialite::driver($social);
-        if($social === 'facebook') {
-            $driver->scopes(['public_profile']);
-        }
         return $driver->redirect();
     }
 
@@ -46,8 +43,7 @@ class SocialLoginController extends Controller
                 $userID = $user->id;
             }
             $user = $userRepo->createOrUpdateSocialUser($social, $userSocial, $userID);
-            Auth::guard('guest')->login($user);
-            die('xxx');
+            Auth::login($user);
             return view('auth.redirect', [
                 'auth' => $user
             ]);
@@ -58,14 +54,11 @@ class SocialLoginController extends Controller
     }
 
     public function logout(Request $request) {
-        if(!Auth::guard('guest')->check()) {
+        if(!Auth::check()) {
             return view('errors.401');
         }
 
-        $sessionKey = Auth::guard('guest')->getName();
-
-        // Delete single session key (just for this user)
-        $request->session()->forget($sessionKey);
+        Auth::logout();
         return redirect()->back();
     }
 }
