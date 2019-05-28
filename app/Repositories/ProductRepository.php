@@ -1029,6 +1029,10 @@ Class ProductRepository
             $model->where('is_hot', $search['is_hot']);
         }
 
+        if (key_exists('active', $search)) {
+            $model->where('active', $search['active']);
+        }
+
         if (key_exists('take', $search)) {
             $model->take($search['take']);
         }

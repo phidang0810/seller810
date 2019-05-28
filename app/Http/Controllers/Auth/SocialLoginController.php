@@ -16,13 +16,7 @@ class SocialLoginController extends Controller
      */
     public function login($social)
     {
-        $redirect = config('services.'.$social . '.redirect');
-        config(['services.'.$social . '.redirect' => $redirect]);
-
         $driver = Socialite::driver($social);
-        if($social === 'facebook') {
-            $driver->scopes(['public_profile']);
-        }
         return $driver->redirect();
     }
 
@@ -35,11 +29,11 @@ class SocialLoginController extends Controller
      */
     public function handleProviderCallback(Request $request, UserRepository $userRepo,  $social)
     {
-        $url = $request->get('url');
+        //$url = $request->get('url');
 
         try {
-            $redirect = config('services.'.$social . '.redirect');
-            config(['services.'.$social . '.redirect' => $redirect . '?url=' . $url]);
+           // $redirect = config('services.'.$social . '.redirect');
+            //config(['services.'.$social . '.redirect' => $redirect . '?url=' . $url]);
 
             $userSocial = Socialite::driver($social)->user();
 
@@ -49,24 +43,22 @@ class SocialLoginController extends Controller
                 $userID = $user->id;
             }
             $user = $userRepo->createOrUpdateSocialUser($social, $userSocial, $userID);
-            Auth::guard('guest')->login($user);
+            Auth::login($user);
             return view('auth.redirect', [
                 'auth' => $user
             ]);
         } catch (\Exception $e) {
+            die($e->getMessage());
             return view('auth.redirect_cancel');
         }
     }
 
     public function logout(Request $request) {
-        if(!Auth::guard('guest')->check()) {
+        if(!Auth::check()) {
             return view('errors.401');
         }
 
-        $sessionKey = Auth::guard('guest')->getName();
-
-        // Delete single session key (just for this user)
-        $request->session()->forget($sessionKey);
+        Auth::logout();
         return redirect()->back();
     }
 }

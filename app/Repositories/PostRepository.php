@@ -135,6 +135,10 @@ class PostRepository
         if(key_exists('category_id', $search)) {
             $data->where('category_id', $search['category_id']);
         }
+        if(key_exists('active', $search)) {
+            $data->where('active', $search['active']);
+        }
+
         if(key_exists('take', $search)) {
             $result = $data->paginate(3);
         } else {

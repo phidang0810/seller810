@@ -136,8 +136,13 @@ Class ProductRepository
 	}
 
 	public function getProductsByFilters($request, $category = null) {
+        $data = Product::select('id', 'slug', 'name', 'sell_price', 'photo', 'thumb');
+
 	// Filter with search string
-		$data = Product::where('products.name', 'like', '%' . $request->get('search_string') . '%');
+        if ($request->get('search_string') != "") {
+            $data->where('products.name', 'like', '%' . $request->get('search_string') . '%');
+        }
+
 
 	// Filter category
 		if ($request->get('category') != "") {
@@ -173,7 +178,7 @@ Class ProductRepository
 		}
 
 	// Get products with paginate
-		$data =	$data->paginate(9);
+		$data =	$data->paginate(40);
 
 	// Format price for all products got
 		foreach ($data as $key => $value) {

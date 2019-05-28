@@ -28,7 +28,7 @@
 				<span>{{$data->created_at}}</span>
 			</div>
 			<div>
-				{!! $data->content !!}
+				{!!html_entity_decode($data->content)!!}
 			</div>
 		</div>
 	</section>
