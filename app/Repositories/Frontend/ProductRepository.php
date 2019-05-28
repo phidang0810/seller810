@@ -174,7 +174,10 @@ Class ProductRepository
 
 	// Sorting
 		if ($request->get('sort') != "") {
-			$data->orderBy('sell_price', $request->get('sort'));
+			$data->orderBy('sell_price', $request->get('sort'))
+			->orderBy('order', 'asc');
+		}else{
+			$data->orderBy('order', 'asc');
 		}
 
 	// Get products with paginate

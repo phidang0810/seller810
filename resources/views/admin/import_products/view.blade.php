@@ -116,19 +116,23 @@ span.select2.select2-container.select2-container--default {
             // categories
             $("input[type=checkbox]").prop("checked",false);
         }else{
-            if ( !$('input[name=id]') || $('input[name=id]') == null ) {
+            // if ( !$('input[name=id]') || $('input[name=id]') == null ) {
                 $('select[name=brand_id]').val(data.product.brand_id);
+                $('select[name=supplier_id]').val(data.product.supplier_id);
                 $('input[name=price]').val(data.product.price);
                 $('input[name=sell_price]').val(data.product.sell_price);
-                $('textarea[name=description]').val(data.product.description);
-                $('textarea[name=content]').val(data.product.content);
+                $('textarea[name=description]').html(data.product.description);
+                $('textarea[name=content]').html(data.product.content);
                 $('input[name=order]').val(data.product.order);
                 $('select[name=active]').val(data.product.active);
                 // metas
                 $('input[name=meta_keyword]').val(data.product.meta_keyword);
                 $('input[name=meta_description]').val(data.product.meta_description);
                 $('input[name=meta_robot]').val(data.product.meta_robot);
-            }
+
+                CKEDITOR.instances['editor-desc'].insertHtml(data.product.description);
+                CKEDITOR.instances['editor-content'].insertHtml(data.product.content);
+            // }
             // photo
             if (data.product.photo) {
                 // if ($('.fileinput').hasClass('fileinput-new')) {
@@ -463,6 +467,7 @@ span.select2.select2-container.select2-container--default {
         // When "Lưu", "Lưu và thoát" on form are clicked -> Update data for array photos
         // When "Lưu", "Lưu và thoát" on form are clicked -> Update data for array details
         $( "#mainForm" ).submit(function( event ) {
+            $('#mainForm button[type="submit"]').hide();
             updatePhotosData();
             var searchIDs = $("#mainForm .list-tree-section input:checkbox:checked").map(function(){
               return $(this).val();
@@ -470,6 +475,9 @@ span.select2.select2-container.select2-container--default {
             var boolValidateDetails = updateDetailsData();
             var boolValidateCategories = validateCategories(searchIDs);
             if (boolValidateDetails == false || boolValidateCategories == false) {
+                setTimeout(function(){
+                    $('#mainForm button[type="submit"]').show();
+                }, 2000);
                 event.preventDefault();
             }else{
                 $('input[name="categories"]').val(searchIDs);
