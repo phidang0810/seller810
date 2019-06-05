@@ -35,7 +35,7 @@ class SizeController extends AdminController
     public function view(SizeRepository $model)
     {
         $id = $this->_request->get('id');
-        $this->_data['title'] = 'Thêm phiếu chi';
+        $this->_data['title'] = 'Thêm size';
         if ($id) {
             $this->_data['title'] = 'Sửa thông tin size';
             $this->_data['data'] = $model->getData($id);
