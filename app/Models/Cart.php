@@ -95,6 +95,6 @@ class Cart extends BaseModel
      */
     public function customerExpress()
     {
-        return $this->belongsTo('App\Models\customerExpress');
+        return $this->belongsTo('App\Models\CustomerExpress');
     }
 }
