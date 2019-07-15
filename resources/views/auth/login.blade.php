@@ -22,7 +22,7 @@
             <div class="row justify-content-center">
                 <div class="col-8">
                     <div class="row">
-                        <div class="col-8">
+                        <div class="col-xs-12 col-sm-8">
                             <div class="wrap-login">
                                 <h1>ĐĂNG NHẬP</h1>
                                 <div>
@@ -59,9 +59,8 @@
                                         <input name="remember" type="checkbox" /> <span>Nhớ tài khoản</span>
                                         <a href="/password/reset">Quên mật khẩu?</a>
                                     </div>
-                                    <button type="submit" class="btn bt-login block full-width m-b">Đăng nhập
-                                    </button>
-
+                                    <button type="submit" class="btn bt-login block full-width m-b">Đăng nhập</button>
+                                    <a class="bt-register d-block d-sm-none" href="{{route('register')}}">ĐĂNG KÝ</a>
                                     <div class="justify-content-center" style="margin-bottom:10px;display: flex;align-items: center;">
                                         <span class="line"></span><span>Hoặc</span><span class="line"></span>
                                     </div>
@@ -73,7 +72,7 @@
                                 </form>
                             </div>
                         </div>
-                        <div class="col-4 col-right justify-content-center">
+                        <div class="d-none d-sm-block col-sm-4 col-right justify-content-center">
                             <div style="color:#fff; text-align:center; margin: 100px 0 20px 0;font-weight: bold;">ĐĂNG KÝ MỚI</div>
                             <div style="line-height: 20px; font-size:13px;text-align:center;margin-bottom: 60px">Hãy là thành viên của <br/> Rampoin để nhận <br/> những ưu đãi tốt nhất.</div>
                             <a class="bt-register" href="{{route('register')}}">ĐĂNG KÝ</a>

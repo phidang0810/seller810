@@ -103,7 +103,7 @@ class UserRepository
 
     public function checkAccountExist($user, $social)
     {
-        $model =  SocialUser::where('social_alias', $social);
+        $model =  User::where('social_alias', $social);
         if($user->getEmail()) {
             $model->where('email', $user->getEmail());
         }
@@ -196,22 +196,22 @@ class UserRepository
         return $data;
     }
 
-    public function getStaff($request){
+    public function getStaff($request)
+    {
         $id = $request->get('id');
 
         $return = [
-            'status'    =>  'true',
-            'message'   =>  'Lấy datas nhân viên thành công',
+            'status'    =>  false,
+            'message'   =>  'Id staff không tồn tại',
         ];
 
         $staff = User::find($id);
         if ($staff) {
+            $return['status'] = true;
             $return['staff'] = $staff;
-        }else{
-            $return['status'] = 'false';
         }
 
-        return Response::json($return);
+        return $return;
     }
 
     public function createCustomer($data)
