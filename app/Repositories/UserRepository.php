@@ -196,10 +196,8 @@ class UserRepository
         return $data;
     }
 
-    public function getStaff($request)
+    public function getStaff($id)
     {
-        $id = $request->get('id');
-
         $return = [
             'status'    =>  false,
             'message'   =>  'Id staff không tồn tại',

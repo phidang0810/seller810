@@ -151,8 +151,8 @@ function generateListProduct(product) {
 	if (auth == 1) {
 		html += '<h6 class="product-price">' + product.sell_price + '</h6>';
 	}
-	html += '<p class="size">' + product.sizes + '</p>\
-	<p class="color">' + product.colors + '</p>\
+	html += '<p class="size"><span class="font-weight-bold">Kích thước: </span>' + product.sizes + '</p>\
+	<p class="color"><span class="font-weight-bold">Màu sắc: </span>' + product.colors + '</p>\
 	<a name="' + product.name + '" class="btn btn-success" href="/san-pham/' + product.id + '/' + product.slug + '" role="button">Xem Chi Tiết</a>\
 	</div>\
 	</div>\

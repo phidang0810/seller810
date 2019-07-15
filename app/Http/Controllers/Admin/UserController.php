@@ -38,7 +38,7 @@ class UserController extends AdminController
     public function view(UserRepository $user, RoleRepository $role)
     {
         if ($this->_request->ajax()) {
-            return $user->getStaff($this->_request);
+            return response()->json($user->getStaff($this->_request->get('id')));
         }
         
         $id = $this->_request->get('id');
