@@ -100,6 +100,7 @@
     }
 
     function performDetail(id){
+        $('#btn-'+id).hide();
         $.ajax({
             url: "{{route('admin.import_products.confirm')}}",
             data:{
@@ -108,11 +109,13 @@
             },
             dataType:'json'
         }).done(function(data) {
-            $('#btn-'+id).hide()
             if (data.all_confirmed == "true") {
                 $('button[name=action][value=save_complete]').removeAttr('disabled');
             }
-        })
+        }).fail(function() {
+            alert( "error" );
+            $('#btn-'+id).show();
+        });
     }
 
     $('.quantity-editable').on('change', function(){
