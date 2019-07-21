@@ -54,10 +54,12 @@
         </div>
     </div>
 
+    @if($result['cart']->payment_method)
     <div class="form-group">
         <label class="col-lg-5 control-label" style="text-align: left; padding-right: 0; width: 33.666667%;">Phương thức thanh toán:</label>
         <label id="code" class="col-lg-7 text-left control-label" style="padding-left: 0; text-align: left;">{{PAYMENT_METHOD_TEXT[$result['cart']->payment_method]}}</label>
     </div>
+    @endif
 
     <div class="text-left">
         <h3 class="text-uppercase">thông tin vận chuyển</h3>
@@ -71,6 +73,7 @@
     </div>
     @endif
 
+    @if($result['cart']->receiver)
     <div class="form-group">
         <label class="col-lg-5 control-label" style="text-align: left; padding-right: 0; width: 33.666667%;">Thành phố:</label>
         <label id="code" class="col-lg-7 text-left control-label" style="padding-left: 0; text-align: left;">{{$result['cart']->receiver->city->name}}</label>
@@ -95,6 +98,7 @@
         <label class="col-lg-5 control-label" style="text-align: left; padding-right: 0; width: 33.666667%;">Địa chỉ:</label>
         <label id="code" class="col-lg-7 text-left control-label" style="padding-left: 0; text-align: left;">{{$result['cart']->receiver->address}}</label>
     </div>
+    @endif
 
     <div class="text-left">
         <h3 class="text-uppercase">thông tin đơn hàng</h3>
