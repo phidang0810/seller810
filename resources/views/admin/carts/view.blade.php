@@ -5,19 +5,19 @@
 @section('css')
 <link href="{{asset('themes/inspinia/css/plugins/select2/select2.min.css')}}" rel="stylesheet">
 <style type="text/css">
-@media (min-width: 768px){
-    #page-wrapper {
-        margin: 0 0 0 0px;
-    }
+    @media (min-width: 768px) {
+        #page-wrapper {
+            margin: 0 0 0 0px;
+        }
 
-    nav.navbar-default.navbar-static-side {
-        display: none;
-    }
+        nav.navbar-default.navbar-static-side {
+            display: none;
+        }
 
-    .pace-done.mini-navbar nav.navbar-default.navbar-static-side {
-        display: block;
+        .pace-done.mini-navbar nav.navbar-default.navbar-static-side {
+            display: block;
+        }
     }
-}
 </style>
 @endsection
 
@@ -28,15 +28,21 @@
     var cart_details = ($('input[name="cart_details"]').val()) ? jQuery.parseJSON($('input[name="cart_details"]').val()) : [];
     var default_image = '{{asset(NO_PHOTO)}}';
     var isSelectPhone = true;
+    var createdCart = false;
+
+    function updateCartDetails(data) {
+        cart_details = data.data.cart.details;
+        $('input[name="cart_details"]').val(JSON.stringify(cart_details));
+    }
 
     // Function to add row with form edit/create to table details
-    function htmlEditCreateRowProductDetail(data, key){
+    function htmlEditCreateRowProductDetail(data, key) {
         // Image
         var html_detail_photo = '<span class="img-wrapper"><img class="img-thumbnail" style="width: 80px; height: 60px;" src="' + data.product_image + '" title="' + data.product_name.name + '"/></span>';
         // Name
         var html_detail_label_name = '<label>' + data.product_name.name + '</label>';
         // Quantity
-        var html_detail_input_quantity = '<input type="number" min="0" value="'+data['product_quantity']+'" max="'+data['max_quantity']+'" id="detail_quantity_'+key+'" class="detail_quantity form-control" >';
+        var html_detail_input_quantity = '<input type="number" min="0" value="' + data['product_quantity'] + '" max="' + data['max_quantity'] + '" id="detail_quantity_' + key + '" class="detail_quantity form-control" >';
         // Code
         var html_detail_label_code = '<label>' + data.product_code + '</label>';
         // Size
@@ -46,31 +52,31 @@
         // Price
         var html_detail_label_price = '<input type="text" value="' + data.product_price + '" class="thousand-number form-control" readonly="readonly">';
         // Editable price
-        var html_detail_fixed_price = '<input type="text" value="'+data['product_fixed_price']+'" id="detail_fixed_price_'+key+'" class="thousand-number detail_quantity detail_fixed_price form-control" >';
+        var html_detail_fixed_price = '<input type="text" value="' + data['product_fixed_price'] + '" id="detail_fixed_price_' + key + '" class="thousand-number detail_quantity detail_fixed_price form-control" >';
         // Count price
-        var html_detail_input_count_price = '<input type="text" value="' + data.total_price + '" id="detail_count_price_'+key+'" class="thousand-number detail_count_price form-control" readonly="readonly">';
+        var html_detail_input_count_price = '<input type="text" value="' + data.total_price + '" id="detail_count_price_' + key + '" class="thousand-number detail_count_price form-control" readonly="readonly">';
 
         //---> Warehouse
-        var html_detail_warehouse = '<label>' + data.product_warehouse + '</label>';
+        var html_detail_warehouse = '<label>' + data.warehouse_product_name + '</label>';
 
         // Row html
-        var html = '<td>'+html_detail_photo+'</td>\
-        <td>'+html_detail_label_name+'</td>\
-        <td class="c-quantity">'+html_detail_input_quantity+'</td>\
-        <td>'+html_detail_label_code+'</td>\
-        <td>'+html_detail_label_size+'</td>\
-        <td>'+html_detail_label_color+'</td>\
-        <td>'+html_detail_warehouse+'</td>\
-        <td>'+html_detail_label_price+'</td>\
-        <td>'+html_detail_fixed_price+'</td>\
-        <td>'+html_detail_input_count_price+'</td>\
-        <td><a href="javascript:;" onclick="deleteCartDetailItem('+key+');" class="bt-delete btn btn-xs btn-danger"><i class="fa fa-trash-o" aria-hidden="true"></i></a></td>';
+        var html = '<td>' + html_detail_photo + '</td>\
+        <td>' + html_detail_label_name + '</td>\
+        <td class="c-quantity">' + html_detail_input_quantity + '</td>\
+        <td>' + html_detail_label_code + '</td>\
+        <td>' + html_detail_label_size + '</td>\
+        <td>' + html_detail_label_color + '</td>\
+        <td>' + html_detail_warehouse + '</td>\
+        <td>' + html_detail_label_price + '</td>\
+        <td>' + html_detail_fixed_price + '</td>\
+        <td>' + html_detail_input_count_price + '</td>\
+        <td><a href="javascript:;" onclick="deleteCartDetailItem(' + key + ');" class="bt-delete btn btn-xs btn-danger"><i class="fa fa-trash-o" aria-hidden="true"></i></a></td>';
         return html;
     }
 
-    function formatPrice(){
+    function formatPrice() {
         // Format prices
-        $('.thousand-number').toArray().forEach(function(field){
+        $('.thousand-number').toArray().forEach(function(field) {
             new Cleave(field, {
                 numeral: true,
                 numeralThousandsGroupStyle: 'thousand'
@@ -81,44 +87,44 @@
     // When "Xóa" on row is clicked -> Remove current row, add delete:true to item on array details
     function deleteCartDetailItem(key) {
         cart_details[key].delete = true;
-        $('#cart_detail_'+key).remove();
+        $('#cart_detail_' + key).remove();
         $('input[name="cart_details"]').val(JSON.stringify(cart_details));
         updateCartTotalInfo();
     }
 
     // Function to generate color options
-    function generate_options(data){
+    function generate_options(data) {
         var html = '';
-        $.each(data, function(key, value){
-            html += '<option value='+value.id+'>'+value.name+'</option>';
+        $.each(data, function(key, value) {
+            html += '<option value=' + value.id + '>' + value.name + '</option>';
         });
 
         return html;
     }
 
     // Function update cart details data
-    function updateCartDetailsData(){
-        $.each(cart_details, function(key, value){
+    function updateCartDetailsData() {
+        $.each(cart_details, function(key, value) {
             if (value.delete != true) {
-                cart_details[key].product_quantity = parseInt($('#detail_quantity_'+key).val());
-                cart_details[key].product_fixed_price = (parseInt($('#detail_fixed_price_'+key).val().replace(/,/g , '')) >= 0) ? parseInt(removeNonDigit($('#detail_fixed_price_'+key).val())) : null;
+                cart_details[key].product_quantity = parseInt($('#detail_quantity_' + key).val());
+                cart_details[key].product_fixed_price = (parseInt($('#detail_fixed_price_' + key).val().replace(/,/g, '')) >= 0) ? parseInt(removeNonDigit($('#detail_fixed_price_' + key).val())) : null;
                 cart_details[key].total_price = (cart_details[key].product_fixed_price == null) ? cart_details[key].product_quantity * cart_details[key].product_price : cart_details[key].product_quantity * cart_details[key].product_fixed_price;
-                $('#detail_count_price_'+key).val(cart_details[key].total_price);
+                $('#detail_count_price_' + key).val(cart_details[key].total_price);
             }
         });
         updateCartTotalInfo();
     }
 
     // Function remove all character non-digit
-    function removeNonDigit(str){
-        return str.replace(/\D/g,'');
+    function removeNonDigit(str) {
+        return str.replace(/\D/g, '');
     }
 
     // Function update cart total info
-    function updateCartTotalInfo(){
+    function updateCartTotalInfo() {
         total_price = 0;
         total_quantity = 0;
-        $.each(cart_details, function(key, value){
+        $.each(cart_details, function(key, value) {
             if (value.delete != true) {
                 total_price += value.total_price;
                 total_quantity += value.product_quantity;
@@ -149,7 +155,7 @@
     });
 
     // Function update total amount
-    function updateTotalDiscountAmount(total_quantity){
+    function updateTotalDiscountAmount(total_quantity) {
         customer_discount = (parseInt($('input[name="customer_discount_amount"]').val())) ? parseInt(removeNonDigit($('input[name="customer_discount_amount"]').val())) : 0;
         partner_discount = (parseInt($('input[name="partner_discount_amount"]').val())) ? parseInt(removeNonDigit($('input[name="partner_discount_amount"]').val())) * parseInt(total_quantity) : 0;
         $('.cart-total-info input[name="total_discount_amount"]').val(-(customer_discount + partner_discount));
@@ -157,11 +163,11 @@
     }
 
     // First time show details to table
-    function printTableCartDetails(){
-        $.each(cart_details, function(key, value){
+    function printTableCartDetails() {
+        $.each(cart_details, function(key, value) {
             var html = htmlEditCreateRowProductDetail(value, key);
 
-            $('#i-cart-info tbody').append('<tr class="child" id="cart_detail_'+key+'">'+html+'</tr>');
+            $('#i-cart-info tbody').append('<tr class="child" id="cart_detail_' + key + '">' + html + '</tr>');
         });
     }
 
@@ -177,8 +183,8 @@
 
         // Set focus
         // $('input[name="scan_barcode"]').focus();
-        $('#tab_scan_barcode').on('click', function () {
-            setTimeout(function(){ 
+        $('#tab_scan_barcode').on('click', function() {
+            setTimeout(function() {
                 $('input[name="scan_barcode"]').focus();
             }, 500);
         });
@@ -189,29 +195,30 @@
 
         printTableCartDetails();
 
-        $("#bt-reset").click(function(){
+        $("#bt-reset").click(function() {
             $("#mainForm")[0].reset();
         })
 
-        $("#mainForm").validate();
+        var mainform = $("#mainForm");
+        mainform.validate();
 
         // Scan barcode
-        $('input[name="scan_barcode"]').on('change', function (e) {
+        $('input[name="scan_barcode"]').on('change', function(e) {
             var barcode = e.currentTarget.value;
 
             var path_img_folder = window.location.origin + '/storage/';
             $.ajax({
                 url: "{{route('admin.carts.view')}}",
-                data:{
-                    barcode_text:barcode
+                data: {
+                    barcode_text: barcode
                 },
-                dataType:'json'
+                dataType: 'json'
             }).done(function(data) {
                 if (!$.isEmptyObject(data)) {
                     if (data.result == 'success') {
                         var item_added = false;
 
-                        $.each(cart_details, function(key, value){
+                        $.each(cart_details, function(key, value) {
                             if (value.warehouse_product_id == data.warehouse_product_id) {
                                 cart_details[key].product_quantity++;
                                 cart_details[key].total_price = parseInt(data.product.sell_price) * parseInt(cart_details[key].product_quantity);
@@ -221,41 +228,50 @@
 
                         if (!item_added) {
                             cart_details.push({
-                                'product_image':(data.product.photo) ? path_img_folder + data.product.photo : default_image,
-                                'product_code':data.product.barcode_text,
-                                'product_price':parseInt(data.product.sell_price),
-                                'product_fixed_price':null,
-                                'product_name':{id:data.product.id, name:data.product.name},
-                                'product_quantity':1,
-                                'product_size':{id:data.size.id, name:data.size.name},
-                                'product_color':{id:data.color.id, name:data.color.name},
-                                'total_price':parseInt(data.product.sell_price),
-                                'product_detail':data.product_detail,
-                                'product_warehouse': data.warehouse.name,
+                                'product_image': (data.product.photo) ? path_img_folder + data.product.photo : default_image,
+                                'product_code': data.product.barcode_text,
+                                'product_price': parseInt(data.product.sell_price),
+                                'product_fixed_price': null,
+                                'product_name': {
+                                    id: data.product.id,
+                                    name: data.product.name
+                                },
+                                'product_quantity': 1,
+                                'product_size': {
+                                    id: data.size.id,
+                                    name: data.size.name
+                                },
+                                'product_color': {
+                                    id: data.color.id,
+                                    name: data.color.name
+                                },
+                                'total_price': parseInt(data.product.sell_price),
+                                'product_detail': data.product_detail,
+                                'warehouse_product_name': data.warehouse.name,
                                 'warehouse_product_id': data.warehouse_product_id,
                                 'max_quantity': data.max_quantity
                             });
 
-                            var key = cart_details.length-1;
+                            var key = cart_details.length - 1;
                             var html = htmlEditCreateRowProductDetail(cart_details[key], key);
 
-                            $('#i-cart-info tbody').append('<tr class="child" id="cart_detail_'+key+'">'+html+'</tr>');
-                        }else{
+                            $('#i-cart-info tbody').append('<tr class="child" id="cart_detail_' + key + '">' + html + '</tr>');
+                        } else {
                             $('#i-cart-info tbody').html('');
                             printTableCartDetails();
                         }
                         updateCartTotalInfo();
-                    }else{
+                    } else {
                         $('#scan_barcode_error').html(data.message);
                         $('#scan_barcode_error').show();
                     }
-                }else{
+                } else {
 
                 }
-                setTimeout(function(){ 
+                setTimeout(function() {
                     $('input[name="scan_barcode"]').focus();
                 }, 500);
-            }).fail(function(jqXHR, textStatus){
+            }).fail(function(jqXHR, textStatus) {
                 alert('Có lỗi xảy ra, xin hãy làm mới trình duyệt');
             });
         });
@@ -264,17 +280,17 @@
         var url_get_products = '{{route("admin.carts.getProductAjax")}}';
         $('select[name="product_name"]').select2({
             placeholder: '-- Chọn sản phẩm --',
-            ajax: {//---> Retrieve post data
+            ajax: { //---> Retrieve post data
                 url: url_get_products,
                 dataType: 'json',
                 delay: 250, //---> Delay in ms while typing when to perform a AJAX search
-                data: function (params) {
+                data: function(params) {
                     return {
                         q: params.term, //---> Search query
                         action: 'mishagetposts', // AJAX action for admin-ajax.php
                     };
                 },
-                processResults: function( data ) {
+                processResults: function(data) {
                     return {
                         results: data
                     };
@@ -286,64 +302,64 @@
         //---> Init select2 for customer name number
         var url_get_name = '{{route("admin.carts.getNameAjax")}}';
         $('select[name="customer_name"]').select2({
-            tags:true,
+            tags: true,
             placeholder: '-- Chọn tên khách hàng --',
-            ajax: {//---> Retrieve post data
+            ajax: { //---> Retrieve post data
                 url: url_get_name,
                 dataType: 'json',
                 delay: 250, //---> Delay in ms while typing when to perform a AJAX search
-                data: function (params) {
+                data: function(params) {
                     return {
                         q: params.term, //---> Search query
                         action: 'mishagetposts', // AJAX action for admin-ajax.php
                     };
                 },
-                processResults: function( data ) {
+                processResults: function(data) {
                     return {
                         results: data
                     };
                 },
                 cache: true,
             },
-            tags:true
+            tags: true
         });
 
         //---> Init select2 for customer phone number
         var url_get_phone = '{{route("admin.carts.getPhoneAjax")}}';
         $('select[name="customer_phone"]').select2({
-            tags:true,
+            tags: true,
             placeholder: '-- Chọn số điện thoại --',
-            ajax: {//---> Retrieve post data
+            ajax: { //---> Retrieve post data
                 url: url_get_phone,
                 dataType: 'json',
                 delay: 250, //---> Delay in ms while typing when to perform a AJAX search
-                data: function (params) {
+                data: function(params) {
                     return {
                         q: params.term, //---> Search query
                         action: 'mishagetposts', // AJAX action for admin-ajax.php
                     };
                 },
-                processResults: function( data ) {
+                processResults: function(data) {
                     return {
                         results: data
                     };
                 },
                 cache: true,
             },
-            tags:true
+            tags: true
         });
         $('select[name="partner"]').select2();
 
         // Load data for color options when product select is changed
-        $('select[name="product_name"]').on('change', function(){
+        $('select[name="product_name"]').on('change', function() {
             //---> validatae product
             validateProductInfo($(this).val(), "name");
             $.ajax({
                 url: "{{route('admin.carts.view')}}",
-                data:{
-                    product_id:$(this).val()
+                data: {
+                    product_id: $(this).val()
                 },
-                dataType:'json'
+                dataType: 'json'
             }).done(function(data) {
                 if (!$.isEmptyObject(data.colors)) {
                     html_color_options = '<option value="0"> -- Chọn màu sắc -- </option>' + generate_options(data.colors);
@@ -353,13 +369,13 @@
                     $('input[name="product_quantity"]').removeAttr('max_avaiable');
                     $('input[name="product_quantity"]').val(0);
                     $('input[name="warehouse_product_id"]').val(0);
-                    
-                    $('.col-md-8 .ibox-content .error').each(function(){
+
+                    $('.col-md-8 .ibox-content .error').each(function() {
                         if (!$(this).hasClass('hidden')) {
                             $(this).addClass('hidden');
                         }
                     });
-                }else{
+                } else {
                     html_sizes_options = '<option value="0"> -- Chọn kích thước -- </option>';
                     html_color_options = '<option value="0"> -- Chọn màu sắc -- </option>';
                     $('select[name="product_color"]').html(html_color_options);
@@ -368,7 +384,7 @@
                     $('input[name="product_quantity"]').val(0);
                     $('input[name="warehouse_product_id"]').val(0);
 
-                    $('.col-md-8 .ibox-content .error').each(function(){
+                    $('.col-md-8 .ibox-content .error').each(function() {
                         if (!$(this).hasClass('hidden')) {
                             $(this).addClass('hidden');
                         }
@@ -377,23 +393,23 @@
             })
         });
 
-        $('input[name="vat_percent"]').on('change', function(){
+        $('input[name="vat_percent"]').on('change', function() {
             updateCartTotalInfo();
         });
 
         // Load data for size options when color select is changed
-        $('select[name="product_color"]').on('change', function(){
+        $('select[name="product_color"]').on('change', function() {
             //---> validatae color
             validateProductInfo($(this).val(), "color");
 
             $('select[name="product_size"]').html('<option value="0"> -- Chọn kích thước -- </option>');
             $.ajax({
                 url: "{{route('admin.carts.view')}}",
-                data:{
-                    product_id:$('select[name="product_name"]').val(),
-                    color_id:$(this).val()
+                data: {
+                    product_id: $('select[name="product_name"]').val(),
+                    color_id: $(this).val()
                 },
-                dataType:'json'
+                dataType: 'json'
             }).done(function(data) {
                 if (!$.isEmptyObject(data.sizes)) {
                     html_sizes_options = '<option value="0"> -- Chọn kích thước -- </option>' + generate_options(data.sizes);
@@ -402,7 +418,7 @@
                     $('input[name="product_quantity"]').val(0);
                     $('input[name="warehouse_product_id"]').val(0);
 
-                }else{
+                } else {
                     html_sizes_options = '<option value="0"> -- Chọn kích thước -- </option>';
                     $('select[name="product_size"]').html(html_sizes_options);
                     $('input[name="product_quantity"]').removeAttr('max_avaiable');
@@ -414,23 +430,23 @@
         });
 
         // Load data for quantity product when size select is changed
-        $('select[name="product_size"]').on('change', function(){
+        $('select[name="product_size"]').on('change', function() {
             //---> validatae color
             validateProductInfo($(this).val(), "size");
             $.ajax({
                 url: "{{route('admin.carts.view')}}",
-                data:{
-                    product_id:$('select[name="product_name"]').val(),
-                    color_id:$('select[name="product_color"]').val(),
-                    size_id:$(this).val()
+                data: {
+                    product_id: $('select[name="product_name"]').val(),
+                    color_id: $('select[name="product_color"]').val(),
+                    size_id: $(this).val()
                 },
-                dataType:'json'
+                dataType: 'json'
             }).done(function(data) {
                 if (!$.isEmptyObject(data)) {
                     html_warehouses_options = '<option value="0"> -- Chọn nhà kho -- </option>' + generate_options(data.warehourses);
                     $('select[name="product_warehouse"]').html(html_warehouses_options);
                     // $('input[name="product_quantity"]').attr('max_avaiable', data.quantity);
-                }else{
+                } else {
                     $('input[name="product_quantity"]').removeAttr('max_avaiable');
                     $('input[name="product_quantity"]').val(0);
                     $('input[name="warehouse_product_id"]').val(0);
@@ -440,24 +456,24 @@
         });
 
         //---> Warehouse select change
-        $('select[name="product_warehouse"]').on('change', function(){
+        $('select[name="product_warehouse"]').on('change', function() {
             //---> validatae color
             validateProductInfo($(this).val(), "warehouse");
 
             $.ajax({
                 url: "{{route('admin.carts.view')}}",
-                data:{
+                data: {
                     product_id: $('select[name="product_name"]').val(),
                     color_id: $('select[name="product_color"]').val(),
                     size_id: $('select[name="product_size"]').val(),
                     warehouse_id: $(this).val()
                 },
-                dataType:'json'
+                dataType: 'json'
             }).done(function(data) {
                 if (!$.isEmptyObject(data)) {
                     $('input[name="product_quantity"]').attr('max_avaiable', data.quantity);
                     $('input[name="warehouse_product_id"]').val(data.warehouse_product_id);
-                }else{
+                } else {
                     $('input[name="product_quantity"]').removeAttr('max_avaiable');
                     $('input[name="product_quantity"]').val(0);
                     $('input[name="warehouse_product_id"]').val(0);
@@ -468,22 +484,22 @@
         });
 
         // Number product changed
-        $('input[name="product_quantity"]').on('change', function(){
+        $('input[name="product_quantity"]').on('change', function() {
             validateNumberProduct();
         });
 
-        function validateProductInfo(elSelectVal, objectName){
+        function validateProductInfo(elSelectVal, objectName) {
             var status = true;
             if (elSelectVal == 0) {
-                if ($("#product-"+objectName+"-error").hasClass("hidden")) {
-                    $("#product-"+objectName+"-error").removeClass("hidden");
-                    $("#product-"+objectName+"-error").css("display","inline-block!important");
+                if ($("#product-" + objectName + "-error").hasClass("hidden")) {
+                    $("#product-" + objectName + "-error").removeClass("hidden");
+                    $("#product-" + objectName + "-error").css("display", "inline-block!important");
                 }
                 status = false;
-            }else{
-                if (!$("#product-"+objectName+"-error").hasClass("hidden")) {
-                    $("#product-"+objectName+"-error").addClass("hidden");
-                    $("#product-"+objectName+"-error").css("display","none!important");
+            } else {
+                if (!$("#product-" + objectName + "-error").hasClass("hidden")) {
+                    $("#product-" + objectName + "-error").addClass("hidden");
+                    $("#product-" + objectName + "-error").css("display", "none!important");
                 }
 
                 status = true;
@@ -491,7 +507,7 @@
             return status;
         }
 
-        function validateNumberProduct(){
+        function validateNumberProduct() {
             var status = true;
             var max = parseInt($('input[name="product_quantity"]').attr('max_avaiable'));
             var val = parseInt($('input[name="product_quantity"]').val());
@@ -499,19 +515,19 @@
             if (val <= 0 || val > max) {
                 if ($("#product-quantity-error").hasClass("hidden")) {
                     $("#product-quantity-error").removeClass("hidden");
-                    $("#product-quantity-error").css("display","inline-block!important");
+                    $("#product-quantity-error").css("display", "inline-block!important");
                 }
                 if (val <= 0) {
                     $("#product-quantity-error").html('Số lượng sản phẩm phải lớn hơn 0');
-                }else{
-                    $("#product-quantity-error").html('Sản phẩm này chỉ còn '+max+' sản phẩm');
+                } else {
+                    $("#product-quantity-error").html('Sản phẩm này chỉ còn ' + max + ' sản phẩm');
                 }
                 $('#add_cart_details').prop('disabled', true);
                 status = false;
-            }else{
+            } else {
                 if (!$("#product-quantity-error").hasClass("hidden")) {
                     $("#product-quantity-error").addClass("hidden");
-                    $("#product-quantity-error").css("display","none!important");
+                    $("#product-quantity-error").css("display", "none!important");
                 }
 
                 $('#add_cart_details').removeAttr('disabled');
@@ -520,10 +536,10 @@
             return status;
         }
 
-        function validateUniqueDetail(){
+        function validateUniqueDetail() {
             var status = true;
-            $.each(cart_details, function(key, value){
-                if (value.delete != true && value.warehouse_product_id == $('input[name="warehouse_product_id"]').val() ) {
+            $.each(cart_details, function(key, value) {
+                if (value.delete != true && value.warehouse_product_id == $('input[name="warehouse_product_id"]').val()) {
                     status = false;
                 }
             });
@@ -531,12 +547,12 @@
             if (status == false) {
                 if ($("#product-detail-id-error").hasClass("hidden")) {
                     $("#product-detail-id-error").removeClass("hidden");
-                    $("#product-detail-id-error").css("display","inline-block!important");
+                    $("#product-detail-id-error").css("display", "inline-block!important");
                 }
-            }else{
+            } else {
                 if (!$("#product-detail-id-error").hasClass("hidden")) {
                     $("#product-detail-id-error").addClass("hidden");
-                    $("#product-detail-id-error").css("display","none!important");
+                    $("#product-detail-id-error").css("display", "none!important");
                 }
             }
             return status;
@@ -550,59 +566,93 @@
             }
         }
 
-        function validateCartDetailEmpty(){
+        function validateCartDetailEmpty() {
             var status = true;
-            if (jQuery.isEmptyObject(cart_details)) {status = false;}
+            if (jQuery.isEmptyObject(cart_details)) {
+                status = false;
+            }
 
             if (status == false) {
                 if ($("#cart-details-empty-error").hasClass("hidden")) {
                     $("#cart-details-empty-error").removeClass("hidden");
-                    $("#cart-details-empty-error").css("display","inline-block!important");
+                    // $("#cart-details-empty-error").css("display", "inline-block!important");
                     navigationFn.goToSection('#cart-details-empty-error');
                 }
-            }else{
+            } else {
                 if (!$("#cart-details-empty-error").hasClass("hidden")) {
                     $("#cart-details-empty-error").addClass("hidden");
-                    $("#cart-details-empty-error").css("display","none!important");
+                    // $("#cart-details-empty-error").css("display", "none!important");
                 }
             }
             return status;
         }
 
-        $('button[value="save"]').click(function(event){
-            if (!validateCartDetailEmpty()) {
-                return false;
-            }
+        $('button[value="save"]').click(function(event) {
+            if (createdCart) {
 
+                event.preventDefault();
+            } else {
+                if (!submitForm) {
+                    setSubmitFormFlag(true);
+                    if (!validateCartDetailEmpty()) {
+                        setSubmitFormFlag(false);
+                        return false;
+                    }
+                }
+            }
         });
 
         //---> Print
-        $('button[value="save_print"]').click(function(event){
-            if (!validateCartDetailEmpty()) {
-                return false;
-            }
+        $('button[value="save_print"]').click(function(event) {
             var print_el = $("#print-section");
-            event.preventDefault();
-            $.ajax({
-                url: "{{route('admin.carts.store')}}",
-                data:$("#mainForm").serialize(),
-                method:"POST",
-                dataType:'json'
-            }).done(function(data) {
-                if (!$.isEmptyObject(data)) {
-                    $('input[name="id"]').val(data.id);
-                    getDataToPrint(data);
-                    print_el.removeClass("hidden");
-                    print_el.printThis({
-                        header: null,
-                    });
-                }else{
+            if (createdCart) {
+                print_el.printThis({
+                    header: null,
+                });
+                event.preventDefault();
+            } else {
+                if (!submitForm) {
+                    setSubmitFormFlag(true);
+                    if (!validateCartDetailEmpty()) {
+                        setSubmitFormFlag(false);
+                        return false;
+                    }
+                    if (mainform.valid()) {
+                        event.preventDefault();
+                        $.ajax({
+                            url: "{{route('admin.carts.store')}}",
+                            data: $("#mainForm").serialize(),
+                            method: "POST",
+                            dataType: 'json'
+                        }).done(function(data) {
+                            if (!$.isEmptyObject(data)) {
+                                @if(!isset($data->id))
+                                updateCartDetails(data);
+                                @endif
+                                $('input[name="id"]').val(data.id);
+                                getDataToPrint(data);
+                                print_el.removeClass("hidden");
+                                print_el.printThis({
+                                    header: null,
+                                });
+                            } else {}
+                            @if(!isset($data->id))
+                            createdCart = true;
+                            @endif
+                            setSubmitFormFlag(false);
+                            $('#created-cart').removeClass('hidden');
+                        }).fail(function(jqXHR, textStatus, errorThrown) {
+                            setSubmitFormFlag(false);
+                        });
+                    } else {
+                        setSubmitFormFlag(false);
+                    }
                 }
-            });
+            }
         });
 
         // When "Thêm" button is clicked -> Add new item to array cart_details, append new row to table
-        $('#add_cart_details').click(function(){
+        $('#add_cart_details').click(function() {
             if (validateProductInfo($("select[name=product_name]").val(), "name") && validateProductInfo($("select[name=product_color]").val(), "color") && validateProductInfo($("select[name=product_size]").val(), "size") && validateNumberProduct()) {
                 // $('#add_cart_details').removeAttr('disabled');
                 $('button[value="save"]').removeAttr('disabled');
@@ -612,47 +662,56 @@
                     var path_img_folder = window.location.origin + '/storage/';
                     $.ajax({
                         url: "{{route('admin.carts.view')}}",
-                        data:{
-                            product_id:$('select[name="product_name"]').val(),
-                            color_id:$('select[name="product_color"]').val(),
-                            size_id:$('select[name="product_size"]').val(),
-                            warehouse_id:$('select[name="product_warehouse"]').val(),
-                            get_data:true
+                        data: {
+                            product_id: $('select[name="product_name"]').val(),
+                            color_id: $('select[name="product_color"]').val(),
+                            size_id: $('select[name="product_size"]').val(),
+                            warehouse_id: $('select[name="product_warehouse"]').val(),
+                            get_data: true
                         },
-                        dataType:'json'
+                        dataType: 'json'
                     }).done(function(data) {
                         if (!$.isEmptyObject(data)) {
                             // $('#add_cart_details').prop('disabled', true);
                             cart_details.push({
-                                'product_image':(data.product.photo) ? path_img_folder + data.product.photo : default_image,
-                                'product_code':data.product.barcode_text,
-                                'product_price':parseInt(data.product.sell_price),
-                                'product_fixed_price':null,
-                                'product_name':{id:$('select[name="product_name"]').val(), name:$('select[name="product_name"] option[value="'+$('select[name="product_name"]').val()+'"]').text()},
-                                'product_quantity':parseInt($('input[name="product_quantity"]').val()),
-                                'product_size':{id:$('select[name="product_size"]').val(), name:$('select[name="product_size"] option[value="'+$('select[name="product_size"]').val()+'"]').text()},
-                                'product_color':{id:$('select[name="product_color"]').val(), name:$('select[name="product_color"] option[value="'+$('select[name="product_color"]').val()+'"]').text()},
-                                'total_price':parseInt(data.product.sell_price)*parseInt($('input[name="product_quantity"]').val()),
-                                'product_detail':data.product_detail,
-                                'product_warehouse': data.warehouse.name,
+                                'product_image': (data.product.photo) ? path_img_folder + data.product.photo : default_image,
+                                'product_code': data.product.barcode_text,
+                                'product_price': parseInt(data.product.sell_price),
+                                'product_fixed_price': null,
+                                'product_name': {
+                                    id: $('select[name="product_name"]').val(),
+                                    name: $('select[name="product_name"] option[value="' + $('select[name="product_name"]').val() + '"]').text()
+                                },
+                                'product_quantity': parseInt($('input[name="product_quantity"]').val()),
+                                'product_size': {
+                                    id: $('select[name="product_size"]').val(),
+                                    name: $('select[name="product_size"] option[value="' + $('select[name="product_size"]').val() + '"]').text()
+                                },
+                                'product_color': {
+                                    id: $('select[name="product_color"]').val(),
+                                    name: $('select[name="product_color"] option[value="' + $('select[name="product_color"]').val() + '"]').text()
+                                },
+                                'total_price': parseInt(data.product.sell_price) * parseInt($('input[name="product_quantity"]').val()),
+                                'product_detail': data.product_detail,
+                                'warehouse_product_name': data.warehouse.name,
                                 'warehouse_product_id': data.warehouse_product_id,
                                 'max_quantity': data.max_quantity
                             });
 
-                            var key = cart_details.length-1;
+                            var key = cart_details.length - 1;
                             var html = htmlEditCreateRowProductDetail(cart_details[key], key);
 
-                            $('#i-cart-info tbody').append('<tr class="child" id="cart_detail_'+key+'">'+html+'</tr>');
+                            $('#i-cart-info tbody').append('<tr class="child" id="cart_detail_' + key + '">' + html + '</tr>');
                             updateCartTotalInfo();
-                        }else{
+                        } else {
 
                         }
-                    }).fail(function(jqXHR, textStatus){
+                    }).fail(function(jqXHR, textStatus) {
                         alert('Có lỗi xảy ra, xin hãy làm mới trình duyệt');
                     });
                 }
 
-            }else{
+            } else {
                 $('#add_cart_details').prop('disabled', true);
                 $('button[value="save"]').prop('disabled', true);
                 $('button[value="save_print"]').prop('disabled', true);
@@ -660,17 +719,25 @@
 
         });
 
+        $('select[name="transporting_service"').on('change', function() {
+            if($('select[name="transporting_service"').val() == 2) {
+                $('.transport-info').removeClass('hidden');
+            }else{
+                $('.transport-info').addClass('hidden');
+            }
+        });
+
         // Load customer data when customer phone select is changed
-        $('select[name="customer_name"]').on('change', function(){
+        $('select[name="customer_name"]').on('change', function() {
             if (!isSelectPhone) {
-                var new_customer = ($(this).find('option[value="'+$(this).val()+'"]').attr('data-select2-tag')) ? $(this).find('option[value="'+$(this).val()+'"]').attr('data-select2-tag') : 'false';
+                var new_customer = ($(this).find('option[value="' + $(this).val() + '"]').attr('data-select2-tag')) ? $(this).find('option[value="' + $(this).val() + '"]').attr('data-select2-tag') : 'false';
                 $.ajax({
                     url: "{{route('admin.carts.view')}}",
-                    data:{
-                        customer_name:$(this).val(),
-                        new_customer:new_customer
+                    data: {
+                        customer_name: $(this).val(),
+                        new_customer: new_customer
                     },
-                    dataType:'json'
+                    dataType: 'json'
                 }).done(function(data) {
                     if (!$.isEmptyObject(data)) {
                         if (data.status == 'true') {
@@ -683,10 +750,10 @@
                             }
                             if (!$.isEmptyObject(data.customer.group)) {
                                 $('input[name="customer_discount_amount"]').val(-data.customer.group.discount_amount);
-                            }else{
+                            } else {
                                 $('input[name="customer_discount_amount"]').val(0);
                             }
-                        }else{
+                        } else {
                             // $('select[name="customer_phone"]').val("");
                             $('input[name="customer_email"]').val("");
                             $('input[name="customer_address"]').val("");
@@ -694,31 +761,30 @@
                             $('input[name="customer_discount_amount"]').val(0);
                         }
                         updateCartTotalInfo();
-                    }else{
-                    }
+                    } else {}
                 })
             }
         });
 
-        $('select[name="customer_phone"]').on('select2:selecting', function() { 
-         isSelectPhone = true;
-     });
+        $('select[name="customer_phone"]').on('select2:selecting', function() {
+            isSelectPhone = true;
+        });
 
-        $('select[name="customer_name"]').on('select2:selecting', function() { 
-         isSelectPhone = false;
-     });
+        $('select[name="customer_name"]').on('select2:selecting', function() {
+            isSelectPhone = false;
+        });
 
         // Load customer data when customer phone select is changed
-        $('select[name="customer_phone"]').on('change', function(){
-            if(isSelectPhone){
-                var new_customer = ($(this).find('option[value="'+$(this).val()+'"]').attr('data-select2-tag')) ? $(this).find('option[value="'+$(this).val()+'"]').attr('data-select2-tag') : 'false';
+        $('select[name="customer_phone"]').on('change', function() {
+            if (isSelectPhone) {
+                var new_customer = ($(this).find('option[value="' + $(this).val() + '"]').attr('data-select2-tag')) ? $(this).find('option[value="' + $(this).val() + '"]').attr('data-select2-tag') : 'false';
                 $.ajax({
                     url: "{{route('admin.carts.view')}}",
-                    data:{
-                        customer_phone:$(this).val(),
-                        new_customer:new_customer
+                    data: {
+                        customer_phone: $(this).val(),
+                        new_customer: new_customer
                     },
-                    dataType:'json'
+                    dataType: 'json'
                 }).done(function(data) {
                     if (!$.isEmptyObject(data)) {
                         if (data.status == 'true') {
@@ -731,10 +797,10 @@
                             }
                             if (!$.isEmptyObject(data.customer.group)) {
                                 $('input[name="customer_discount_amount"]').val(-data.customer.group.discount_amount);
-                            }else{
+                            } else {
                                 $('input[name="customer_discount_amount"]').val(0);
                             }
-                        }else{
+                        } else {
                             // $('input[name="customer_name"]').val("");
                             $('input[name="customer_email"]').val("");
                             $('input[name="customer_address"]').val("");
@@ -742,50 +808,48 @@
                             $('input[name="customer_discount_amount"]').val(0);
                         }
                         updateCartTotalInfo();
-                    }else{
-                    }
+                    } else {}
                 })
             }
         });
 
         // Load discount amount for partner
-        $('select[name="partner"]').on('change', function(){
+        $('select[name="partner"]').on('change', function() {
             $('input[name="partner_discount_amount"]').val(0);
             if ($(this).val() != "") {
                 $.ajax({
                     url: "{{route('admin.carts.view')}}",
-                    data:{
-                        partner_id:$(this).val()
+                    data: {
+                        partner_id: $(this).val()
                     },
-                    dataType:'json'
+                    dataType: 'json'
                 }).done(function(data) {
                     if (!$.isEmptyObject(data)) {
                         $('input[name="partner_discount_amount"]').val(-data.partner.discount_amount);
                         updateCartTotalInfo();
-                    }else{
-                    }
+                    } else {}
                 })
-            }else{
+            } else {
                 updateCartTotalInfo();
             }
         });
 
         // Update value for cart total info paid field when paid field update
-        $('input[name="paid_amount"]').on('change', function(){
+        $('input[name="paid_amount"]').on('change', function() {
             updateCartTotalInfo();
         });
 
         // Update value for cart total info shipping fee field when shipping fee field update
-        $('input[name="shipping_fee"]').on('change', function(){
+        $('input[name="shipping_fee"]').on('change', function() {
             $('.cart-total-info input[name="shipping_fee"]').val($(this).val());
             updateCartTotalInfo();
         });
 
-        $('.negative-number').each(function(){
+        $('.negative-number').each(function() {
             $(this).val(-$(this).val());
         });
 
-        $('.negative-number').on('change', function(){
+        $('.negative-number').on('change', function() {
             $(this).val(-$(this).val());
         });
 
@@ -793,67 +857,123 @@
 
     });
 
-function parseProductTable(arrProducts){
-    var path_img_folder = window.location.origin + '/storage/';
-    var html = '';
-    if (arrProducts.length > 0) {
-        $.each(arrProducts, function( index, value ) {
-            product_image = (value.product.photo) ? path_img_folder + value.product.photo : default_image;
-            html += '<tr>';
-            html += '<td>'+value.product.name+'</td>';
-            html += '<td>'+value.product.barcode_text+'</td>';
-            html += '<td><span class="img-wrapper"><img class="img-thumbnail" style="width: 80px; height: 60px;" src="' + product_image + '"/></span></td>';
-            html += '<td class="thousand-number" style="text-align:right;">'+value['price']+'</td>';
-            html += '<td style="text-align:right;">'+value['quantity']+'</td>';
-            html += '<td class="thousand-number" style="text-align:right;">'+value['total_price']+'</td>';
-              // html += '<td>'+value['total_price']+'</td>';
-              html += '</tr>';
-          });
+    function parseProductTable(arrProducts) {
+        var path_img_folder = window.location.origin + '/storage/';
+        var html = '';
+        if (arrProducts.length > 0) {
+            $.each(arrProducts, function(index, value) {
+                product_image = (value.product.photo) ? path_img_folder + value.product.photo : default_image;
+                html += '<tr>';
+                html += '<td>' + value.product.name + '</td>';
+                html += '<td>' + value.product.barcode_text + '</td>';
+                html += '<td><span class="img-wrapper"><img class="img-thumbnail" style="width: 80px; height: 60px;" src="' + product_image + '"/></span></td>';
+                html += '<td>' + value.product_detail.size.name + '</td>';
+                html += '<td>' + value.product_detail.color.name + '</td>';
+                html += '<td class="thousand-number" style="text-align:right;">' + ((value['fixed_price']) ? value['fixed_price'] : value['price']) + '</td>';
+                html += '<td style="text-align:right;">' + value['quantity'] + '</td>';
+                html += '<td class="thousand-number" style="text-align:right;">' + value['total_price'] + '</td>';
+                // html += '<td>'+value['total_price']+'</td>';
+                html += '</tr>';
+            });
+        }
+        return html;
     }
-    return html;
-}
 
-function addCommas(nStr)
-{
-    nStr += '';
-    x = nStr.split('.');
-    x1 = x[0];
-    x2 = x.length > 1 ? '.' + x[1] : '';
-    var rgx = /(\d+)(\d{3})/;
-    while (rgx.test(x1)) {
-        x1 = x1.replace(rgx, '$1' + ',' + '$2');
+    function addCommas(nStr) {
+        nStr += '';
+        x = nStr.split('.');
+        x1 = x[0];
+        x2 = x.length > 1 ? '.' + x[1] : '';
+        var rgx = /(\d+)(\d{3})/;
+        while (rgx.test(x1)) {
+            x1 = x1.replace(rgx, '$1' + ',' + '$2');
+        }
+        return x1 + x2;
     }
-    return x1 + x2;
-}
 
-function parseSummaryProduct(cart){
-    // var html = '<tr><td colspan="5" style="text-align:right" >Tổng cộng:</td><td class="thousand-number" style="text-align:right">'+cart['total_price']+'</td></tr>';
-    // html += '<tr><td colspan="5" style="text-align:right">Thuế:</td><td class="thousand-number" style="text-align:right">'+cart['vat_amount']+'</td></tr>';
-    // html += '<tr><td colspan="5" style="text-align:right">Phí vận chuyển:</td><td class="thousand-number" style="text-align:right">'+cart['shipping_fee']+'</td></tr>';
-    // html += '<tr><td colspan="5" style="text-align:right">Tổng chiết khấu:</td><td class="thousand-number" style="text-align:right">-'+cart['total_discount_amount']+'</td></tr>';
-    // html += '<tr><td colspan="5" style="text-align:right">Thành tiền:</td><td class="thousand-number" style="text-align:right">'+cart['price']+'</td></tr>';
-    // $('.tbl-list-product > tfoot').html(html);
-    $('label.lbl-total-price').text(addCommas(cart.total_price));
-    $('label.lbl-total-quantity').text(addCommas(cart.quantity));
-    $('label.lbl-discount-amount').text(addCommas(cart.total_discount_amount));
-    $('label.lbl-shipping-fee').text(addCommas(cart.shipping_fee));
-    $('h4.lbl-price').text(addCommas(cart.price));
-}
+    function parseSummaryProduct(cart) {
+        // var html = '<tr><td colspan="5" style="text-align:right" >Tổng cộng:</td><td class="thousand-number" style="text-align:right">'+cart['total_price']+'</td></tr>';
+        // html += '<tr><td colspan="5" style="text-align:right">Thuế:</td><td class="thousand-number" style="text-align:right">'+cart['vat_amount']+'</td></tr>';
+        // html += '<tr><td colspan="5" style="text-align:right">Phí vận chuyển:</td><td class="thousand-number" style="text-align:right">'+cart['shipping_fee']+'</td></tr>';
+        // html += '<tr><td colspan="5" style="text-align:right">Tổng chiết khấu:</td><td class="thousand-number" style="text-align:right">-'+cart['total_discount_amount']+'</td></tr>';
+        // html += '<tr><td colspan="5" style="text-align:right">Thành tiền:</td><td class="thousand-number" style="text-align:right">'+cart['price']+'</td></tr>';
+        // $('.tbl-list-product > tfoot').html(html);
+        $('label.lbl-total-price').text(addCommas(cart.total_price));
+        $('label.lbl-total-quantity').text(addCommas(cart.quantity));
+        $('label.lbl-discount-amount').text(addCommas(cart.total_discount_amount));
+        $('label.lbl-shipping-fee').text(addCommas(cart.shipping_fee));
+        $('h4.lbl-price').text(addCommas(cart.price));
+    }
 
-function getDataToPrint(data){
-    //---> Apply for print
-    $('.lbl-customer-name').text(data.data.cart.customer.name);
-    $('.lbl-customer-phone').text(data.data.cart.customer.phone);
-    $('.lbl-customer-address').text(data.data.cart.customer.address);
-    $('.lbl-customer-created').text(data.data.cart.created_at);
-    $('.lbl-customer-code').text(data.data.cart.code);
-    $('.tbl-list-product > tbody').prepend(parseProductTable(data.data.cart.details));
-    parseSummaryProduct(data.data.cart);
-    setTimeout(function(){
-        $('.thousand-number').simpleMoneyFormat();
-        $('.thousand-number').append(" VNĐ");
-    },300);
-}
+    function resetResultPrint() {
+        html = '<tr style="border-top:3px solid #333;">\
+    <th colspan="8" style="position: relative;">\
+    <div class="row" style="margin-top: 20px;">\
+    <div class="col-sm-7">\
+    </div>\
+    <div class="col-sm-5">\
+    <div class="form-group">\
+    <label class="col-sm-8 control-label font-bold">Tổng cộng:</label>\
+    <label class="col-sm-4 control-label lbl-total-price" style="text-align: right;"></label>\
+    </div>\
+    </div>\
+    </div>\
+    <div class="row">\
+    <div class="col-sm-7">\
+    </div>\
+    <div class="col-sm-5">\
+    <div class="form-group">\
+    <label class="col-sm-8 control-label font-bold">Tổng số lượng:</label>\
+    <label class="col-sm-4 control-label lbl-total-quantity" style="text-align: right;"></label>\
+    </div>\
+    </div>\
+    </div>\
+    <div class="row">\
+    <div class="col-sm-7">\
+    </div>\
+    <div class="col-sm-5">\
+    <div class="form-group">\
+    <label class="col-sm-8 control-label font-bold">Chiết khấu:</label>\
+    <label class="col-sm-4 control-label lbl-discount-amount" style="text-align: right;"></label>\
+    </div>\
+    </div>\
+    </div>\
+    <div class="row" style="margin-bottom: 70px;">\
+    <div class="col-sm-7">\
+    </div>\
+    <div class="col-sm-5">\
+    <div class="form-group">\
+    <label class="col-sm-8 control-label font-bold">Phí vận chuyển:</label>\
+    <label class="col-sm-4 control-label lbl-shipping-fee" style="text-align: right;"></label>\
+    </div>\
+    </div>\
+    </div>\
+    <div class="row" style="position: absolute; bottom: 0; right: 70px; width: 150px;">\
+    <div class="form-group">\
+    <h4 class="col-sm-8 control-label font-bold">Thành tiền:</h4>\
+    <h4 class="col-sm-4 control-label lbl-price" style="text-align: right;"></h4>\
+    </div>\
+    </div>\
+    </th>\
+    </tr>';
+        $('.tbl-list-product > tbody').html(html);
+    }
+
+    function getDataToPrint(data) {
+        //---> Apply for print
+        resetResultPrint();
+        $('.lbl-customer-name').text(data.data.cart.customer.name);
+        $('.lbl-customer-phone').text(data.data.cart.customer.phone);
+        $('.lbl-customer-address').text(data.data.cart.customer.address);
+        $('.lbl-customer-created').text(data.data.cart.created_at);
+        $('.lbl-customer-code').text(data.data.cart.code);
+        $('.tbl-list-product > tbody').prepend(parseProductTable(data.data.cart.details));
+        parseSummaryProduct(data.data.cart);
+        setTimeout(function() {
+            $('.thousand-number').simpleMoneyFormat();
+            $('.thousand-number').append(" VNĐ");
+        }, 300);
+    }
 </script>
 @endsection
 @section('content')
@@ -863,10 +983,10 @@ function getDataToPrint(data){
             @include('admin._partials._alert')
             <form role="form" method="POST" id="mainForm" action="{{route('admin.carts.store')}}">
                 {{ csrf_field() }}
-                
+
                 <input type="hidden" name="id" value="@if(isset($data->id)){{$data->id}}@else{{null}}@endif" />
-                
-                <input type="hidden" name="cart_details" value="@if(isset($cart_details)){{$cart_details}}@endif"/>
+
+                <input type="hidden" name="cart_details" value="@if(isset($cart_details)){{$cart_details}}@endif" />
                 <div class="row">
                     <div class="col-md-8">
                         <div class="ibox-content">
@@ -876,6 +996,12 @@ function getDataToPrint(data){
                                     <h2>{{ $title }}</h2>
                                 </div>
                             </div>
+
+                            @if(!isset($data->id))
+                            <div id="created-cart" class="alert alert-success hidden" role="alert">
+                                <strong>Tạo đơn hàng thành công!</strong> Bạn sẽ không thể cập nhật thông tin đơn hàng trong trang này.
+                            </div>
+                            @endif
 
                             <ul class="nav nav-tabs" style="margin-bottom: 10px;">
                                 <li class="active"><a data-toggle="tab" href="#scan_barcode_tab" id="tab_scan_barcode">Scan barcode</a></li>
@@ -921,8 +1047,7 @@ function getDataToPrint(data){
                                         </div>
                                         <!-- END: Select Warehouse -->
                                         <div class="col-md-4 col-sm-4 col-xs-12">
-                                            <input name="product_quantity" type="text" placeholder="Nhập số lượng" class="form-control m-b"
-                                            value="0"/>
+                                            <input name="product_quantity" type="text" placeholder="Nhập số lượng" class="form-control m-b" value="0" />
                                             <label id="product-quantity-error" class="error hidden" for="product_quantity1">Vui lòng nhập vào số lượng.</label>
                                         </div>
                                         <div class="col-md-2 col-sm-2 col-xs-12">
@@ -934,7 +1059,7 @@ function getDataToPrint(data){
                                     <div class="row">
                                         <div class="form-group clearfix scan_barcode_wrapper">
                                             <div class="scan_barcode_input">
-                                                <input type="text" id="scan_barcode" name="scan_barcode" placeholder="" class="form-control m-b" autofocus/>
+                                                <input type="text" id="scan_barcode" name="scan_barcode" placeholder="" class="form-control m-b" autofocus />
                                                 <label id="scan_barcode_error" class="error" for="scan_barcode"></label>
                                             </div>
                                         </div>
@@ -1011,8 +1136,7 @@ function getDataToPrint(data){
                                 <div class="form-group">
                                     <label class="col-md-4 control-label">Email</label>
                                     <div class="col-md-8">
-                                        <input type="text" name="customer_email" placeholder="" class="form-control m-b"
-                                        value="@if(isset($data->customer) && isset($data->customer->email)){{$data->customer->email}}@else{{old('customer_email')}}@endif"/>
+                                        <input type="text" name="customer_email" placeholder="" class="form-control m-b" value="@if(isset($data->customer) && isset($data->customer->email)){{$data->customer->email}}@else{{old('customer_email')}}@endif" />
                                     </div>
                                 </div>
                             </div>
@@ -1021,8 +1145,7 @@ function getDataToPrint(data){
                                 <div class="form-group">
                                     <label class="col-md-4 control-label">Địa chỉ (<span class="text-danger">*</span>)</label>
                                     <div class="col-md-8">
-                                        <input type="text" name="customer_address" placeholder="" class="form-control required m-b"
-                                        value="@if(isset($data->customer) && isset($data->customer->address)){{$data->customer->address}}@else{{old('customer_address')}}@endif"/>
+                                        <input type="text" name="customer_address" placeholder="" class="form-control required m-b" value="@if(isset($data->customer) && isset($data->customer->address)){{$data->customer->address}}@else{{old('customer_address')}}@endif" />
                                     </div>
                                 </div>
                             </div>
@@ -1044,8 +1167,7 @@ function getDataToPrint(data){
                                     <label class="col-md-4 control-label">Chiết khấu khách hàng</label>
                                     <div class="col-md-8">
                                         <div class="input-group">
-                                            <input type="text" name="customer_discount_amount" placeholder="" class="thousand-number negative-number text-right form-control m-b"
-                                            value="@if(isset($data->customer_discount_amount)){{$data->customer_discount_amount}}@else{{0}}@endif" readonly="readonly" />
+                                            <input type="text" name="customer_discount_amount" placeholder="" class="thousand-number negative-number text-right form-control m-b" value="@if(isset($data->customer_discount_amount)){{$data->customer_discount_amount}}@else{{0}}@endif" readonly="readonly" />
                                             <span class="input-group-addon input-readonly">VND</span>
                                         </div>
                                     </div>
@@ -1082,13 +1204,30 @@ function getDataToPrint(data){
                                 </div>
                             </div>
 
+                            <div class="row transport-info @if(!isset($data) || $data->transport_method != 2){{'hidden'}}@endif">
+                                <div class="form-group">
+                                    <label class="col-md-4 control-label">Tên nhà xe</label>
+                                    <div class="col-md-8">
+                                        <input type="text" name="transport_info_name" placeholder="" class="form-control m-b" value="@if(isset($data->transport_info_name)){{$data->transport_info_name}}@endif" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row transport-info @if(!isset($data) || $data->transport_method != 2){{'hidden'}}@endif">
+                                <div class="form-group">
+                                    <label class="col-md-4 control-label">SĐT nhà xe</label>
+                                    <div class="col-md-8">
+                                        <input type="text" name="transport_info_phone" placeholder="" class="form-control m-b" value="@if(isset($data->transport_info_phone)){{$data->transport_info_phone}}@endif" />
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="row">
                                 <div class="form-group clearfix">
                                     <label class="col-md-4 control-label">Phí vận chuyển</label>
                                     <div class="col-md-8">
                                         <div class="input-group">
-                                            <input type="text" name="shipping_fee" placeholder="" class="thousand-number text-right form-control m-b"
-                                            value="@if(isset($data->shipping_fee)){{$data->shipping_fee}}@else{{0}}@endif"/>
+                                            <input type="text" name="shipping_fee" placeholder="" class="thousand-number text-right form-control m-b" value="@if(isset($data->shipping_fee)){{$data->shipping_fee}}@else{{0}}@endif" />
                                             <span class="input-group-addon">VND</span>
                                         </div>
                                     </div>
@@ -1112,8 +1251,7 @@ function getDataToPrint(data){
                                     <label class="col-md-4 control-label">Chiết khấu cộng tác viên</label>
                                     <div class="col-md-8">
                                         <div class="input-group">
-                                            <input type="text" name="partner_discount_amount" placeholder="" class="thousand-number text-right negative-number form-control m-b"
-                                            value="@if(isset($data->partner_discount_amount)){{$data->partner_discount_amount}}@else{{0}}@endif" readonly="readonly" />
+                                            <input type="text" name="partner_discount_amount" placeholder="" class="thousand-number text-right negative-number form-control m-b" value="@if(isset($data->partner_discount_amount)){{$data->partner_discount_amount}}@else{{0}}@endif" readonly="readonly" />
                                             <span class="input-group-addon input-readonly">VND/sp</span>
                                         </div>
                                     </div>
@@ -1125,8 +1263,7 @@ function getDataToPrint(data){
                                     <label class="col-md-4 control-label">Thuế</label>
                                     <div class="col-md-8">
                                         <div class="input-group">
-                                            <input type="text" name="vat_percent" placeholder="" class="thousand-number text-right form-control m-b"
-                                            value="@if(isset($data->vat_percent)){{$data->vat_percent}}@else{{0}}@endif" />
+                                            <input type="text" name="vat_percent" placeholder="" class="thousand-number text-right form-control m-b" value="@if(isset($data->vat_percent)){{$data->vat_percent}}@else{{0}}@endif" />
                                             <span class="input-group-addon input-readonly">%</span>
                                         </div>
                                     </div>
@@ -1148,8 +1285,7 @@ function getDataToPrint(data){
                                         <label class="col-md-4 control-label">Tổng cộng</label>
                                         <div class="col-md-8">
                                             <div class="input-group">
-                                                <input type="text" name="total_price" placeholder="" class="thousand-number text-right form-control m-b"
-                                                value="@if(isset($data->total_price)){{$data->total_price}}@else{{0}}@endif" readonly="readonly" />
+                                                <input type="text" name="total_price" placeholder="" class="thousand-number text-right form-control m-b" value="@if(isset($data->total_price)){{$data->total_price}}@else{{0}}@endif" readonly="readonly" />
                                                 <span class="input-group-addon input-readonly">VND</span>
                                             </div>
                                         </div>
@@ -1160,8 +1296,7 @@ function getDataToPrint(data){
                                     <div class="form-group">
                                         <label class="col-md-4 control-label">Tổng số lượng</label>
                                         <div class="col-md-8">
-                                            <input type="text" name="quantity" placeholder="" class="text-right form-control m-b"
-                                            value="@if(isset($data->quantity)){{$data->quantity}}@else{{0}}@endif" readonly="readonly" />
+                                            <input type="text" name="quantity" placeholder="" class="text-right form-control m-b" value="@if(isset($data->quantity)){{$data->quantity}}@else{{0}}@endif" readonly="readonly" />
                                         </div>
                                     </div>
                                 </div>
@@ -1171,8 +1306,7 @@ function getDataToPrint(data){
                                         <label class="col-md-4 control-label">Thuế</label>
                                         <div class="col-md-8">
                                             <div class="input-group">
-                                                <input type="text" name="vat_amount" placeholder="" class="thousand-number text-right form-control m-b"
-                                                value="@if(isset($data->vat_amount)){{$data->vat_amount}}@else{{0}}@endif" readonly="readonly" />
+                                                <input type="text" name="vat_amount" placeholder="" class="thousand-number text-right form-control m-b" value="@if(isset($data->vat_amount)){{$data->vat_amount}}@else{{0}}@endif" readonly="readonly" />
                                                 <span class="input-group-addon input-readonly">VND</span>
                                             </div>
                                         </div>
@@ -1184,8 +1318,7 @@ function getDataToPrint(data){
                                         <label class="col-md-4 control-label">Phí vận chuyển</label>
                                         <div class="col-md-8">
                                             <div class="input-group">
-                                                <input type="text" name="shipping_fee" placeholder="" class="thousand-number text-right form-control m-b"
-                                                value="@if(isset($data->shipping_fee)){{$data->shipping_fee}}@else{{0}}@endif" readonly="readonly" />
+                                                <input type="text" name="shipping_fee" placeholder="" class="thousand-number text-right form-control m-b" value="@if(isset($data->shipping_fee)){{$data->shipping_fee}}@else{{0}}@endif" readonly="readonly" />
                                                 <span class="input-group-addon input-readonly">VND</span>
                                             </div>
                                         </div>
@@ -1197,8 +1330,7 @@ function getDataToPrint(data){
                                         <label class="col-md-4 control-label">Tổng chiết khấu</label>
                                         <div class="col-md-8">
                                             <div class="input-group">
-                                                <input type="text" name="total_discount_amount" placeholder="" class="thousand-number text-right negative-number form-control m-b"
-                                                value="@if(isset($data->total_discount_amount)){{$data->total_discount_amount}}@else{{0}}@endif" readonly="readonly" />
+                                                <input type="text" name="total_discount_amount" placeholder="" class="thousand-number text-right negative-number form-control m-b" value="@if(isset($data->total_discount_amount)){{$data->total_discount_amount}}@else{{0}}@endif" readonly="readonly" />
                                                 <span class="input-group-addon input-readonly">VND</span>
                                             </div>
                                         </div>
@@ -1210,8 +1342,7 @@ function getDataToPrint(data){
                                         <label class="col-md-4 control-label">Thành tiền</label>
                                         <div class="col-md-8">
                                             <div class="input-group">
-                                                <input type="text" name="price" placeholder="" class="thousand-number text-right form-control m-b"
-                                                value="@if(isset($data->price)){{$data->price}}@else{{0}}@endif" readonly="readonly" />
+                                                <input type="text" name="price" placeholder="" class="thousand-number text-right form-control m-b" value="@if(isset($data->price)){{$data->price}}@else{{0}}@endif" readonly="readonly" />
                                                 <span class="input-group-addon input-readonly">VND</span>
                                             </div>
                                         </div>
@@ -1223,8 +1354,7 @@ function getDataToPrint(data){
                                         <label class="col-md-4 control-label">Đã thanh toán</label>
                                         <div class="col-md-8">
                                             <div class="input-group">
-                                                <input type="text" name="paid_amount" placeholder="" class="thousand-number text-right form-control m-b"
-                                                value="@if(isset($data->paid_amount)){{$data->paid_amount}}@else{{0}}@endif" />
+                                                <input type="text" name="paid_amount" placeholder="" class="thousand-number text-right form-control m-b" value="@if(isset($data->paid_amount)){{$data->paid_amount}}@else{{0}}@endif" />
                                                 <span class="input-group-addon">VND</span>
                                             </div>
                                         </div>
@@ -1236,8 +1366,7 @@ function getDataToPrint(data){
                                         <label class="col-md-4 control-label">Số tiền cần thanh toán</label>
                                         <div class="col-md-8">
                                             <div class="input-group">
-                                                <input type="text" name="needed_paid" placeholder="" class="thousand-number text-right form-control m-b"
-                                                value="@if(isset($data->needed_paid)){{$data->needed_paid}}@else{{0}}@endif" readonly="readonly" />
+                                                <input type="text" name="needed_paid" placeholder="" class="thousand-number text-right form-control m-b" value="@if(isset($data->needed_paid)){{$data->needed_paid}}@else{{0}}@endif" readonly="readonly" />
                                                 <span class="input-group-addon input-readonly">VND</span>
                                             </div>
                                         </div>

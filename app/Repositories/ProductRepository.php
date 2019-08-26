@@ -710,6 +710,7 @@ Class ProductRepository
             'color_id' => $color_id,
             'size_id' => $size_id,
             'warehouse_id' => $warehouse_id,
+            'quantity' => 0,
             'message' => 'Lấy quantity cho product detail thành công',
         ];
 
@@ -720,13 +721,17 @@ Class ProductRepository
                 ->having('quantity_available', '>', 0)
                 ->first();
 
-            $warehouse_products = WarehouseProduct::having('product_detail_id', '=', $product_detail->id)
-                ->having('warehouse_id', '=', $warehouse_id)
-                ->having('quantity_available', '>', 0)
-                ->first();
-
-            $return['quantity'] = $warehouse_products->quantity_available;
-            $return['warehouse_product_id'] = $warehouse_products->id;
+                if($product_detail) {
+                    $warehouse_products = WarehouseProduct::having('product_detail_id', '=', $product_detail->id)
+                    ->having('warehouse_id', '=', $warehouse_id)
+                    ->having('quantity_available', '>', 0)
+                    ->first();
+                    
+                    if($warehouse_products) {
+                        $return['quantity'] = $warehouse_products->quantity_available;
+                        $return['warehouse_product_id'] = $warehouse_products->id;
+                    }
+                }
         }
 
         return Response::json($return);

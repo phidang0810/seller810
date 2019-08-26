@@ -87,7 +87,7 @@ class CartController extends AdminController
             $this->_data['customer_name_options'] = $customer->getNameOptions($this->_data['data']->customer->id);
 
             // Get all transports
-            $this->_data['transport_options'] = $cart->getTransportOptions($this->_data['data']->transport_id);
+            $this->_data['transport_options'] = $cart->getTransportOptions($this->_data['data']->transport_method);
 
             // Get all cities
             $this->_data['city_options'] = $cart->getCityOptions($this->_data['data']->city_id);

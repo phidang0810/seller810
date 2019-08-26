@@ -388,7 +388,9 @@ Class CartRepository
         $model->customer_id = $customer->id;
 
 
-        $model->transport_id = $data['transporting_service'];
+        $model->transport_method = $data['transporting_service'];
+        $model->transport_info_name = $data['transport_info_name'];
+        $model->transport_info_phone = $data['transport_info_phone'];
         $model->quantity = $data['quantity'];
         $model->partner_discount_amount = preg_replace('/[^0-9]/', '', $data['partner_discount_amount']);
         $model->customer_discount_amount = preg_replace('/[^0-9]/', '', $data['customer_discount_amount']);

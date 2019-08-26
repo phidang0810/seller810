@@ -30,19 +30,19 @@
     </div>
 
     <div class="form-group">
-        <label class="col-lg-5 control-label" style="text-align: left; padding-right: 0; width: 33.666667%;">Nhà vận chuyển:</label>
-        <label id="transport_name" class="col-lg-7 text-left control-label" style="padding-left: 0; text-align: left;">@if($result['cart']->transport){{$result['cart']->transport->name}}@endif</label>
-    </div>
-
-    <div class="form-group">
         <label class="col-lg-5 control-label" style="text-align: left; padding-right: 0; width: 33.666667%;">Mã vận đơn:</label>
         <!-- <label id='transport_id' class="col-lg-7 text-left control-label" style="padding-left: 0; text-align: left;">{{$result['cart']->transport_id}}</label> -->
-        <input type="text" value="@if(isset($result['cart']->transport_id) && isset($result['cart']->transport->id)){{$result['cart']->transport->id}}@else{{old('transport_id')}}@endif"" name="transport_id">
+        <input type="text" value="@if(isset($result['cart']->transport_id)){{$result['cart']->transport_id}}@else{{old('transport_id')}}@endif" name="transport_id">
     </div>
 
     <div class="form-group">
         <label class="col-lg-5 control-label" style="text-align: left; padding-right: 0; width: 33.666667%;">Mã đơn hàng:</label>
         <label id="code" class="col-lg-7 text-left control-label" style="padding-left: 0; text-align: left;">{{$result['cart']->code}}</label>
+    </div>
+
+    <div class="form-group">
+        <label class="col-lg-5 control-label" style="text-align: left; padding-right: 0; width: 33.666667%;">Ghi chú:</label>
+        <label class="col-lg-7 text-left control-label" style="padding-left: 0; text-align: left;">{{$result['cart']->descritption}}</label>
     </div>
 
     <div class="form-group">
@@ -71,6 +71,19 @@
         <label class="col-lg-5 control-label" style="text-align: left; padding-right: 0; width: 33.666667%;">Phương thức vận chuyển:</label>
         <label id="code" class="col-lg-7 text-left control-label" style="padding-left: 0; text-align: left;">{{TRANSPORT_METHOD_TEXT[$result['cart']->transport_method]}}</label>
     </div>
+
+
+    @if($result['cart']->transport_method == 2)
+    <div class="form-group">
+        <label class="col-lg-5 control-label" style="text-align: left; padding-right: 0; width: 33.666667%;">Nhà xe:</label>
+        <label id="code" class="col-lg-7 text-left control-label" style="padding-left: 0; text-align: left;">{{$result['cart']->transport_info_name}}</label>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-5 control-label" style="text-align: left; padding-right: 0; width: 33.666667%;">SĐT Nhà xe:</label>
+        <label id="code" class="col-lg-7 text-left control-label" style="padding-left: 0; text-align: left;">{{$result['cart']->transport_info_phone}}</label>
+    </div>
+    @endif
+
     @endif
 
     @if($result['cart']->receiver)
