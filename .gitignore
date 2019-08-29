@@ -1,6 +1,6 @@
 storage/
 vendor/
-\.env
+.env
 
 *.log
 
