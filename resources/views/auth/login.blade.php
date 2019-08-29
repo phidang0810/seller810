@@ -20,7 +20,7 @@
     <section id="login-page">
         <div class="container">
             <div class="row justify-content-center">
-                <div class="col-8">
+                <div class="col-sm-8">
                     <div class="row">
                         <div class="col-xs-12 col-sm-8">
                             <div class="wrap-login">
