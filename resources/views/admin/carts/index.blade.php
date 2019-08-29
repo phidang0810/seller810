@@ -96,7 +96,9 @@
                     html += '<td>'+value.product.name+'</td>';
                     html += '<td>'+value.product.barcode_text+'</td>';
                     html += '<td><span class="img-wrapper"><img class="img-thumbnail" style="width: 80px; height: 60px;" src="' + product_image + '"/></span></td>';
-                    html += '<td class="thousand-number" style="text-align:right;">'+value.price+'</td>';
+                    html += '<td>'+value.product_detail.size.name+'</td>';
+                    html += '<td>'+value.product_detail.color.name+'</td>';
+                    html += '<td class="thousand-number" style="text-align:right;">'+((value.fixed_price) ? value.fixed_price : value.price)+'</td>';
                     html += '<td style="text-align:right;">'+value.quantity+'</td>';
                     html += '<td class="thousand-number" style="text-align:right;">'+value.total_price+'</td>';
                     html += '</tr>';
@@ -107,7 +109,7 @@
 
         function resetResultPrint(){
             html = '<tr style="border-top:3px solid #333;">\
-            <th colspan="6" style="position: relative;">\
+            <th colspan="8" style="position: relative;">\
             <div class="row" style="margin-top: 20px;">\
             <div class="col-sm-7">\
             </div>\
@@ -161,12 +163,12 @@
 
         function getDataToPrint(data){
             //---> Apply for print
+            resetResultPrint();
             $('.lbl-customer-name').text(data.result.cart.customer.name);
             $('.lbl-customer-phone').text(data.result.cart.customer.phone);
             $('.lbl-customer-address').text(data.result.cart.customer.address);
             $('.lbl-customer-created').text(data.result.cart.created_at);
             $('.lbl-customer-code').text(data.result.cart.code);
-            resetResultPrint();
             $('.tbl-list-product > tbody').prepend(parseProductTable(data.result.cart.details));
             parseSummaryProduct(data.result.cart);
             setTimeout(function(){
