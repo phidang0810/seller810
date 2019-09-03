@@ -69,7 +69,7 @@
     @if($result['cart']->transport_method != null)
     <div class="form-group">
         <label class="col-lg-5 control-label" style="text-align: left; padding-right: 0; width: 33.666667%;">Phương thức vận chuyển:</label>
-        <label id="code" class="col-lg-7 text-left control-label" style="padding-left: 0; text-align: left;">{{TRANSPORT_METHOD_TEXT[$result['cart']->transport_method]}}</label>
+        <label id="code" class="col-lg-7 text-left control-label" style="padding-left: 0; text-align: left;">{{$result['cart']->transportMethod->name}}</label>
     </div>
 
 
