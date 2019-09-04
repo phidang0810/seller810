@@ -496,7 +496,8 @@ Class CartRepository
                         $modelDetail->product_detail_id = (isset($detail->product_detail)) ? $detail->product_detail->id : 0;
                         $modelDetail->warehouse_product_id = (isset($detail->warehouse_product_id)) ? $detail->warehouse_product_id : 0;
                         $modelDetail->quantity = (isset($detail->product_quantity)) ? $detail->product_quantity : 0;
-                        $modelDetail->discount_amount = (isset($detail->discount_amount)) ? $detail->discount_amount : 0;
+                        // $modelDetail->discount_amount = (isset($detail->discount_amount)) ? $detail->discount_amount : 0;
+                        $modelDetail->discount_amount = (isset($model)) ? ( $model->partner_discount_amount * $detail->product_quantity ) : 0;
                         $modelDetail->price = (isset($detail->product_price)) ? $detail->product_price : 0;
                         $modelDetail->fixed_price = (isset($detail->product_fixed_price)) ? $detail->product_fixed_price : null;
                         $modelDetail->total_price = (isset($detail->total_price)) ? $detail->total_price : 0;
@@ -530,7 +531,8 @@ Class CartRepository
                         'product_detail_id' => (isset($detail->product_detail)) ? $detail->product_detail->id : 0,
                         'warehouse_product_id' => (isset($detail->warehouse_product_id)) ? $detail->warehouse_product_id : 0,
                         'quantity' => (isset($detail->product_quantity)) ? $detail->product_quantity : 0,
-                        'discount_amount' => (isset($detail->discount_amount)) ? $detail->discount_amount : 0,
+                        // 'discount_amount' => (isset($detail->discount_amount)) ? $detail->discount_amount : 0,
+                        'discount_amount' => (isset($model)) ? ( $model->partner_discount_amount * $detail->product_quantity ) : 0,
                         'price' => (isset($detail->product_price)) ? $detail->product_price : 0,
                         'fixed_price' => (isset($detail->product_fixed_price)) ? $detail->product_fixed_price : null,
                         'total_price' => (isset($detail->total_price)) ? $detail->total_price : 0,
