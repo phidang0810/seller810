@@ -164,6 +164,7 @@ Class CartRepository
             $cart->customer;
             $cart->platform;
             $cart->transport;
+            $cart->transportMethod;
 
             // receiver
             if ($cart->customer_express_id != null) {

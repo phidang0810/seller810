@@ -97,4 +97,11 @@ class Cart extends BaseModel
     {
         return $this->belongsTo('App\Models\CustomerExpress');
     }
+    /**
+     * Get the brand that owns the product.
+     */
+    public function transportMethod()
+    {
+        return $this->belongsTo('App\Models\Transport', 'transport_method');
+    }
 }
