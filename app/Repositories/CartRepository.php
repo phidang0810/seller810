@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: Dinh Thien Phuoc
@@ -31,7 +32,7 @@ use Yajra\DataTables\Facades\DataTables;
 use Carbon\Carbon;
 use Response;
 
-Class CartRepository
+class CartRepository
 {
 
     const CACHE_NAME_CART = 'carts';
@@ -39,90 +40,89 @@ Class CartRepository
     public function dataTable($request)
     {
         $carts = Cart::select(['carts.id', 'carts.city_id', 'carts.partner_id', 'carts.customer_id', 'carts.code', 'carts.quantity', 'carts.status', 'carts.active', 'carts.created_at', 'customers.name as customer_name', 'customers.phone as customer_phone', 'platforms.name as platform_name', 'carts.payment_status'])
-        ->join('customers', 'customers.id', '=', 'carts.customer_id')
-        ->leftJoin('platforms', 'platforms.id', '=', 'carts.platform_id');
+            ->join('customers', 'customers.id', '=', 'carts.customer_id')
+            ->leftJoin('platforms', 'platforms.id', '=', 'carts.platform_id');
 
         $dataTable = DataTables::eloquent($carts)
-        ->filter(function ($query) use ($request) {
-            if (trim($request->get('code')) !== "") {
-                $query->where(function ($sub) use ($request) {
-                    $sub->where('carts.code', 'like', '%' . $request->get('code') . '%');
-                });
-            }
-
-            if (trim($request->get('customer_name')) !== "") {
-                $query->where(function ($sub) use ($request) {
-                    $sub->where('customers.name', 'like', '%' . $request->get('customer_name') . '%');
-                });
-            }
-
-            if (trim($request->get('customer_phone')) !== "") {
-                $query->where(function ($sub) use ($request) {
-                    $sub->where('customers.phone', 'like', '%' . $request->get('customer_phone') . '%');
-                });
-            }
-
-            if (trim($request->get('platform_name')) !== "") {
-                $query->where(function ($sub) use ($request) {
-                    $sub->where('carts.platform_id', $request->get('platform_name'));
-                });
-            }
-
-            if (trim($request->get('start_date')) !== "") {
-                $fromDate = Carbon::createFromFormat('d/m/Y H:i:s', $request->get('start_date') . ' 00:00:00')->toDateTimeString();
-
-                if (trim($request->get('end_date')) !== "") {
-
-                    $toDate = Carbon::createFromFormat('d/m/Y H:i:s', $request->get('end_date') . ' 23:59:59')->toDateTimeString();
-                    $query->whereBetween('carts.created_at', [$fromDate, $toDate]);
-                } else {
-                    $query->whereDate('carts.created_at', '>=', $fromDate);
+            ->filter(function ($query) use ($request) {
+                if (trim($request->get('code')) !== "") {
+                    $query->where(function ($sub) use ($request) {
+                        $sub->where('carts.code', 'like', '%' . $request->get('code') . '%');
+                    });
                 }
-            }
 
-            if (trim($request->get('status')) !== "") {
-                $query->where(function ($sub) use ($request) {
-                    $sub->where('carts.status', 'like', '%' . $request->get('status') . '%');
-                });
-            }
+                if (trim($request->get('customer_name')) !== "") {
+                    $query->where(function ($sub) use ($request) {
+                        $sub->where('customers.name', 'like', '%' . $request->get('customer_name') . '%');
+                    });
+                }
 
-            if (trim($request->get('payment_status')) !== "") {
-                $query->where(function ($sub) use ($request) {
-                    $sub->where('carts.payment_status', 'like', '%' . $request->get('payment_status') . '%');
-                });
-            }
+                if (trim($request->get('customer_phone')) !== "") {
+                    $query->where(function ($sub) use ($request) {
+                        $sub->where('customers.phone', 'like', '%' . $request->get('customer_phone') . '%');
+                    });
+                }
 
-        }, true)
-        ->addColumn('created_at', function ($cart) {
-                $html = $cart->created_at;//date('d/m/Y', strtotime($cart->created_at));
+                if (trim($request->get('platform_name')) !== "") {
+                    $query->where(function ($sub) use ($request) {
+                        $sub->where('carts.platform_id', $request->get('platform_name'));
+                    });
+                }
+
+                if (trim($request->get('start_date')) !== "") {
+                    $fromDate = Carbon::createFromFormat('d/m/Y H:i:s', $request->get('start_date') . ' 00:00:00')->toDateTimeString();
+
+                    if (trim($request->get('end_date')) !== "") {
+
+                        $toDate = Carbon::createFromFormat('d/m/Y H:i:s', $request->get('end_date') . ' 23:59:59')->toDateTimeString();
+                        $query->whereBetween('carts.created_at', [$fromDate, $toDate]);
+                    } else {
+                        $query->whereDate('carts.created_at', '>=', $fromDate);
+                    }
+                }
+
+                if (trim($request->get('status')) !== "") {
+                    $query->where(function ($sub) use ($request) {
+                        $sub->where('carts.status', 'like', '%' . $request->get('status') . '%');
+                    });
+                }
+
+                if (trim($request->get('payment_status')) !== "") {
+                    $query->where(function ($sub) use ($request) {
+                        $sub->where('carts.payment_status', 'like', '%' . $request->get('payment_status') . '%');
+                    });
+                }
+            }, true)
+            ->addColumn('created_at', function ($cart) {
+                $html = $cart->created_at; //date('d/m/Y', strtotime($cart->created_at));
                 return $html;
             })
-        ->addColumn('status', function ($cart) {
-            $html = parse_status($cart->status);
-            return $html;
-        })
-        ->addColumn('payment_status', function ($cart) {
-            $html = parse_payment_status($cart->payment_status);
-            return $html;
-        })
-        ->addColumn('code', function ($cart) use ($request) {
-            if (trim($request->get('no_link')) !== "" && $request->get('no_link') == 'true') {
-                $html = '<span id="'.$cart->code.'">'.$cart->code.'</span>';
-            }else{
-                $html = '<a href="'.route('admin.carts.index', ['cart_code' => $cart->code]) . '">' . '<span id="'.$cart->code.'">'.$cart->code.'</span>' .'</a>';
-            }
-            
-            return $html;
-        })
-        ->rawColumns(['created_at', 'status', 'payment_status', 'code'])
-        ->order(function ($query) use ($request) {
-            if (trim($request->get('cart_code')) !== ""){
-                $query->orderByRaw("FIELD(`carts`.`code` , '".$request->get('cart_code')."') DESC");
-            }
-            $query->orderBy('carts.created_at', 'desc');
-            $query->orderBy('carts.code', 'desc');
-        })
-        ->toJson();
+            ->addColumn('status', function ($cart) {
+                $html = parse_status($cart->status);
+                return $html;
+            })
+            ->addColumn('payment_status', function ($cart) {
+                $html = parse_payment_status($cart->payment_status);
+                return $html;
+            })
+            ->addColumn('code', function ($cart) use ($request) {
+                if (trim($request->get('no_link')) !== "" && $request->get('no_link') == 'true') {
+                    $html = '<span id="' . $cart->code . '">' . $cart->code . '</span>';
+                } else {
+                    $html = '<a href="' . route('admin.carts.index', ['cart_code' => $cart->code]) . '">' . '<span id="' . $cart->code . '">' . $cart->code . '</span>' . '</a>';
+                }
+
+                return $html;
+            })
+            ->rawColumns(['created_at', 'status', 'payment_status', 'code'])
+            ->order(function ($query) use ($request) {
+                if (trim($request->get('cart_code')) !== "") {
+                    $query->orderByRaw("FIELD(`carts`.`code` , '" . $request->get('cart_code') . "') DESC");
+                }
+                $query->orderBy('carts.created_at', 'desc');
+                $query->orderBy('carts.code', 'desc');
+            })
+            ->toJson();
         return $dataTable;
     }
 
@@ -169,7 +169,7 @@ Class CartRepository
             // receiver
             if ($cart->customer_express_id != null) {
                 $cart->receiver = $cart->customer;
-            }else{
+            } else {
                 $cart->receiver = $cart->customerExpress;
             }
         }
@@ -195,6 +195,12 @@ Class CartRepository
         $pay_amount = ($request->get('pay_amount') !== null) ? $request->get('pay_amount') : 0;
         $needed_paid = $request->get('needed_paid');
         $model = Cart::where('code', '=', $cartCode)->first();
+
+        // Check if cart is completed
+        if ($model->status == CART_COMPLETED) {
+            return $model;
+        }
+
         $model->paid_amount = ($model->paid_amount) ? $model->paid_amount : 0;
         $model->paid_amount += $pay_amount;
         $model->needed_paid = $needed_paid;
@@ -212,7 +218,6 @@ Class CartRepository
                 } else {
                     $model->payment_status = RECEIVED_PAYMENT;
                 }
-
             }
         } else {
             $model->payment_status = NOT_PAYING;
@@ -269,7 +274,6 @@ Class CartRepository
                 } else {
                     $model->payment_status = RECEIVED_PAYMENT;
                 }
-
             }
         } else {
             $model->payment_status = NOT_PAYING;
@@ -363,7 +367,7 @@ Class CartRepository
             $customer->address = $data['customer_address'];
 
             $customer->save();
-        }elseif($customer = Customer::where('name', $data['customer_name'])->first()){
+        } elseif ($customer = Customer::where('name', $data['customer_name'])->first()) {
             $customer->city_id = $data['customer_city'];
             // $customer->name = $data['customer_name'];
             $customer->email = $data['customer_email'];
@@ -418,7 +422,6 @@ Class CartRepository
                 } else {
                     $model->payment_status = RECEIVED_PAYMENT;
                 }
-
             }
         } else {
             $model->payment_status = NOT_PAYING;
@@ -463,7 +466,8 @@ Class CartRepository
         return $model;
     }
 
-    public function calculateTotalImportProductPrice($cart_id){
+    public function calculateTotalImportProductPrice($cart_id)
+    {
         $total = 0;
 
         if ($cart_id) {
@@ -497,7 +501,7 @@ Class CartRepository
                         $modelDetail->warehouse_product_id = (isset($detail->warehouse_product_id)) ? $detail->warehouse_product_id : 0;
                         $modelDetail->quantity = (isset($detail->product_quantity)) ? $detail->product_quantity : 0;
                         // $modelDetail->discount_amount = (isset($detail->discount_amount)) ? $detail->discount_amount : 0;
-                        $modelDetail->discount_amount = (isset($model)) ? ( $model->partner_discount_amount * $detail->product_quantity ) : 0;
+                        $modelDetail->discount_amount = (isset($model)) ? ($model->partner_discount_amount * $detail->product_quantity) : 0;
                         $modelDetail->price = (isset($detail->product_price)) ? $detail->product_price : 0;
                         $modelDetail->fixed_price = (isset($detail->product_fixed_price)) ? $detail->product_fixed_price : null;
                         $modelDetail->total_price = (isset($detail->total_price)) ? $detail->total_price : 0;
@@ -532,7 +536,7 @@ Class CartRepository
                         'warehouse_product_id' => (isset($detail->warehouse_product_id)) ? $detail->warehouse_product_id : 0,
                         'quantity' => (isset($detail->product_quantity)) ? $detail->product_quantity : 0,
                         // 'discount_amount' => (isset($detail->discount_amount)) ? $detail->discount_amount : 0,
-                        'discount_amount' => (isset($model)) ? ( $model->partner_discount_amount * $detail->product_quantity ) : 0,
+                        'discount_amount' => (isset($model)) ? ($model->partner_discount_amount * $detail->product_quantity) : 0,
                         'price' => (isset($detail->product_price)) ? $detail->product_price : 0,
                         'fixed_price' => (isset($detail->product_fixed_price)) ? $detail->product_fixed_price : null,
                         'total_price' => (isset($detail->total_price)) ? $detail->total_price : 0,
@@ -630,66 +634,66 @@ Class CartRepository
         $platforms = Platform::get()->pluck('name', 'id')->toArray();
         $cities = City::get()->pluck('name', 'id')->toArray();
         $dataTable = DataTables::eloquent($products)
-        ->filter(function ($query) use ($request) {
-            if (trim($request->get('category')) !== "") {
-                $query->join('product_category', 'products.id', '=', 'product_category.product_id')
-                ->where('product_category.category_id', $request->get('category'));
-            }
+            ->filter(function ($query) use ($request) {
+                if (trim($request->get('category')) !== "") {
+                    $query->join('product_category', 'products.id', '=', 'product_category.product_id')
+                        ->where('product_category.category_id', $request->get('category'));
+                }
 
-            if (trim($request->get('platform_id')) !== "") {
-                $query->where('carts.platform_id', $request->get('platform_id'));
-            }
+                if (trim($request->get('platform_id')) !== "") {
+                    $query->where('carts.platform_id', $request->get('platform_id'));
+                }
 
-            if (trim($request->get('date_from')) !== "") {
-                $dateFrom = \DateTime::createFromFormat('d/m/Y', $request->get('date_from'));
-                $dateFrom = $dateFrom->format('Y-m-d 00:00:00');
-                $query->where('cart_detail.created_at', '>=', $dateFrom);
-            }
+                if (trim($request->get('date_from')) !== "") {
+                    $dateFrom = \DateTime::createFromFormat('d/m/Y', $request->get('date_from'));
+                    $dateFrom = $dateFrom->format('Y-m-d 00:00:00');
+                    $query->where('cart_detail.created_at', '>=', $dateFrom);
+                }
 
-            if (trim($request->get('date_to')) !== "") {
-                $dateTo = \DateTime::createFromFormat('d/m/Y', $request->get('date_to'));
-                $dateTo = $dateTo->format('Y-m-d 23:59:50');
-                $query->where('cart_detail.created_at', '<=', $dateTo);
-            }
+                if (trim($request->get('date_to')) !== "") {
+                    $dateTo = \DateTime::createFromFormat('d/m/Y', $request->get('date_to'));
+                    $dateTo = $dateTo->format('Y-m-d 23:59:50');
+                    $query->where('cart_detail.created_at', '<=', $dateTo);
+                }
 
-            if (trim($request->get('keyword')) !== "") {
-                $query->where(function ($sub) use ($request) {
-                    $sub->where('products.name', 'like', '%' . $request->get('keyword') . '%');
-                    $sub->where('products.barcode_text', 'like', '%' . $request->get('keyword') . '%');
-                });
-            }
-        }, true)
-        ->addColumn('category', function ($product) use ($categories) {
-            $html = '';
-            $categoryName = $categories[$product->main_cate] ?? '';
-            $html .= '<label class="label label-default">' . $categoryName . '</label><br/>';
-            return $html;
-        })
-        ->addColumn('total_price', function ($product) use ($platforms) {
-            return format_price($product->total_price);
-        })
-        ->addColumn('total_cart', function ($product) use ($platforms) {
-            return format_number($product->total_cart);
-        })
-        ->addColumn('profit', function ($product) {
-            return format_price($product->profit);
-        })
-        ->addColumn('platform', function ($product) use ($platforms) {
-            return $platforms[$product->platform_id] ?? '';
-        })
-        ->addColumn('city', function ($product) use ($cities) {
-            return $cities[$product->city_id] ?? '';
-        })
-        ->addColumn('photo', function ($product) {
-            if ($product->photo) {
-                $html = '<img style="width: 80px; height: 60px;" class="img-thumbnail" src="' . asset('storage/' . $product->photo) . '" />';
-            } else {
-                $html = ' <img alt="No Photo" style="width: 80px; height: 60px;" class="img-thumbnail" src="' . asset(NO_PHOTO) . '" >';
-            }
-            return $html;
-        })
-        ->rawColumns(['category', 'platform', 'photo'])
-        ->toJson();
+                if (trim($request->get('keyword')) !== "") {
+                    $query->where(function ($sub) use ($request) {
+                        $sub->where('products.name', 'like', '%' . $request->get('keyword') . '%');
+                        $sub->where('products.barcode_text', 'like', '%' . $request->get('keyword') . '%');
+                    });
+                }
+            }, true)
+            ->addColumn('category', function ($product) use ($categories) {
+                $html = '';
+                $categoryName = $categories[$product->main_cate] ?? '';
+                $html .= '<label class="label label-default">' . $categoryName . '</label><br/>';
+                return $html;
+            })
+            ->addColumn('total_price', function ($product) use ($platforms) {
+                return format_price($product->total_price);
+            })
+            ->addColumn('total_cart', function ($product) use ($platforms) {
+                return format_number($product->total_cart);
+            })
+            ->addColumn('profit', function ($product) {
+                return format_price($product->profit);
+            })
+            ->addColumn('platform', function ($product) use ($platforms) {
+                return $platforms[$product->platform_id] ?? '';
+            })
+            ->addColumn('city', function ($product) use ($cities) {
+                return $cities[$product->city_id] ?? '';
+            })
+            ->addColumn('photo', function ($product) {
+                if ($product->photo) {
+                    $html = '<img style="width: 80px; height: 60px;" class="img-thumbnail" src="' . asset('storage/' . $product->photo) . '" />';
+                } else {
+                    $html = ' <img alt="No Photo" style="width: 80px; height: 60px;" class="img-thumbnail" src="' . asset(NO_PHOTO) . '" >';
+                }
+                return $html;
+            })
+            ->rawColumns(['category', 'platform', 'photo'])
+            ->toJson();
 
         return $dataTable;
     }
@@ -703,91 +707,90 @@ Class CartRepository
     public function returnDataTable($request)
     {
         $carts = Cart::select(['carts.id', 'carts.city_id', 'carts.partner_id', 'carts.customer_id', 'carts.code', 'carts.quantity', 'carts.status', 'carts.active', 'carts.created_at', 'customers.name as customer_name', 'customers.phone as customer_phone', 'platforms.name as platform_name', 'carts.payment_status'])
-        ->join('customers', 'customers.id', '=', 'carts.customer_id')
-        ->leftJoin('platforms', 'platforms.id', '=', 'carts.platform_id')
-        ->where('carts.is_returned', '=', 1);
+            ->join('customers', 'customers.id', '=', 'carts.customer_id')
+            ->leftJoin('platforms', 'platforms.id', '=', 'carts.platform_id')
+            ->where('carts.is_returned', '=', 1);
 
         $dataTable = DataTables::eloquent($carts)
-        ->filter(function ($query) use ($request) {
-            if (trim($request->get('code')) !== "") {
-                $query->where(function ($sub) use ($request) {
-                    $sub->where('carts.code', 'like', '%' . $request->get('code') . '%');
-                });
-            }
-
-            if (trim($request->get('customer_name')) !== "") {
-                $query->where(function ($sub) use ($request) {
-                    $sub->where('customers.name', 'like', '%' . $request->get('customer_name') . '%');
-                });
-            }
-
-            if (trim($request->get('customer_phone')) !== "") {
-                $query->where(function ($sub) use ($request) {
-                    $sub->where('customers.phone', 'like', '%' . $request->get('customer_phone') . '%');
-                });
-            }
-
-            if (trim($request->get('platform_name')) !== "") {
-                $query->where(function ($sub) use ($request) {
-                    $sub->where('carts.platform_id', $request->get('platform_name'));
-                });
-            }
-
-            if (trim($request->get('start_date')) !== "") {
-                $fromDate = Carbon::createFromFormat('d/m/Y H:i:s', $request->get('start_date') . ' 00:00:00')->toDateTimeString();
-
-                if (trim($request->get('end_date')) !== "") {
-
-                    $toDate = Carbon::createFromFormat('d/m/Y H:i:s', $request->get('end_date') . ' 23:59:59')->toDateTimeString();
-                    $query->whereBetween('carts.created_at', [$fromDate, $toDate]);
-                } else {
-                    $query->whereDate('carts.created_at', '>=', $fromDate);
+            ->filter(function ($query) use ($request) {
+                if (trim($request->get('code')) !== "") {
+                    $query->where(function ($sub) use ($request) {
+                        $sub->where('carts.code', 'like', '%' . $request->get('code') . '%');
+                    });
                 }
-            }
 
-            if (trim($request->get('status')) !== "") {
-                $query->where(function ($sub) use ($request) {
-                    $sub->where('carts.status', 'like', '%' . $request->get('status') . '%');
-                });
-            }
+                if (trim($request->get('customer_name')) !== "") {
+                    $query->where(function ($sub) use ($request) {
+                        $sub->where('customers.name', 'like', '%' . $request->get('customer_name') . '%');
+                    });
+                }
 
-            if (trim($request->get('payment_status')) !== "") {
-                $query->where(function ($sub) use ($request) {
-                    $sub->where('carts.payment_status', 'like', '%' . $request->get('payment_status') . '%');
-                });
-            }
+                if (trim($request->get('customer_phone')) !== "") {
+                    $query->where(function ($sub) use ($request) {
+                        $sub->where('customers.phone', 'like', '%' . $request->get('customer_phone') . '%');
+                    });
+                }
 
-        }, true)
-        ->addColumn('created_at', function ($cart) {
-                $html = $cart->created_at;//date('d/m/Y', strtotime($cart->created_at));
+                if (trim($request->get('platform_name')) !== "") {
+                    $query->where(function ($sub) use ($request) {
+                        $sub->where('carts.platform_id', $request->get('platform_name'));
+                    });
+                }
+
+                if (trim($request->get('start_date')) !== "") {
+                    $fromDate = Carbon::createFromFormat('d/m/Y H:i:s', $request->get('start_date') . ' 00:00:00')->toDateTimeString();
+
+                    if (trim($request->get('end_date')) !== "") {
+
+                        $toDate = Carbon::createFromFormat('d/m/Y H:i:s', $request->get('end_date') . ' 23:59:59')->toDateTimeString();
+                        $query->whereBetween('carts.created_at', [$fromDate, $toDate]);
+                    } else {
+                        $query->whereDate('carts.created_at', '>=', $fromDate);
+                    }
+                }
+
+                if (trim($request->get('status')) !== "") {
+                    $query->where(function ($sub) use ($request) {
+                        $sub->where('carts.status', 'like', '%' . $request->get('status') . '%');
+                    });
+                }
+
+                if (trim($request->get('payment_status')) !== "") {
+                    $query->where(function ($sub) use ($request) {
+                        $sub->where('carts.payment_status', 'like', '%' . $request->get('payment_status') . '%');
+                    });
+                }
+            }, true)
+            ->addColumn('created_at', function ($cart) {
+                $html = $cart->created_at; //date('d/m/Y', strtotime($cart->created_at));
                 return $html;
             })
-        ->addColumn('status', function ($cart) {
-            $html = parse_status($cart->status);
-            return $html;
-        })
-        ->addColumn('payment_status', function ($cart) {
-            $html = parse_payment_status($cart->payment_status);
-            return $html;
-        })
-        ->addColumn('code', function ($cart) use ($request) {
-            if (trim($request->get('no_link')) !== "" && $request->get('no_link') == 'true') {
-                $html = '<span id="'.$cart->code.'">'.$cart->code.'</span>';
-            }else{
-                $html = '<a href="'.route('admin.carts.index', ['cart_code' => $cart->code]) . '">' . '<span id="'.$cart->code.'">'.$cart->code.'</span>' .'</a>';
-            }
-            
-            return $html;
-        })
-        ->rawColumns(['created_at', 'status', 'payment_status', 'code'])
-        ->order(function ($query) use ($request) {
-            if (trim($request->get('cart_code')) !== ""){
-                $query->orderByRaw("FIELD(`carts`.`code` , '".$request->get('cart_code')."') DESC");
-            }
-            $query->orderBy('carts.created_at', 'desc');
-            $query->orderBy('carts.code', 'desc');
-        })
-        ->toJson();
+            ->addColumn('status', function ($cart) {
+                $html = parse_status($cart->status);
+                return $html;
+            })
+            ->addColumn('payment_status', function ($cart) {
+                $html = parse_payment_status($cart->payment_status);
+                return $html;
+            })
+            ->addColumn('code', function ($cart) use ($request) {
+                if (trim($request->get('no_link')) !== "" && $request->get('no_link') == 'true') {
+                    $html = '<span id="' . $cart->code . '">' . $cart->code . '</span>';
+                } else {
+                    $html = '<a href="' . route('admin.carts.index', ['cart_code' => $cart->code]) . '">' . '<span id="' . $cart->code . '">' . $cart->code . '</span>' . '</a>';
+                }
+
+                return $html;
+            })
+            ->rawColumns(['created_at', 'status', 'payment_status', 'code'])
+            ->order(function ($query) use ($request) {
+                if (trim($request->get('cart_code')) !== "") {
+                    $query->orderByRaw("FIELD(`carts`.`code` , '" . $request->get('cart_code') . "') DESC");
+                }
+                $query->orderBy('carts.created_at', 'desc');
+                $query->orderBy('carts.code', 'desc');
+            })
+            ->toJson();
         return $dataTable;
     }
 
@@ -815,11 +818,12 @@ Class CartRepository
         return $result;
     }
 
-    public function getCarts($request){
+    public function getCarts($request)
+    {
         $formatted_carts = [];
         $term = trim($request->q);
 
-        $carts = Cart::where('code','LIKE', '%'.$term.'%')->where('quantity', '>', 0)->get();
+        $carts = Cart::where('code', 'LIKE', '%' . $term . '%')->where('quantity', '>', 0)->get();
         foreach ($carts as $cart) {
             $formatted_carts[] = ['id' => $cart->id, 'text' => $cart->code];
         }
@@ -827,7 +831,8 @@ Class CartRepository
         return $formatted_carts;
     }
 
-    public function getDetailProductOptions($request){
+    public function getDetailProductOptions($request)
+    {
         $cart_id = $request->get('cart_id');
 
         $return = [
@@ -837,7 +842,7 @@ Class CartRepository
 
         if ($cart_id) {
             $cart_details = CartDetail::having('cart_id', '=', $cart_id)->having('quantity', '>', 0)
-            ->get();
+                ->get();
 
 
             $product_ids = [];
@@ -853,7 +858,8 @@ Class CartRepository
         return Response::json($return);
     }
 
-    public function getProductDetailColorOptions($request){
+    public function getProductDetailColorOptions($request)
+    {
         $cart_id = $request->get('cart_id');
         $product_id = $request->get('product_id');
 
@@ -864,9 +870,9 @@ Class CartRepository
 
         if ($product_id && $cart_id) {
             $details = CartDetail::having('cart_id', '=', $cart_id)
-            ->having('product_id', '=', $product_id)
-            ->having('quantity', '>', 0)
-            ->get();
+                ->having('product_id', '=', $product_id)
+                ->having('quantity', '>', 0)
+                ->get();
 
             $color_ids = [];
             foreach ($details as $detail) {
@@ -885,7 +891,8 @@ Class CartRepository
         return Response::json($return);
     }
 
-    public function getProductDetailSizeOptions($request){
+    public function getProductDetailSizeOptions($request)
+    {
         $cart_id = $request->get('cart_id');
         $product_id = $request->get('product_id');
         $color_id = $request->get('color_id');
@@ -897,9 +904,9 @@ Class CartRepository
 
         if ($product_id && $cart_id) {
             $details = CartDetail::having('cart_id', '=', $cart_id)
-            ->having('product_id', '=', $product_id)
-            ->having('quantity', '>', 0)
-            ->get();
+                ->having('product_id', '=', $product_id)
+                ->having('quantity', '>', 0)
+                ->get();
 
             $size_ids = [];
             foreach ($details as $detail) {
@@ -918,7 +925,8 @@ Class CartRepository
         return Response::json($return);
     }
 
-    public function getProductDetailWarehouseOptions($request){
+    public function getProductDetailWarehouseOptions($request)
+    {
         $cart_id = $request->get('cart_id');
         $product_id = $request->get('product_id');
         $color_id = $request->get('color_id');
@@ -933,9 +941,9 @@ Class CartRepository
 
         if ($product_id && $cart_id && $size_id) {
             $details = CartDetail::having('cart_id', '=', $cart_id)
-            ->having('product_id', '=', $product_id)
-            ->having('quantity', '>', 0)
-            ->get();
+                ->having('product_id', '=', $product_id)
+                ->having('quantity', '>', 0)
+                ->get();
 
             $warehouse_ids = [];
             foreach ($details as $detail) {
@@ -956,10 +964,10 @@ Class CartRepository
         }
 
         return Response::json($return);
-
     }
 
-    function getProductDetailquantity($request){
+    function getProductDetailquantity($request)
+    {
         $cart_id = $request->get('cart_id');
         $product_id = $request->get('product_id');
         $color_id = $request->get('color_id');
@@ -976,21 +984,21 @@ Class CartRepository
 
         if ($product_id && $color_id && $size_id && $warehouse_id) {
             $product_detail = ProductDetail::having('product_id', '=', $product_id)
-            ->having('color_id', '=', $color_id)
-            ->having('size_id', '=', $size_id)
-            ->having('quantity', '>', 0)
-            ->first();
+                ->having('color_id', '=', $color_id)
+                ->having('size_id', '=', $size_id)
+                ->having('quantity', '>', 0)
+                ->first();
 
             $warehouse_products = WarehouseProduct::having('product_detail_id', '=', $product_detail->id)
-            ->having('warehouse_id', '=', $warehouse_id)
-            ->having('quantity', '>', 0)
-            ->first();
+                ->having('warehouse_id', '=', $warehouse_id)
+                ->having('quantity', '>', 0)
+                ->first();
 
             $detail = CartDetail::having('product_detail_id', '=', $product_detail->id)
-            ->having('warehouse_product_id', '=', $warehouse_products->id)
-            ->having('cart_id', '=', $cart_id)
-            ->having('quantity', '>', 0)
-            ->first();
+                ->having('warehouse_product_id', '=', $warehouse_products->id)
+                ->having('cart_id', '=', $cart_id)
+                ->having('quantity', '>', 0)
+                ->first();
 
             $return['quantity'] = $detail->quantity;
             $return['cart_detail_id'] = $detail->id;
@@ -999,7 +1007,8 @@ Class CartRepository
         return Response::json($return);
     }
 
-    public function updateProductQuantity($cart_detail, $quantity){
+    public function updateProductQuantity($cart_detail, $quantity)
+    {
         $modelProduct = Product::find($cart_detail->product_id);
         if ($modelProduct) {
             $modelProduct->quantity_available += $quantity;
@@ -1019,7 +1028,8 @@ Class CartRepository
         }
     }
 
-    public function createReturnCart($data){
+    public function createReturnCart($data)
+    {
         $returnDetails = json_decode($data['return_details']);
 
         $modelCart = Cart::find($data['cart']);
@@ -1029,7 +1039,7 @@ Class CartRepository
             }
 
             foreach ($returnDetails as $returnCartDetail) {
-                if ( !isset($returnCartDetail->delete) || $returnCartDetail->delete != true ) {
+                if (!isset($returnCartDetail->delete) || $returnCartDetail->delete != true) {
                     $modelReturnCartDetail = new ReturnCartDetail;
 
                     $modelReturnCartDetail->cart_id = $data['cart'];
@@ -1040,21 +1050,21 @@ Class CartRepository
 
                     $modelReturnCartDetail->save();
 
-                // Update quantity cart, cart detail, payment, payment detail
+                    // Update quantity cart, cart detail, payment, payment detail
                     $modelCart->quantity -= $modelReturnCartDetail->quantity;
 
                     $modelCartDetail = CartDetail::where('product_id', $returnCartDetail->product_name->id)
-                    ->where('product_detail_id', $returnCartDetail->product_detail->id)
-                    ->where('warehouse_product_id', $returnCartDetail->warehouse_product_id)
-                    ->where('cart_id', $modelCart->id)
-                    ->firstOrFail();
+                        ->where('product_detail_id', $returnCartDetail->product_detail->id)
+                        ->where('warehouse_product_id', $returnCartDetail->warehouse_product_id)
+                        ->where('cart_id', $modelCart->id)
+                        ->firstOrFail();
 
                     if ($modelCartDetail) {
                         $modelCartDetail->quantity -= $modelReturnCartDetail->quantity;
 
                         $this->updateProductQuantity($modelCartDetail, $modelReturnCartDetail->quantity);
 
-                    // Calculate cart detail
+                        // Calculate cart detail
                         $modelCartDetail = $this->calculateCartDetail($modelCartDetail);
 
                         $modelCartDetail->save();
@@ -1062,11 +1072,11 @@ Class CartRepository
 
                     if (isset($modelPayment)) {
                         $modelPaymentDetail = PaymentDetail::where('product_id', $returnCartDetail->product_name->id)
-                        ->where('product_detail_id', $returnCartDetail->product_detail->id)
-                        ->where('cart_detail_id', $modelCartDetail->id)
-                        ->where('cart_id', $modelCart->id)
-                        ->where('payment_id', $modelPayment->id)
-                        ->firstOrFail();
+                            ->where('product_detail_id', $returnCartDetail->product_detail->id)
+                            ->where('cart_detail_id', $modelCartDetail->id)
+                            ->where('cart_id', $modelCart->id)
+                            ->where('payment_id', $modelPayment->id)
+                            ->firstOrFail();
 
                         if ($modelPaymentDetail) {
                             $modelPaymentDetail->quantity -= $modelReturnCartDetail->quantity;
@@ -1103,13 +1113,15 @@ Class CartRepository
         // update cart & payment
     }
 
-    public function calculateCartDetail($model){
+    public function calculateCartDetail($model)
+    {
         $price = ($model->fixed_price) ? $model->fixed_price : $model->price;
         $model->total_price = $model->quantity * $price;
         return $model;
     }
 
-    public function calculateCart($model){
+    public function calculateCart($model)
+    {
         $model->total_price = 0;
         if ($model->details) {
             foreach ($model->details as $detail) {
@@ -1118,7 +1130,7 @@ Class CartRepository
         }
 
         $model->vat_amount = $model->total_price * $model->vat_percent / 100;
-        $model->total_discount_amount = $model->quantity*$model->partner_discount_amount + $model->customer_discount_amount;
+        $model->total_discount_amount = $model->quantity * $model->partner_discount_amount + $model->customer_discount_amount;
         $model->price = preg_replace('/[^0-9]/', '', $model->total_price + $model->shipping_fee + $model->vat_amount - $model->total_discount_amount);
         $model->needed_paid = $model->price - $model->paid_amount;
         if ($model->needed_paid < 0) {
@@ -1131,7 +1143,8 @@ Class CartRepository
         return $model;
     }
 
-    public function getCartDetailDatas($request){
+    public function getCartDetailDatas($request)
+    {
         $cart_id = $request->get('cart_id');
         $product_id = $request->get('product_id');
         $color_id = $request->get('color_id');
@@ -1155,31 +1168,30 @@ Class CartRepository
 
         if ($product_id && $color_id && $size_id && $warehouse_id) {
             $product_detail = ProductDetail::having('product_id', '=', $product_id)
-            ->having('color_id', '=', $color_id)
-            ->having('size_id', '=', $size_id)
-            ->first();
+                ->having('color_id', '=', $color_id)
+                ->having('size_id', '=', $size_id)
+                ->first();
 
             $return['product_detail'] = $product_detail;
 
             $warehouse_product = WarehouseProduct::where('warehouse_id', $warehouse->id)
-            ->where('product_detail_id', $product_detail->id)
-            ->first();
+                ->where('product_detail_id', $product_detail->id)
+                ->first();
 
             $return['warehouse_product_id'] = $warehouse_product->id;
         }
 
         $modelCartDetail = CartDetail::where('product_id', $product_id)
-        ->where('product_detail_id', $product_detail->id)
-        ->where('warehouse_product_id', $warehouse_product->id)
-        ->where('cart_id', $cart_id)
-        ->firstOrFail();
+            ->where('product_detail_id', $product_detail->id)
+            ->where('warehouse_product_id', $warehouse_product->id)
+            ->where('cart_id', $cart_id)
+            ->firstOrFail();
 
         if ($modelCartDetail) {
             $return['cart_detail_id'] = $modelCartDetail->id;
         }
 
         return Response::json($return);
-
     }
 
     public function getCartDetails($id)
@@ -1231,5 +1243,4 @@ Class CartRepository
         }
         return Response::json($return);
     }
-
 }

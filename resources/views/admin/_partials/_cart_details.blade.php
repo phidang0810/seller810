@@ -66,14 +66,14 @@
     </div>
     <div class="hr-line-dashed"></div>
 
-    @if($result['cart']->transport_method != null)
     <div class="form-group">
         <label class="col-lg-5 control-label" style="text-align: left; padding-right: 0; width: 33.666667%;">Phương thức vận chuyển:</label>
-        <label id="code" class="col-lg-7 text-left control-label" style="padding-left: 0; text-align: left;">{{$result['cart']->transportMethod->name}}</label>
+    @if($result['cart']->transport_method != null)
+    <label id="code" class="col-lg-7 text-left control-label" style="padding-left: 0; text-align: left;">{{$result['cart']->transportMethod->name}}</label>
     </div>
 
 
-    @if($result['cart']->transport_method == 2)
+    @if($result['cart']->transport_method == 6)
     <div class="form-group">
         <label class="col-lg-5 control-label" style="text-align: left; padding-right: 0; width: 33.666667%;">Nhà xe:</label>
         <label id="code" class="col-lg-7 text-left control-label" style="padding-left: 0; text-align: left;">{{$result['cart']->transport_info_name}}</label>
@@ -83,6 +83,9 @@
         <label id="code" class="col-lg-7 text-left control-label" style="padding-left: 0; text-align: left;">{{$result['cart']->transport_info_phone}}</label>
     </div>
     @endif
+    @else
+    <label id="code" class="col-lg-7 text-left control-label" style="padding-left: 0; text-align: left;">Không có</label>
+    </div>
 
     @endif
 
