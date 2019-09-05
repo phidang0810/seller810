@@ -121,8 +121,8 @@ span.select2.select2-container.select2-container--default {
                 $('select[name=supplier_id]').val(data.product.supplier_id);
                 $('input[name=price]').val(data.product.price);
                 $('input[name=sell_price]').val(data.product.sell_price);
-                $('textarea[name=description]').html(data.product.description);
-                $('textarea[name=content]').html(data.product.content);
+                $('textarea[name=description]').html(decodeURI(data.product.description));
+                $('textarea[name=content]').html(decodeURI(data.product.description));
                 $('input[name=order]').val(data.product.order);
                 $('select[name=active]').val(data.product.active);
                 // metas
@@ -130,8 +130,8 @@ span.select2.select2-container.select2-container--default {
                 $('input[name=meta_description]').val(data.product.meta_description);
                 $('input[name=meta_robot]').val(data.product.meta_robot);
 
-                CKEDITOR.instances['editor-desc'].insertHtml(data.product.description);
-                CKEDITOR.instances['editor-content'].insertHtml(data.product.content);
+                CKEDITOR.instances['editor-desc'].insertHtml(decodeURI(data.product.description));
+                CKEDITOR.instances['editor-content'].insertHtml(decodeURI(data.product.description));
             // }
             // photo
             if (data.product.photo) {
@@ -769,7 +769,7 @@ span.select2.select2-container.select2-container--default {
                                                     <div class="form-group">
                                                         <label class="col-md-3 control-label">Sơ lược</label>
                                                         <div class="col-md-9">
-                                                            <textarea name="description" id="editor-desc" cols="30" rows="10"  class="form-control m-b">@if(isset($data->description)){{$data->description}}@else{{old('description')}}@endif</textarea>
+                                                            <textarea name="description" id="editor-desc" cols="30" rows="10"  class="form-control m-b">@if(isset($data->description)){!!$data->description!!}@else{{old('description')}}@endif</textarea>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -778,7 +778,7 @@ span.select2.select2-container.select2-container--default {
                                                     <div class="form-group">
                                                         <label class="col-md-3 control-label">Mô tả</label>
                                                         <div class="col-md-9">
-                                                            <textarea name="content" id="editor-content" cols="30" rows="10"  class="summernote form-control m-b">@if(isset($data->content)){{$data->content}}@else{{old('content')}}@endif</textarea>
+                                                            <textarea name="content" id="editor-content" cols="30" rows="10"  class="summernote form-control m-b">@if(isset($data->content)){!!$data->content!!}@else{{old('content')}}@endif</textarea>
                                                         </div>
                                                     </div>
                                                 </div>
