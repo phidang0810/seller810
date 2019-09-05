@@ -617,7 +617,7 @@ Class CartRepository
 
     public function getStaticsCartDataTable($request)
     {
-        $products = CartDetail::selectRaw('products.name, products.main_cate, products.barcode_text, carts.code as cart_code, products.photo, products.category_ids,carts.city_id, carts.platform_id, SUM(cart_detail.quantity) as quantity, SUM(cart_detail.total_price) as total_price, (cart_detail.total_price - (products.price*cart_detail.quantity)) as profit, DATE(cart_detail.created_at) as created_at, COUNT(carts.id) total_cart')
+        $products = CartDetail::selectRaw('products.name, products.main_cate, products.barcode_text, carts.code as cart_code, products.photo, products.category_ids,carts.city_id, carts.platform_id, SUM(cart_detail.quantity) as quantity, SUM(cart_detail.total_price) as total_price, SUM(cart_detail.total_price - (cart_detail.import_price*cart_detail.quantity)-cart_detail.discount_amount) as profit, DATE(cart_detail.created_at) as created_at, COUNT(carts.id) total_cart')
         ->join('products', 'products.id', '=', 'cart_detail.product_id')
         ->join('carts', 'carts.id', '=', 'cart_detail.cart_id')
         ->groupBy('cart_detail.product_id');
