@@ -720,7 +720,7 @@
         });
 
         $('select[name="transporting_service"').on('change', function() {
-            if($('select[name="transporting_service"').val() == 2) {
+            if($('select[name="transporting_service"').val() == 6) {
                 $('.transport-info').removeClass('hidden');
             }else{
                 $('.transport-info').addClass('hidden');
