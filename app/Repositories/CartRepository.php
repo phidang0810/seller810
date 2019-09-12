@@ -197,7 +197,7 @@ class CartRepository
         $model = Cart::where('code', '=', $cartCode)->first();
 
         // Check if cart is completed
-        if ($model->status == CART_COMPLETED) {
+        if ($model->status == CART_COMPLETED || $model->status == CART_CANCELED) {
             return $model;
         }
 
