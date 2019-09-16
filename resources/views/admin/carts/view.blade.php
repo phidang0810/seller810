@@ -181,6 +181,13 @@
             $(".cart-menu-wrapper .cart-detail").addClass("active");
         }
 
+        $(window).keydown(function(event){
+            if(event.keyCode == 13) {
+            event.preventDefault();
+            return false;
+            }
+        });
+
         // Set focus
         // $('input[name="scan_barcode"]').focus();
         $('#tab_scan_barcode').on('click', function() {
