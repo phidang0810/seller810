@@ -13,6 +13,8 @@
 <!-- Page-Level Scripts -->
 <script>
     var url_print = "{{route('admin.return_products.print')}}";
+    var path_img_folder = window.location.origin + '/storage/';
+    var default_image = '{{asset(NO_PHOTO)}}';
 
     function print(id) {
         var transport_quantity = 0;
@@ -59,20 +61,28 @@
         $('label.lbl-customer-address').text("");
         $('table.tbl-list-product tbody').html("");
         transport_quantity = 0;
+        transport_total_price = 0;
     }
 
     function printTableRows(details) {
         html = "";
         $.each(details, function(key, detail) {
+            var product_image = (detail.product.photo) ? path_img_folder + detail.product.photo : default_image;
             html_product_name = detail.product.name;
             html_product_code = detail.product.barcode_text;
             html_quantity = detail.quantity;
             html_color = detail.product_detail.color.name;
             html_size = detail.product_detail.size.name;
-            html += '<tr><th>' + html_product_name + '</th><th>' + html_product_code + '</th><th>' + html_color + '</th><th>' + html_size + '</th><th style="text-align: right;">' + html_quantity + '</th></tr>';
+            html += '<tr><th>' + (key + 1) + '</th><th><img class="img-thumbnail" style="width: 80px; height: 60px;" src="' + product_image + '" title="' + detail.product.name + '"/></th><th>' + html_product_name + '</th><th>' + html_product_code + '</th><th>' + html_color + '</th><th>' + html_size + '</th><th style="text-align: right;">' + html_quantity + '</th><th class="thousand-number">' + detail.product.price + '</th><th class="thousand-number">' + (detail.product.price*detail.quantity) + '</th></tr>';
             transport_quantity += parseInt(detail.quantity);
+            transport_total_price += (detail.quantity * detail.product.price);
         });
         $('label.lbl-transport-quantity').text(transport_quantity);
+        $('h4.lbl-price').text(transport_total_price);
+        setTimeout(function() {
+            $('.thousand-number').simpleMoneyFormat();
+            $('.thousand-number').append(" VNĐ");
+        }, 300);
         return html;
     }
 
@@ -112,13 +122,22 @@
         //---> Transport Warehouse
         var html_detail_warehouse = '<label>' + data.warehouse.name + '</label>';
 
+        //---> Product Import Price
+        var html_product_import_price = '<label>' + data.product_import_price + '</label>';
+
+        //---> Product Total Price
+        var html_product_total_price = '<label>' + (data.product_import_price * data.product_quantity) + '</label>';
+
         // Row html
-        var html = '<td>' + html_detail_photo + '</td>\
+        var html = '<td>' + (key + 1) + '</td>\
+        <td>' + html_detail_photo + '</td>\
         <td>' + html_detail_label_name + '</td>\
         <td class="c-quantity">' + html_detail_input_quantity + '</td>\
         <td>' + html_detail_label_size + '</td>\
         <td>' + html_detail_label_color + '</td>\
         <td>' + html_detail_warehouse + '</td>\
+        <td>' + html_product_import_price + '</td>\
+        <td>' + html_product_total_price + '</td>\
         <td><a href="javascript:;" onclick="deleteCartDetailItem(' + key + ');" class="bt-delete btn btn-xs btn-danger"><i class="fa fa-trash-o" aria-hidden="true"></i></a></td>';
         return html;
     }
@@ -132,6 +151,7 @@
 
     // First time show details to table
     function printTableTransportDetails() {
+        $('#i-cart-info tbody').html('');
         $.each(return_details, function(key, value) {
             var html = htmlEditCreateRowProductDetail(value, key);
 
@@ -142,6 +162,7 @@
     // When detail quantity, color, size change will count total again
     $(document.body).delegate('.detail_quantity', 'change', function() {
         updateTranslationDetailsData();
+        printTableTransportDetails();
     });
 
     // Function update cart details data
@@ -291,7 +312,8 @@
                                     id: $('select[name="warehouse_id"]').val(),
                                     name: $('select[name="warehouse_id"] option[value="' + $('select[name="warehouse_id"]').val() + '"]').text()
                                 },
-                                'warehouse_product_id': data.warehouse_product_id
+                                'warehouse_product_id': data.warehouse_product_id,
+                                'product_import_price': data.product.price
                             });
 
                             var key = return_details.length - 1;
@@ -612,12 +634,15 @@
                                             <table id="i-cart-info" class="table">
                                                 <thead>
                                                     <tr>
+                                                        <th>STT</th>
                                                         <th>Hình ảnh</th>
                                                         <th>Tên sản phẩm</th>
                                                         <th>Số lượng</th>
                                                         <th>Size</th>
                                                         <th>Màu</th>
                                                         <th>Kho</th>
+                                                        <th>Đơn giá nhập</th>
+                                                        <th>Thành tiền</th>
                                                         <th></th>
                                                     </tr>
                                                 </thead>

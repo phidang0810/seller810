@@ -1,7 +1,7 @@
 @include('admin._partials._print_header')
 <!--  BEGIN: Print transport warehourse receive -->
 <div id="print-section">
-    <div class="row" >
+    <div class="row">
         <!-- BEGIN: Logo -->
         <div class="col-sm-3">
             <img src="{{asset('themes/inspinia/img/logo.png')}}" alt="" width="100%" height="auto">
@@ -30,13 +30,13 @@
     </div>
     <div style="margin-top: 20px;">
         <div class="row">
-            <div class="col-sm-6" >
+            <div class="col-sm-6">
                 <div class="form-group">
                     <label class="col-sm-6 control-label font-bold">Tên người phụ trách:</label>
                     <label class="col-sm-6 control-label lbl-customer-name"></label>
                 </div>
             </div>
-            <div class="col-sm-6" >
+            <div class="col-sm-6">
                 <div class="form-group">
                     <label class="col-sm-6 control-label font-bold">Ngày trả:</label>
                     <label class="col-sm-6 control-label lbl-customer-created"></label>
@@ -71,11 +71,15 @@
             <table class="table bordered tbl-list-product table-borderless">
                 <thead style="border-bottom: 3px solid #333;">
                     <tr class="table-body-head">
+                        <th>STT</th>
+                        <th>Hình ảnh</th>
                         <th>Tên sản phẩm</th>
                         <th>Mã sản phẩm</th>
                         <th>Màu sắc</th>
                         <th>Kích thước</th>
                         <th style="text-align: right;">Số lượng</th>
+                        <th>Đơn giá nhập</th>
+                        <th>Thành tiền</th>
                     </tr>
                 </thead>
                 <tfoot>
@@ -101,6 +105,12 @@
                 <div class="form-group">
                     <label class="col-sm-8 control-label font-bold">Chi phí vận chuyển:</label>
                 </div>
+            </div>
+        </div>
+        <div class="row" style="position: absolute; bottom: 0; right: 70px; width: 150px;">
+            <div class="form-group">
+                <h4 class="col-sm-8 control-label font-bold">Thành tiền:</h4>
+                <h4 class="col-sm-4 control-label lbl-price thousand-number" style="text-align: right;"></h4>
             </div>
         </div>
     </div>
