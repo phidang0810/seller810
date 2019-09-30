@@ -60,7 +60,8 @@
         var html_detail_warehouse = '<label>' + data.warehouse_product_name + '</label>';
 
         // Row html
-        var html = '<td>' + html_detail_photo + '</td>\
+        var html = '<td>' + (key + 1) + '</td>\
+        <td>' + html_detail_photo + '</td>\
         <td>' + html_detail_label_name + '</td>\
         <td class="c-quantity">' + html_detail_input_quantity + '</td>\
         <td>' + html_detail_label_code + '</td>\
@@ -871,6 +872,7 @@
             $.each(arrProducts, function(index, value) {
                 product_image = (value.product.photo) ? path_img_folder + value.product.photo : default_image;
                 html += '<tr>';
+                html += '<td>' + (index + 1) + '</td>';
                 html += '<td>' + value.product.name + '</td>';
                 html += '<td>' + value.product.barcode_text + '</td>';
                 html += '<td><span class="img-wrapper"><img class="img-thumbnail" style="width: 80px; height: 60px;" src="' + product_image + '"/></span></td>';
@@ -914,7 +916,7 @@
 
     function resetResultPrint() {
         html = '<tr style="border-top:3px solid #333;">\
-    <th colspan="8" style="position: relative;">\
+    <th colspan="9" style="position: relative;">\
     <div class="row" style="margin-top: 20px;">\
     <div class="col-sm-7">\
     </div>\
@@ -1081,6 +1083,7 @@
                                             <table id="i-cart-info" class="table">
                                                 <thead>
                                                     <tr>
+                                                        <th>STT</th>
                                                         <th>Hình ảnh</th>
                                                         <th>Tên sản phẩm</th>
                                                         <th>Số lượng</th>
@@ -1299,7 +1302,7 @@
                                     </div>
                                 </div>
 
-                                <div class="row hidden">
+                                <div class="row">
                                     <div class="form-group">
                                         <label class="col-md-4 control-label">Tổng số lượng</label>
                                         <div class="col-md-8">

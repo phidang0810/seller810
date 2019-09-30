@@ -295,7 +295,8 @@ Class ReturnProductRepository
 				'warehouse' => [
 					'id' => ($value->warehouse) ? $value->warehouse->id : 0,
 					'name' => ($value->warehouse) ? $value->warehouse->name : ''
-				]
+				],
+				'product_import_price' => $value->product->price
 			];
 		}
 		return $return;

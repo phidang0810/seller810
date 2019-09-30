@@ -93,6 +93,7 @@
             $.each(arrProducts, function(index, value) {
                 product_image = (value.product.photo) ? path_img_folder + value.product.photo : default_image;
                 html += '<tr>';
+                html += '<td>' + (index + 1) + '</td>';
                 html += '<td>' + value.product.name + '</td>';
                 html += '<td>' + value.product.barcode_text + '</td>';
                 html += '<td><span class="img-wrapper"><img class="img-thumbnail" style="width: 80px; height: 60px;" src="' + product_image + '"/></span></td>';
@@ -109,7 +110,7 @@
 
     function resetResultPrint() {
         html = '<tr style="border-top:3px solid #333;">\
-            <th colspan="8" style="position: relative;">\
+            <th colspan="9" style="position: relative;">\
             <div class="row" style="margin-top: 20px;">\
             <div class="col-sm-7">\
             </div>\

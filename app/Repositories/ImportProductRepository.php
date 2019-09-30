@@ -258,7 +258,7 @@ Class ImportProductRepository
 		}
 		Storage::delete($model->barcode);
 
-		$barcode = general_product_code($model->id, 8);
+		$barcode = general_code('N H', $model->id, 6);
 		$file = Barcode::draw('code39', 'image', array('text' => $barcode), array());
 		$barcodePath = 'public/barcodes/' . $barcode . '.png';
 		imagepng($file,storage_path('app/' . $barcodePath));
@@ -624,7 +624,7 @@ Class ImportProductRepository
 		}
 		Storage::delete($model->barcode);
 
-		$barcode = general_product_code($model->id, 8);
+		$barcode = general_code('S P', $model->id, 8);
 		$file = Barcode::draw('code39', 'image', array('text' => $barcode), array());
 		$barcodePath = 'public/barcodes/' . $barcode . '.png';
 		imagepng($file,storage_path('app/' . $barcodePath));

@@ -193,7 +193,7 @@ class CartRepository
         $status = $request->get('status');
         $transport_id = $request->get('transport_id');
         $pay_amount = ($request->get('pay_amount') !== null) ? $request->get('pay_amount') : 0;
-        $needed_paid = $request->get('needed_paid');
+        // $needed_paid = $request->get('needed_paid');
         $model = Cart::where('code', '=', $cartCode)->first();
 
         // Check if cart is completed
@@ -203,7 +203,7 @@ class CartRepository
 
         $model->paid_amount = ($model->paid_amount) ? $model->paid_amount : 0;
         $model->paid_amount += $pay_amount;
-        $model->needed_paid = $needed_paid;
+        $model->needed_paid = $model->price - $model->paid_amount;
         $model->transport_id = $transport_id;
 
         // total import price
@@ -227,24 +227,20 @@ class CartRepository
 
         // Excute status
         if ($status == CART_COMPLETED) {
-            if ($model->payment_status == PAYING_OFF || $model->payment_status == RECEIVED_PAYMENT) {
-                $model->status = $status;
-
-                $model->save();
-            } else {
+            if ($model->payment_status != PAYING_OFF && $model->payment_status != RECEIVED_PAYMENT) {
                 return false;
             }
-        } else {
-            if ($status == CART_CANCELED) {
-                if ($model->details) {
-                    foreach ($model->details as $detail) {
-                        $this->deleteDetails($detail->id);
-                    }
+        }
+            
+        if ($status == CART_CANCELED) {
+            if ($model->details) {
+                foreach ($model->details as $detail) {
+                    $this->deleteDetails($detail->id);
                 }
             }
-            $model->status = $status;
-            $model->save();
         }
+        $model->status = $status;
+        $model->save();
 
         // Excute if cart status is COMPLETED then copy cart & cart detail to payment & payment detail
         if ($model->status == CART_COMPLETED) {
