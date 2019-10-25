@@ -149,7 +149,7 @@ Class ProductRepository
         $model->active = $data['active'];
         $model->order = $data['order'];
         $model->description = $data['description'];
-        if (isset($data['quantity'])) {
+        if (!$id && isset($data['quantity'])) {
             $model->quantity = $data['quantity'];
             $model->quantity_available = $data['quantity'];
         }
